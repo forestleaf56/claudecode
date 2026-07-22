@@ -31,7 +31,7 @@ weekly-apps/current/
       travel to next planet, score, game over, restart. Mobile canvas + touch.
 - [x] Tue: energy orbs to collect, combo multiplier, particle/trail juice,
       HUD (score, best, combo).
-- [ ] Wed: asteroids/hazards, difficulty ramp, sound (WebAudio blips), screen
+- [x] Wed: asteroids/hazards, difficulty ramp, sound (WebAudio blips), screen
       shake, start & game-over screens.
 - [ ] Thu: polish pass, tune balance, mobile testing, fix bugs; confirm it runs
       offline from a single file. Note any setup steps for the Friday readme.

@@ -97,8 +97,22 @@
 
   // ---- game state ----
   let state='start';
-  let planets=[], orbs=[], stars=[], particles=[];
+  let planets=[], orbs=[], asteroids=[], stars=[], particles=[];
   let camX=0, ship, score, orbsCollected, combo, elapsed, lastPlanetX, shake;
+
+  // ---- sound (WebAudio; created lazily on first user gesture) ----
+  let actx=null;
+  function sfx(freq, dur=0.12, type='sine', vol=0.14){
+    try{
+      if(!actx) actx=new (window.AudioContext||window.webkitAudioContext)();
+      if(actx.state==='suspended') actx.resume();
+      const t=actx.currentTime, o=actx.createOscillator(), g=actx.createGain();
+      o.type=type; o.frequency.setValueAtTime(freq,t);
+      o.frequency.exponentialRampToValueAtTime(Math.max(40,freq*0.55), t+dur);
+      g.gain.setValueAtTime(vol,t); g.gain.exponentialRampToValueAtTime(0.0001, t+dur);
+      o.connect(g); g.connect(actx.destination); o.start(t); o.stop(t+dur);
+    }catch(e){}
+  }
 
   function makeStars(){
     stars=[];
@@ -118,13 +132,19 @@
     // orb in the gap before this planet
     if(planets.length>1){
       const prev = planets[planets.length-2];
-      orbs.push({ x:(prev.x+x)/2 + rand(-30,30), y:rand(H*0.25,H*0.75), r:11, taken:false, t:Math.random()*6 });
+      const mid=(prev.x+x)/2;
+      orbs.push({ x:mid + rand(-30,30), y:rand(H*0.25,H*0.75), r:11, taken:false, t:Math.random()*6 });
+      // hazards: appear once past the early planets, more likely as difficulty climbs
+      if(planets.length>3 && Math.random() < 0.32 + difficulty()*0.45){
+        asteroids.push({ x:mid + rand(-40,40), y:rand(H*0.14, H*0.86), r:rand(13,21),
+                         vy:rand(-42,42)*(0.5+difficulty()), seed:Math.random()*6.28 });
+      }
     }
     lastPlanetX = x;
   }
 
   function start(){
-    planets=[]; orbs=[]; particles=[]; camX=0;
+    planets=[]; orbs=[]; asteroids=[]; particles=[]; camX=0;
     score=0; orbsCollected=0; combo=0; elapsed=0; shake=0; lastPlanetX=0;
     addPlanet(W*0.4);
     for(let i=0;i<4;i++) addPlanet(lastPlanetX+gapFor());
@@ -140,6 +160,7 @@
 
   function gameOver(){
     state='over';
+    sfx(150,0.5,'sawtooth',0.22);
     for(let i=0;i<26;i++) particles.push({x:ship.x-camX, y:ship.y, vx:rand(-220,220), vy:rand(-220,220),
       life:1, col:'55,242,195'});
     shake=16;
@@ -163,6 +184,7 @@
       ship.vx=tx*speed; ship.vy=ty*speed;
       ship.orbiting=null;
       burst(ship.x-camX, ship.y, p.hue, 8);
+      sfx(520,0.1,'triangle',0.12);
     }
   }
   function burst(sx,sy,col,n){
@@ -201,11 +223,19 @@
           shake=Math.min(shake+3,10);
           burst(s.x-camX, s.y, p.hue, 10);
           bumpCombo();
+          sfx(680+combo*30, 0.14, 'sine', 0.13);
           break;
         }
       }
       // died: drifted off the top/bottom, or fell behind the world
       if(s.y< -60 || s.y> H+60 || s.x < camX-40){ gameOver(); return; }
+    }
+
+    // hazards: drift vertically, bounce at edges, deadly on contact (either state)
+    for(const a of asteroids){
+      a.y += a.vy*dt;
+      if(a.y < a.r || a.y > H-a.r){ a.vy*=-1; a.y=clamp(a.y, a.r, H-a.r); }
+      if(dist2(s.x,s.y,a.x,a.y) < (a.r+7)*(a.r+7)){ gameOver(); return; }
     }
 
     // trail
@@ -222,13 +252,15 @@
       if(dist2(s.x,s.y,o.x,o.y) < (o.r+16)*(o.r+16)){
         o.taken=true; orbsCollected++; score+=10+combo*2;
         burst(o.x-camX, o.y, '55,242,195', 12);
+        sfx(880,0.09,'square',0.1);
       }
     }
 
     // generate ahead, cull behind
     while(lastPlanetX < camX + W*1.6) addPlanet(lastPlanetX+gapFor());
-    planets = planets.filter(p=>p.x > camX-120);
-    orbs    = orbs.filter(o=>o.x > camX-120);
+    planets   = planets.filter(p=>p.x > camX-120);
+    orbs      = orbs.filter(o=>o.x > camX-120);
+    asteroids = asteroids.filter(a=>a.x > camX-120);
 
     // particles
     for(const pt of particles){ pt.x+=pt.vx*dt; pt.y+=pt.vy*dt; pt.vx*=0.94; pt.vy*=0.94; pt.life-=dt*1.6; }
@@ -279,6 +311,23 @@
       ctx.fillStyle=rg; ctx.beginPath(); ctx.arc(x,p.y,p.r*1.8,0,7); ctx.fill();
       ctx.fillStyle='#0b0e22'; ctx.beginPath(); ctx.arc(x,p.y,p.r,0,7); ctx.fill();
       ctx.strokeStyle='rgba('+p.hue+',0.9)'; ctx.lineWidth=2.5; ctx.stroke();
+    }
+
+    // asteroids
+    for(const a of asteroids){
+      const ax=a.x-camX; if(ax<-60||ax>W+60) continue;
+      ctx.save(); ctx.translate(ax,a.y); ctx.rotate(a.seed + elapsed*0.4);
+      ctx.shadowColor='rgba(255,92,138,0.6)'; ctx.shadowBlur=12;
+      ctx.fillStyle='#241019'; ctx.strokeStyle='rgba(255,92,138,0.95)'; ctx.lineWidth=2;
+      ctx.beginPath();
+      const n=8;
+      for(let i=0;i<n;i++){
+        const ang=i/n*Math.PI*2, rr=a.r*(0.72+ (Math.sin(a.seed+i*2.3)*0.5+0.5)*0.28);
+        const px=Math.cos(ang)*rr, py=Math.sin(ang)*rr;
+        i? ctx.lineTo(px,py) : ctx.moveTo(px,py);
+      }
+      ctx.closePath(); ctx.fill(); ctx.stroke();
+      ctx.restore(); ctx.shadowBlur=0;
     }
 
     // orbs
