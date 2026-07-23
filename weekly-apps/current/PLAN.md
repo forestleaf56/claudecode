@@ -33,8 +33,9 @@ weekly-apps/current/
       HUD (score, best, combo).
 - [x] Wed: asteroids/hazards, difficulty ramp, sound (WebAudio blips), screen
       shake, start & game-over screens.
-- [ ] Thu: polish pass, tune balance, mobile testing, fix bugs; confirm it runs
-      offline from a single file. Note any setup steps for the Friday readme.
+- [x] Thu: polish pass — haptic feedback (vibrate on capture/death), "NEW BEST"
+      indicator on game over; verified in browser; runs offline from a single file.
+      No setup steps needed (no API keys / backend).
 
 ## Status notes
 - Bootstrapped manually on Tue 2026-07-21 after the scheduled Mon/Tue autonomous

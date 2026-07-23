@@ -63,6 +63,7 @@
 <div class="overlay hidden" id="overScreen">
   <div class="big">DRIFTED AWAY</div>
   <div class="title" id="finalScore" style="font-size:clamp(48px,18vw,120px)">0</div>
+  <div class="stat" id="newBest" style="display:none;color:var(--neon);letter-spacing:3px;font-weight:800">★ NEW BEST ★</div>
   <div class="stat">Best <b id="finalBest">0</b> · Orbs <b id="finalOrbs">0</b></div>
   <div class="cta">TAP TO RETRY</div>
 </div>
@@ -113,6 +114,7 @@
       o.connect(g); g.connect(actx.destination); o.start(t); o.stop(t+dur);
     }catch(e){}
   }
+  function haptic(ms){ try{ if(navigator.vibrate) navigator.vibrate(ms); }catch(e){} }
 
   function makeStars(){
     stars=[];
@@ -161,13 +163,16 @@
   function gameOver(){
     state='over';
     sfx(150,0.5,'sawtooth',0.22);
+    haptic([30,40,30]);
     for(let i=0;i<26;i++) particles.push({x:ship.x-camX, y:ship.y, vx:rand(-220,220), vy:rand(-220,220),
       life:1, col:'55,242,195'});
     shake=16;
-    if(score>best){ best=score; localStorage.setItem('orbitweaver_best', best); }
+    const isBest = score>best;
+    if(isBest){ best=score; localStorage.setItem('orbitweaver_best', best); }
     $('finalScore').textContent=score;
     $('finalBest').textContent=best;
     $('finalOrbs').textContent=orbsCollected;
+    $('newBest').style.display = (isBest && score>0) ? 'block' : 'none';
     bestEl.textContent='BEST '+best;
     setTimeout(()=>overScreen.classList.remove('hidden'), 480);
   }
@@ -224,6 +229,7 @@
           burst(s.x-camX, s.y, p.hue, 10);
           bumpCombo();
           sfx(680+combo*30, 0.14, 'sine', 0.13);
+          haptic(12);
           break;
         }
       }
