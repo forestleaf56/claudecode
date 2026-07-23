@@ -41,3 +41,5 @@ weekly-apps/current/
 - Bootstrapped manually on Tue 2026-07-21 after the scheduled Mon/Tue autonomous
   runs failed to push. Core loop + Tuesday items (orbs, combo, juice, HUD) are in.
 - No API keys or env vars required — readme just needs play instructions.
+
+- autonomy delivery test: 2026-07-23T09:37:26Z fired and executed OK
