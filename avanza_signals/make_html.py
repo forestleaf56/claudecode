@@ -129,6 +129,51 @@ def hero(r, side, kicker):
       </div>"""
 
 
+def buy_score(r):
+    c = []
+    if r.get("analyst_upside_pct") is not None:
+        c.append(r["analyst_upside_pct"])
+    last, tl, th = r.get("last"), r.get("analyst_target_low"), r.get("analyst_target_high")
+    if last and (tl or th):
+        c.append(((tl or th) / last - 1) * 100)  # konservativ (låg) riktkurs om den finns
+    if r.get("morningstar_stars") is not None:
+        c.append(r["morningstar_stars"] * 8)
+    if r.get("one_year_pct") is not None:
+        c.append(max(r["one_year_pct"], 0) * 1.0)  # prestation väger så globala fonder konkurrerar
+    return max(c) if c else 10
+
+
+def sell_score(r):
+    last, th = r.get("last"), r.get("analyst_target_high")
+    if last and th:
+        return (last / th - 1) * 100  # positiv = över riktkurs (nedsida)
+    if r.get("one_year_pct") is not None:
+        return -r["one_year_pct"]
+    return 0
+
+
+def order_score(r):
+    """Högre = högre upp. Starkaste köp först, sedan bevaka, sedan sälj."""
+    sides = {s["side"] for s in r["signals"]}
+    if "KOP" in sides:
+        return 3000 + buy_score(r)
+    if "SALJ" in sides or "VARNING" in sides:
+        return 1000 - sell_score(r)
+    if "BEVAKA" in sides:
+        return 2000
+    return 0
+
+
+def best_buy_of(lst):
+    b = [r for r in lst if any(s["side"] == "KOP" for s in r["signals"]) and not r.get("risk_high")]
+    return max(b, key=lambda r: (buy_score(r), r.get("one_year_pct") or 0)) if b else None
+
+
+def best_sell_of(lst):
+    s = [r for r in lst if any(x["side"] == "SALJ" for x in r["signals"])]
+    return max(s, key=sell_score) if s else None
+
+
 def main():
     with open(os.path.join(HERE, "signals.json"), encoding="utf-8") as fh:
         data = json.load(fh)
@@ -136,8 +181,8 @@ def main():
     results = data["results"]
     for r in results:
         r["_p"] = primary(r["signals"])
-    # högrisk sorteras sist inom varje sektion (nedtonat)
-    results.sort(key=lambda r: (bool(r.get("risk_high")), SIDE_ORDER[r["_p"]], r["name"]))
+    # Sortera efter starkast köprekommendation (högst först); högrisk sist (nedtonat).
+    results.sort(key=lambda r: (bool(r.get("risk_high")), -order_score(r), r["name"]))
 
     stocks = [r for r in results if r.get("type") != "fond"]
     funds = [r for r in results if r.get("type") == "fond"]
@@ -146,38 +191,9 @@ def main():
     n_sell = sum(1 for r in results if any(s["side"] in ("SALJ", "VARNING") for s in r["signals"]))
     n_watch = sum(1 for r in results if r["_p"] == "BEVAKA")
 
-    # Dagens tydligaste (separat för aktier och fonder)
-    def buy_score(r):
-        c = []
-        if r.get("analyst_upside_pct") is not None:
-            c.append(r["analyst_upside_pct"])
-        last, tl, th = r.get("last"), r.get("analyst_target_low"), r.get("analyst_target_high")
-        if last and (tl or th):
-            c.append(((tl or th) / last - 1) * 100)  # konservativ (låg) riktkurs om den finns
-        if r.get("morningstar_stars") is not None:
-            c.append(r["morningstar_stars"] * 8)
-        if r.get("one_year_pct") is not None:
-            c.append(max(r["one_year_pct"], 0) * 1.0)  # prestation väger så globala fonder konkurrerar
-        return max(c) if c else 10
-
-    def sell_score(r):
-        last, th = r.get("last"), r.get("analyst_target_high")
-        if last and th:
-            return (last / th - 1) * 100  # positiv = över riktkurs (nedsida)
-        if r.get("one_year_pct") is not None:
-            return -r["one_year_pct"]
-        return 0
-
-    def best_buy_of(lst):
-        b = [r for r in lst if any(s["side"] == "KOP" for s in r["signals"]) and not r.get("risk_high")]
-        return max(b, key=lambda r: (buy_score(r), r.get("one_year_pct") or 0)) if b else None
-
-    def best_sell_of(lst):
-        s = [r for r in lst if any(x["side"] == "SALJ" for x in r["signals"])]
-        return max(s, key=sell_score) if s else None
-
     sv = [r for r in stocks if r["ticker"].endswith(".ST")]
     gl = [r for r in stocks if not r["ticker"].endswith(".ST")]
+    gl_funds = [r for r in funds if r.get("market") != "Sverige"]
 
     gen = data.get("generated_at", datetime.now(timezone.utc).isoformat())
     try:
@@ -189,10 +205,10 @@ def main():
     warn = '<div class="warn">⚠️ Syntetisk data – exekvera ej.</div>' if synthetic else ""
 
     hero_specs = [
-        (best_buy_of(gl), "KOP", "Tydligaste köp – global"),
-        (best_sell_of(gl), "SALJ", "Tydligaste sälj – global"),
-        (best_buy_of(funds), "KOP", "Tydligaste fond-köp"),
-        (best_sell_of(funds), "SALJ", "Tydligaste fond-sälj"),
+        (best_buy_of(gl), "KOP", "Tydligaste aktie-köp – global"),
+        (best_sell_of(gl), "SALJ", "Tydligaste aktie-sälj – global"),
+        (best_buy_of(gl_funds), "KOP", "Tydligaste fond-köp – global"),
+        (best_sell_of(gl_funds), "SALJ", "Tydligaste fond-sälj – global"),
     ]
     heroes = "".join(hero(r, s, k) for r, s, k in hero_specs)
     hero_html = f'<div class="heroes">{heroes}</div>' if any(r for r, _, _ in hero_specs) else ""

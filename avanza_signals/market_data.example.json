@@ -4,182 +4,319 @@
   "source": "websearch",
   "instruments": {
     "STOR-B.ST": {
-      "last": 9.19, "analyst_upside_pct": 76, "analyst_target_low": 15, "analyst_target_high": 21, "risk_high": true,
+      "last": 9.19,
+      "analyst_upside_pct": 76,
+      "analyst_target_low": 15,
+      "analyst_target_high": 21,
+      "risk_high": true,
       "analyst_rating": "snitt-riktkurs ~16,7 kr",
-      "rating_signal": "BEVAKA", "rating_note": "hög uppsida men fallande trendkanal – högrisk"
+      "rating_signal": "BEVAKA",
+      "rating_note": "hög uppsida men fallande trendkanal – högrisk"
     },
     "INTRUM.ST": {
-      "last": 3.4, "risk_high": true,
+      "last": 3.4,
+      "risk_high": true,
       "analyst_rating": "distressed",
-      "rating_signal": "BEVAKA", "rating_note": "kollapsat (52v 74→3 kr); skuldkris – mycket hög risk, spekulativt"
+      "rating_signal": "BEVAKA",
+      "rating_note": "kollapsat (52v 74→3 kr); skuldkris – mycket hög risk, spekulativt"
     },
     "SUS.ST": {
-      "last": 32.86, "last_approx": true,
-      "analyst_target_low": 40, "analyst_target_high": 88,
+      "last": 32.86,
+      "last_approx": true,
+      "analyst_target_low": 40,
+      "analyst_target_high": 88,
       "analyst_rating": "3 köp / 0 sälj (Köp)",
-      "rating_signal": "BEVAKA", "rating_note": "Intuitive avbröt MoU – sänkta 2026-mål (risk)"
+      "rating_signal": "BEVAKA",
+      "rating_note": "Intuitive avbröt MoU – sänkta 2026-mål (risk)"
     },
     "HEM.ST": {
-      "last": 81.6, "support": 67, "resistance": 100,
-      "analyst_target_low": 103, "analyst_target_high": 130,
+      "last": 81.6,
+      "support": 67,
+      "resistance": 100,
+      "analyst_target_low": 103,
+      "analyst_target_high": 130,
       "analyst_rating": "Nordea Köp 103 / BNP Underperform 78 (konsensus neutral)"
     },
     "EKTA-B.ST": {
-      "last": 61.5, "last_approx": true, "analyst_upside_pct": 76, "analyst_target_high": 108,
+      "last": 61.5,
+      "last_approx": true,
+      "analyst_upside_pct": 76,
+      "analyst_target_high": 108,
       "analyst_rating": "Morningstar 5 stjärnor, verkligt värde 108",
       "rating_note": "43 % rabatt mot verkligt värde (Unity-driven)"
     },
     "GRNG.ST": {
-      "last": 146.3, "analyst_target_low": 157, "analyst_target_high": 215,
+      "last": 146.3,
+      "analyst_target_low": 157,
+      "analyst_target_high": 215,
       "analyst_rating": "Handelsbanken Köp 210 / Kepler Köp 215",
-      "rating_signal": "KOP", "rating_note": "HB & Kepler upprepar köp (riktkurs 210–215); tekniskt lyft"
+      "rating_signal": "KOP",
+      "rating_note": "HB & Kepler upprepar köp (riktkurs 210–215); tekniskt lyft"
     },
     "ERIC-B.ST": {
-      "last": 91.5, "day_change_pct": -1.59, "month_change_pct": -18.27, "pe": 12.18, "div_yield_pct": 3.0, "support": 96,
-      "analyst_target_low": 120, "analyst_target_high": 128,
+      "last": 91.5,
+      "day_change_pct": -1.59,
+      "month_change_pct": -18.27,
+      "pe": 12.18,
+      "div_yield_pct": 3.0,
+      "support": 96,
+      "analyst_target_low": 120,
+      "analyst_target_high": 128,
       "analyst_rating": "SEB Köp 128 / Danske Behåll 120",
       "rating_note": "återköp lyfter total direktavkastning mot ~7,5 %"
     },
     "HM-B.ST": {
-      "last": 166.8, "sma_fast": 164.99, "sma_slow": 164.83, "support": 140, "resistance": 173,
-      "div_yield_pct": 4.31, "analyst_target_high": 145,
+      "last": 166.8,
+      "sma_fast": 164.99,
+      "sma_slow": 164.83,
+      "support": 140,
+      "resistance": 173,
+      "div_yield_pct": 4.31,
+      "analyst_target_high": 145,
       "analyst_rating": "Pareto Sälj / BofA Underperform 145",
-      "rating_signal": "SALJ", "rating_note": "Pareto sänkte till sälj; marginallyft väntas avta"
+      "rating_signal": "SALJ",
+      "rating_note": "Pareto sänkte till sälj; marginallyft väntas avta"
     },
     "CAST.ST": {
-      "last": 129.0, "analyst_target_low": 116.5, "analyst_target_high": 150,
+      "last": 129.0,
+      "analyst_target_low": 116.5,
+      "analyst_target_high": 150,
       "analyst_rating": "UBS Neutral 145 (sänkt från köp) / HB Köp 150",
-      "rating_signal": "BEVAKA", "rating_note": "UBS nedgraderade till neutral; +25 % i år, mycket inprisat"
+      "rating_signal": "BEVAKA",
+      "rating_note": "UBS nedgraderade till neutral; +25 % i år, mycket inprisat"
     },
     "VOLV-B.ST": {
-      "last": 335.0, "last_approx": true, "year_change_pct": 24.46, "resistance": 340,
-      "analyst_target_low": 330, "analyst_target_high": 407,
+      "last": 335.0,
+      "last_approx": true,
+      "year_change_pct": 24.46,
+      "resistance": 340,
+      "analyst_target_low": 330,
+      "analyst_target_high": 407,
       "analyst_rating": "Goldman 407 / Citi 376 / Kepler 365 / BNP 330"
     },
     "INVE-B.ST": {
-      "last": 367.7, "day_change_pct": -0.58,
-      "analyst_target_low": 375.6, "analyst_target_high": 415,
+      "last": 367.7,
+      "day_change_pct": -0.58,
+      "analyst_target_low": 375.6,
+      "analyst_target_high": 415,
       "analyst_rating": "snitt-riktkurs ~375,6 kr (neutral)",
       "note": "stigande trendkanal (Investtech)"
     },
     "ATCO-A.ST": {
-      "last": 187.0, "sma_fast": 189.49, "sma_slow": 182.65, "div_yield_pct": 2.7, "support": 170, "resistance": 196,
+      "last": 187.0,
+      "sma_fast": 189.49,
+      "sma_slow": 182.65,
+      "div_yield_pct": 2.7,
+      "support": 170,
+      "resistance": 196,
       "analyst_target_low": 193.7,
       "analyst_rating": "UBS uppgraderade till neutral (från sälj)"
     },
-
     "NVDA": {
-      "currency": "USD", "last": 208.76, "div_yield_pct": 0.48, "analyst_target_high": 252,
+      "currency": "USD",
+      "last": 208.76,
+      "div_yield_pct": 0.48,
+      "analyst_target_high": 252,
       "analyst_rating": "konsensus köp/strong buy",
-      "rating_signal": "KOP", "rating_note": "topp AI-pick 2026 (Wolfe); riktkurs ~$252"
+      "rating_signal": "KOP",
+      "rating_note": "topp AI-pick 2026 (Wolfe); riktkurs ~$252"
     },
     "ASML": {
-      "currency": "EUR", "last": 1593, "year_change_pct": 100,
-      "analyst_target_low": 1930, "analyst_target_high": 2150,
+      "currency": "EUR",
+      "last": 1593,
+      "year_change_pct": 100,
+      "analyst_target_low": 1930,
+      "analyst_target_high": 2150,
       "analyst_rating": "alla 19 analytiker köp; MS 1930 / Berenberg 2100 / DB 2150",
-      "rating_signal": "KOP", "rating_note": "höjda riktkurser i juli; +100 % på 1 år; stark AI-order"
+      "rating_signal": "KOP",
+      "rating_note": "höjda riktkurser i juli; +100 % på 1 år; stark AI-order"
     },
     "MSFT": {
-      "currency": "USD", "last": 381.58, "div_yield_pct": 0.92, "analyst_target_high": 600,
+      "currency": "USD",
+      "last": 381.58,
+      "div_yield_pct": 0.92,
+      "analyst_target_high": 600,
       "analyst_rating": "Morningstar 5★ – significantly undervalued",
-      "rating_signal": "KOP", "rating_note": "verkligt värde ~$600; ~21x vinst"
+      "rating_signal": "KOP",
+      "rating_note": "verkligt värde ~$600; ~21x vinst"
     },
     "KTOS": {
-      "currency": "USD", "last": 48.86, "analyst_upside_pct": 75,
+      "currency": "USD",
+      "last": 48.86,
+      "analyst_upside_pct": 75,
       "analyst_rating": "Strong Buy (9 köp / 2 håll)",
-      "rating_signal": "KOP", "rating_note": "försvar/drönare; stigande försvarsbudgetar"
+      "rating_signal": "KOP",
+      "rating_note": "försvar/drönare; stigande försvarsbudgetar"
     },
     "CEG": {
-      "currency": "USD", "last": 274.9, "analyst_upside_pct": 50,
+      "currency": "USD",
+      "last": 274.9,
+      "analyst_upside_pct": 50,
       "analyst_rating": "16/22 Strong Buy, 0 sälj",
-      "rating_signal": "KOP", "rating_note": "AI-elkraft; kärnkraftsexponering"
+      "rating_signal": "KOP",
+      "rating_note": "AI-elkraft; kärnkraftsexponering"
     },
     "NVO": {
-      "currency": "USD", "last": 59.97, "last_approx": true, "div_yield_pct": 4.93,
-      "analyst_target_low": 77.5, "analyst_target_high": 145,
+      "currency": "USD",
+      "last": 59.97,
+      "last_approx": true,
+      "div_yield_pct": 4.93,
+      "analyst_target_low": 77.5,
+      "analyst_target_high": 145,
       "analyst_rating": "Moderate Buy; Cowen höjde till $145",
       "rating_note": "nedpressad; möjlig återhämtning (GLP-1)"
     },
     "TSLA": {
-      "currency": "USD", "last": 323.55, "risk_high": true,
+      "currency": "USD",
+      "last": 323.55,
+      "risk_high": true,
       "analyst_rating": "Morningstar: mest övervärderad; konsensus Håll",
-      "rating_signal": "SALJ", "rating_note": "föll 14 % på Q2-rapport; Morningstar mest övervärderad – värderings-/risk"
+      "rating_signal": "SALJ",
+      "rating_note": "föll 14 % på Q2-rapport; Morningstar mest övervärderad – värderings-/risk"
     },
     "PLTR": {
-      "currency": "USD", "last": 132.66, "risk_high": true,
+      "currency": "USD",
+      "last": 132.66,
+      "risk_high": true,
       "analyst_rating": "konsensus Köp men 2 sälj (mycket spretigt)",
-      "rating_signal": "SALJ", "rating_note": "extrem värdering (bubbelrisk); analytiker dock köp – mycket volatil"
+      "rating_signal": "SALJ",
+      "rating_note": "extrem värdering (bubbelrisk); analytiker dock köp – mycket volatil"
     },
     "MU": {
-      "currency": "USD", "last": 960, "risk_high": true,
-      "analyst_target_low": 1316, "analyst_target_high": 1492,
+      "currency": "USD",
+      "last": 960,
+      "risk_high": true,
+      "analyst_target_low": 1316,
+      "analyst_target_high": 1492,
       "analyst_rating": "Strong Buy ~$1300–1490",
-      "rating_signal": "BEVAKA", "rating_note": "analytiker köp men minnespriser 'bubbliga' – cyklisk topprisk"
+      "rating_signal": "BEVAKA",
+      "rating_note": "analytiker köp men minnespriser 'bubbliga' – cyklisk topprisk"
     },
-
     "F-SPILTAN-INV": {
-      "category": "Investmentbolag Sverige", "morningstar_stars": 5, "fee_pct": 0.20, "one_year_pct": 18.9, "risk_1_7": 5,
-      "rating_signal": "KOP", "rating_note": "5★ + Lipper Award 2026; +48,8 % på 3 år; låg avgift"
+      "category": "Investmentbolag Sverige",
+      "morningstar_stars": 5,
+      "fee_pct": 0.2,
+      "one_year_pct": 18.9,
+      "risk_1_7": 5,
+      "rating_signal": "KOP",
+      "rating_note": "5★ + Lipper Award 2026; +48,8 % på 3 år; låg avgift",
+      "market": "Sverige"
     },
     "F-AVANZA-GLOBAL": {
-      "category": "Global-index", "fee_pct": 0.05, "risk_1_7": 5,
-      "rating_signal": "KOP", "rating_note": "billigast globalt; 1500+ bolag – bred kärna"
+      "category": "Global-index",
+      "fee_pct": 0.05,
+      "risk_1_7": 5,
+      "rating_signal": "KOP",
+      "rating_note": "billigast globalt; 1500+ bolag – bred kärna"
     },
     "F-LF-GLOBAL": {
-      "category": "Global-index", "fee_pct": 0.20, "risk_1_7": 4,
-      "rating_signal": "KOP", "rating_note": "klassisk bred kärna; Nvidia/Apple/Microsoft"
+      "category": "Global-index",
+      "fee_pct": 0.2,
+      "risk_1_7": 4,
+      "rating_signal": "KOP",
+      "rating_note": "klassisk bred kärna; Nvidia/Apple/Microsoft"
     },
     "F-LF-USA": {
-      "category": "USA-index", "fee_pct": 0.20, "one_year_pct": 36.34, "risk_1_7": 5,
-      "rating_signal": "KOP", "rating_note": "+36 % senaste året; USA-kärna; Nvidia/Apple/Microsoft"
+      "category": "USA-index",
+      "fee_pct": 0.2,
+      "one_year_pct": 36.34,
+      "risk_1_7": 5,
+      "rating_signal": "KOP",
+      "rating_note": "+36 % senaste året; USA-kärna; Nvidia/Apple/Microsoft"
     },
     "F-DNB-HEALTH": {
-      "category": "Hälsovård/läkemedel", "one_year_pct": 22.34, "risk_1_7": 5,
-      "rating_signal": "KOP", "rating_note": "bästa läkemedelsfond 5 år (+44 %); defensiv tillväxt"
+      "category": "Hälsovård/läkemedel",
+      "one_year_pct": 22.34,
+      "risk_1_7": 5,
+      "rating_signal": "KOP",
+      "rating_note": "bästa läkemedelsfond 5 år (+44 %); defensiv tillväxt"
     },
     "F-AMF-RANTA": {
-      "category": "Lång räntefond", "morningstar_stars": 5, "fee_pct": 0.10, "risk_1_7": 3,
-      "rating_signal": "KOP", "rating_note": "defensiv; utsedd bästa räntefond; dämpar portföljrisk"
+      "category": "Lång räntefond",
+      "morningstar_stars": 5,
+      "fee_pct": 0.1,
+      "risk_1_7": 3,
+      "rating_signal": "KOP",
+      "rating_note": "defensiv; utsedd bästa räntefond; dämpar portföljrisk",
+      "market": "Sverige"
     },
     "F-VANECK-DEF": {
-      "category": "Försvar (ETF)", "fee_pct": 0.55, "one_year_pct": 43, "risk_1_7": 6,
-      "rating_signal": "KOP", "rating_note": "försvar; Palantir/Thales/Leonardo; billigast i temat"
+      "category": "Försvar (ETF)",
+      "fee_pct": 0.55,
+      "one_year_pct": 43,
+      "risk_1_7": 6,
+      "rating_signal": "KOP",
+      "rating_note": "försvar; Palantir/Thales/Leonardo; billigast i temat"
     },
     "F-SEB-TECH": {
-      "category": "Teknik (aktiv)", "one_year_pct": 42, "risk_1_7": 6,
-      "rating_signal": "KOP", "rating_note": "+42 % 2025; global teknik – stark men sektorrisk"
+      "category": "Teknik (aktiv)",
+      "one_year_pct": 42,
+      "risk_1_7": 6,
+      "rating_signal": "KOP",
+      "rating_note": "+42 % 2025; global teknik – stark men sektorrisk"
     },
     "F-BGF-TECH": {
-      "category": "Teknik global (aktiv)", "risk_1_7": 6,
-      "rating_signal": "BEVAKA", "rating_note": "USA ~60 % / Kina ~15 %; hög volatilitet – sektorrisk"
+      "category": "Teknik global (aktiv)",
+      "risk_1_7": 6,
+      "rating_signal": "BEVAKA",
+      "rating_note": "USA ~60 % / Kina ~15 %; hög volatilitet – sektorrisk"
     },
     "F-CARNEGIE-INDIA": {
-      "category": "Indien (aktiv)", "risk_1_7": 6,
-      "rating_signal": "BEVAKA", "rating_note": "tillväxtmarknad; HDFC/Bajaj/ICICI – hög risk"
+      "category": "Indien (aktiv)",
+      "risk_1_7": 6,
+      "rating_signal": "BEVAKA",
+      "rating_note": "tillväxtmarknad; HDFC/Bajaj/ICICI – hög risk"
     },
     "F-TIN-NYTEK": {
-      "category": "Ny teknik/småbolag", "one_year_pct": -42, "fee_pct": 1.62, "risk_1_7": 6, "risk_high": true,
-      "rating_signal": "SALJ", "rating_note": "−42 % senaste året; hög avgift 1,62 %; stora utflöden"
+      "category": "Ny teknik/småbolag",
+      "one_year_pct": -42,
+      "fee_pct": 1.62,
+      "risk_1_7": 6,
+      "risk_high": true,
+      "rating_signal": "SALJ",
+      "rating_note": "−42 % senaste året; hög avgift 1,62 %; stora utflöden",
+      "market": "Sverige"
     },
     "F-SEB-DEF": {
-      "category": "Försvar (aktiv)", "fee_pct": 1.57, "one_year_pct": 7, "risk_1_7": 6,
-      "rating_signal": "SALJ", "rating_note": "hög avgift 1,57 %; +7 % i år, under index (+12 %)"
+      "category": "Försvar (aktiv)",
+      "fee_pct": 1.57,
+      "one_year_pct": 7,
+      "risk_1_7": 6,
+      "rating_signal": "SALJ",
+      "rating_note": "hög avgift 1,57 %; +7 % i år, under index (+12 %)"
     },
     "F-CMAM-GOLD": {
-      "category": "Guld/ädelmetall", "one_year_pct": 144.73, "risk_1_7": 7, "risk_high": true,
-      "rating_signal": "SALJ", "rating_note": "+145 % 1 år men ädelmetall svagare 2026 – vinsthemtagning, extremt volatil"
+      "category": "Guld/ädelmetall",
+      "one_year_pct": 144.73,
+      "risk_1_7": 7,
+      "risk_high": true,
+      "rating_signal": "SALJ",
+      "rating_note": "+145 % 1 år men ädelmetall svagare 2026 – vinsthemtagning, extremt volatil"
     },
     "F-SPILTAN-SMA": {
-      "category": "Småbolag Sverige", "fee_pct": 1.5, "one_year_pct": -14.71, "risk_1_7": 6,
-      "rating_signal": "BEVAKA", "rating_note": "−14,7 % i år; hög avgift 1,5 %; småbolag kan vända"
+      "category": "Småbolag Sverige",
+      "fee_pct": 1.5,
+      "one_year_pct": -14.71,
+      "risk_1_7": 6,
+      "rating_signal": "BEVAKA",
+      "rating_note": "−14,7 % i år; hög avgift 1,5 %; småbolag kan vända",
+      "market": "Sverige"
     },
     "F-PLUS-SVERIGE": {
-      "category": "Sverige-index", "fee_pct": 0.20, "risk_1_7": 5,
-      "rating_signal": "BEVAKA", "rating_note": "billig bred Sverige (~350 bolag); kärna, avvakta momentum"
+      "category": "Sverige-index",
+      "fee_pct": 0.2,
+      "risk_1_7": 5,
+      "rating_signal": "BEVAKA",
+      "rating_note": "billig bred Sverige (~350 bolag); kärna, avvakta momentum",
+      "market": "Sverige"
     },
     "F-SCHRODER-GOLD": {
-      "category": "Guld", "one_year_pct": 52, "risk_1_7": 7, "risk_high": true,
-      "rating_signal": "BEVAKA", "rating_note": "guld +52 % 1 år; mycket volatil"
+      "category": "Guld",
+      "one_year_pct": 52,
+      "risk_1_7": 7,
+      "risk_high": true,
+      "rating_signal": "BEVAKA",
+      "rating_note": "guld +52 % 1 år; mycket volatil"
     }
   }
 }
