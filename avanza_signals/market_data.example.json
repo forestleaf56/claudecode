@@ -178,9 +178,9 @@
       "currency": "USD",
       "last": 132.66,
       "risk_high": true,
-      "analyst_rating": "konsensus Köp men 2 sälj (mycket spretigt)",
-      "rating_signal": "SALJ",
-      "rating_note": "extrem värdering (bubbelrisk); analytiker dock köp – mycket volatil"
+      "analyst_rating": "konsensus Köp, snittriktkurs ~$183 (+38 %)",
+      "rating_signal": "BEVAKA",
+      "rating_note": "analytiker ser uppsida men extrem värdering/bubbelrisk – högrisk, ej ren sälj"
     },
     "MU": {
       "currency": "USD",

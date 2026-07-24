@@ -168,6 +168,12 @@ def evaluate(rec: dict, cfg: dict) -> list[dict]:
     if rs in ("KOP", "SALJ", "BEVAKA"):
         sig.append((rs, g("rating_note") or "analytikersignal"))
 
+    # Rekyl/kontrarian: nedtryckt (kraftigt fall) MEN med köpsignal = möjlig uppgång.
+    down = ((g("month_change_pct") or 0) <= -10 or (g("year_change_pct") or 0) <= -15
+            or (g("one_year_pct") or 0) <= -12)
+    if down and any(s == "KOP" for s, _ in sig):
+        sig.append(("KOP", "rekyl-kandidat – nedtryckt men med uppsida"))
+
     return [{"side": s, "reason": why} for s, why in sig]
 
 
