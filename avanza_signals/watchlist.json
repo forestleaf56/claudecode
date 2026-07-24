@@ -14,6 +14,16 @@
     { "ticker": "INVE-B.ST", "name": "Investor B" },
     { "ticker": "ATCO-A.ST", "name": "Atlas Copco A" },
 
+    { "ticker": "NVDA",  "name": "Nvidia" },
+    { "ticker": "ASML",  "name": "ASML" },
+    { "ticker": "MSFT",  "name": "Microsoft" },
+    { "ticker": "KTOS",  "name": "Kratos Defense" },
+    { "ticker": "CEG",   "name": "Constellation Energy" },
+    { "ticker": "NVO",   "name": "Novo Nordisk" },
+    { "ticker": "TSLA",  "name": "Tesla" },
+    { "ticker": "PLTR",  "name": "Palantir" },
+    { "ticker": "MU",    "name": "Micron Technology" },
+
     { "ticker": "F-SPILTAN-INV", "name": "Spiltan Aktiefond Investmentbolag", "type": "fond" },
     { "ticker": "F-AVANZA-GLOBAL", "name": "Avanza Global", "type": "fond" },
     { "ticker": "F-LF-GLOBAL", "name": "Länsförsäkringar Global Index", "type": "fond" },

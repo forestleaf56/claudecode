@@ -49,10 +49,11 @@ def chips_for(r):
     oy = r.get("one_year_pct")
     if oy is not None:
         c.append(f'<span class="chip {"up" if oy >= 0 else "down"}">1 år {oy:+g}%</span>')
+    ccy = r.get("currency", "kr")
     tl, th = r.get("analyst_target_low"), r.get("analyst_target_high")
     if tl or th:
         tgt = f"{tl:g}–{th:g}" if (tl and th) else f"{(tl or th):g}"
-        c.append(f'<span class="chip">Riktkurs {tgt} kr</span>')
+        c.append(f'<span class="chip">Riktkurs {tgt} {ccy}</span>')
     if r.get("pe") is not None:
         c.append(f'<span class="chip">P/E {r["pe"]:g}</span>')
     if r.get("fee_pct") is not None:
@@ -60,7 +61,7 @@ def chips_for(r):
     if r.get("div_yield_pct") is not None:
         c.append(f'<span class="chip">Dir.avk {r["div_yield_pct"]:g}%</span>')
     if r.get("support") is not None and r.get("resistance") is not None:
-        c.append(f'<span class="chip">Stöd {r["support"]:g} · Motstånd {r["resistance"]:g} kr</span>')
+        c.append(f'<span class="chip">Stöd {r["support"]:g} · Motstånd {r["resistance"]:g} {ccy}</span>')
     if r.get("risk_high"):
         c.append('<span class="chip risk">⚠️ Högrisk</span>')
     return "".join(c)
@@ -72,7 +73,7 @@ def card(r):
     last = r.get("last")
     price = ""
     if last is not None:
-        p = f'{last:g} kr' + ("*" if r.get("last_approx") else "")
+        p = f'{last:g} {r.get("currency", "kr")}' + ("*" if r.get("last_approx") else "")
         day = r.get("day_change_pct")
         if day is not None:
             p += f' <span class="{"up" if day >= 0 else "down"}">({day:+.1f}%)</span>'
@@ -128,21 +129,35 @@ def main():
     n_sell = sum(1 for r in results if any(s["side"] in ("SALJ", "VARNING") for s in r["signals"]))
     n_watch = sum(1 for r in results if r["_p"] == "BEVAKA")
 
-    # Dagens tydligaste
+    # Dagens tydligaste (separat för aktier och fonder)
     def buy_score(r):
+        s = 0.0
+        seen = False
         if r.get("analyst_upside_pct") is not None:
-            return r["analyst_upside_pct"]
+            s += r["analyst_upside_pct"]; seen = True
         if r.get("morningstar_stars") is not None:
-            return r["morningstar_stars"] * 15
+            s += r["morningstar_stars"] * 18; seen = True
         if r.get("one_year_pct") is not None:
-            return r["one_year_pct"]
-        return 10
-    buys = [r for r in results if any(s["side"] == "KOP" for s in r["signals"]) and not r.get("risk_high")]
-    best_buy = max(buys, key=buy_score) if buys else None
-    sells = [r for r in results if any(s["side"] == "SALJ" for s in r["signals"])]
-    # tydligaste sälj: störst analytiker-nedsida om möjligt, annars först
-    sells.sort(key=lambda r: (r.get("last") or 0) - (r.get("analyst_target_high") or 0), reverse=True)
-    best_sell = sells[0] if sells else None
+            s += max(r["one_year_pct"], 0) * 0.4; seen = True
+        return s if seen else 10
+
+    def sell_score(r):
+        if r.get("last") and r.get("analyst_target_high"):
+            return r["last"] - r["analyst_target_high"]
+        if r.get("one_year_pct") is not None:
+            return -r["one_year_pct"]
+        return 0
+
+    def best_buy_of(lst):
+        b = [r for r in lst if any(s["side"] == "KOP" for s in r["signals"]) and not r.get("risk_high")]
+        return max(b, key=buy_score) if b else None
+
+    def best_sell_of(lst):
+        s = [r for r in lst if any(x["side"] == "SALJ" for x in r["signals"])]
+        return max(s, key=sell_score) if s else None
+
+    sb, ss = best_buy_of(stocks), best_sell_of(stocks)
+    fb, fs = best_buy_of(funds), best_sell_of(funds)
 
     gen = data.get("generated_at", datetime.now(timezone.utc).isoformat())
     try:
@@ -153,9 +168,9 @@ def main():
     synthetic = data.get("synthetic_data", False)
     warn = '<div class="warn">⚠️ Syntetisk data – exekvera ej.</div>' if synthetic else ""
 
-    hero_html = ""
-    if best_buy or best_sell:
-        hero_html = f'<div class="heroes">{hero(best_buy, "KOP", "Dagens tydligaste köp")}{hero(best_sell, "SALJ", "Dagens tydligaste sälj")}</div>'
+    heroes = (hero(sb, "KOP", "Tydligaste aktie-köp") + hero(ss, "SALJ", "Tydligaste aktie-sälj")
+              + hero(fb, "KOP", "Tydligaste fond-köp") + hero(fs, "SALJ", "Tydligaste fond-sälj"))
+    hero_html = f'<div class="heroes">{heroes}</div>' if any([sb, ss, fb, fs]) else ""
 
     stock_cards = "".join(card(r) for r in stocks)
     fund_cards = "".join(card(r) for r in funds)
@@ -257,7 +272,7 @@ def main():
     <div class="head">
       <div>
         <h1>Avanza beslutsstöd</h1>
-        <div class="meta">Screening av svenska aktier &amp; fonder (Avanza-utbudet) · {esc(gen_disp)} · källa: {esc(src)}</div>
+        <div class="meta">Screening av aktier &amp; fonder – hela Avanza-utbudet (svenska &amp; globala) · {esc(gen_disp)} · källa: {esc(src)}</div>
       </div>
       <button class="toggle" id="tg" aria-label="Växla ljust/mörkt läge">🌙 Mörkt</button>
     </div>
@@ -268,7 +283,7 @@ def main():
       <div class="tile sell"><div class="n">{n_sell}</div><div class="l">Sälj</div></div>
       <div class="tile watch"><div class="n">{n_watch}</div><div class="l">Bevaka</div></div>
     </div>
-    <h2>Aktier ({len(stocks)})</h2>
+    <h2>Aktier – svenska &amp; globala ({len(stocks)})</h2>
     <div class="grid">{stock_cards}
     </div>
     <h2>Fonder – hela Avanza-utbudet ({len(funds)})</h2>

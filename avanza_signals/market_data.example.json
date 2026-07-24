@@ -65,6 +65,52 @@
       "analyst_rating": "UBS uppgraderade till neutral (från sälj)"
     },
 
+    "NVDA": {
+      "currency": "USD", "analyst_target_high": 252,
+      "analyst_rating": "konsensus köp/strong buy",
+      "rating_signal": "KOP", "rating_note": "topp AI-pick 2026 (Wolfe); riktkurs ~$252"
+    },
+    "ASML": {
+      "currency": "EUR", "analyst_target_high": 1400, "year_change_pct": 100,
+      "analyst_rating": "alla 19 analytiker köp/strong buy",
+      "rating_signal": "KOP", "rating_note": "MS höjer riktkurs till €1400; stark AI-order"
+    },
+    "MSFT": {
+      "currency": "USD", "analyst_target_high": 600,
+      "analyst_rating": "Morningstar 5★ – significantly undervalued",
+      "rating_signal": "KOP", "rating_note": "verkligt värde ~$600; ~21x vinst"
+    },
+    "KTOS": {
+      "currency": "USD", "analyst_upside_pct": 75,
+      "analyst_rating": "Strong Buy (9 köp / 2 håll)",
+      "rating_signal": "KOP", "rating_note": "försvar/drönare; stigande försvarsbudgetar"
+    },
+    "CEG": {
+      "currency": "USD", "analyst_upside_pct": 50,
+      "analyst_rating": "16/22 Strong Buy, 0 sälj",
+      "rating_signal": "KOP", "rating_note": "AI-elkraft; kärnkraftsexponering"
+    },
+    "NVO": {
+      "currency": "USD", "last": 59.97, "last_approx": true,
+      "analyst_target_low": 77.5, "analyst_target_high": 145,
+      "analyst_rating": "Moderate Buy; Cowen höjde till $145",
+      "rating_note": "nedpressad; möjlig återhämtning (GLP-1)"
+    },
+    "TSLA": {
+      "currency": "USD", "risk_high": true, "analyst_target_high": 410,
+      "analyst_rating": "konsensus Håll ~$410",
+      "rating_signal": "SALJ", "rating_note": "mest övervärderad enligt Morningstar 2026; hög värdering"
+    },
+    "PLTR": {
+      "currency": "USD", "risk_high": true,
+      "analyst_rating": "Wall Street: undvik",
+      "rating_signal": "SALJ", "rating_note": "extrem värdering; mycket volatil – ta hem/undvik"
+    },
+    "MU": {
+      "currency": "USD",
+      "analyst_rating": "flera flaggar övervärdering",
+      "rating_signal": "SALJ", "rating_note": "minnespriser 'bubbly'; cyklisk topprisk"
+    },
     "F-SPILTAN-INV": {
       "category": "Investmentbolag Sverige", "morningstar_stars": 5, "fee_pct": 0.20, "one_year_pct": 18.9,
       "rating_signal": "KOP", "rating_note": "5★ + Lipper Award 2026; +48,8 % på 3 år; låg avgift"
