@@ -191,9 +191,6 @@ def main():
     n_sell = sum(1 for r in results if any(s["side"] in ("SALJ", "VARNING") for s in r["signals"]))
     n_watch = sum(1 for r in results if r["_p"] == "BEVAKA")
 
-    sv = [r for r in stocks if r["ticker"].endswith(".ST")]
-    gl = [r for r in stocks if not r["ticker"].endswith(".ST")]
-    gl_funds = [r for r in funds if r.get("market") != "Sverige"]
 
     gen = data.get("generated_at", datetime.now(timezone.utc).isoformat())
     try:
@@ -205,10 +202,10 @@ def main():
     warn = '<div class="warn">⚠️ Syntetisk data – exekvera ej.</div>' if synthetic else ""
 
     hero_specs = [
-        (best_buy_of(gl), "KOP", "Tydligaste aktie-köp – global"),
-        (best_sell_of(gl), "SALJ", "Tydligaste aktie-sälj – global"),
-        (best_buy_of(gl_funds), "KOP", "Tydligaste fond-köp – global"),
-        (best_sell_of(gl_funds), "SALJ", "Tydligaste fond-sälj – global"),
+        (best_buy_of(stocks), "KOP", "Tydligaste aktie-köp"),
+        (best_sell_of(stocks), "SALJ", "Tydligaste aktie-sälj"),
+        (best_buy_of(funds), "KOP", "Tydligaste fond-köp"),
+        (best_sell_of(funds), "SALJ", "Tydligaste fond-sälj"),
     ]
     heroes = "".join(hero(r, s, k) for r, s, k in hero_specs)
     hero_html = f'<div class="heroes">{heroes}</div>' if any(r for r, _, _ in hero_specs) else ""
