@@ -1,0 +1,11 @@
+{
+  "_comment": "Bevakningslista. 'ticker' = Yahoo Finance-symbol (svenska aktier slutar pa .ST). Byt ut mot dina egna innehav/bevakningar. Nar Avanza-MCP kopplas in ersatts 'ticker' av Avanza orderbookId.",
+  "instruments": [
+    { "ticker": "INVE-B.ST", "name": "Investor B" },
+    { "ticker": "VOLV-B.ST", "name": "Volvo B" },
+    { "ticker": "ERIC-B.ST", "name": "Ericsson B" },
+    { "ticker": "ATCO-A.ST", "name": "Atlas Copco A" },
+    { "ticker": "SEB-A.ST",  "name": "SEB A" },
+    { "ticker": "HM-B.ST",   "name": "Hennes & Mauritz B" }
+  ]
+}

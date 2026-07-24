@@ -1,0 +1,11 @@
+{
+  "_comment": "Signalregler. Justera trosklarna efter din strategi. Allt ar beslutsunderlag - ingen order laggs automatiskt.",
+  "rsi_period": 14,
+  "sma_fast": 20,
+  "sma_slow": 50,
+  "rsi_oversold": 30,
+  "rsi_overbought": 70,
+  "drawdown_from_high_pct": 15,
+  "history_range": "6mo",
+  "allow_synthetic_fallback": true
+}

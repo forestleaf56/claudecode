@@ -1,0 +1,147 @@
+{
+  "generated_at": "2026-07-24T09:31:06+00:00",
+  "synthetic_data": true,
+  "results": [
+    {
+      "name": "Investor B",
+      "ticker": "INVE-B.ST",
+      "synthetic": true,
+      "last": 118.19,
+      "day_change_pct": 0.86,
+      "rsi": 72.8,
+      "sma_fast": 111.56,
+      "sma_slow": 109.89,
+      "drawdown_from_high_pct": 0.0,
+      "signals": [
+        {
+          "side": "SALJ",
+          "reason": "RSI 73 >= 70 (overkopt)"
+        }
+      ]
+    },
+    {
+      "name": "Volvo B",
+      "ticker": "VOLV-B.ST",
+      "synthetic": true,
+      "last": 132.95,
+      "day_change_pct": 1.54,
+      "rsi": 44.9,
+      "sma_fast": 133.54,
+      "sma_slow": 128.28,
+      "drawdown_from_high_pct": -6.5,
+      "signals": []
+    },
+    {
+      "name": "Ericsson B",
+      "ticker": "ERIC-B.ST",
+      "synthetic": true,
+      "last": 88.5,
+      "day_change_pct": 1.55,
+      "rsi": 54.2,
+      "sma_fast": 86.93,
+      "sma_slow": 92.15,
+      "drawdown_from_high_pct": -16.03,
+      "signals": [
+        {
+          "side": "VARNING",
+          "reason": "-16% fran 6mn-topp"
+        }
+      ]
+    },
+    {
+      "name": "Atlas Copco A",
+      "ticker": "ATCO-A.ST",
+      "synthetic": true,
+      "last": 99.47,
+      "day_change_pct": 2.72,
+      "rsi": 57.4,
+      "sma_fast": 96.11,
+      "sma_slow": 99.1,
+      "drawdown_from_high_pct": -6.12,
+      "signals": []
+    },
+    {
+      "name": "SEB A",
+      "ticker": "SEB-A.ST",
+      "synthetic": true,
+      "last": 132.12,
+      "day_change_pct": 1.87,
+      "rsi": 55.6,
+      "sma_fast": 129.02,
+      "sma_slow": 136.37,
+      "drawdown_from_high_pct": -15.55,
+      "signals": [
+        {
+          "side": "VARNING",
+          "reason": "-16% fran 6mn-topp"
+        }
+      ]
+    },
+    {
+      "name": "Hennes & Mauritz B",
+      "ticker": "HM-B.ST",
+      "synthetic": true,
+      "last": 182.45,
+      "day_change_pct": 0.37,
+      "rsi": 56.4,
+      "sma_fast": 178.52,
+      "sma_slow": 184.27,
+      "drawdown_from_high_pct": -14.97,
+      "signals": []
+    }
+  ],
+  "flagged": [
+    {
+      "name": "Investor B",
+      "ticker": "INVE-B.ST",
+      "synthetic": true,
+      "last": 118.19,
+      "day_change_pct": 0.86,
+      "rsi": 72.8,
+      "sma_fast": 111.56,
+      "sma_slow": 109.89,
+      "drawdown_from_high_pct": 0.0,
+      "signals": [
+        {
+          "side": "SALJ",
+          "reason": "RSI 73 >= 70 (overkopt)"
+        }
+      ]
+    },
+    {
+      "name": "Ericsson B",
+      "ticker": "ERIC-B.ST",
+      "synthetic": true,
+      "last": 88.5,
+      "day_change_pct": 1.55,
+      "rsi": 54.2,
+      "sma_fast": 86.93,
+      "sma_slow": 92.15,
+      "drawdown_from_high_pct": -16.03,
+      "signals": [
+        {
+          "side": "VARNING",
+          "reason": "-16% fran 6mn-topp"
+        }
+      ]
+    },
+    {
+      "name": "SEB A",
+      "ticker": "SEB-A.ST",
+      "synthetic": true,
+      "last": 132.12,
+      "day_change_pct": 1.87,
+      "rsi": 55.6,
+      "sma_fast": 129.02,
+      "sma_slow": 136.37,
+      "drawdown_from_high_pct": -15.55,
+      "signals": [
+        {
+          "side": "VARNING",
+          "reason": "-16% fran 6mn-topp"
+        }
+      ]
+    }
+  ],
+  "push_line": "3 signal(er): Investor B (SALJ), Ericsson B (VARNING), SEB A (VARNING) [SYNTET-DATA, exekvera ej]"
+}
