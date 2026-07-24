@@ -4,17 +4,15 @@
 Normaliserar marknadsdata till en "snapshot" per instrument och genererar
 KOP-/SALJ-/BEVAKA-signaler. Inga order laggs - utfallet ar BESLUTSUNDERLAG.
 
-Datakalla, i prioritetsordning:
+Datakalla:
   1. market_data.json  - riktig data insamlad via WebSearch (harness-verktyg;
      enda externa vagen i denna miljo eftersom egress blockerar kurskallor).
-  2. Yahoo Finance      - riktig daglig serie (fungerar nar egress oppnas eller
-     via en framtida Avanza-MCP). Berakningar: SMA20/50, RSI14, drawdown.
-  3. Syntetisk fallback - deterministisk, tydligt markt [SYNTET], far ALDRIG
+  2. Syntetisk fallback - deterministisk, tydligt markt [SYNTET], far ALDRIG
      anvandas for riktiga affarer. Finns bara sa att pipelinen kan verifieras.
 
 Utskrift:
   * Laslig rapport.
-  * En rad som borjar med "PUSH:" - texten routinen skickar som notis.
+  * En rad som borjar med "PUSH:" - kort sammanfattning.
   * signals.json bredvid skriptet.
 """
 from __future__ import annotations
@@ -23,8 +21,6 @@ import json
 import math
 import os
 import sys
-import urllib.request
-import urllib.error
 from datetime import datetime, timezone
 
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -41,23 +37,6 @@ def load_json(name: str, required: bool = True) -> dict | None:
 
 
 # ---------------------------------------------------------------- datakallor
-
-def fetch_history(ticker: str, rng: str) -> list[float] | None:
-    """Dagliga stangningskurser fran Yahoo Finance. None vid fel/blockering."""
-    url = (
-        f"https://query1.finance.yahoo.com/v8/finance/chart/{ticker}"
-        f"?range={rng}&interval=1d"
-    )
-    req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0"})
-    try:
-        with urllib.request.urlopen(req, timeout=25) as resp:
-            data = json.load(resp)
-        closes = data["chart"]["result"][0]["indicators"]["quote"][0]["close"]
-        return [c for c in closes if c is not None]
-    except (urllib.error.URLError, KeyError, IndexError, ValueError, TypeError) as exc:
-        print(f"  ! Yahoo blockerad/fel for {ticker}: {exc}", file=sys.stderr)
-        return None
-
 
 def synthetic_history(ticker: str, n: int = 130) -> list[float]:
     seed = sum(ord(c) for c in ticker)
@@ -181,17 +160,14 @@ def evaluate(rec: dict, cfg: dict) -> list[dict]:
 
 def resolve_record(ticker: str, market: dict | None, cfg: dict,
                    itype: str = "aktie") -> tuple[dict, str]:
-    """Returnera (snapshot, kalla). Kalla: websearch | yahoo | synthetic."""
+    """Returnera (snapshot, kalla). Kalla: websearch | synthetic."""
     if market and cfg.get("prefer_market_data_json", True):
         snap = market.get("instruments", {}).get(ticker)
         if snap:
             return dict(snap), "websearch"
     if itype == "fond":
-        # Fonder har ingen Yahoo-serie/syntet - bara data fran market_data.json.
+        # Fonder har ingen syntet-serie - bara data fran market_data.json.
         return {}, "none"
-    closes = fetch_history(ticker, cfg["history_range"])
-    if closes and len(closes) >= cfg["sma_slow"] + 1:
-        return snapshot_from_series(closes, cfg), "yahoo"
     if cfg.get("allow_synthetic_fallback", False):
         return snapshot_from_series(synthetic_history(ticker), cfg), "synthetic"
     return {}, "none"

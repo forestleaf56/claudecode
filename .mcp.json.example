@@ -1,9 +1,0 @@
-{
-  "_comment": "Exempel pa hur Avanza-MCP kopplas in nar du har en distribuerad HTTP/SSE-endpoint. Kopiera till .mcp.json och fyll i din URL. Lagg ALDRIG hemligheter (Avanza-losenord/TOTP) har - de hor hemma som env-vars pa sjalva MCP-servern. mcpmarket.com ar en katalog, inte en endpoint - anvand din faktiska server-URL.",
-  "mcpServers": {
-    "avanza": {
-      "type": "http",
-      "url": "https://din-avanza-mcp.example.com/mcp"
-    }
-  }
-}
