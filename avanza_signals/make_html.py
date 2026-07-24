@@ -118,7 +118,8 @@ def main():
     results = data["results"]
     for r in results:
         r["_p"] = primary(r["signals"])
-    results.sort(key=lambda r: (SIDE_ORDER[r["_p"]], r["name"]))
+    # högrisk sorteras sist inom varje sektion (nedtonat)
+    results.sort(key=lambda r: (bool(r.get("risk_high")), SIDE_ORDER[r["_p"]], r["name"]))
 
     stocks = [r for r in results if r.get("type") != "fond"]
     funds = [r for r in results if r.get("type") == "fond"]
@@ -218,7 +219,8 @@ def main():
   .itemcard.p-KOP{{border-left-color:var(--buy);}}
   .itemcard.p-SALJ,.itemcard.p-VARNING{{border-left-color:var(--sell);}}
   .itemcard.p-BEVAKA{{border-left-color:var(--watch);}}
-  .itemcard.risk{{opacity:.66;}}
+  .itemcard.risk{{opacity:.45;filter:grayscale(.65);}}
+  .itemcard.risk:hover,.itemcard.risk:active{{opacity:1;filter:none;}}
   .top{{display:flex;align-items:center;justify-content:space-between;gap:8px;}}
   .id{{display:flex;align-items:center;gap:7px;}}
   .dot{{width:9px;height:9px;border-radius:50%;background:var(--muted);flex:none;}}
@@ -255,7 +257,7 @@ def main():
     <div class="head">
       <div>
         <h1>Avanza beslutsstöd</h1>
-        <div class="meta">Screening av svenska aktier &amp; Avanza-fonder · {esc(gen_disp)} · källa: {esc(src)}</div>
+        <div class="meta">Screening av svenska aktier &amp; fonder (Avanza-utbudet) · {esc(gen_disp)} · källa: {esc(src)}</div>
       </div>
       <button class="toggle" id="tg" aria-label="Växla ljust/mörkt läge">🌙 Mörkt</button>
     </div>
@@ -269,7 +271,7 @@ def main():
     <h2>Aktier ({len(stocks)})</h2>
     <div class="grid">{stock_cards}
     </div>
-    <h2>Avanza-fonder ({len(funds)})</h2>
+    <h2>Fonder – hela Avanza-utbudet ({len(funds)})</h2>
     <div class="grid">{fund_cards}
     </div>
     <div class="legend">

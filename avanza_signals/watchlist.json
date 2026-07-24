@@ -1,5 +1,5 @@
 {
-  "_comment": "SCREENING: svenska aktier + Avanza-fonder som visar tydliga köp-/sälj-/bevaka-lägen. INTE användarens innehav. type: aktie (default) eller fond. Beslutsunderlag - inte rådgivning.",
+  "_comment": "SCREENING: svenska aktier + fonder (hela Avanza-utbudet, alla fondbolag) som visar tydliga köp-/sälj-/bevaka-lägen just nu. INTE användarens innehav. type: aktie (default) eller fond. Beslutsunderlag - inte rådgivning.",
   "instruments": [
     { "ticker": "STOR-B.ST", "name": "Storskogen B" },
     { "ticker": "INTRUM.ST", "name": "Intrum" },
@@ -14,17 +14,17 @@
     { "ticker": "INVE-B.ST", "name": "Investor B" },
     { "ticker": "ATCO-A.ST", "name": "Atlas Copco A" },
 
-    { "ticker": "AVZA-USA",    "name": "Avanza USA", "type": "fond" },
-    { "ticker": "AVZA-EUROPA", "name": "Avanza Europa", "type": "fond" },
-    { "ticker": "AVZA-AUTO6",  "name": "Avanza Auto 6", "type": "fond" },
-    { "ticker": "AVZA-ZERO",   "name": "Avanza Zero", "type": "fond" },
-    { "ticker": "AVZA-GLOBAL", "name": "Avanza Global", "type": "fond" },
-    { "ticker": "AVZA-SWEDEN", "name": "Avanza Sweden All Cap", "type": "fond" },
-    { "ticker": "AVZA-EM",     "name": "Avanza Emerging Markets", "type": "fond" },
-    { "ticker": "AVZA-ARK",    "name": "Avanza Disruptive Innovation by ARK", "type": "fond" },
-    { "ticker": "AVZA-100",    "name": "Avanza 100", "type": "fond" },
-    { "ticker": "AVZA-75",     "name": "Avanza 75", "type": "fond" },
-    { "ticker": "AVZA-50",     "name": "Avanza 50", "type": "fond" },
-    { "ticker": "AVZA-AUTO1",  "name": "Avanza Auto 1", "type": "fond" }
+    { "ticker": "F-SPILTAN-INV", "name": "Spiltan Aktiefond Investmentbolag", "type": "fond" },
+    { "ticker": "F-AVANZA-GLOBAL", "name": "Avanza Global", "type": "fond" },
+    { "ticker": "F-LF-GLOBAL", "name": "Länsförsäkringar Global Index", "type": "fond" },
+    { "ticker": "F-AMF-RANTA", "name": "AMF Räntefond Lång", "type": "fond" },
+    { "ticker": "F-VANECK-DEF", "name": "VanEck Defense UCITS ETF", "type": "fond" },
+    { "ticker": "F-SEB-TECH", "name": "SEB Teknologifond", "type": "fond" },
+    { "ticker": "F-TIN-NYTEK", "name": "TIN Ny Teknik", "type": "fond" },
+    { "ticker": "F-SEB-DEF", "name": "SEB European Defence & Security", "type": "fond" },
+    { "ticker": "F-CMAM-GOLD", "name": "CM-AM Global Gold", "type": "fond" },
+    { "ticker": "F-SPILTAN-SMA", "name": "Spiltan Småbolagsfond", "type": "fond" },
+    { "ticker": "F-PLUS-SVERIGE", "name": "PLUS Allabolag Sverige Index", "type": "fond" },
+    { "ticker": "F-SCHRODER-GOLD", "name": "Schroder Global Gold", "type": "fond" }
   ]
 }

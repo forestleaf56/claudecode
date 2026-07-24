@@ -1,5 +1,5 @@
 {
-  "_comment": "Riktig marknadsdata via WebSearch. Screening av aktier + Avanza-fonder. Kan vara några dagar fördröjd. Beslutsunderlag - verifiera i Avanza/Infront. Inte rådgivning.",
+  "_comment": "Riktig marknadsdata via WebSearch. Screening av aktier + fonder (hela Avanza-utbudet). Kan vara fördröjd. Beslutsunderlag - verifiera i Avanza/Infront. Inte rådgivning.",
   "as_of": "2026-07-24",
   "source": "websearch",
   "instruments": {
@@ -65,53 +65,53 @@
       "analyst_rating": "UBS uppgraderade till neutral (från sälj)"
     },
 
-    "AVZA-USA": {
-      "category": "USA-index", "morningstar_stars": 5, "fee_pct": 0.17,
-      "rating_signal": "KOP", "rating_note": "Morningstar 5★; +44 % sedan start; NVIDIA/Apple/Microsoft"
+    "F-SPILTAN-INV": {
+      "category": "Investmentbolag Sverige", "morningstar_stars": 5, "fee_pct": 0.20, "one_year_pct": 18.9,
+      "rating_signal": "KOP", "rating_note": "5★ + Lipper Award 2026; +48,8 % på 3 år; låg avgift"
     },
-    "AVZA-EUROPA": {
-      "category": "Europa", "one_year_pct": 22.54,
-      "rating_signal": "KOP", "rating_note": "+22,5 % senaste året; ASML/AstraZeneca/Nestlé"
-    },
-    "AVZA-AUTO6": {
-      "category": "Fondrobot (offensiv)", "morningstar_stars": 4, "fee_pct": 0.37,
-      "rating_signal": "KOP", "rating_note": "85–110 % aktier; +180 % sedan 2017; ~9–10 %/år"
-    },
-    "AVZA-ZERO": {
-      "category": "Sverige-index", "fee_pct": 0.0, "one_year_pct": 19,
-      "rating_signal": "KOP", "rating_note": "0 % avgift; OMXS30; +19 % 2025 – Sverige-kärna"
-    },
-    "AVZA-GLOBAL": {
+    "F-AVANZA-GLOBAL": {
       "category": "Global-index", "fee_pct": 0.05,
-      "rating_signal": "KOP", "rating_note": "kärninnehav; ~0,05 % avgift; Apple/Nvidia/Microsoft"
+      "rating_signal": "KOP", "rating_note": "billigast globalt; 1500+ bolag – bred kärna"
     },
-    "AVZA-SWEDEN": {
-      "category": "Sverige-index", "fee_pct": 0.17,
-      "rating_signal": "BEVAKA", "rating_note": "ny bred billig Sverige (99 % av börsen); kort historik"
+    "F-LF-GLOBAL": {
+      "category": "Global-index", "fee_pct": 0.20,
+      "rating_signal": "KOP", "rating_note": "klassisk bred kärna; Nvidia/Apple/Microsoft"
     },
-    "AVZA-EM": {
-      "category": "Tillväxtmarknad", "fee_pct": 0.30,
-      "rating_signal": "BEVAKA", "rating_note": "~1400 tillväxtmarknadsbolag; EM-risk"
+    "F-AMF-RANTA": {
+      "category": "Lång räntefond", "morningstar_stars": 5, "fee_pct": 0.10,
+      "rating_signal": "KOP", "rating_note": "defensiv; utsedd bästa räntefond; dämpar portföljrisk"
     },
-    "AVZA-ARK": {
-      "category": "Disruptiv teknik", "one_year_pct": 42.7, "risk_high": true,
-      "rating_signal": "BEVAKA", "rating_note": "feeder till ARK Innovation; +42,7 % 2025 men mycket volatil"
+    "F-VANECK-DEF": {
+      "category": "Försvar (ETF)", "fee_pct": 0.55, "one_year_pct": 43,
+      "rating_signal": "KOP", "rating_note": "försvar; Palantir/Thales/Leonardo; billigast i temat"
     },
-    "AVZA-100": {
-      "category": "Global blandfond", "fee_pct": 0.49, "one_year_pct": 2.62,
-      "rating_signal": "SALJ", "rating_note": "hög avgift 0,49 %; +2,6 % 2025, under index (3,6 %)"
+    "F-SEB-TECH": {
+      "category": "Teknik (aktiv)",
+      "rating_signal": "KOP", "rating_note": "+42 % 2025; global teknik – stark men sektorrisk"
     },
-    "AVZA-75": {
-      "category": "Blandfond ~75 % aktier",
-      "rating_signal": "BEVAKA", "rating_note": "blandfond, medelhög aktieandel"
+    "F-TIN-NYTEK": {
+      "category": "Ny teknik/småbolag", "one_year_pct": -42, "risk_high": true,
+      "rating_signal": "SALJ", "rating_note": "−42 % senaste året; bland sämsta; stora utflöden"
     },
-    "AVZA-50": {
-      "category": "Blandfond ~50 % aktier",
-      "rating_signal": "BEVAKA", "rating_note": "defensiv blandfond, halva i räntor"
+    "F-SEB-DEF": {
+      "category": "Försvar (aktiv)", "fee_pct": 1.57, "one_year_pct": 7,
+      "rating_signal": "SALJ", "rating_note": "hög avgift 1,57 %; +7 % i år, under index (+12 %)"
     },
-    "AVZA-AUTO1": {
-      "category": "Fondrobot (defensiv)",
-      "rating_signal": "BEVAKA", "rating_note": "låg aktieandel; för försiktig profil"
+    "F-CMAM-GOLD": {
+      "category": "Guld/ädelmetall", "one_year_pct": 144.73, "risk_high": true,
+      "rating_signal": "SALJ", "rating_note": "+145 % 1 år men ädelmetall svagare 2026 – vinsthemtagning, extremt volatil"
+    },
+    "F-SPILTAN-SMA": {
+      "category": "Småbolag Sverige",
+      "rating_signal": "BEVAKA", "rating_note": "bland sämsta H1 2026; småbolag kan vända"
+    },
+    "F-PLUS-SVERIGE": {
+      "category": "Sverige-index", "fee_pct": 0.20,
+      "rating_signal": "BEVAKA", "rating_note": "billig bred Sverige (~350 bolag); kärna, avvakta momentum"
+    },
+    "F-SCHRODER-GOLD": {
+      "category": "Guld", "one_year_pct": 52, "risk_high": true,
+      "rating_signal": "BEVAKA", "rating_note": "guld +52 % 1 år; mycket volatil"
     }
   }
 }
