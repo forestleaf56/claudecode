@@ -40,10 +40,11 @@
     "EKTA-B.ST": {
       "last": 61.5,
       "last_approx": true,
-      "analyst_upside_pct": 76,
-      "analyst_target_high": 108,
-      "analyst_rating": "Morningstar 5 stjärnor, verkligt värde 108",
-      "rating_note": "43 % rabatt mot verkligt värde (Unity-driven)"
+      "analyst_target_low": 62,
+      "analyst_target_high": 69,
+      "analyst_rating": "analytiker-konsensus Behåll ~62–69 kr; Morningstar 5★ (FV 108)",
+      "rating_signal": "BEVAKA",
+      "rating_note": "spretigt: konsensus behåll (~platt) men Morningstar ser stor uppsida"
     },
     "GRNG.ST": {
       "last": 146.3,
@@ -135,10 +136,11 @@
       "currency": "USD",
       "last": 381.58,
       "div_yield_pct": 0.92,
-      "analyst_target_high": 600,
-      "analyst_rating": "Morningstar 5★ – significantly undervalued",
+      "analyst_target_low": 556,
+      "analyst_target_high": 592,
+      "analyst_rating": "konsensus Strong Buy, snittriktkurs ~$577",
       "rating_signal": "KOP",
-      "rating_note": "verkligt värde ~$600; ~21x vinst"
+      "rating_note": "nedtryckt från topp $555; analytiker ser stor uppsida"
     },
     "KTOS": {
       "currency": "USD",
@@ -151,8 +153,9 @@
     "CEG": {
       "currency": "USD",
       "last": 274.9,
-      "analyst_upside_pct": 50,
-      "analyst_rating": "16/22 Strong Buy, 0 sälj",
+      "analyst_target_low": 358,
+      "analyst_target_high": 373,
+      "analyst_rating": "konsensus Buy, snittriktkurs ~$358",
       "rating_signal": "KOP",
       "rating_note": "AI-elkraft; kärnkraftsexponering"
     },
