@@ -17,4 +17,12 @@ COMMIT=$(git commit-tree "$TREE" -m "Avanza-rapport $(date -u '+%Y-%m-%d %H:%M U
 
 # Force-push sa att grenen alltid har exakt EN commit med senaste rapporten:
 git push -f origin "$COMMIT:refs/heads/$BR"
-echo "Publicerade senaste index.html till grenen '$BR' (single commit, overskriven)"
+echo "Publicerade senaste index.html till '$BR' i detta repo (single commit)"
+
+# Publicera aven till det separata 'avanza'-repot (main), samma single-commit.
+AVANZA_URL="https://github.com/forestleaf56/avanza"
+if git push -f "$AVANZA_URL" "$COMMIT:refs/heads/main"; then
+  echo "Publicerade aven till $AVANZA_URL (main, single commit)"
+else
+  echo "VARNING: kunde inte pusha till $AVANZA_URL - kontrollera atkomst"
+fi
