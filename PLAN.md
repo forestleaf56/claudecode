@@ -7,6 +7,27 @@ affären manuellt i Avanza-appen eller i Infront Active Trader.
 
 ---
 
+## Status (2026-07-24): pipeline + Routine + push är byggda
+
+Implementerat och verifierat i molndatorn:
+
+- **Analys-pipeline** i `avanza_signals/` (`analyze.py`, `watchlist.json`,
+  `config.json`) — hämtar kurser, beräknar SMA/RSI/drawdown, genererar köp-/
+  säljkandidater och en `PUSH:`-rad. Körd och verifierad.
+- **Routine** `Avanza beslutsstod (borsdag, efter stangning)` — varje börsdag
+  17:45 svensk tid (cron `45 15 * * 1-5`), färsk session som kör analysen och
+  pushar. Inbyggd push påslagen. Avfyrad skarpt en gång för verifiering.
+- **Push-notis** testad live (nådde telefonen).
+
+**Kvarstår för riktig data** (en av två, ditt val):
+1. Öppna miljöns egress-policy för kurskällan, eller
+2. Koppla in en extern Avanza-MCP-server (`.mcp.json.example` finns).
+
+Tills dess kör pipelinen på tydligt märkt **syntetisk** data så att allt rör sig.
+Detaljer i `avanza_signals/README.md`.
+
+---
+
 ## 0. Viktiga förbehåll (läs först)
 
 Dessa punkter påverkar hela planen och bör bekräftas innan du sätter igång.
