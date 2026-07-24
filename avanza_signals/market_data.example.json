@@ -284,7 +284,8 @@
       "category": "Indien (aktiv)",
       "risk_1_7": 6,
       "rating_signal": "BEVAKA",
-      "rating_note": "tillväxtmarknad; HDFC/Bajaj/ICICI – hög risk"
+      "rating_note": "tillväxtmarknad; HDFC/Bajaj/ICICI – hög risk",
+      "one_year_pct": 6.61
     },
     "F-TIN-NYTEK": {
       "category": "Ny teknik/småbolag",
