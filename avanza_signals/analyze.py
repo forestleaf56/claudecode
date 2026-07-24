@@ -117,20 +117,20 @@ def evaluate(rec: dict, cfg: dict) -> list[dict]:
 
     r = g("rsi")
     if r is not None and r <= cfg["rsi_oversold"]:
-        sig.append(("KOP", f"RSI {r:.0f} (oversald)"))
+        sig.append(("KOP", f"RSI {r:.0f} (översåld)"))
     if r is not None and r >= cfg["rsi_overbought"]:
-        sig.append(("SALJ", f"RSI {r:.0f} (overkopt)"))
+        sig.append(("SALJ", f"RSI {r:.0f} (överköpt)"))
 
     m = g("month_change_pct")
     if m is not None and m <= -cfg["drawdown_from_high_pct"]:
-        sig.append(("BEVAKA", f"manad {m:+.0f}% - kraftigt fall, granska"))
+        sig.append(("BEVAKA", f"månad {m:+.0f}% – kraftigt fall, granska"))
     dd = g("drawdown_from_high_pct")
     if dd is not None and dd <= -cfg["drawdown_from_high_pct"]:
-        sig.append(("BEVAKA", f"{dd:+.0f}% fran 6mn-topp"))
+        sig.append(("BEVAKA", f"{dd:+.0f}% från 6mån-topp"))
 
     d = g("day_change_pct")
     if d is not None and d <= -cfg["big_day_drop_pct"]:
-        sig.append(("VARNING", f"dag {d:+.0f}% - stort fall"))
+        sig.append(("VARNING", f"dag {d:+.0f}% – stort fall"))
 
     up_direct = g("analyst_upside_pct")
     if up_direct is not None and up_direct >= cfg["analyst_upside_pct"]:
@@ -147,7 +147,7 @@ def evaluate(rec: dict, cfg: dict) -> list[dict]:
     if last and th and last > th:
         dn = (1 - th / last) * 100
         if dn >= cfg["analyst_downside_pct"]:
-            sig.append(("SALJ", f"kurs {last:.0f} over riktkurs {th:.0f} (-{dn:.0f}%)"
+            sig.append(("SALJ", f"kurs {last:.0f} över riktkurs {th:.0f} (-{dn:.0f}%)"
                                + (f" [{rating}]" if rating else "")))
 
     sf, ss = g("sma_fast"), g("sma_slow")
@@ -160,9 +160,9 @@ def evaluate(rec: dict, cfg: dict) -> list[dict]:
 
     res, sup = g("resistance"), g("support")
     if last and res and last <= res and abs(last / res - 1) * 100 <= cfg["near_level_pct"]:
-        sig.append(("BEVAKA", f"nara motstand {res:.0f}"))
+        sig.append(("BEVAKA", f"nära motstånd {res:.0f}"))
     if last and sup and last >= sup and abs(last / sup - 1) * 100 <= cfg["near_level_pct"]:
-        sig.append(("BEVAKA", f"nara stod {sup:.0f}"))
+        sig.append(("BEVAKA", f"nära stöd {sup:.0f}"))
 
     rs = g("rating_signal")
     if rs in ("KOP", "SALJ", "BEVAKA"):
