@@ -1,3 +1,4 @@
 # Genererade vid varje analyskorning - spara inte (exempel finns i *.example.json)
 avanza_signals/signals.json
 avanza_signals/market_data.json
+avanza_signals/senaste_signaler.txt
