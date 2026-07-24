@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
 """Genererar en mobilvänlig, självständig index.html från signals.json.
 
-Kort-layout (ingen sidoscroll), synlig ljus/mörk-växlare, riktig svenska och
-mer info per aktie. Ingen extern data/CSS/JS – allt inline.
-Beslutsunderlag, inte rådgivning.
+Kort-layout (ingen sidoscroll), synlig ljus/mörk-växlare, riktig svenska.
+Topp-sektion med dagens tydligaste köp/sälj, nedtonade högrisk-kort och
+separata sektioner för aktier och Avanza-fonder. Allt inline (ingen extern
+data/CSS/JS). Beslutsunderlag, inte rådgivning.
 """
 from __future__ import annotations
 import html
@@ -24,8 +25,90 @@ def primary(signals):
     return "none"
 
 
+def reason_for(r, side):
+    for s in r["signals"]:
+        if s["side"] == side:
+            return s["reason"]
+    return ""
+
+
 def esc(x):
     return html.escape(str(x))
+
+
+def chips_for(r):
+    c = []
+    if r.get("category"):
+        c.append(f'<span class="chip cat">{esc(r["category"])}</span>')
+    up = r.get("analyst_upside_pct")
+    if up is not None:
+        c.append(f'<span class="chip up">Uppsida +{up:g}%</span>')
+    ms = r.get("morningstar_stars")
+    if ms is not None:
+        c.append(f'<span class="chip">{"★" * int(ms)}{"☆" * (5 - int(ms))} {ms:g}/5</span>')
+    oy = r.get("one_year_pct")
+    if oy is not None:
+        c.append(f'<span class="chip {"up" if oy >= 0 else "down"}">1 år {oy:+g}%</span>')
+    tl, th = r.get("analyst_target_low"), r.get("analyst_target_high")
+    if tl or th:
+        tgt = f"{tl:g}–{th:g}" if (tl and th) else f"{(tl or th):g}"
+        c.append(f'<span class="chip">Riktkurs {tgt} kr</span>')
+    if r.get("pe") is not None:
+        c.append(f'<span class="chip">P/E {r["pe"]:g}</span>')
+    if r.get("fee_pct") is not None:
+        c.append(f'<span class="chip">Avgift {r["fee_pct"]:g}%</span>')
+    if r.get("div_yield_pct") is not None:
+        c.append(f'<span class="chip">Dir.avk {r["div_yield_pct"]:g}%</span>')
+    if r.get("support") is not None and r.get("resistance") is not None:
+        c.append(f'<span class="chip">Stöd {r["support"]:g} · Motstånd {r["resistance"]:g} kr</span>')
+    if r.get("risk_high"):
+        c.append('<span class="chip risk">⚠️ Högrisk</span>')
+    return "".join(c)
+
+
+def card(r):
+    pc = r["_p"]
+    cls = "itemcard p-" + pc + (" risk" if r.get("risk_high") else "")
+    last = r.get("last")
+    price = ""
+    if last is not None:
+        p = f'{last:g} kr' + ("*" if r.get("last_approx") else "")
+        day = r.get("day_change_pct")
+        if day is not None:
+            p += f' <span class="{"up" if day >= 0 else "down"}">({day:+.1f}%)</span>'
+        price = f'<div class="price">{p}</div>'
+    sig = "".join(
+        f'<li><span class="badge {s["side"]}">{SIDE_LABEL.get(s["side"], s["side"])}</span>'
+        f'<span class="reason">{esc(s["reason"])}</span></li>'
+        for s in r["signals"]
+    ) or '<li><span class="reason muted">Ingen signal just nu</span></li>'
+    rating = r.get("analyst_rating")
+    note = r.get("note")
+    extra = (f'<div class="rating">📊 {esc(rating)}</div>' if rating
+             else (f'<div class="rating">ℹ️ {esc(note)}</div>' if note else ""))
+    return f"""
+      <article class="{cls}">
+        <div class="top">
+          <div class="id"><span class="dot {pc}"></span><strong>{esc(r['name'])}</strong></div>
+          <span class="rec {pc}">{SIDE_LABEL.get(pc, '–')}</span>
+        </div>
+        {price}
+        <div class="chips">{chips_for(r)}</div>
+        <ul class="signals">{sig}</ul>
+        {extra}
+      </article>"""
+
+
+def hero(r, side, kicker):
+    if not r:
+        return ""
+    lbl = SIDE_LABEL[side]
+    return f"""
+      <div class="hero {side}">
+        <div class="k">{kicker}</div>
+        <div class="hn">{esc(r['name'])}<span class="hrec {side}">{lbl}</span></div>
+        <div class="hr">{esc(reason_for(r, side))}</div>
+      </div>"""
 
 
 def main():
@@ -37,9 +120,28 @@ def main():
         r["_p"] = primary(r["signals"])
     results.sort(key=lambda r: (SIDE_ORDER[r["_p"]], r["name"]))
 
+    stocks = [r for r in results if r.get("type") != "fond"]
+    funds = [r for r in results if r.get("type") == "fond"]
+
     n_buy = sum(1 for r in results if any(s["side"] == "KOP" for s in r["signals"]))
     n_sell = sum(1 for r in results if any(s["side"] in ("SALJ", "VARNING") for s in r["signals"]))
     n_watch = sum(1 for r in results if r["_p"] == "BEVAKA")
+
+    # Dagens tydligaste
+    def buy_score(r):
+        if r.get("analyst_upside_pct") is not None:
+            return r["analyst_upside_pct"]
+        if r.get("morningstar_stars") is not None:
+            return r["morningstar_stars"] * 15
+        if r.get("one_year_pct") is not None:
+            return r["one_year_pct"]
+        return 10
+    buys = [r for r in results if any(s["side"] == "KOP" for s in r["signals"]) and not r.get("risk_high")]
+    best_buy = max(buys, key=buy_score) if buys else None
+    sells = [r for r in results if any(s["side"] == "SALJ" for s in r["signals"])]
+    # tydligaste sälj: störst analytiker-nedsida om möjligt, annars först
+    sells.sort(key=lambda r: (r.get("last") or 0) - (r.get("analyst_target_high") or 0), reverse=True)
+    best_sell = sells[0] if sells else None
 
     gen = data.get("generated_at", datetime.now(timezone.utc).isoformat())
     try:
@@ -48,57 +150,14 @@ def main():
         gen_disp = gen
     src = "+".join(data.get("sources", [])) or "–"
     synthetic = data.get("synthetic_data", False)
-
-    cards = []
-    for r in results:
-        pc = r["_p"]
-        chips = []
-        up = r.get("analyst_upside_pct")
-        if up is not None:
-            chips.append(f'<span class="chip up">Uppsida +{up:g}%</span>')
-        tl, th = r.get("analyst_target_low"), r.get("analyst_target_high")
-        if tl or th:
-            tgt = f"{tl:g}–{th:g}" if (tl and th) else f"{(tl or th):g}"
-            chips.append(f'<span class="chip">Riktkurs {tgt} kr</span>')
-        if r.get("pe") is not None:
-            chips.append(f'<span class="chip">P/E {r["pe"]:g}</span>')
-        if r.get("div_yield_pct") is not None:
-            chips.append(f'<span class="chip">Dir.avk {r["div_yield_pct"]:g}%</span>')
-        if r.get("support") is not None and r.get("resistance") is not None:
-            chips.append(f'<span class="chip">Stöd {r["support"]:g} · Motstånd {r["resistance"]:g} kr</span>')
-        chip_html = "".join(chips)
-
-        last = r.get("last")
-        price = (f'{last:g} kr' + ("*" if r.get("last_approx") else "")) if last is not None else "kurs saknas"
-        day = r.get("day_change_pct")
-        if day is not None:
-            price += f' <span class="{"up" if day >= 0 else "down"}">({day:+.1f}%)</span>'
-
-        sig_items = "".join(
-            f'<li><span class="badge {s["side"]}">{SIDE_LABEL.get(s["side"], s["side"])}</span>'
-            f'<span class="reason">{esc(s["reason"])}</span></li>'
-            for s in r["signals"]
-        ) or '<li><span class="reason muted">Ingen signal just nu</span></li>'
-
-        rating = r.get("analyst_rating")
-        note = r.get("note")
-        extra = (f'<div class="rating">📊 {esc(rating)}</div>' if rating
-                 else (f'<div class="rating">ℹ️ {esc(note)}</div>' if note else ""))
-
-        cards.append(f"""
-      <article class="itemcard p-{pc}">
-        <div class="top">
-          <div class="id"><span class="dot {pc}"></span><strong>{esc(r['name'])}</strong>
-            <span class="ticker">{esc(r['ticker'])}</span></div>
-          <span class="rec {pc}">{SIDE_LABEL.get(pc, '–')}</span>
-        </div>
-        <div class="price">{price}</div>
-        <div class="chips">{chip_html}</div>
-        <ul class="signals">{sig_items}</ul>
-        {extra}
-      </article>""")
-
     warn = '<div class="warn">⚠️ Syntetisk data – exekvera ej.</div>' if synthetic else ""
+
+    hero_html = ""
+    if best_buy or best_sell:
+        hero_html = f'<div class="heroes">{hero(best_buy, "KOP", "Dagens tydligaste köp")}{hero(best_sell, "SALJ", "Dagens tydligaste sälj")}</div>'
+
+    stock_cards = "".join(card(r) for r in stocks)
+    fund_cards = "".join(card(r) for r in funds)
 
     doc = f"""<!doctype html>
 <html lang="sv">
@@ -131,13 +190,24 @@ def main():
   .wrap{{max-width:900px;margin:0 auto;padding:20px 14px 44px;}}
   .head{{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;}}
   h1{{margin:0 0 4px;font-size:21px;letter-spacing:-.01em;}}
+  h2{{font-size:13px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);
+    margin:22px 0 10px;}}
   .meta{{color:var(--muted);font-size:12.5px;}}
   .toggle{{flex:none;border:1px solid var(--line);background:var(--card);color:var(--ink);
     border-radius:999px;padding:8px 12px;font-size:13px;cursor:pointer;line-height:1;white-space:nowrap;}}
   .toggle:active{{transform:scale(.96);}}
   .warn{{margin:12px 0;padding:10px 12px;border-radius:10px;background:var(--sell-bg);
     color:var(--sell);font-weight:600;font-size:13px;}}
-  .tiles{{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:18px 0;}}
+  .heroes{{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px;margin:18px 0 6px;}}
+  .hero{{border-radius:16px;padding:15px 16px;border:1px solid var(--line);}}
+  .hero.KOP{{background:var(--buy-bg);border-color:var(--buy);}}
+  .hero.SALJ{{background:var(--sell-bg);border-color:var(--sell);}}
+  .hero .k{{font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);}}
+  .hero .hn{{font-size:19px;font-weight:750;margin:3px 0 5px;display:flex;align-items:center;gap:9px;flex-wrap:wrap;}}
+  .hrec{{font-size:11px;font-weight:800;padding:3px 9px;border-radius:999px;}}
+  .hrec.KOP{{background:var(--buy);color:#fff;}} .hrec.SALJ{{background:var(--sell);color:#fff;}}
+  .hero .hr{{font-size:13px;color:var(--ink);}}
+  .tiles{{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:14px 0 4px;}}
   .tile{{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px;text-align:center;}}
   .tile .n{{font-size:26px;font-weight:750;line-height:1;}}
   .tile .l{{font-size:11px;color:var(--muted);margin-top:5px;text-transform:uppercase;letter-spacing:.04em;}}
@@ -148,11 +218,11 @@ def main():
   .itemcard.p-KOP{{border-left-color:var(--buy);}}
   .itemcard.p-SALJ,.itemcard.p-VARNING{{border-left-color:var(--sell);}}
   .itemcard.p-BEVAKA{{border-left-color:var(--watch);}}
+  .itemcard.risk{{opacity:.66;}}
   .top{{display:flex;align-items:center;justify-content:space-between;gap:8px;}}
-  .id{{display:flex;align-items:center;gap:7px;flex-wrap:wrap;}}
+  .id{{display:flex;align-items:center;gap:7px;}}
   .dot{{width:9px;height:9px;border-radius:50%;background:var(--muted);flex:none;}}
   .dot.KOP{{background:var(--buy);}}.dot.SALJ,.dot.VARNING{{background:var(--sell);}}.dot.BEVAKA{{background:var(--watch);}}
-  .ticker{{color:var(--muted);font-size:12px;}}
   .rec{{font-size:11px;font-weight:800;padding:3px 9px;border-radius:999px;flex:none;
     background:var(--chip);color:var(--muted);letter-spacing:.03em;}}
   .rec.KOP{{background:var(--buy-bg);color:var(--buy);}}
@@ -160,9 +230,11 @@ def main():
   .rec.BEVAKA{{background:var(--watch-bg);color:var(--watch);}}
   .price{{margin:9px 0 8px;font-size:18px;font-weight:650;font-variant-numeric:tabular-nums;}}
   .up{{color:var(--up);}}.down{{color:var(--down);}}
-  .chips{{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:6px;}}
+  .chips{{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0 2px;}}
   .chip{{background:var(--chip);color:var(--ink);font-size:11.5px;padding:3px 8px;border-radius:8px;}}
-  .chip.up{{color:var(--buy);font-weight:700;}}
+  .chip.up{{color:var(--buy);font-weight:700;}} .chip.down{{color:var(--sell);font-weight:700;}}
+  .chip.cat{{background:transparent;border:1px solid var(--line);color:var(--muted);}}
+  .chip.risk{{background:var(--sell-bg);color:var(--sell);font-weight:700;}}
   ul.signals{{list-style:none;margin:8px 0 0;padding:0;}}
   ul.signals li{{display:flex;gap:7px;align-items:baseline;margin:5px 0;font-size:13px;}}
   .badge{{flex:none;font-size:10px;font-weight:800;padding:2px 7px;border-radius:999px;letter-spacing:.03em;}}
@@ -171,9 +243,9 @@ def main():
   .badge.BEVAKA{{background:var(--watch-bg);color:var(--watch);}}
   .reason{{color:var(--ink);}}.muted{{color:var(--muted);}}
   .rating{{margin-top:8px;font-size:12px;color:var(--muted);border-top:1px dashed var(--line);padding-top:7px;}}
-  .legend{{margin:16px 0 0;font-size:12px;color:var(--muted);display:flex;flex-wrap:wrap;gap:12px;}}
+  .legend{{margin:18px 0 0;font-size:12px;color:var(--muted);display:flex;flex-wrap:wrap;gap:12px;}}
   .legend b{{color:var(--ink);}}
-  footer{{margin-top:16px;color:var(--muted);font-size:12px;}}
+  footer{{margin-top:14px;color:var(--muted);font-size:12px;}}
   footer p{{margin:4px 0;}}
   @media (max-width:420px){{ .tiles{{gap:8px;}} .tile{{padding:11px;}} .tile .n{{font-size:22px;}} h1{{font-size:19px;}} }}
 </style>
@@ -183,26 +255,32 @@ def main():
     <div class="head">
       <div>
         <h1>Avanza beslutsstöd</h1>
-        <div class="meta">Screening av svenska aktier · {esc(gen_disp)} · källa: {esc(src)}</div>
+        <div class="meta">Screening av svenska aktier &amp; Avanza-fonder · {esc(gen_disp)} · källa: {esc(src)}</div>
       </div>
       <button class="toggle" id="tg" aria-label="Växla ljust/mörkt läge">🌙 Mörkt</button>
     </div>
     {warn}
+    {hero_html}
     <div class="tiles">
       <div class="tile buy"><div class="n">{n_buy}</div><div class="l">Köp</div></div>
       <div class="tile sell"><div class="n">{n_sell}</div><div class="l">Sälj</div></div>
       <div class="tile watch"><div class="n">{n_watch}</div><div class="l">Bevaka</div></div>
     </div>
-    <div class="grid">{''.join(cards)}
+    <h2>Aktier ({len(stocks)})</h2>
+    <div class="grid">{stock_cards}
+    </div>
+    <h2>Avanza-fonder ({len(funds)})</h2>
+    <div class="grid">{fund_cards}
     </div>
     <div class="legend">
       <span><b style="color:var(--buy)">KÖP</b> uppsida/köpsignal</span>
       <span><b style="color:var(--sell)">SÄLJ</b> nedsida/säljsignal</span>
       <span><b style="color:var(--watch)">BEVAKA</b> följ – blandat/risk</span>
+      <span>⚠️ = nedtonat, högrisk</span>
     </div>
     <footer>
       <p>Beslutsunderlag – <strong>inte finansiell rådgivning</strong>. Inga order läggs automatiskt; verifiera och exekvera själv i Avanza-appen eller Infront Active Trader.</p>
-      <p>Data via publik websökning, kan vara fördröjd/ungefärlig. * = ungefärlig kurs. Signaler bygger på analytikers riktkurser, momentum (RSI, glidande medelvärden), avstånd till stöd/motstånd och kursfall.</p>
+      <p>Data via publik websökning, kan vara fördröjd/ungefärlig. * = ungefärlig kurs. Aktiesignaler bygger på riktkurser, momentum och stöd/motstånd; fondsignaler på Morningstar-betyg, avkastning och avgift.</p>
     </footer>
   </div>
   <script>

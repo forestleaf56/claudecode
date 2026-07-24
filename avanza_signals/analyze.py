@@ -173,12 +173,16 @@ def evaluate(rec: dict, cfg: dict) -> list[dict]:
 
 # ---------------------------------------------------------------- main
 
-def resolve_record(ticker: str, market: dict | None, cfg: dict) -> tuple[dict, str]:
+def resolve_record(ticker: str, market: dict | None, cfg: dict,
+                   itype: str = "aktie") -> tuple[dict, str]:
     """Returnera (snapshot, kalla). Kalla: websearch | yahoo | synthetic."""
     if market and cfg.get("prefer_market_data_json", True):
         snap = market.get("instruments", {}).get(ticker)
         if snap:
             return dict(snap), "websearch"
+    if itype == "fond":
+        # Fonder har ingen Yahoo-serie/syntet - bara data fran market_data.json.
+        return {}, "none"
     closes = fetch_history(ticker, cfg["history_range"])
     if closes and len(closes) >= cfg["sma_slow"] + 1:
         return snapshot_from_series(closes, cfg), "yahoo"
@@ -195,12 +199,13 @@ def main() -> int:
     results, sources = [], set()
     for inst in watch:
         ticker, name = inst["ticker"], inst["name"]
-        snap, source = resolve_record(ticker, market, cfg)
+        itype = inst.get("type", "aktie")
+        snap, source = resolve_record(ticker, market, cfg, itype)
         if source == "none":
             print(f"  hoppar over {ticker}: ingen data", file=sys.stderr)
             continue
         sources.add(source)
-        snap.update({"name": name, "ticker": ticker, "source": source,
+        snap.update({"name": name, "ticker": ticker, "type": itype, "source": source,
                      "signals": evaluate(snap, cfg)})
         results.append(snap)
 

@@ -1,15 +1,15 @@
 {
-  "_comment": "Riktig marknadsdata insamlad via WebSearch. Screening av köp-/sälj-kandidater. Priser kan vara några dagar fördröjda (sökdata). Alltid beslutsunderlag - verifiera i Avanza/Infront före affär. Inte rådgivning.",
+  "_comment": "Riktig marknadsdata via WebSearch. Screening av aktier + Avanza-fonder. Kan vara några dagar fördröjd. Beslutsunderlag - verifiera i Avanza/Infront. Inte rådgivning.",
   "as_of": "2026-07-24",
   "source": "websearch",
   "instruments": {
     "STOR-B.ST": {
-      "analyst_upside_pct": 76, "analyst_target_low": 15, "analyst_target_high": 21,
+      "analyst_upside_pct": 76, "analyst_target_low": 15, "analyst_target_high": 21, "risk_high": true,
       "analyst_rating": "snitt-riktkurs ~16,7 kr",
       "rating_signal": "BEVAKA", "rating_note": "hög uppsida men fallande trendkanal – högrisk"
     },
     "INTRUM.ST": {
-      "analyst_upside_pct": 71, "analyst_target_low": 47.9, "pe": 7,
+      "analyst_upside_pct": 71, "analyst_target_low": 47.9, "pe": 7, "risk_high": true,
       "analyst_rating": "snitt-riktkurs ~47,9 kr",
       "rating_signal": "BEVAKA", "rating_note": "mycket låg värdering (~7x vinst) men hög skuld – högrisk"
     },
@@ -63,6 +63,55 @@
       "last": 187.0, "sma_fast": 189.49, "sma_slow": 182.65, "support": 170, "resistance": 196,
       "analyst_target_low": 193.7,
       "analyst_rating": "UBS uppgraderade till neutral (från sälj)"
+    },
+
+    "AVZA-USA": {
+      "category": "USA-index", "morningstar_stars": 5, "fee_pct": 0.17,
+      "rating_signal": "KOP", "rating_note": "Morningstar 5★; +44 % sedan start; NVIDIA/Apple/Microsoft"
+    },
+    "AVZA-EUROPA": {
+      "category": "Europa", "one_year_pct": 22.54,
+      "rating_signal": "KOP", "rating_note": "+22,5 % senaste året; ASML/AstraZeneca/Nestlé"
+    },
+    "AVZA-AUTO6": {
+      "category": "Fondrobot (offensiv)", "morningstar_stars": 4, "fee_pct": 0.37,
+      "rating_signal": "KOP", "rating_note": "85–110 % aktier; +180 % sedan 2017; ~9–10 %/år"
+    },
+    "AVZA-ZERO": {
+      "category": "Sverige-index", "fee_pct": 0.0, "one_year_pct": 19,
+      "rating_signal": "KOP", "rating_note": "0 % avgift; OMXS30; +19 % 2025 – Sverige-kärna"
+    },
+    "AVZA-GLOBAL": {
+      "category": "Global-index", "fee_pct": 0.05,
+      "rating_signal": "KOP", "rating_note": "kärninnehav; ~0,05 % avgift; Apple/Nvidia/Microsoft"
+    },
+    "AVZA-SWEDEN": {
+      "category": "Sverige-index", "fee_pct": 0.17,
+      "rating_signal": "BEVAKA", "rating_note": "ny bred billig Sverige (99 % av börsen); kort historik"
+    },
+    "AVZA-EM": {
+      "category": "Tillväxtmarknad", "fee_pct": 0.30,
+      "rating_signal": "BEVAKA", "rating_note": "~1400 tillväxtmarknadsbolag; EM-risk"
+    },
+    "AVZA-ARK": {
+      "category": "Disruptiv teknik", "one_year_pct": 42.7, "risk_high": true,
+      "rating_signal": "BEVAKA", "rating_note": "feeder till ARK Innovation; +42,7 % 2025 men mycket volatil"
+    },
+    "AVZA-100": {
+      "category": "Global blandfond", "fee_pct": 0.49, "one_year_pct": 2.62,
+      "rating_signal": "SALJ", "rating_note": "hög avgift 0,49 %; +2,6 % 2025, under index (3,6 %)"
+    },
+    "AVZA-75": {
+      "category": "Blandfond ~75 % aktier",
+      "rating_signal": "BEVAKA", "rating_note": "blandfond, medelhög aktieandel"
+    },
+    "AVZA-50": {
+      "category": "Blandfond ~50 % aktier",
+      "rating_signal": "BEVAKA", "rating_note": "defensiv blandfond, halva i räntor"
+    },
+    "AVZA-AUTO1": {
+      "category": "Fondrobot (defensiv)",
+      "rating_signal": "BEVAKA", "rating_note": "låg aktieandel; för försiktig profil"
     }
   }
 }

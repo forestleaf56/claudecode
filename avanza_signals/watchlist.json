@@ -1,5 +1,5 @@
 {
-  "_comment": "SCREENING-lista: svenska aktier som just nu visar tydliga kop-/salj-kandidater enligt analytiker/teknik (INTE anvandarens innehav). 'ticker' = Yahoo/Avanza-symbol. Justera fritt. Beslutsunderlag - inte radgivning.",
+  "_comment": "SCREENING: svenska aktier + Avanza-fonder som visar tydliga köp-/sälj-/bevaka-lägen. INTE användarens innehav. type: aktie (default) eller fond. Beslutsunderlag - inte rådgivning.",
   "instruments": [
     { "ticker": "STOR-B.ST", "name": "Storskogen B" },
     { "ticker": "INTRUM.ST", "name": "Intrum" },
@@ -12,6 +12,19 @@
     { "ticker": "CAST.ST",   "name": "Castellum" },
     { "ticker": "VOLV-B.ST", "name": "Volvo B" },
     { "ticker": "INVE-B.ST", "name": "Investor B" },
-    { "ticker": "ATCO-A.ST", "name": "Atlas Copco A" }
+    { "ticker": "ATCO-A.ST", "name": "Atlas Copco A" },
+
+    { "ticker": "AVZA-USA",    "name": "Avanza USA", "type": "fond" },
+    { "ticker": "AVZA-EUROPA", "name": "Avanza Europa", "type": "fond" },
+    { "ticker": "AVZA-AUTO6",  "name": "Avanza Auto 6", "type": "fond" },
+    { "ticker": "AVZA-ZERO",   "name": "Avanza Zero", "type": "fond" },
+    { "ticker": "AVZA-GLOBAL", "name": "Avanza Global", "type": "fond" },
+    { "ticker": "AVZA-SWEDEN", "name": "Avanza Sweden All Cap", "type": "fond" },
+    { "ticker": "AVZA-EM",     "name": "Avanza Emerging Markets", "type": "fond" },
+    { "ticker": "AVZA-ARK",    "name": "Avanza Disruptive Innovation by ARK", "type": "fond" },
+    { "ticker": "AVZA-100",    "name": "Avanza 100", "type": "fond" },
+    { "ticker": "AVZA-75",     "name": "Avanza 75", "type": "fond" },
+    { "ticker": "AVZA-50",     "name": "Avanza 50", "type": "fond" },
+    { "ticker": "AVZA-AUTO1",  "name": "Avanza Auto 1", "type": "fond" }
   ]
 }
