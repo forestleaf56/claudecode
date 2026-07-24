@@ -1,37 +1,68 @@
 {
-  "_comment": "Riktig marknadsdata insamlad via WebSearch (Anthropics sok-backend - enda externa vagen i denna miljo; egress blockerar direkta kurskallor). Falt ar valfria; analyze.py hanterar saknade varden. VARNING: sokdata kan vara fordrojd/ungefarlig - alltid beslutsunderlag, verifiera i Avanza/Infront fore affar.",
+  "_comment": "Riktig marknadsdata insamlad via WebSearch. Screening av kop-/salj-kandidater. Priser kan vara nagra dagar fordrojda (sokdata). Alltid beslutsunderlag - verifiera i Avanza/Infront fore affar. Inte radgivning.",
   "as_of": "2026-07-24",
   "source": "websearch",
   "instruments": {
-    "INVE-B.ST": {
-      "last": 367.7, "day_change_pct": -0.58,
-      "note": "stigande trendkanal (Investtech)"
+    "STOR-B.ST": {
+      "analyst_upside_pct": 76, "analyst_target_low": 15, "analyst_target_high": 21,
+      "analyst_rating": "snitt-riktkurs ~16.7",
+      "rating_signal": "BEVAKA", "rating_note": "hog uppsida men fallande trendkanal - hogrisk"
+    },
+    "INTRUM.ST": {
+      "analyst_upside_pct": 71, "analyst_target_low": 47.9,
+      "analyst_rating": "snitt-riktkurs ~47.9",
+      "rating_signal": "BEVAKA", "rating_note": "mycket lag vardering (~7x vinst) men hog skuld - hogrisk"
+    },
+    "SUS.ST": {
+      "last": 32.86, "last_approx": true,
+      "analyst_target_low": 40, "analyst_target_high": 88,
+      "analyst_rating": "3 kop / 0 salj (Buy)",
+      "rating_signal": "BEVAKA", "rating_note": "Intuitive avbrot MoU - sankta 2026-mal (risk)"
+    },
+    "HEM.ST": {
+      "last": 81.6, "support": 67, "resistance": 100,
+      "analyst_target_low": 103, "analyst_target_high": 130,
+      "analyst_rating": "Nordea Kop 103 / BNP Underperform 78 (konsensus neutral)"
+    },
+    "EKTA-B.ST": {
+      "last": 61.5, "last_approx": true, "analyst_upside_pct": 76, "analyst_target_high": 108,
+      "analyst_rating": "Morningstar 5 stjarnor, verkligt varde 108",
+      "rating_note": "43% rabatt mot verkligt varde (Unity-driven)"
+    },
+    "GRNG.ST": {
+      "analyst_target_low": 157, "analyst_target_high": 215,
+      "analyst_rating": "HB Kop 210 / Kepler Kop 215",
+      "rating_signal": "KOP", "rating_note": "HB & Kepler upprepar kop (riktkurs 210-215); tekniskt lyft"
+    },
+    "ERIC-B.ST": {
+      "last": 91.5, "day_change_pct": -1.59, "month_change_pct": -18.27, "pe": 12.18, "support": 96,
+      "analyst_target_low": 120, "analyst_target_high": 128,
+      "analyst_rating": "SEB Kop 128 / Danske Behall 120"
+    },
+    "HM-B.ST": {
+      "last": 166.8, "sma_fast": 164.99, "sma_slow": 164.83, "support": 140, "resistance": 173,
+      "div_yield_pct": 4.31, "analyst_target_high": 145,
+      "analyst_rating": "Pareto Salj / BofA Underperform 145",
+      "rating_signal": "SALJ", "rating_note": "Pareto sankte till salj; marginallyft vantas avta"
+    },
+    "CAST.ST": {
+      "analyst_target_low": 116.5, "analyst_target_high": 150,
+      "analyst_rating": "UBS Neutral 145 (sankt fran kop) / HB Kop 150",
+      "rating_signal": "BEVAKA", "rating_note": "UBS nedgraderade till neutral; +25% i ar, mycket inprisat"
     },
     "VOLV-B.ST": {
       "last": 335.0, "last_approx": true, "year_change_pct": 24.46, "resistance": 340,
       "analyst_target_low": 330, "analyst_target_high": 407,
       "analyst_rating": "Goldman 407 / Citi 376 / Kepler 365 / BNP 330"
     },
-    "ERIC-B.ST": {
-      "last": 91.5, "day_change_pct": -1.59, "month_change_pct": -18.27, "pe": 12.18,
-      "support": 96, "analyst_target_low": 120, "analyst_target_high": 128,
-      "analyst_rating": "SEB Kop 128 / Danske Behall 120",
-      "note": "brutit ner genom stod ~96 (Investtech)"
+    "INVE-B.ST": {
+      "last": 367.7, "day_change_pct": -0.58,
+      "note": "stigande trendkanal (Investtech)"
     },
     "ATCO-A.ST": {
       "last": 187.0, "sma_fast": 189.49, "sma_slow": 182.65, "support": 170, "resistance": 196,
       "analyst_target_low": 193.7,
-      "analyst_rating": "snitt-riktkurs ~193.7"
-    },
-    "SEB-A.ST": {
-      "analyst_target_low": 204, "analyst_target_high": 230,
-      "analyst_rating": "Handelsbanken 214 / Goldman 230 / Citi 204",
-      "note": "kurs saknas i sokdata"
-    },
-    "HM-B.ST": {
-      "last": 166.8, "sma_fast": 164.99, "sma_slow": 164.83, "support": 140, "resistance": 173,
-      "div_yield_pct": 4.31, "analyst_target_high": 145,
-      "analyst_rating": "BofA Underperform 145 (sankt fran 150)"
+      "analyst_rating": "UBS uppgraderade till neutral (fran salj)"
     }
   }
 }

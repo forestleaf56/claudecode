@@ -132,6 +132,10 @@ def evaluate(rec: dict, cfg: dict) -> list[dict]:
     if d is not None and d <= -cfg["big_day_drop_pct"]:
         sig.append(("VARNING", f"dag {d:+.0f}% - stort fall"))
 
+    up_direct = g("analyst_upside_pct")
+    if up_direct is not None and up_direct >= cfg["analyst_upside_pct"]:
+        sig.append(("KOP", f"analytiker-uppsida +{up_direct:.0f}%"))
+
     last, tl, th = g("last"), g("analyst_target_low"), g("analyst_target_high")
     rating = g("analyst_rating")
     if last and tl and last < tl:
@@ -159,6 +163,10 @@ def evaluate(rec: dict, cfg: dict) -> list[dict]:
         sig.append(("BEVAKA", f"nara motstand {res:.0f}"))
     if last and sup and last >= sup and abs(last / sup - 1) * 100 <= cfg["near_level_pct"]:
         sig.append(("BEVAKA", f"nara stod {sup:.0f}"))
+
+    rs = g("rating_signal")
+    if rs in ("KOP", "SALJ", "BEVAKA"):
+        sig.append((rs, g("rating_note") or "analytikersignal"))
 
     return [{"side": s, "reason": why} for s, why in sig]
 

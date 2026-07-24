@@ -1,11 +1,17 @@
 {
-  "_comment": "Bevakningslista. 'ticker' = Yahoo Finance-symbol (svenska aktier slutar pa .ST). Byt ut mot dina egna innehav/bevakningar. Nar Avanza-MCP kopplas in ersatts 'ticker' av Avanza orderbookId.",
+  "_comment": "SCREENING-lista: svenska aktier som just nu visar tydliga kop-/salj-kandidater enligt analytiker/teknik (INTE anvandarens innehav). 'ticker' = Yahoo/Avanza-symbol. Justera fritt. Beslutsunderlag - inte radgivning.",
   "instruments": [
-    { "ticker": "INVE-B.ST", "name": "Investor B" },
-    { "ticker": "VOLV-B.ST", "name": "Volvo B" },
+    { "ticker": "STOR-B.ST", "name": "Storskogen B" },
+    { "ticker": "INTRUM.ST", "name": "Intrum" },
+    { "ticker": "SUS.ST",    "name": "Surgical Science" },
+    { "ticker": "HEM.ST",    "name": "Hemnet Group" },
+    { "ticker": "EKTA-B.ST", "name": "Elekta B" },
+    { "ticker": "GRNG.ST",   "name": "Granges" },
     { "ticker": "ERIC-B.ST", "name": "Ericsson B" },
-    { "ticker": "ATCO-A.ST", "name": "Atlas Copco A" },
-    { "ticker": "SEB-A.ST",  "name": "SEB A" },
-    { "ticker": "HM-B.ST",   "name": "Hennes & Mauritz B" }
+    { "ticker": "HM-B.ST",   "name": "Hennes & Mauritz B" },
+    { "ticker": "CAST.ST",   "name": "Castellum" },
+    { "ticker": "VOLV-B.ST", "name": "Volvo B" },
+    { "ticker": "INVE-B.ST", "name": "Investor B" },
+    { "ticker": "ATCO-A.ST", "name": "Atlas Copco A" }
   ]
 }
