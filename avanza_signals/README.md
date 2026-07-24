@@ -23,15 +23,45 @@ Sista raden börjar med `PUSH:` och är den som routinen skickar som notis.
 
 ## Datakälla och nätpolicy
 
-Standardkällan är publik (Yahoo Finance, svenska tickers `*.ST`). **Denna miljös
-egress-policy blockerar externa kurskällor (403)**, så skriptet faller
-automatiskt tillbaka på en **deterministisk syntetisk serie** som märks
-`[SYNTET]` — den bevisar att rörledningen fungerar men får **aldrig** användas för
-riktiga affärer. För riktig data, välj ett:
+Datakällan väljs i prioritetsordning av `analyze.py`:
 
-1. **Öppna egress** för kurskällan i miljöns nätpolicy (styrs när miljön skapas —
-   se https://code.claude.com/docs/en/claude-code-on-the-web), eller
-2. **Koppla in Avanza-MCP** (nedan) och läs riktig marknadsdata + positioner.
+1. **`market_data.json` (riktig data via WebSearch)** — primär källa idag.
+   Miljöns egress-policy blockerar direkta kurskällor (Yahoo/Stooq/Avanza → 403),
+   men harness-verktyget **WebSearch** når en allowlistad sök-backend och
+   returnerar riktiga siffror (pris, dags-/vecko-/månadsförändring, glidande
+   medelvärden, analytikers riktkurser). Routinerna samlar in detta varje körning
+   och skriver `market_data.json`. Detta är **inte** ett kringgående av egress —
+   det är en tillåten kapabilitet. Notera att sökdata kan vara **fördröjd/ungefärlig**;
+   den är alltid beslutsunderlag att verifiera i Avanza/Infront.
+2. **Yahoo Finance-serie** — `fetch_history()` beräknar SMA20/50, RSI14 och
+   drawdown från en riktig daglig serie. Ligger vilande tills egress öppnas eller
+   en Avanza-MCP kopplas in.
+3. **Syntetisk fallback** — deterministisk, märkt `[SYNTET]`, får **aldrig**
+   användas för riktiga affärer. Finns bara så pipelinen kan verifieras offline.
+
+`market_data.json`-schema (alla fält utom nyckeln valfria; utelämna det du inte
+hittar — gissa aldrig):
+
+```json
+{
+  "as_of": "YYYY-MM-DD",
+  "source": "websearch",
+  "instruments": {
+    "ERIC-B.ST": {
+      "last": 91.5, "day_change_pct": -1.59, "week_change_pct": -5.96,
+      "month_change_pct": -18.27, "sma_fast": 0, "sma_slow": 0,
+      "support": 0, "resistance": 0,
+      "analyst_target_low": 120, "analyst_target_high": 128,
+      "analyst_rating": "text", "pe": 12.18, "div_yield_pct": 0
+    }
+  }
+}
+```
+
+För **ännu** bättre data (realtid + dina faktiska positioner): öppna egress för en
+kurskälla i miljöns nätpolicy (styrs när miljön skapas — se
+https://code.claude.com/docs/en/claude-code-on-the-web), eller koppla in Avanza-MCP
+(nedan).
 
 ## Byta till Avanza-MCP (riktig data + positioner)
 
@@ -43,11 +73,16 @@ riktiga affärer. För riktig data, välj ett:
    kursverktyg, och lägg ev. till ett steg som läser dina positioner för
    position-medveten analys.
 
-## Routine (schemalagd körning)
+## Routines (schemalagda körningar)
 
-En Routine kör detta varje börsdag **17:45 svensk tid** (cron `45 15 * * 1-5`,
-UTC) i en färsk session som hämtar denna branch, kör `analyze.py` och pushar
-`PUSH:`-raden. Inbyggd push-notis är påslagen som backstop.
+Två Routines kör på börsdagar i en färsk session som hämtar denna branch, samlar
+in färsk data via WebSearch, skriver `market_data.json`, kör `analyze.py` och
+pushar `PUSH:`-raden. Inbyggd push-notis är påslagen som backstop.
+
+| Routine | Cron (UTC) | Svensk tid (sommar) |
+| --- | --- | --- |
+| Före öppning | `30 6 * * 1-5` | 08:30 |
+| Efter stängning | `45 15 * * 1-5` | 17:45 |
 
 - Ändra schema/pausa: hantera Routinen i claude.ai (Routines) eller via
   `update_trigger`/`delete_trigger`.

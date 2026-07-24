@@ -7,23 +7,28 @@ affären manuellt i Avanza-appen eller i Infront Active Trader.
 
 ---
 
-## Status (2026-07-24): pipeline + Routine + push är byggda
+## Status (2026-07-24): allt byggt, kör på RIKTIG data
 
 Implementerat och verifierat i molndatorn:
 
 - **Analys-pipeline** i `avanza_signals/` (`analyze.py`, `watchlist.json`,
-  `config.json`) — hämtar kurser, beräknar SMA/RSI/drawdown, genererar köp-/
-  säljkandidater och en `PUSH:`-rad. Körd och verifierad.
-- **Routine** `Avanza beslutsstod (borsdag, efter stangning)` — varje börsdag
-  17:45 svensk tid (cron `45 15 * * 1-5`), färsk session som kör analysen och
-  pushar. Inbyggd push påslagen. Avfyrad skarpt en gång för verifiering.
+  `config.json`, `market_data.json`) — normaliserad snapshot-modell, signaler för
+  RSI, månadsfall, stort dagsfall, analytiker-uppsida/nedsida, SMA-trend och
+  närhet till stöd/motstånd. Körd och verifierad.
+- **Riktig data via WebSearch.** Egress blockerar direkta kurskällor, men
+  harness-verktyget WebSearch (allowlistad sök-backend) ger riktiga siffror.
+  Verifierad körning gav KÖP (Ericsson, analytiker-uppsida +31 %), SÄLJ (H&M, kurs
+  över underperform-riktkurs), BEVAKA (Volvo nära motstånd, Atlas Copco positiv
+  trend). Yahoo-serie + syntet finns kvar som fallback.
+- **Två Routines** (färsk session, WebSearch-insamling → analys → push, inbyggd
+  push på): *Före öppning* `30 6 * * 1-5` (08:30) och *Efter stängning*
+  `45 15 * * 1-5` (17:45), svensk sommartid. Båda avfyrade skarpt för verifiering.
 - **Push-notis** testad live (nådde telefonen).
 
-**Kvarstår för riktig data** (en av två, ditt val):
-1. Öppna miljöns egress-policy för kurskällan, eller
+**Valfria uppgraderingar** (mer exakt/realtid + dina positioner):
+1. Öppna miljöns egress-policy för en kurskälla, eller
 2. Koppla in en extern Avanza-MCP-server (`.mcp.json.example` finns).
 
-Tills dess kör pipelinen på tydligt märkt **syntetisk** data så att allt rör sig.
 Detaljer i `avanza_signals/README.md`.
 
 ---
