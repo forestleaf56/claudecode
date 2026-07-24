@@ -3,3 +3,5 @@ avanza_signals/signals.json
 avanza_signals/market_data.json
 avanza_signals/senaste_signaler.txt
 avanza_signals/index.html
+__pycache__/
+*.pyc
