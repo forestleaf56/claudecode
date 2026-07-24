@@ -54,28 +54,37 @@ def signed(pct, digits=0):
     return f'<span class="{cls}">{pct:+.{digits}f}%</span>'
 
 
+MARKET = {"kr": "Stockholm", "USD": "USA", "EUR": "Europa"}
+
+
+def subtitle(r):
+    if r.get("type") == "fond":
+        return esc(r["category"]) if r.get("category") else "Fond"
+    return MARKET.get(r.get("currency", "kr"), "")
+
+
 def stats_grid(r):
     """Enhetlig 4-cells statruta – samma fält för alla aktier resp. alla fonder."""
     if r.get("type") == "fond":
-        oy, fee, ms, cat = (r.get("one_year_pct"), r.get("fee_pct"),
-                            r.get("morningstar_stars"), r.get("category"))
+        oy, fee, risk, ms = (r.get("one_year_pct"), r.get("fee_pct"),
+                             r.get("risk_1_7"), r.get("morningstar_stars"))
         cells = [
             stat("1 år", signed(oy) if oy is not None else "–"),
             stat("Avgift", f"{fee:g}%" if fee is not None else "–"),
+            stat("Risk", f"{risk:g}/7" if risk is not None else "–"),
             stat("Betyg", ("★" * int(ms) + f" {ms:g}/5") if ms is not None else "–"),
-            stat("Kategori", esc(cat) if cat else "–"),
         ]
     else:
         ccy = r.get("currency", "kr")
         last, tl, th = r.get("last"), r.get("analyst_target_low"), r.get("analyst_target_high")
         tgt = (f"{tl:g}–{th:g}" if (tl and th) else (f"{(tl or th):g}" if (tl or th) else None))
         up = upside_pct(r)
-        pe = r.get("pe")
+        dy = r.get("div_yield_pct")
         cells = [
             stat("Kurs", f"{last:g} {ccy}" + ("*" if r.get("last_approx") else "") if last is not None else "–"),
             stat("Riktkurs", f"{tgt} {ccy}" if tgt else "–"),
             stat("Uppsida", signed(up) if up is not None else "–"),
-            stat("P/E", f"{pe:g}" if pe is not None else "–"),
+            stat("Dir.avk", f"{dy:g}%" if dy is not None else "–"),
         ]
     return '<div class="stats">' + "".join(cells) + "</div>"
 
@@ -96,7 +105,10 @@ def card(r):
     return f"""
       <article class="{cls}">
         <div class="top">
-          <div class="id"><span class="dot {pc}"></span><strong>{esc(r['name'])}</strong>{risktag}</div>
+          <div class="id"><span class="dot {pc}"></span>
+            <div class="idtext"><strong>{esc(r['name'])}</strong>{risktag}
+              <div class="sub">{subtitle(r)}</div></div>
+          </div>
           <span class="rec {pc}">{SIDE_LABEL.get(pc, '–')}</span>
         </div>
         {stats_grid(r)}
@@ -143,9 +155,9 @@ def main():
         if last and (tl or th):
             c.append(((tl or th) / last - 1) * 100)  # konservativ (låg) riktkurs om den finns
         if r.get("morningstar_stars") is not None:
-            c.append(r["morningstar_stars"] * 15)
+            c.append(r["morningstar_stars"] * 8)
         if r.get("one_year_pct") is not None:
-            c.append(max(r["one_year_pct"], 0) * 0.5)
+            c.append(max(r["one_year_pct"], 0) * 1.0)  # prestation väger så globala fonder konkurrerar
         return max(c) if c else 10
 
     def sell_score(r):
@@ -250,7 +262,10 @@ def main():
   .itemcard.risk{{opacity:.45;filter:grayscale(.65);}}
   .itemcard.risk:hover,.itemcard.risk:active{{opacity:1;filter:none;}}
   .top{{display:flex;align-items:center;justify-content:space-between;gap:8px;}}
-  .id{{display:flex;align-items:center;gap:7px;}}
+  .id{{display:flex;align-items:flex-start;gap:7px;min-width:0;}}
+  .idtext{{min-width:0;}}
+  .sub{{font-size:11px;color:var(--muted);margin-top:1px;}}
+  .dot{{margin-top:6px;}}
   .dot{{width:9px;height:9px;border-radius:50%;background:var(--muted);flex:none;}}
   .dot.KOP{{background:var(--buy);}}.dot.SALJ,.dot.VARNING{{background:var(--sell);}}.dot.BEVAKA{{background:var(--watch);}}
   .rec{{font-size:11px;font-weight:800;padding:3px 9px;border-radius:999px;flex:none;
