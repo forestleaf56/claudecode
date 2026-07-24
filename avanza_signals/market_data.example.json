@@ -259,7 +259,8 @@
       "category": "Teknik global (aktiv)",
       "risk_1_7": 6,
       "rating_signal": "BEVAKA",
-      "rating_note": "USA ~60 % / Kina ~15 %; hög volatilitet – sektorrisk"
+      "rating_note": "USA ~60 % / Kina ~15 %; hög volatilitet – sektorrisk",
+      "one_year_pct": 56
     },
     "F-CARNEGIE-INDIA": {
       "category": "Indien (aktiv)",

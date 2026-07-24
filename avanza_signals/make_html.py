@@ -130,16 +130,18 @@ def hero(r, side, kicker):
 
 
 def buy_score(r):
+    """Jämförbart, geografineutralt köpvärde: aktier rankas på analytiker-uppsida
+    (%), fonder på faktisk 1-årsavkastning. Morningstar-stjärnor används EJ i
+    rankingen (kategori-relativa, inte jämförbara mellan fondtyper) – bara som
+    visad statistik."""
     c = []
     if r.get("analyst_upside_pct") is not None:
         c.append(r["analyst_upside_pct"])
     last, tl, th = r.get("last"), r.get("analyst_target_low"), r.get("analyst_target_high")
     if last and (tl or th):
         c.append(((tl or th) / last - 1) * 100)  # konservativ (låg) riktkurs om den finns
-    if r.get("morningstar_stars") is not None:
-        c.append(r["morningstar_stars"] * 8)
     if r.get("one_year_pct") is not None:
-        c.append(max(r["one_year_pct"], 0) * 1.0)  # prestation väger så globala fonder konkurrerar
+        c.append(r["one_year_pct"])  # faktisk avkastning (kan vara negativ)
     return max(c) if c else 10
 
 
