@@ -37,11 +37,19 @@ def esc(x):
 
 
 def upside_pct(r):
-    last, tl, th = r.get("last"), r.get("analyst_target_low"), r.get("analyst_target_high")
-    if last and (tl or th):
-        return ((tl or th) / last - 1) * 100
+    """Uppsida till analytikernas KONSENSUS-SNITT (samma mått för alla aktier).
+    Faller tillbaka på ev. upside_pct, sedan mittpunkten av low/high, sedan enskild."""
+    last = r.get("last")
+    avg = r.get("analyst_target_avg")
+    if last and avg:
+        return (avg / last - 1) * 100
     if r.get("analyst_upside_pct") is not None:
         return r["analyst_upside_pct"]
+    tl, th = r.get("analyst_target_low"), r.get("analyst_target_high")
+    if last and tl and th:
+        return (((tl + th) / 2) / last - 1) * 100
+    if last and (tl or th):
+        return ((tl or th) / last - 1) * 100
     return None
 
 
@@ -76,8 +84,16 @@ def stats_grid(r):
         ]
     else:
         ccy = r.get("currency", "kr")
-        last, tl, th = r.get("last"), r.get("analyst_target_low"), r.get("analyst_target_high")
-        tgt = (f"{tl:g}–{th:g}" if (tl and th) else (f"{(tl or th):g}" if (tl or th) else None))
+        last = r.get("last")
+        avg, tl, th = r.get("analyst_target_avg"), r.get("analyst_target_low"), r.get("analyst_target_high")
+        if avg is not None:
+            tgt = f"~{avg:g}"
+        elif tl and th:
+            tgt = f"{tl:g}–{th:g}"
+        elif tl or th:
+            tgt = f"{(tl or th):g}"
+        else:
+            tgt = None
         up = upside_pct(r)
         dy = r.get("div_yield_pct")
         cells = [
@@ -135,13 +151,11 @@ def buy_score(r):
     rankingen (kategori-relativa, inte jämförbara mellan fondtyper) – bara som
     visad statistik."""
     c = []
-    if r.get("analyst_upside_pct") is not None:
-        c.append(r["analyst_upside_pct"])
-    last, tl, th = r.get("last"), r.get("analyst_target_low"), r.get("analyst_target_high")
-    if last and (tl or th):
-        c.append(((tl or th) / last - 1) * 100)  # konservativ (låg) riktkurs om den finns
-    if r.get("one_year_pct") is not None:
-        c.append(r["one_year_pct"])  # faktisk avkastning (kan vara negativ)
+    up = upside_pct(r)                       # aktier: uppsida till konsensus-snitt
+    if up is not None:
+        c.append(up)
+    if r.get("one_year_pct") is not None:    # fonder: faktisk 1-årsavkastning
+        c.append(r["one_year_pct"])
     return max(c) if c else 10
 
 

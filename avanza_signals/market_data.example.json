@@ -5,13 +5,13 @@
   "instruments": {
     "STOR-B.ST": {
       "last": 9.19,
-      "analyst_upside_pct": 76,
       "analyst_target_low": 15,
       "analyst_target_high": 21,
       "risk_high": true,
       "analyst_rating": "snitt-riktkurs ~16,7 kr",
       "rating_signal": "BEVAKA",
-      "rating_note": "hög uppsida men fallande trendkanal – högrisk"
+      "rating_note": "hög uppsida men fallande trendkanal – högrisk",
+      "analyst_target_avg": 16.7
     },
     "INTRUM.ST": {
       "last": 3.4,
@@ -27,7 +27,8 @@
       "analyst_target_high": 88,
       "analyst_rating": "3 köp / 0 sälj (Köp)",
       "rating_signal": "BEVAKA",
-      "rating_note": "Intuitive avbröt MoU – sänkta 2026-mål (risk)"
+      "rating_note": "Intuitive avbröt MoU – sänkta 2026-mål (risk)",
+      "analyst_target_avg": 46
     },
     "HEM.ST": {
       "last": 81.6,
@@ -35,7 +36,8 @@
       "resistance": 100,
       "analyst_target_low": 103,
       "analyst_target_high": 130,
-      "analyst_rating": "Nordea Köp 103 / BNP Underperform 78 (konsensus neutral)"
+      "analyst_rating": "Nordea Köp 103 / BNP Underperform 78 (konsensus neutral)",
+      "analyst_target_avg": 106
     },
     "EKTA-B.ST": {
       "last": 61.5,
@@ -44,7 +46,8 @@
       "analyst_target_high": 69,
       "analyst_rating": "analytiker-konsensus Behåll ~62–69 kr; Morningstar 5★ (FV 108)",
       "rating_signal": "BEVAKA",
-      "rating_note": "spretigt: konsensus behåll (~platt) men Morningstar ser stor uppsida"
+      "rating_note": "spretigt: konsensus behåll (~platt) men Morningstar ser stor uppsida",
+      "analyst_target_avg": 65
     },
     "GRNG.ST": {
       "last": 146.3,
@@ -52,7 +55,8 @@
       "analyst_target_high": 215,
       "analyst_rating": "Handelsbanken Köp 210 / Kepler Köp 215",
       "rating_signal": "KOP",
-      "rating_note": "HB & Kepler upprepar köp (riktkurs 210–215); tekniskt lyft"
+      "rating_note": "HB & Kepler upprepar köp (riktkurs 210–215); tekniskt lyft",
+      "analyst_target_avg": 157
     },
     "ERIC-B.ST": {
       "last": 91.5,
@@ -64,7 +68,8 @@
       "analyst_target_low": 120,
       "analyst_target_high": 128,
       "analyst_rating": "SEB Köp 128 / Danske Behåll 120",
-      "rating_note": "återköp lyfter total direktavkastning mot ~7,5 %"
+      "rating_note": "återköp lyfter total direktavkastning mot ~7,5 %",
+      "analyst_target_avg": 124
     },
     "HM-B.ST": {
       "last": 166.8,
@@ -84,7 +89,8 @@
       "analyst_target_high": 150,
       "analyst_rating": "UBS Neutral 145 (sänkt från köp) / HB Köp 150",
       "rating_signal": "BEVAKA",
-      "rating_note": "UBS nedgraderade till neutral; +25 % i år, mycket inprisat"
+      "rating_note": "UBS nedgraderade till neutral; +25 % i år, mycket inprisat",
+      "analyst_target_avg": 116.5
     },
     "VOLV-B.ST": {
       "last": 335.0,
@@ -93,7 +99,8 @@
       "resistance": 340,
       "analyst_target_low": 330,
       "analyst_target_high": 407,
-      "analyst_rating": "Goldman 407 / Citi 376 / Kepler 365 / BNP 330"
+      "analyst_rating": "Goldman 407 / Citi 376 / Kepler 365 / BNP 330",
+      "analyst_target_avg": 369
     },
     "INVE-B.ST": {
       "last": 367.7,
@@ -101,7 +108,8 @@
       "analyst_target_low": 375.6,
       "analyst_target_high": 415,
       "analyst_rating": "snitt-riktkurs ~375,6 kr (neutral)",
-      "note": "stigande trendkanal (Investtech)"
+      "note": "stigande trendkanal (Investtech)",
+      "analyst_target_avg": 375.6
     },
     "ATCO-A.ST": {
       "last": 187.0,
@@ -111,7 +119,8 @@
       "support": 170,
       "resistance": 196,
       "analyst_target_low": 193.7,
-      "analyst_rating": "UBS uppgraderade till neutral (från sälj)"
+      "analyst_rating": "UBS uppgraderade till neutral (från sälj)",
+      "analyst_target_avg": 193.7
     },
     "NVDA": {
       "currency": "USD",
@@ -120,7 +129,8 @@
       "analyst_target_high": 252,
       "analyst_rating": "konsensus köp/strong buy",
       "rating_signal": "KOP",
-      "rating_note": "topp AI-pick 2026 (Wolfe); riktkurs ~$252"
+      "rating_note": "topp AI-pick 2026 (Wolfe); riktkurs ~$252",
+      "analyst_target_avg": 252
     },
     "ASML": {
       "currency": "EUR",
@@ -130,7 +140,8 @@
       "analyst_target_high": 2150,
       "analyst_rating": "alla 19 analytiker köp; MS 1930 / Berenberg 2100 / DB 2150",
       "rating_signal": "KOP",
-      "rating_note": "höjda riktkurser i juli; +100 % på 1 år; stark AI-order"
+      "rating_note": "höjda riktkurser i juli; +100 % på 1 år; stark AI-order",
+      "analyst_target_avg": 1942
     },
     "MSFT": {
       "currency": "USD",
@@ -140,15 +151,16 @@
       "analyst_target_high": 592,
       "analyst_rating": "konsensus Strong Buy, snittriktkurs ~$577",
       "rating_signal": "KOP",
-      "rating_note": "nedtryckt från topp $555; analytiker ser stor uppsida"
+      "rating_note": "nedtryckt från topp $555; analytiker ser stor uppsida",
+      "analyst_target_avg": 577
     },
     "KTOS": {
       "currency": "USD",
       "last": 48.86,
-      "analyst_upside_pct": 75,
       "analyst_rating": "Strong Buy (9 köp / 2 håll)",
       "rating_signal": "KOP",
-      "rating_note": "försvar/drönare; stigande försvarsbudgetar"
+      "rating_note": "försvar/drönare; stigande försvarsbudgetar",
+      "analyst_target_avg": 85.5
     },
     "CEG": {
       "currency": "USD",
@@ -157,7 +169,8 @@
       "analyst_target_high": 373,
       "analyst_rating": "konsensus Buy, snittriktkurs ~$358",
       "rating_signal": "KOP",
-      "rating_note": "AI-elkraft; kärnkraftsexponering"
+      "rating_note": "AI-elkraft; kärnkraftsexponering",
+      "analyst_target_avg": 358
     },
     "NVO": {
       "currency": "USD",
@@ -167,7 +180,8 @@
       "analyst_target_low": 77.5,
       "analyst_target_high": 145,
       "analyst_rating": "Moderate Buy; Cowen höjde till $145",
-      "rating_note": "nedpressad; möjlig återhämtning (GLP-1)"
+      "rating_note": "nedpressad; möjlig återhämtning (GLP-1)",
+      "analyst_target_avg": 77.5
     },
     "TSLA": {
       "currency": "USD",
@@ -193,7 +207,8 @@
       "analyst_target_high": 1492,
       "analyst_rating": "Strong Buy ~$1300–1490",
       "rating_signal": "BEVAKA",
-      "rating_note": "analytiker köp men minnespriser 'bubbliga' – cyklisk topprisk"
+      "rating_note": "analytiker köp men minnespriser 'bubbliga' – cyklisk topprisk",
+      "analyst_target_avg": 1404
     },
     "F-SPILTAN-INV": {
       "category": "Investmentbolag Sverige",
