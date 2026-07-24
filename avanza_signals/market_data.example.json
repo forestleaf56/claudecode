@@ -327,7 +327,8 @@
       "risk_1_7": 5,
       "rating_signal": "BEVAKA",
       "rating_note": "billig bred Sverige (~350 bolag); kärna, avvakta momentum",
-      "market": "Sverige"
+      "market": "Sverige",
+      "one_year_pct": 28.13
     },
     "F-SCHRODER-GOLD": {
       "category": "Guld",
