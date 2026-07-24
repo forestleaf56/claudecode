@@ -6,6 +6,12 @@
   "rsi_oversold": 30,
   "rsi_overbought": 70,
   "drawdown_from_high_pct": 15,
+  "big_day_drop_pct": 5,
+  "analyst_upside_pct": 20,
+  "analyst_downside_pct": 10,
+  "sma_gap_pct": 3,
+  "near_level_pct": 2,
   "history_range": "6mo",
+  "prefer_market_data_json": true,
   "allow_synthetic_fallback": true
 }

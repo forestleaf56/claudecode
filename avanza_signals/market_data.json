@@ -1,0 +1,35 @@
+{
+  "_comment": "Riktig marknadsdata insamlad via WebSearch (Anthropics sok-backend - enda externa vagen i denna miljo; egress blockerar direkta kurskallor). Falt ar valfria; analyze.py hanterar saknade varden. VARNING: sokdata kan vara fordrojd/ungefarlig - alltid beslutsunderlag, verifiera i Avanza/Infront fore affar.",
+  "as_of": "2026-07-24",
+  "source": "websearch",
+  "instruments": {
+    "ERIC-B.ST": {
+      "last": 91.5, "day_change_pct": -1.59, "week_change_pct": -5.96, "month_change_pct": -18.27,
+      "pe": 12.18, "analyst_target_low": 120, "analyst_target_high": 128,
+      "analyst_rating": "SEB Kop 128 / Danske Behall 120"
+    },
+    "INVE-B.ST": {
+      "last": 367.7, "day_change_pct": -0.58,
+      "note": "stigande trendkanal (Investtech)"
+    },
+    "VOLV-B.ST": {
+      "last": 335.0, "last_approx": true, "year_change_pct": 24.46,
+      "resistance": 340, "analyst_target_low": 365, "analyst_target_high": 407,
+      "analyst_rating": "Kepler Behall 365 / Goldman Kop 407"
+    },
+    "ATCO-A.ST": {
+      "sma_fast": 189.49, "sma_slow": 182.65, "support": 170, "resistance": 196,
+      "note": "kurs saknas i sokdata"
+    },
+    "SEB-A.ST": {
+      "analyst_target_low": 214, "analyst_target_high": 230,
+      "analyst_rating": "Handelsbanken 214 / Goldman 230",
+      "note": "kurs saknas i sokdata"
+    },
+    "HM-B.ST": {
+      "last": 166.8, "sma_fast": 164.99, "sma_slow": 164.83, "support": 140, "resistance": 173,
+      "div_yield_pct": 4.31, "analyst_target_high": 145,
+      "analyst_rating": "BofA Underperform 145"
+    }
+  }
+}

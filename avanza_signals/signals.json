@@ -1,147 +1,183 @@
 {
-  "generated_at": "2026-07-24T09:31:06+00:00",
-  "synthetic_data": true,
+  "generated_at": "2026-07-24T09:43:13+00:00",
+  "sources": [
+    "websearch"
+  ],
+  "synthetic_data": false,
   "results": [
     {
+      "last": 367.7,
+      "day_change_pct": -0.58,
+      "note": "stigande trendkanal (Investtech)",
       "name": "Investor B",
       "ticker": "INVE-B.ST",
-      "synthetic": true,
-      "last": 118.19,
-      "day_change_pct": 0.86,
-      "rsi": 72.8,
-      "sma_fast": 111.56,
-      "sma_slow": 109.89,
-      "drawdown_from_high_pct": 0.0,
+      "source": "websearch",
+      "signals": []
+    },
+    {
+      "last": 335.0,
+      "last_approx": true,
+      "year_change_pct": 24.46,
+      "resistance": 340,
+      "analyst_target_low": 365,
+      "analyst_target_high": 407,
+      "analyst_rating": "Kepler Behall 365 / Goldman Kop 407",
+      "name": "Volvo B",
+      "ticker": "VOLV-B.ST",
+      "source": "websearch",
+      "signals": [
+        {
+          "side": "BEVAKA",
+          "reason": "nara motstand 340"
+        }
+      ]
+    },
+    {
+      "last": 91.5,
+      "day_change_pct": -1.59,
+      "week_change_pct": -5.96,
+      "month_change_pct": -18.27,
+      "pe": 12.18,
+      "analyst_target_low": 120,
+      "analyst_target_high": 128,
+      "analyst_rating": "SEB Kop 128 / Danske Behall 120",
+      "name": "Ericsson B",
+      "ticker": "ERIC-B.ST",
+      "source": "websearch",
+      "signals": [
+        {
+          "side": "BEVAKA",
+          "reason": "manad -18% - kraftigt fall, granska"
+        },
+        {
+          "side": "KOP",
+          "reason": "analytiker 120-128 vs 92 (+31%) [SEB Kop 128 / Danske Behall 120]"
+        }
+      ]
+    },
+    {
+      "sma_fast": 189.49,
+      "sma_slow": 182.65,
+      "support": 170,
+      "resistance": 196,
+      "note": "kurs saknas i sokdata",
+      "name": "Atlas Copco A",
+      "ticker": "ATCO-A.ST",
+      "source": "websearch",
+      "signals": [
+        {
+          "side": "BEVAKA",
+          "reason": "SMA20 189 > SMA50 183 (positiv trend)"
+        }
+      ]
+    },
+    {
+      "analyst_target_low": 214,
+      "analyst_target_high": 230,
+      "analyst_rating": "Handelsbanken 214 / Goldman 230",
+      "note": "kurs saknas i sokdata",
+      "name": "SEB A",
+      "ticker": "SEB-A.ST",
+      "source": "websearch",
+      "signals": []
+    },
+    {
+      "last": 166.8,
+      "sma_fast": 164.99,
+      "sma_slow": 164.83,
+      "support": 140,
+      "resistance": 173,
+      "div_yield_pct": 4.31,
+      "analyst_target_high": 145,
+      "analyst_rating": "BofA Underperform 145",
+      "name": "Hennes & Mauritz B",
+      "ticker": "HM-B.ST",
+      "source": "websearch",
       "signals": [
         {
           "side": "SALJ",
-          "reason": "RSI 73 >= 70 (overkopt)"
+          "reason": "kurs 167 over riktkurs 145 (-13%) [BofA Underperform 145]"
         }
       ]
-    },
-    {
-      "name": "Volvo B",
-      "ticker": "VOLV-B.ST",
-      "synthetic": true,
-      "last": 132.95,
-      "day_change_pct": 1.54,
-      "rsi": 44.9,
-      "sma_fast": 133.54,
-      "sma_slow": 128.28,
-      "drawdown_from_high_pct": -6.5,
-      "signals": []
-    },
-    {
-      "name": "Ericsson B",
-      "ticker": "ERIC-B.ST",
-      "synthetic": true,
-      "last": 88.5,
-      "day_change_pct": 1.55,
-      "rsi": 54.2,
-      "sma_fast": 86.93,
-      "sma_slow": 92.15,
-      "drawdown_from_high_pct": -16.03,
-      "signals": [
-        {
-          "side": "VARNING",
-          "reason": "-16% fran 6mn-topp"
-        }
-      ]
-    },
-    {
-      "name": "Atlas Copco A",
-      "ticker": "ATCO-A.ST",
-      "synthetic": true,
-      "last": 99.47,
-      "day_change_pct": 2.72,
-      "rsi": 57.4,
-      "sma_fast": 96.11,
-      "sma_slow": 99.1,
-      "drawdown_from_high_pct": -6.12,
-      "signals": []
-    },
-    {
-      "name": "SEB A",
-      "ticker": "SEB-A.ST",
-      "synthetic": true,
-      "last": 132.12,
-      "day_change_pct": 1.87,
-      "rsi": 55.6,
-      "sma_fast": 129.02,
-      "sma_slow": 136.37,
-      "drawdown_from_high_pct": -15.55,
-      "signals": [
-        {
-          "side": "VARNING",
-          "reason": "-16% fran 6mn-topp"
-        }
-      ]
-    },
-    {
-      "name": "Hennes & Mauritz B",
-      "ticker": "HM-B.ST",
-      "synthetic": true,
-      "last": 182.45,
-      "day_change_pct": 0.37,
-      "rsi": 56.4,
-      "sma_fast": 178.52,
-      "sma_slow": 184.27,
-      "drawdown_from_high_pct": -14.97,
-      "signals": []
     }
   ],
   "flagged": [
     {
-      "name": "Investor B",
-      "ticker": "INVE-B.ST",
-      "synthetic": true,
-      "last": 118.19,
-      "day_change_pct": 0.86,
-      "rsi": 72.8,
-      "sma_fast": 111.56,
-      "sma_slow": 109.89,
-      "drawdown_from_high_pct": 0.0,
+      "last": 335.0,
+      "last_approx": true,
+      "year_change_pct": 24.46,
+      "resistance": 340,
+      "analyst_target_low": 365,
+      "analyst_target_high": 407,
+      "analyst_rating": "Kepler Behall 365 / Goldman Kop 407",
+      "name": "Volvo B",
+      "ticker": "VOLV-B.ST",
+      "source": "websearch",
+      "signals": [
+        {
+          "side": "BEVAKA",
+          "reason": "nara motstand 340"
+        }
+      ]
+    },
+    {
+      "last": 91.5,
+      "day_change_pct": -1.59,
+      "week_change_pct": -5.96,
+      "month_change_pct": -18.27,
+      "pe": 12.18,
+      "analyst_target_low": 120,
+      "analyst_target_high": 128,
+      "analyst_rating": "SEB Kop 128 / Danske Behall 120",
+      "name": "Ericsson B",
+      "ticker": "ERIC-B.ST",
+      "source": "websearch",
+      "signals": [
+        {
+          "side": "BEVAKA",
+          "reason": "manad -18% - kraftigt fall, granska"
+        },
+        {
+          "side": "KOP",
+          "reason": "analytiker 120-128 vs 92 (+31%) [SEB Kop 128 / Danske Behall 120]"
+        }
+      ]
+    },
+    {
+      "sma_fast": 189.49,
+      "sma_slow": 182.65,
+      "support": 170,
+      "resistance": 196,
+      "note": "kurs saknas i sokdata",
+      "name": "Atlas Copco A",
+      "ticker": "ATCO-A.ST",
+      "source": "websearch",
+      "signals": [
+        {
+          "side": "BEVAKA",
+          "reason": "SMA20 189 > SMA50 183 (positiv trend)"
+        }
+      ]
+    },
+    {
+      "last": 166.8,
+      "sma_fast": 164.99,
+      "sma_slow": 164.83,
+      "support": 140,
+      "resistance": 173,
+      "div_yield_pct": 4.31,
+      "analyst_target_high": 145,
+      "analyst_rating": "BofA Underperform 145",
+      "name": "Hennes & Mauritz B",
+      "ticker": "HM-B.ST",
+      "source": "websearch",
       "signals": [
         {
           "side": "SALJ",
-          "reason": "RSI 73 >= 70 (overkopt)"
-        }
-      ]
-    },
-    {
-      "name": "Ericsson B",
-      "ticker": "ERIC-B.ST",
-      "synthetic": true,
-      "last": 88.5,
-      "day_change_pct": 1.55,
-      "rsi": 54.2,
-      "sma_fast": 86.93,
-      "sma_slow": 92.15,
-      "drawdown_from_high_pct": -16.03,
-      "signals": [
-        {
-          "side": "VARNING",
-          "reason": "-16% fran 6mn-topp"
-        }
-      ]
-    },
-    {
-      "name": "SEB A",
-      "ticker": "SEB-A.ST",
-      "synthetic": true,
-      "last": 132.12,
-      "day_change_pct": 1.87,
-      "rsi": 55.6,
-      "sma_fast": 129.02,
-      "sma_slow": 136.37,
-      "drawdown_from_high_pct": -15.55,
-      "signals": [
-        {
-          "side": "VARNING",
-          "reason": "-16% fran 6mn-topp"
+          "reason": "kurs 167 over riktkurs 145 (-13%) [BofA Underperform 145]"
         }
       ]
     }
   ],
-  "push_line": "3 signal(er): Investor B (SALJ), Ericsson B (VARNING), SEB A (VARNING) [SYNTET-DATA, exekvera ej]"
+  "push_line": "4 signal(er): Volvo B (BEVAKA), Ericsson B (BEVAKA/KOP), Atlas Copco A (BEVAKA), Hennes & Mauritz B (SALJ) - forslag, verifiera i Avanza/Infront"
 }
