@@ -36,48 +36,54 @@ def esc(x):
     return html.escape(str(x))
 
 
-def chips_for(r):
-    c = []
-    if r.get("category"):
-        c.append(f'<span class="chip cat">{esc(r["category"])}</span>')
-    up = r.get("analyst_upside_pct")
-    if up is not None:
-        c.append(f'<span class="chip up">Uppsida +{up:g}%</span>')
-    ms = r.get("morningstar_stars")
-    if ms is not None:
-        c.append(f'<span class="chip">{"★" * int(ms)}{"☆" * (5 - int(ms))} {ms:g}/5</span>')
-    oy = r.get("one_year_pct")
-    if oy is not None:
-        c.append(f'<span class="chip {"up" if oy >= 0 else "down"}">1 år {oy:+g}%</span>')
-    ccy = r.get("currency", "kr")
-    tl, th = r.get("analyst_target_low"), r.get("analyst_target_high")
-    if tl or th:
-        tgt = f"{tl:g}–{th:g}" if (tl and th) else f"{(tl or th):g}"
-        c.append(f'<span class="chip">Riktkurs {tgt} {ccy}</span>')
-    if r.get("pe") is not None:
-        c.append(f'<span class="chip">P/E {r["pe"]:g}</span>')
-    if r.get("fee_pct") is not None:
-        c.append(f'<span class="chip">Avgift {r["fee_pct"]:g}%</span>')
-    if r.get("div_yield_pct") is not None:
-        c.append(f'<span class="chip">Dir.avk {r["div_yield_pct"]:g}%</span>')
-    if r.get("support") is not None and r.get("resistance") is not None:
-        c.append(f'<span class="chip">Stöd {r["support"]:g} · Motstånd {r["resistance"]:g} {ccy}</span>')
-    if r.get("risk_high"):
-        c.append('<span class="chip risk">⚠️ Högrisk</span>')
-    return "".join(c)
+def upside_pct(r):
+    last, tl, th = r.get("last"), r.get("analyst_target_low"), r.get("analyst_target_high")
+    if last and (tl or th):
+        return ((tl or th) / last - 1) * 100
+    if r.get("analyst_upside_pct") is not None:
+        return r["analyst_upside_pct"]
+    return None
+
+
+def stat(label, value):
+    return f'<div class="stat"><div class="sl">{label}</div><div class="sv">{value}</div></div>'
+
+
+def signed(pct, digits=0):
+    cls = "up" if pct >= 0 else "down"
+    return f'<span class="{cls}">{pct:+.{digits}f}%</span>'
+
+
+def stats_grid(r):
+    """Enhetlig 4-cells statruta – samma fält för alla aktier resp. alla fonder."""
+    if r.get("type") == "fond":
+        oy, fee, ms, cat = (r.get("one_year_pct"), r.get("fee_pct"),
+                            r.get("morningstar_stars"), r.get("category"))
+        cells = [
+            stat("1 år", signed(oy) if oy is not None else "–"),
+            stat("Avgift", f"{fee:g}%" if fee is not None else "–"),
+            stat("Betyg", ("★" * int(ms) + f" {ms:g}/5") if ms is not None else "–"),
+            stat("Kategori", esc(cat) if cat else "–"),
+        ]
+    else:
+        ccy = r.get("currency", "kr")
+        last, tl, th = r.get("last"), r.get("analyst_target_low"), r.get("analyst_target_high")
+        tgt = (f"{tl:g}–{th:g}" if (tl and th) else (f"{(tl or th):g}" if (tl or th) else None))
+        up = upside_pct(r)
+        pe = r.get("pe")
+        cells = [
+            stat("Kurs", f"{last:g} {ccy}" + ("*" if r.get("last_approx") else "") if last is not None else "–"),
+            stat("Riktkurs", f"{tgt} {ccy}" if tgt else "–"),
+            stat("Uppsida", signed(up) if up is not None else "–"),
+            stat("P/E", f"{pe:g}" if pe is not None else "–"),
+        ]
+    return '<div class="stats">' + "".join(cells) + "</div>"
 
 
 def card(r):
     pc = r["_p"]
     cls = "itemcard p-" + pc + (" risk" if r.get("risk_high") else "")
-    last = r.get("last")
-    price = ""
-    if last is not None:
-        p = f'{last:g} {r.get("currency", "kr")}' + ("*" if r.get("last_approx") else "")
-        day = r.get("day_change_pct")
-        if day is not None:
-            p += f' <span class="{"up" if day >= 0 else "down"}">({day:+.1f}%)</span>'
-        price = f'<div class="price">{p}</div>'
+    risktag = '<span class="risktag">⚠️ Högrisk</span>' if r.get("risk_high") else ""
     sig = "".join(
         f'<li><span class="badge {s["side"]}">{SIDE_LABEL.get(s["side"], s["side"])}</span>'
         f'<span class="reason">{esc(s["reason"])}</span></li>'
@@ -90,11 +96,10 @@ def card(r):
     return f"""
       <article class="{cls}">
         <div class="top">
-          <div class="id"><span class="dot {pc}"></span><strong>{esc(r['name'])}</strong></div>
+          <div class="id"><span class="dot {pc}"></span><strong>{esc(r['name'])}</strong>{risktag}</div>
           <span class="rec {pc}">{SIDE_LABEL.get(pc, '–')}</span>
         </div>
-        {price}
-        <div class="chips">{chips_for(r)}</div>
+        {stats_grid(r)}
         <ul class="signals">{sig}</ul>
         {extra}
       </article>"""
@@ -172,9 +177,7 @@ def main():
     warn = '<div class="warn">⚠️ Syntetisk data – exekvera ej.</div>' if synthetic else ""
 
     hero_specs = [
-        (best_buy_of(sv), "KOP", "Tydligaste köp – Sverige"),
         (best_buy_of(gl), "KOP", "Tydligaste köp – global"),
-        (best_sell_of(sv), "SALJ", "Tydligaste sälj – Sverige"),
         (best_sell_of(gl), "SALJ", "Tydligaste sälj – global"),
         (best_buy_of(funds), "KOP", "Tydligaste fond-köp"),
         (best_sell_of(funds), "SALJ", "Tydligaste fond-sälj"),
@@ -262,6 +265,12 @@ def main():
   .chip.up{{color:var(--buy);font-weight:700;}} .chip.down{{color:var(--sell);font-weight:700;}}
   .chip.cat{{background:transparent;border:1px solid var(--line);color:var(--muted);}}
   .chip.risk{{background:var(--sell-bg);color:var(--sell);font-weight:700;}}
+  .stats{{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin:11px 0 3px;}}
+  .stat{{background:var(--chip);border-radius:9px;padding:7px 9px;min-width:0;}}
+  .sl{{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.03em;white-space:nowrap;}}
+  .sv{{font-size:13px;font-weight:650;font-variant-numeric:tabular-nums;margin-top:2px;overflow-wrap:anywhere;}}
+  .risktag{{font-size:9.5px;font-weight:800;color:var(--sell);background:var(--sell-bg);padding:2px 6px;border-radius:6px;margin-left:2px;}}
+  @media (max-width:540px){{ .stats{{grid-template-columns:repeat(2,1fr);}} }}
   ul.signals{{list-style:none;margin:8px 0 0;padding:0;}}
   ul.signals li{{display:flex;gap:7px;align-items:baseline;margin:5px 0;font-size:13px;}}
   .badge{{flex:none;font-size:10px;font-weight:800;padding:2px 7px;border-radius:999px;letter-spacing:.03em;}}

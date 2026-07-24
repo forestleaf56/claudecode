@@ -57,6 +57,8 @@
     },
     "INVE-B.ST": {
       "last": 367.7, "day_change_pct": -0.58,
+      "analyst_target_low": 375.6, "analyst_target_high": 415,
+      "analyst_rating": "snitt-riktkurs ~375,6 kr (neutral)",
       "note": "stigande trendkanal (Investtech)"
     },
     "ATCO-A.ST": {
@@ -72,8 +74,9 @@
     },
     "ASML": {
       "currency": "EUR", "last": 1593, "year_change_pct": 100,
-      "analyst_rating": "alla 19 analytiker kop/strong buy",
-      "rating_signal": "KOP", "rating_note": "MS hojde riktkurs; +100 % pa 1 ar; stark AI-order"
+      "analyst_target_low": 1930, "analyst_target_high": 2150,
+      "analyst_rating": "alla 19 analytiker kop; MS 1930 / Berenberg 2100 / DB 2150",
+      "rating_signal": "KOP", "rating_note": "hojda riktkurser i juli; +100 % pa 1 ar; stark AI-order"
     },
     "MSFT": {
       "currency": "USD", "last": 381.58, "analyst_target_high": 600, "div_yield_pct": 0.95,
@@ -98,18 +101,19 @@
     },
     "TSLA": {
       "currency": "USD", "last": 323.55, "risk_high": true,
-      "analyst_rating": "konsensus Hall ~$410",
-      "rating_signal": "BEVAKA", "rating_note": "foll 14 % pa Q2-rapport; Morningstar overvarderad, konsensus-PT $410 over kurs – blandat"
+      "analyst_rating": "Morningstar: mest overvarderad; konsensus Hall",
+      "rating_signal": "SALJ", "rating_note": "foll 14 % pa Q2-rapport; Morningstar mest overvarderad – vardering/risk"
     },
     "PLTR": {
       "currency": "USD", "last": 132.66, "risk_high": true,
-      "analyst_rating": "Wall Street: undvik",
-      "rating_signal": "SALJ", "rating_note": "extrem vardering (52v 106–208); mycket volatil – ta hem/undvik"
+      "analyst_rating": "konsensus Kop men 2 salj (extremt spretigt)",
+      "rating_signal": "SALJ", "rating_note": "extrem vardering (bubbelrisk); analytiker dock kop – mycket volatil"
     },
     "MU": {
-      "currency": "USD", "last": 960,
-      "analyst_rating": "flera flaggar overvardering",
-      "rating_signal": "SALJ", "rating_note": "minnespriser 'bubbly'; cyklisk topprisk"
+      "currency": "USD", "last": 960, "risk_high": true,
+      "analyst_target_low": 1316, "analyst_target_high": 1492,
+      "analyst_rating": "Strong Buy ~$1300–1490",
+      "rating_signal": "BEVAKA", "rating_note": "analytiker kop men minnespriser 'bubbly' – cyklisk topprisk"
     },
 
     "F-SPILTAN-INV": {
@@ -137,8 +141,8 @@
       "rating_signal": "KOP", "rating_note": "+42 % 2025; global teknik – stark men sektorrisk"
     },
     "F-TIN-NYTEK": {
-      "category": "Ny teknik/smabolag", "one_year_pct": -42, "risk_high": true,
-      "rating_signal": "SALJ", "rating_note": "−42 % senaste aret; bland samsta; stora utfloden"
+      "category": "Ny teknik/smabolag", "one_year_pct": -42, "fee_pct": 1.62, "risk_high": true,
+      "rating_signal": "SALJ", "rating_note": "−42 % senaste aret; hog avgift 1,62 %; stora utfloden"
     },
     "F-SEB-DEF": {
       "category": "Forsvar (aktiv)", "fee_pct": 1.57, "one_year_pct": 7,
@@ -149,8 +153,8 @@
       "rating_signal": "SALJ", "rating_note": "+145 % 1 ar men adelmetall svagare 2026 – vinsthemtagning, extremt volatil"
     },
     "F-SPILTAN-SMA": {
-      "category": "Smabolag Sverige",
-      "rating_signal": "BEVAKA", "rating_note": "bland samsta H1 2026; smabolag kan vanda"
+      "category": "Smabolag Sverige", "fee_pct": 1.5, "one_year_pct": -14.71,
+      "rating_signal": "BEVAKA", "rating_note": "−14,7 % i ar; hog avgift 1,5 %; smabolag kan vanda"
     },
     "F-PLUS-SVERIGE": {
       "category": "Sverige-index", "fee_pct": 0.20,
