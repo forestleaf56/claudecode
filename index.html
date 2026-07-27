@@ -72,7 +72,7 @@
   }
   .ticker span{
     display:inline-block;color:var(--neon3);font-weight:bold;
-    padding-left:100%;animation:slide 22s linear infinite;
+    padding-left:100%;animation:slide 60s linear infinite;
   }
 
   hr.rainbow{
@@ -109,10 +109,10 @@
   }
   .construction{
     background:repeating-linear-gradient(45deg,#000 0 12px,#ffcc00 12px 24px);
-    color:#000;font-weight:bold;text-align:center;padding:4px;border:2px solid #000;
-    margin:8px 0;font-size:.8rem;
+    color:#fff;font-weight:bold;text-align:center;padding:4px;border:2px solid #000;
+    margin:8px 0;font-size:.8rem;text-shadow:1px 1px 2px #000, 0 0 3px #000, 0 0 3px #000;
   }
-  .construction span{background:#ffcc00;padding:0 4px;}
+  .construction span{background:#ffcc00;padding:0 4px;color:#000;text-shadow:none;}
 
   a{color:var(--link);}a:visited{color:var(--vlink);}
   .webring a{color:var(--neon2);font-weight:bold;text-decoration:none;}
@@ -233,9 +233,9 @@
       <div class="box webring">
         <h3>🌐 WEBRING</h3>
         <p style="font-size:.85rem">
-          <a href="#">&laquo; PREV</a> &nbsp;•&nbsp;
-          <a href="#">RANDOM</a> &nbsp;•&nbsp;
-          <a href="#">NEXT &raquo;</a>
+          <a href="#" onclick="alert('You reached the edge of the webring! There is nothing out here but a 404 and the cold void of 1996.');return false;">&laquo; PREV</a> &nbsp;•&nbsp;
+          <a href="#" onclick="alert('RANDOM site rolled... you got THIS site. What are the odds! (100%)');return false;">RANDOM</a> &nbsp;•&nbsp;
+          <a href="#" onclick="alert('The NEXT site in the ring is under construction. So is this one. So is the whole internet, honestly.');return false;">NEXT &raquo;</a>
         </p>
         <p style="font-size:.7rem;color:#9df">member of the<br>UNDERGROUND CYBER-ZINE ring</p>
       </div>
