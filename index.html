@@ -56,7 +56,7 @@
   /* ---- blink + spin + marquee (with reduced-motion mercy) ---- */
   @keyframes blink{50%{opacity:0;}}
   @keyframes spin{to{transform:rotate(360deg);}}
-  @keyframes slide{from{transform:translateX(100%);}to{transform:translateX(-100%);}}
+  @keyframes slide{from{transform:translateX(0);}to{transform:translateX(-100%);}}
   .blink{animation:blink 1s steps(1) infinite;}
   .spin{display:inline-block;animation:spin 3s linear infinite;}
   .badge{
@@ -72,7 +72,7 @@
   }
   .ticker span{
     display:inline-block;color:var(--neon3);font-weight:bold;
-    padding-left:100%;animation:slide 60s linear infinite;
+    padding-left:100%;animation:slide 55s linear infinite;animation-delay:5s;
   }
 
   hr.rainbow{
