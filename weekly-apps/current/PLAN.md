@@ -34,8 +34,9 @@ weekly-apps/current/
 ## Build checklist (Mon–Thu, small daily increments)
 - [ ] Mon: concept + plan; minimal `index.html` skeleton (title, full-screen canvas,
       boot script, responsive/DPR resize). No gameplay yet.
-- [ ] Tue: level model — generate a solvable graph (points on a circle + edges),
-      scramble node positions, and render nodes + edges on the canvas.
+- [x] Tue: level model — generate a solvable graph (line-arrangement method:
+      guaranteed-planar, so a crossing-free solution always exists), scramble node
+      positions, and render nodes + edges on the canvas.
 - [ ] Wed: interaction — drag nodes with touch/mouse; live line-crossing detection;
       highlight crossing edges; detect "solved" (zero crossings) and advance level.
 - [ ] Thu: polish — level counter + move counter + best, solve animation, subtle
