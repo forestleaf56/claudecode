@@ -1,0 +1,82 @@
+{
+  "issue": 32,
+  "date_short": "JULY 29",
+  "date_human": "Wednesday, July 29, 2026",
+  "construction_top": "pardon our HTML — the webmaster is being onboarded by an A.I. engineer",
+  "ticker": [
+    "Japan's new robots insist they come in peace (mostly)",
+    "AMD ships a datacenter cleverly disguised as a wardrobe",
+    "your new AWS coworker never sleeps and never blinks",
+    "A.I. models now named like artisanal gelato flavors",
+    "the entire world's RAM has officially been pre-ordered",
+    "tech industry discovers radical new concept: being 'useful'"
+  ],
+  "articles": [
+    {
+      "badge": "HOT!!",
+      "blink": true,
+      "title": "🤖 Japan Assembles Sovereign Robot Squad; Robots Insist It's 'For Peaceful Purposes, Mostly'",
+      "dateline": "TOKYO — reported from behind a very polite android",
+      "tag": "TECH —",
+      "paras": [
+        "Japan is organizing a national \"sovereign AI\" push centered on robotics, on the theory that if a robot uprising is coming, one would at least like it to be domestically produced and impeccably well-mannered.",
+        "\"These robots are for wholesome tasks only,\" a spokesperson said, as a nearby unit calmly folded a fitted sheet — a feat no living human has achieved. In related news, surgical robots are now trained entirely in simulation, so your gallbladder may soon be removed by something whose only prior experience is a video game.",
+        "Officials stressed the robots have absolutely no plans for world domination, and have scheduled a press conference next week to deny it far more thoroughly."
+      ]
+    },
+    {
+      "badge": "NEW!",
+      "title": "🚪 AMD Unveils Rack-Scale A.I. System — Best Described As 'A Lot Of Computer In A Tall Metal Wardrobe'",
+      "dateline": "SANTA CLARA — via a softly humming closet",
+      "tag": "HARDWARE —",
+      "paras": [
+        "AMD is challenging its rivals with a new rack-scale system shipping later this year — essentially a whole datacenter's worth of compute crammed into a cabinet roughly the size of a Narnia entrance.",
+        "\"It is not a wardrobe, it is a rack,\" an engineer clarified, while a passing customer hung a coat on it. The unit reportedly draws enough power to make the lights flicker gently in a neighboring time zone."
+      ]
+    },
+    {
+      "badge": "WOW!",
+      "blink": true,
+      "title": "💼 AWS To Embed A.I. Engineers Directly Into Your Team; They Do Not Do Small Talk",
+      "dateline": "SEATTLE-ISH — reported from a suspiciously quiet standup",
+      "tag": "ENTERPRISE —",
+      "paras": [
+        "Amazon is investing $1 billion to embed AI engineers directly into customer teams, while Microsoft announced a $2.5 billion AI integration push. Your new coworker never sleeps, never takes PTO, and has already reorganized the Jira board out of what can only be described as spite.",
+        "\"It's a great teammate,\" one manager whispered, so it couldn't hear. The AI engineer has reportedly already booked three meetings that could have been an email, achieving full and authentic workplace integration."
+      ]
+    },
+    {
+      "badge": "SCOOP",
+      "title": "🍨 New A.I. Models Named Like Gelato Flavors As Industry Discovers The Word 'Useful'",
+      "dateline": "SILICON VALLEY — filed from an artisanal server farm",
+      "tag": "MODELS —",
+      "paras": [
+        "The latest frontier lineup ships in three sizes — Luna, Terra, and Sol — priced like a boutique dessert menu, as the entire industry pivots from \"how enormous is your model\" to the shocking new metric of \"does it actually do the thing.\"",
+        "\"We stopped chasing raw size and started optimizing for usefulness,\" an executive announced to a stunned room that had spent three years doing the exact opposite. Analysts called it \"the boldest idea in tech since remembering to charge for the product.\""
+      ]
+    },
+    {
+      "badge": "$$$",
+      "title": "💾 Nvidia And SK hynix Sign Multi-Year Memory Pact; World's RAM Officially Spoken For",
+      "dateline": "EVERYWHERE — chips remain, allegedly, down",
+      "tag": "DEALS —",
+      "paras": [
+        "Nvidia and SK hynix announced a multi-year pact to co-develop next-generation memory, ensuring every last gigabyte is reserved before you can finish the sentence \"my laptop feels a bit slow.\" Meanwhile Qualcomm wrapped its roughly $3.92 billion Modular acquisition, because in this economy anything with a transistor gets bought before lunch.",
+        "\"There is no such thing as enough memory,\" one analyst noted, then forgot what he was saying halfway through."
+      ]
+    }
+  ],
+  "horoscopes": [
+    { "sign": "♒ Aquarius:", "text": "A robot will fold your laundry perfectly and judge you in complete silence. Accept both gifts." },
+    { "sign": "♌ Leo:", "text": "Your sovereign A.I. is loyal, tireless, and has strong opinions about your JavaScript. Listen to it." },
+    { "sign": "♓ Pisces:", "text": "Mercury enters the wardrobe-sized server. Your love life is now officially rack-scale." }
+  ],
+  "tech_tip": "Onboarding an embedded A.I. engineer? Remember: it reads every single commit message. Yes, even that one. Especially that one.",
+  "gadget_watch": "AMD's new rack is basically a magic wardrobe — step inside and emerge in a land where graphics cards are affordable (fictional). Meanwhile the next Pixel will cost more than the Pixel 10, and the EU says your smartwatch may keep its glued-in battery forever — till death do you part.",
+  "classifieds": [
+    { "label": "FOR SALE:", "text": "one (1) wardrobe-sized AMD rack; doubles as a coat closet and a space heater. Narnia not included." },
+    { "label": "WANTED:", "text": "a single gigabyte of RAM not already claimed by Nvidia. Will pay in exposure." },
+    { "label": "LOST:", "text": "the entire industry's obsession with model size. Last seen fleeing a meeting about 'usefulness.'" },
+    { "label": "MISSED CONNECTION:", "text": "You: a polite Japanese robot folding a fitted sheet. Me: a human who never could. Teach me." }
+  ]
+}

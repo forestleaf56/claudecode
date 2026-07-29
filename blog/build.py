@@ -1,4 +1,77 @@
-<!DOCTYPE html>
+#!/usr/bin/env python3
+"""Build index.html for The Information Superhighway Gazette.
+
+Design goal: keep the per-run work TINY and reliable. The heavy, unchanging
+page (all the CSS, the 90s chrome, the mobile layout) lives here as a template.
+Each day the routine only has to produce a small `content.json`; this script
+renders it into a single self-contained index.html.
+
+Usage:
+    python3 blog/build.py            # builds ./index.html from blog/content.json
+    python3 blog/build.py --check    # builds to stdout, does not write
+"""
+import json, sys, html, datetime, pathlib
+
+ROOT = pathlib.Path(__file__).resolve().parent.parent
+CONTENT = ROOT / "blog" / "content.json"
+OUT = ROOT / "index.html"
+
+def esc(s):
+    return html.escape(str(s), quote=False)
+
+def render_articles(articles):
+    out = []
+    for a in articles:
+        badge_cls = "badge blink" if a.get("blink") else "badge"
+        paras = "\n        ".join(f"<p>{p}</p>" for p in a["paras"])
+        # first paragraph gets the yellow lead-in tag if provided
+        tag = a.get("tag")
+        if tag and a["paras"]:
+            first = f'<p><span class="tag">{esc(tag)}</span> {a["paras"][0]}</p>'
+            rest = "\n        ".join(f"<p>{p}</p>" for p in a["paras"][1:])
+            paras = first + ("\n        " + rest if rest else "")
+        out.append(f'''      <div class="article">
+        <span class="{badge_cls}">{esc(a.get("badge","NEW!"))}</span>
+        <h2>{esc(a["title"])}</h2>
+        <div class="dateline">{esc(a.get("dateline",""))}</div>
+        {paras}
+      </div>''')
+    return "\n\n".join(out)
+
+def render_ticker(items):
+    return " &bull; ".join(esc(i) for i in items)
+
+def render_horoscopes(hs):
+    parts = []
+    for h in hs:
+        parts.append(f'<b>{esc(h["sign"])}</b> {esc(h["text"])}')
+    return "<br><br>\n          ".join(parts)
+
+def render_classifieds(items):
+    return " &nbsp;•&nbsp;\n      ".join(
+        f'<b>{esc(i["label"])}</b> {esc(i["text"])}' for i in items
+    )
+
+def build(content):
+    tokens = {
+        "{{ISSUE}}": esc(content.get("issue", "?")),
+        "{{DATE_SHORT}}": esc(content.get("date_short", "")),
+        "{{DATE_HUMAN}}": esc(content.get("date_human", "")),
+        "{{CONSTRUCTION_TOP}}": esc(content.get("construction_top",
+            "pardon our HTML — the webmaster is on a smoke break")),
+        "{{TICKER}}": render_ticker(content["ticker"]),
+        "{{ARTICLES}}": render_articles(content["articles"]),
+        "{{HOROSCOPES}}": render_horoscopes(content["horoscopes"]),
+        "{{TECH_TIP}}": esc(content["tech_tip"]),
+        "{{GADGET}}": esc(content["gadget_watch"]),
+        "{{CLASSIFIEDS}}": render_classifieds(content["classifieds"]),
+    }
+    page = TEMPLATE
+    for k, v in tokens.items():
+        page = page.replace(k, v)
+    return page
+
+TEMPLATE = r'''<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -79,59 +152,20 @@
 <body>
 <div class="wrap">
 
-  <div class="construction"><span>🚧 UNDER CONSTRUCTION 🚧</span> pardon our HTML — the webmaster is being onboarded by an A.I. engineer <span>🚧</span></div>
+  <div class="construction"><span>🚧 UNDER CONSTRUCTION 🚧</span> {{CONSTRUCTION_TOP}} <span>🚧</span></div>
 
   <div class="masthead">
     <h1>The Information Superhighway Gazette</h1>
     <div class="sub">✨ Your #1 CYBER-ZINE for Real News, Fake Takes &amp; 100% Free RAM ✨</div>
-    <div class="sub" style="color:#0ff">📅 VOL. XCVI · ISSUE 32 · WEEK OF JULY 29, 1996 2026</div>
+    <div class="sub" style="color:#0ff">📅 VOL. XCVI · ISSUE {{ISSUE}} · WEEK OF {{DATE_SHORT}}, 1996 2026</div>
   </div>
 
-  <div class="ticker"><span>🔴 BREAKING &bull; Japan's new robots insist they come in peace (mostly) &bull; AMD ships a datacenter cleverly disguised as a wardrobe &bull; your new AWS coworker never sleeps and never blinks &bull; A.I. models now named like artisanal gelato flavors &bull; the entire world's RAM has officially been pre-ordered &bull; tech industry discovers radical new concept: being 'useful' &bull; scroll on, cyber-traveler 🔴</span></div>
+  <div class="ticker"><span>🔴 BREAKING &bull; {{TICKER}} &bull; scroll on, cyber-traveler 🔴</span></div>
 
   <div class="cols">
     <div class="main">
 
-      <div class="article">
-        <span class="badge blink">HOT!!</span>
-        <h2>🤖 Japan Assembles Sovereign Robot Squad; Robots Insist It's 'For Peaceful Purposes, Mostly'</h2>
-        <div class="dateline">TOKYO — reported from behind a very polite android</div>
-        <p><span class="tag">TECH —</span> Japan is organizing a national "sovereign AI" push centered on robotics, on the theory that if a robot uprising is coming, one would at least like it to be domestically produced and impeccably well-mannered.</p>
-        <p>"These robots are for wholesome tasks only," a spokesperson said, as a nearby unit calmly folded a fitted sheet — a feat no living human has achieved. In related news, surgical robots are now trained entirely in simulation, so your gallbladder may soon be removed by something whose only prior experience is a video game.</p>
-        <p>Officials stressed the robots have absolutely no plans for world domination, and have scheduled a press conference next week to deny it far more thoroughly.</p>
-      </div>
-
-      <div class="article">
-        <span class="badge">NEW!</span>
-        <h2>🚪 AMD Unveils Rack-Scale A.I. System — Best Described As 'A Lot Of Computer In A Tall Metal Wardrobe'</h2>
-        <div class="dateline">SANTA CLARA — via a softly humming closet</div>
-        <p><span class="tag">HARDWARE —</span> AMD is challenging its rivals with a new rack-scale system shipping later this year — essentially a whole datacenter's worth of compute crammed into a cabinet roughly the size of a Narnia entrance.</p>
-        <p>"It is not a wardrobe, it is a rack," an engineer clarified, while a passing customer hung a coat on it. The unit reportedly draws enough power to make the lights flicker gently in a neighboring time zone.</p>
-      </div>
-
-      <div class="article">
-        <span class="badge blink">WOW!</span>
-        <h2>💼 AWS To Embed A.I. Engineers Directly Into Your Team; They Do Not Do Small Talk</h2>
-        <div class="dateline">SEATTLE-ISH — reported from a suspiciously quiet standup</div>
-        <p><span class="tag">ENTERPRISE —</span> Amazon is investing $1 billion to embed AI engineers directly into customer teams, while Microsoft announced a $2.5 billion AI integration push. Your new coworker never sleeps, never takes PTO, and has already reorganized the Jira board out of what can only be described as spite.</p>
-        <p>"It's a great teammate," one manager whispered, so it couldn't hear. The AI engineer has reportedly already booked three meetings that could have been an email, achieving full and authentic workplace integration.</p>
-      </div>
-
-      <div class="article">
-        <span class="badge">SCOOP</span>
-        <h2>🍨 New A.I. Models Named Like Gelato Flavors As Industry Discovers The Word 'Useful'</h2>
-        <div class="dateline">SILICON VALLEY — filed from an artisanal server farm</div>
-        <p><span class="tag">MODELS —</span> The latest frontier lineup ships in three sizes — Luna, Terra, and Sol — priced like a boutique dessert menu, as the entire industry pivots from "how enormous is your model" to the shocking new metric of "does it actually do the thing."</p>
-        <p>"We stopped chasing raw size and started optimizing for usefulness," an executive announced to a stunned room that had spent three years doing the exact opposite. Analysts called it "the boldest idea in tech since remembering to charge for the product."</p>
-      </div>
-
-      <div class="article">
-        <span class="badge">$$$</span>
-        <h2>💾 Nvidia And SK hynix Sign Multi-Year Memory Pact; World's RAM Officially Spoken For</h2>
-        <div class="dateline">EVERYWHERE — chips remain, allegedly, down</div>
-        <p><span class="tag">DEALS —</span> Nvidia and SK hynix announced a multi-year pact to co-develop next-generation memory, ensuring every last gigabyte is reserved before you can finish the sentence "my laptop feels a bit slow." Meanwhile Qualcomm wrapped its roughly $3.92 billion Modular acquisition, because in this economy anything with a transistor gets bought before lunch.</p>
-        <p>"There is no such thing as enough memory," one analyst noted, then forgot what he was saying halfway through.</p>
-      </div>
+{{ARTICLES}}
 
     </div>
 
@@ -144,18 +178,16 @@
       <div class="box">
         <h3>🔮 CYBER-HOROSCOPE</h3>
         <p style="font-size:.8rem;text-align:left;color:#ffd">
-          <b>♒ Aquarius:</b> A robot will fold your laundry perfectly and judge you in complete silence. Accept both gifts.<br><br>
-          <b>♌ Leo:</b> Your sovereign A.I. is loyal, tireless, and has strong opinions about your JavaScript. Listen to it.<br><br>
-          <b>♓ Pisces:</b> Mercury enters the wardrobe-sized server. Your love life is now officially rack-scale.
+          {{HOROSCOPES}}
         </p>
       </div>
       <div class="box">
         <h3>💡 TECH TIP O' THE WEEK</h3>
-        <p style="font-size:.82rem;color:#dfffe6">Onboarding an embedded A.I. engineer? Remember: it reads every single commit message. Yes, even that one. Especially that one.</p>
+        <p style="font-size:.82rem;color:#dfffe6">{{TECH_TIP}}</p>
       </div>
       <div class="box">
         <h3>📱 GADGET WATCH</h3>
-        <p style="font-size:.82rem;color:#dfffe6">AMD's new rack is basically a magic wardrobe — step inside and emerge in a land where graphics cards are affordable (fictional). Meanwhile the next Pixel will cost more than the Pixel 10, and the EU says your smartwatch may keep its glued-in battery forever — till death do you part.</p>
+        <p style="font-size:.82rem;color:#dfffe6">{{GADGET}}</p>
       </div>
       <div class="box webring">
         <h3>🌐 WEBRING</h3>
@@ -174,10 +206,7 @@
   <div class="article">
     <h2>📰 CLASSIFIEDS &amp; PERSONALS</h2>
     <p style="font-size:.85rem;color:#dfffe6">
-      <b>FOR SALE:</b> one (1) wardrobe-sized AMD rack; doubles as a coat closet and a space heater. Narnia not included. &nbsp;•&nbsp;
-      <b>WANTED:</b> a single gigabyte of RAM not already claimed by Nvidia. Will pay in exposure. &nbsp;•&nbsp;
-      <b>LOST:</b> the entire industry's obsession with model size. Last seen fleeing a meeting about 'usefulness.' &nbsp;•&nbsp;
-      <b>MISSED CONNECTION:</b> You: a polite Japanese robot folding a fitted sheet. Me: a human who never could. Teach me.
+      {{CLASSIFIEDS}}
     </p>
   </div>
 
@@ -191,7 +220,7 @@
 
   <footer>
     <p class="best-viewed">Best viewed in Netscape Navigator 3.0 at 800×600 on a beige tower that could double as a space heater</p>
-    <p>📅 <b>Last updated:</b> <span id="lastup">Wednesday, July 29, 2026</span> · refreshed every weekday by a robot who read the news so you don't have to</p>
+    <p>📅 <b>Last updated:</b> <span id="lastup">{{DATE_HUMAN}}</span> · refreshed every weekday by a robot who read the news so you don't have to</p>
     <p style="color:#ff9">⚠️ SATIRE — This is a parody. Headlines riff on real 2026 tech news; the jokes are ours, the reality is theirs. No electrons were harmed.</p>
     <p><span class="spin">🌐</span> © 1996–2026 The Information Superhighway Gazette · a Claude Code joint · <span class="blink">📧</span> webmaster@geocities.example</p>
   </footer>
@@ -213,3 +242,16 @@
 </script>
 </body>
 </html>
+'''
+
+def main():
+    content = json.loads(CONTENT.read_text(encoding="utf-8"))
+    page = build(content)
+    if "--check" in sys.argv:
+        sys.stdout.write(page)
+        return
+    OUT.write_text(page, encoding="utf-8")
+    print(f"Built {OUT} ({len(page)} bytes) — issue {content.get('issue')}, {content.get('date_human')}")
+
+if __name__ == "__main__":
+    main()
