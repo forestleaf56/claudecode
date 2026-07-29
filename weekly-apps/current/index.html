@@ -23,19 +23,22 @@
   const ctx = cv.getContext('2d');
   let W=0, H=0, dpr=1;
   const rand=(a,b)=>a+Math.random()*(b-a);
+  const clamp=(v,a,b)=>v<a?a:v>b?b:v;
 
-  // ---- layout margins (top leaves room for a future HUD) ----
   const M = { top:96, side:44, bottom:64 };
 
-  // ---- level model ------------------------------------------------------
-  // Line-arrangement generator: N random lines; their pairwise intersections
-  // are the nodes; consecutive intersections along each line are edges. A line
-  // arrangement is always planar, so the intersection points themselves are a
-  // guaranteed crossing-free solution. We keep those as solved coords, then
-  // scramble node positions for the puzzle.
   let nodes=[], edges=[];
+  let level=1, moves=0, solved=false, flash=0;
 
+  // ---- level model (line-arrangement → guaranteed planar / solvable) ----
   function genLevel(numLines){
+    for(let attempt=0; attempt<24; attempt++){
+      buildArrangement(numLines);
+      scramble();
+      if(crossings().count > 0) break;   // want a genuinely tangled start
+    }
+  }
+  function buildArrangement(numLines){
     const lines=[];
     for(let i=0;i<numLines;i++){
       const ang = rand(0, Math.PI);
@@ -45,12 +48,12 @@
     for(let i=0;i<numLines;i++) for(let j=i+1;j<numLines;j++){
       const L1=lines[i], L2=lines[j];
       const det = L1.a*L2.b - L2.a*L1.b;
-      if(Math.abs(det) < 1e-6) continue;              // parallel — skip
+      if(Math.abs(det) < 1e-6) continue;
       const x = (L1.c*L2.b - L2.c*L1.b)/det;
       const y = (L1.a*L2.c - L2.a*L1.c)/det;
       const idx = N.length;
-      N.push({ solX:x, solY:y, x:0, y:0 });
-      L1.pts.push({ idx, t: x*(-L1.b) + y*L1.a });    // param along line dir (-b,a)
+      N.push({ x:0, y:0 });
+      L1.pts.push({ idx, t: x*(-L1.b) + y*L1.a });
       L2.pts.push({ idx, t: x*(-L2.b) + y*L2.a });
     }
     const seen=new Set(), E=[];
@@ -63,37 +66,102 @@
       }
     }
     nodes=N; edges=E;
-    scramble();
   }
-
-  // Scatter node positions randomly within the play area (the puzzle start).
   function scramble(){
     const x0=M.side, x1=W-M.side, y0=M.top, y1=H-M.bottom;
     for(const n of nodes){ n.x = rand(x0,x1); n.y = rand(y0,y1); }
   }
 
-  // ---- render -----------------------------------------------------------
+  // ---- crossing detection ----
+  function ccw(ax,ay,bx,by,cx,cy){ return (cy-ay)*(bx-ax) > (by-ay)*(cx-ax); }
+  function segInt(a,b,c,d){
+    return ccw(a.x,a.y,c.x,c.y,d.x,d.y)!==ccw(b.x,b.y,c.x,c.y,d.x,d.y) &&
+           ccw(a.x,a.y,b.x,b.y,c.x,c.y)!==ccw(a.x,a.y,b.x,b.y,d.x,d.y);
+  }
+  function crossings(){
+    const bad=new Set(); let count=0;
+    for(let i=0;i<edges.length;i++) for(let j=i+1;j<edges.length;j++){
+      const [a,b]=edges[i], [c,d]=edges[j];
+      if(a===c||a===d||b===c||b===d) continue;   // share a node — not a crossing
+      if(segInt(nodes[a],nodes[b],nodes[c],nodes[d])){ bad.add(i); bad.add(j); count++; }
+    }
+    return { bad, count };
+  }
+
+  // ---- input (drag a node) ----
+  let drag=-1, dragMoved=false;
+  function pick(x,y){
+    let best=-1, bd=28*28;
+    for(let i=0;i<nodes.length;i++){
+      const dx=nodes[i].x-x, dy=nodes[i].y-y, d=dx*dx+dy*dy;
+      if(d<bd){ bd=d; best=i; }
+    }
+    return best;
+  }
+  cv.addEventListener('pointerdown', e=>{
+    e.preventDefault();
+    drag=pick(e.clientX,e.clientY); dragMoved=false;
+    if(drag>=0 && cv.setPointerCapture){ try{ cv.setPointerCapture(e.pointerId); }catch(_){} }
+  }, {passive:false});
+  cv.addEventListener('pointermove', e=>{
+    if(drag<0) return; e.preventDefault();
+    nodes[drag].x = clamp(e.clientX, M.side, W-M.side);
+    nodes[drag].y = clamp(e.clientY, M.top,  H-M.bottom);
+    dragMoved=true;
+  }, {passive:false});
+  function endDrag(){ if(drag>=0 && dragMoved) moves++; drag=-1; }
+  cv.addEventListener('pointerup', endDrag);
+  cv.addEventListener('pointercancel', endDrag);
+
+  // ---- level advance ----
+  function nextLevel(){ level++; moves=0; genLevel(Math.min(4+(level-1),7)); }
+
+  // ---- render loop ----
   function draw(){
+    const cr = crossings();
+
+    // solved → brief flash, then advance
+    if(!solved && drag<0 && cr.count===0){
+      solved=true; flash=1;
+      setTimeout(()=>{ nextLevel(); solved=false; }, 850);
+    }
+    if(flash>0) flash=Math.max(0, flash-0.03);
+
     const g = ctx.createLinearGradient(0,0,0,H);
     g.addColorStop(0,'#120a1a'); g.addColorStop(1,'#080510');
     ctx.fillStyle=g; ctx.fillRect(0,0,W,H);
 
-    // edges
+    // edges — red if crossing something, violet if clean; green wash on solve
     ctx.lineCap='round';
-    for(const [i,j] of edges){
-      const a=nodes[i], b=nodes[j];
-      ctx.strokeStyle='rgba(160,107,255,0.5)'; ctx.lineWidth=2.5;
-      ctx.beginPath(); ctx.moveTo(a.x,a.y); ctx.lineTo(b.x,b.y); ctx.stroke();
+    for(let i=0;i<edges.length;i++){
+      const [a,b]=edges[i];
+      const bad = cr.bad.has(i);
+      ctx.strokeStyle = flash>0 ? 'rgba(120,255,180,'+(0.5+flash*0.4)+')'
+                        : bad ? 'rgba(255,90,110,0.85)' : 'rgba(160,107,255,0.5)';
+      ctx.lineWidth = bad ? 3 : 2.5;
+      ctx.beginPath(); ctx.moveTo(nodes[a].x,nodes[a].y); ctx.lineTo(nodes[b].x,nodes[b].y); ctx.stroke();
     }
     // nodes
-    for(const n of nodes){
-      const rg=ctx.createRadialGradient(n.x,n.y,1,n.x,n.y,18);
+    for(let i=0;i<nodes.length;i++){
+      const n=nodes[i], big = i===drag;
+      const R = big?22:18;
+      const rg=ctx.createRadialGradient(n.x,n.y,1,n.x,n.y,R);
       rg.addColorStop(0,'rgba(255,179,71,1)'); rg.addColorStop(0.5,'rgba(255,179,71,0.35)');
       rg.addColorStop(1,'rgba(255,179,71,0)');
-      ctx.fillStyle=rg; ctx.beginPath(); ctx.arc(n.x,n.y,18,0,7); ctx.fill();
-      ctx.fillStyle='#2a1c0a'; ctx.beginPath(); ctx.arc(n.x,n.y,9,0,7); ctx.fill();
+      ctx.fillStyle=rg; ctx.beginPath(); ctx.arc(n.x,n.y,R,0,7); ctx.fill();
+      ctx.fillStyle='#2a1c0a'; ctx.beginPath(); ctx.arc(n.x,n.y,big?11:9,0,7); ctx.fill();
       ctx.strokeStyle='#ffb347'; ctx.lineWidth=2.5; ctx.stroke();
     }
+    // minimal status (full HUD is Thursday)
+    ctx.textAlign='left'; ctx.textBaseline='middle';
+    ctx.fillStyle='rgba(244,236,255,0.8)';
+    ctx.font='700 18px -apple-system,Segoe UI,Roboto,sans-serif';
+    ctx.fillText('Level '+level, M.side, M.top*0.5);
+    ctx.textAlign='right'; ctx.fillStyle='rgba(244,236,255,0.5)';
+    ctx.font='600 14px -apple-system,Segoe UI,Roboto,sans-serif';
+    ctx.fillText(cr.count===0?'untangled!':cr.count+' crossing'+(cr.count>1?'s':''), W-M.side, M.top*0.5);
+
+    requestAnimationFrame(draw);
   }
 
   function resize(){
@@ -102,15 +170,12 @@
     cv.width = Math.floor(W*dpr); cv.height = Math.floor(H*dpr);
     cv.style.width = W+'px'; cv.style.height = H+'px';
     ctx.setTransform(dpr,0,0,dpr,0,0);
-    if(nodes.length) scramble();   // re-scatter to fit new bounds
-    draw();
   }
   window.addEventListener('resize', resize);
 
-  // Boot: generate the first level and render it. (Dragging + crossing
-  // detection + solve/advance land Wednesday; polish Thursday.)
-  genLevel(4);
   resize();
+  genLevel(4);
+  requestAnimationFrame(draw);
 })();
 </script>
 </body>

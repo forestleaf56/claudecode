@@ -37,8 +37,10 @@ weekly-apps/current/
 - [x] Tue: level model — generate a solvable graph (line-arrangement method:
       guaranteed-planar, so a crossing-free solution always exists), scramble node
       positions, and render nodes + edges on the canvas.
-- [ ] Wed: interaction — drag nodes with touch/mouse; live line-crossing detection;
-      highlight crossing edges; detect "solved" (zero crossings) and advance level.
+- [x] Wed: interaction — drag nodes with touch/mouse (pointer events); live
+      line-crossing detection; crossing edges highlighted red; "solved" (zero
+      crossings) triggers a flash and advances to a harder level. Live crossing
+      count + level shown.
 - [ ] Thu: polish — level counter + move counter + best, solve animation, subtle
       sound (WebAudio) + haptics, start/win overlays; mobile test; fix bugs.
 
