@@ -24,53 +24,60 @@
   let W=0, H=0, dpr=1;
   const rand=(a,b)=>a+Math.random()*(b-a);
   const clamp=(v,a,b)=>v<a?a:v>b?b:v;
+  const now=()=>performance.now();
 
-  const M = { top:96, side:44, bottom:64 };
+  const M = { top:104, side:44, bottom:64 };
+  const FONT = "-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif";
 
+  let state='start';                 // 'start' | 'play'
   let nodes=[], edges=[];
-  let level=1, moves=0, solved=false, flash=0;
+  let level=1, moves=0;
+  let best = +(localStorage.getItem('untangle_best')||0);
+  let solveAt=0;                     // timestamp of solve (for animation), 0 = none
 
-  // ---- level model (line-arrangement → guaranteed planar / solvable) ----
+  // ---- sound + haptics ----
+  let actx=null;
+  function tone(freq, dur=0.12, type='sine', vol=0.12, delay=0){
+    try{
+      if(!actx) actx=new (window.AudioContext||window.webkitAudioContext)();
+      if(actx.state==='suspended') actx.resume();
+      const t=actx.currentTime+delay, o=actx.createOscillator(), g=actx.createGain();
+      o.type=type; o.frequency.setValueAtTime(freq,t);
+      g.gain.setValueAtTime(0.0001,t); g.gain.exponentialRampToValueAtTime(vol,t+0.01);
+      g.gain.exponentialRampToValueAtTime(0.0001,t+dur);
+      o.connect(g); g.connect(actx.destination); o.start(t); o.stop(t+dur+0.02);
+    }catch(e){}
+  }
+  function haptic(ms){ try{ if(navigator.vibrate) navigator.vibrate(ms); }catch(e){} }
+  function solveChord(){ [523.25,659.25,783.99,1046.5].forEach((f,i)=>tone(f,0.5,'triangle',0.11,i*0.07)); }
+
+  // ---- level generation (line arrangement → guaranteed planar/solvable) ----
   function genLevel(numLines){
     for(let attempt=0; attempt<24; attempt++){
-      buildArrangement(numLines);
-      scramble();
-      if(crossings().count > 0) break;   // want a genuinely tangled start
+      buildArrangement(numLines); scramble();
+      if(crossings().count > 0) break;
     }
   }
   function buildArrangement(numLines){
     const lines=[];
-    for(let i=0;i<numLines;i++){
-      const ang = rand(0, Math.PI);
-      lines.push({ a:Math.cos(ang), b:Math.sin(ang), c:rand(-1,1), pts:[] });
-    }
+    for(let i=0;i<numLines;i++){ const ang=rand(0,Math.PI);
+      lines.push({ a:Math.cos(ang), b:Math.sin(ang), c:rand(-1,1), pts:[] }); }
     const N=[];
     for(let i=0;i<numLines;i++) for(let j=i+1;j<numLines;j++){
-      const L1=lines[i], L2=lines[j];
-      const det = L1.a*L2.b - L2.a*L1.b;
-      if(Math.abs(det) < 1e-6) continue;
-      const x = (L1.c*L2.b - L2.c*L1.b)/det;
-      const y = (L1.a*L2.c - L2.a*L1.c)/det;
-      const idx = N.length;
-      N.push({ x:0, y:0 });
-      L1.pts.push({ idx, t: x*(-L1.b) + y*L1.a });
-      L2.pts.push({ idx, t: x*(-L2.b) + y*L2.a });
+      const L1=lines[i], L2=lines[j], det=L1.a*L2.b - L2.a*L1.b;
+      if(Math.abs(det)<1e-6) continue;
+      const x=(L1.c*L2.b - L2.c*L1.b)/det, y=(L1.a*L2.c - L2.a*L1.c)/det, idx=N.length;
+      N.push({ x:0,y:0 });
+      L1.pts.push({idx, t:x*(-L1.b)+y*L1.a}); L2.pts.push({idx, t:x*(-L2.b)+y*L2.a});
     }
     const seen=new Set(), E=[];
-    for(const L of lines){
-      L.pts.sort((p,q)=>p.t-q.t);
-      for(let k=0;k+1<L.pts.length;k++){
-        const a=L.pts[k].idx, b=L.pts[k+1].idx;
-        const key = a<b ? a+'-'+b : b+'-'+a;
-        if(!seen.has(key)){ seen.add(key); E.push([a,b]); }
-      }
-    }
+    for(const L of lines){ L.pts.sort((p,q)=>p.t-q.t);
+      for(let k=0;k+1<L.pts.length;k++){ const a=L.pts[k].idx,b=L.pts[k+1].idx,key=a<b?a+'-'+b:b+'-'+a;
+        if(!seen.has(key)){ seen.add(key); E.push([a,b]); } } }
     nodes=N; edges=E;
   }
-  function scramble(){
-    const x0=M.side, x1=W-M.side, y0=M.top, y1=H-M.bottom;
-    for(const n of nodes){ n.x = rand(x0,x1); n.y = rand(y0,y1); }
-  }
+  function scramble(){ const x0=M.side,x1=W-M.side,y0=M.top,y1=H-M.bottom;
+    for(const n of nodes){ n.x=rand(x0,x1); n.y=rand(y0,y1); } }
 
   // ---- crossing detection ----
   function ccw(ax,ay,bx,by,cx,cy){ return (cy-ay)*(bx-ax) > (by-ay)*(cx-ax); }
@@ -81,100 +88,120 @@
   function crossings(){
     const bad=new Set(); let count=0;
     for(let i=0;i<edges.length;i++) for(let j=i+1;j<edges.length;j++){
-      const [a,b]=edges[i], [c,d]=edges[j];
-      if(a===c||a===d||b===c||b===d) continue;   // share a node — not a crossing
+      const [a,b]=edges[i],[c,d]=edges[j];
+      if(a===c||a===d||b===c||b===d) continue;
       if(segInt(nodes[a],nodes[b],nodes[c],nodes[d])){ bad.add(i); bad.add(j); count++; }
     }
     return { bad, count };
   }
 
-  // ---- input (drag a node) ----
+  // ---- flow ----
+  function startGame(){ state='play'; level=1; moves=0; solveAt=0; genLevel(4); }
+  function nextLevel(){ level++; if(level-1>best){ best=level-1; localStorage.setItem('untangle_best',best); }
+    moves=0; solveAt=0; genLevel(Math.min(4+(level-1),7)); }
+
+  // ---- input ----
   let drag=-1, dragMoved=false;
-  function pick(x,y){
-    let best=-1, bd=28*28;
-    for(let i=0;i<nodes.length;i++){
-      const dx=nodes[i].x-x, dy=nodes[i].y-y, d=dx*dx+dy*dy;
-      if(d<bd){ bd=d; best=i; }
-    }
-    return best;
-  }
+  function pick(x,y){ let best=-1,bd=30*30;
+    for(let i=0;i<nodes.length;i++){ const dx=nodes[i].x-x,dy=nodes[i].y-y,d=dx*dx+dy*dy; if(d<bd){bd=d;best=i;} }
+    return best; }
   cv.addEventListener('pointerdown', e=>{
     e.preventDefault();
+    if(state==='start'){ startGame(); return; }
+    if(solveAt) return;                       // ignore during solve animation
     drag=pick(e.clientX,e.clientY); dragMoved=false;
-    if(drag>=0 && cv.setPointerCapture){ try{ cv.setPointerCapture(e.pointerId); }catch(_){} }
+    if(drag>=0){ tone(320,0.05,'sine',0.05); haptic(6);
+      if(cv.setPointerCapture){ try{ cv.setPointerCapture(e.pointerId); }catch(_){} } }
   }, {passive:false});
   cv.addEventListener('pointermove', e=>{
     if(drag<0) return; e.preventDefault();
-    nodes[drag].x = clamp(e.clientX, M.side, W-M.side);
-    nodes[drag].y = clamp(e.clientY, M.top,  H-M.bottom);
+    nodes[drag].x=clamp(e.clientX,M.side,W-M.side);
+    nodes[drag].y=clamp(e.clientY,M.top,H-M.bottom);
     dragMoved=true;
   }, {passive:false});
   function endDrag(){ if(drag>=0 && dragMoved) moves++; drag=-1; }
   cv.addEventListener('pointerup', endDrag);
   cv.addEventListener('pointercancel', endDrag);
 
-  // ---- level advance ----
-  function nextLevel(){ level++; moves=0; genLevel(Math.min(4+(level-1),7)); }
+  // ---- render ----
+  function bg(){ const g=ctx.createLinearGradient(0,0,0,H);
+    g.addColorStop(0,'#120a1a'); g.addColorStop(1,'#080510'); ctx.fillStyle=g; ctx.fillRect(0,0,W,H); }
 
-  // ---- render loop ----
   function draw(){
-    const cr = crossings();
+    bg();
 
-    // solved → brief flash, then advance
-    if(!solved && drag<0 && cr.count===0){
-      solved=true; flash=1;
-      setTimeout(()=>{ nextLevel(); solved=false; }, 850);
+    if(state==='start'){
+      ctx.textAlign='center'; ctx.textBaseline='middle';
+      ctx.fillStyle='#ffb347'; ctx.font='800 '+Math.min(W*0.15,80)+'px '+FONT;
+      ctx.fillText('UNTANGLE', W/2, H*0.40);
+      ctx.fillStyle='rgba(244,236,255,0.6)'; ctx.font='500 '+Math.min(W*0.045,18)+'px '+FONT;
+      ctx.fillText('drag the nodes so no lines cross', W/2, H*0.49);
+      const pulse=0.6+0.4*Math.sin(now()/400);
+      ctx.fillStyle='rgba(160,107,255,'+pulse+')'; ctx.font='700 20px '+FONT;
+      ctx.fillText('TAP TO PLAY', W/2, H*0.60);
+      if(best>0){ ctx.fillStyle='rgba(244,236,255,0.4)'; ctx.font='600 14px '+FONT;
+        ctx.fillText('best: level '+best, W/2, H*0.66); }
+      requestAnimationFrame(draw); return;
     }
-    if(flash>0) flash=Math.max(0, flash-0.03);
 
-    const g = ctx.createLinearGradient(0,0,0,H);
-    g.addColorStop(0,'#120a1a'); g.addColorStop(1,'#080510');
-    ctx.fillStyle=g; ctx.fillRect(0,0,W,H);
+    const cr = crossings();
+    if(!solveAt && drag<0 && cr.count===0){ solveAt=now(); solveChord(); haptic([20,40,20]); }
+    const solving = solveAt>0;
+    const sp = solving ? Math.min((now()-solveAt)/850,1) : 0;   // 0..1 solve progress
+    if(solving && sp>=1) nextLevel();
 
-    // edges — red if crossing something, violet if clean; green wash on solve
+    // edges
     ctx.lineCap='round';
     for(let i=0;i<edges.length;i++){
-      const [a,b]=edges[i];
-      const bad = cr.bad.has(i);
-      ctx.strokeStyle = flash>0 ? 'rgba(120,255,180,'+(0.5+flash*0.4)+')'
-                        : bad ? 'rgba(255,90,110,0.85)' : 'rgba(160,107,255,0.5)';
-      ctx.lineWidth = bad ? 3 : 2.5;
+      const [a,b]=edges[i], bad=cr.bad.has(i);
+      ctx.strokeStyle = solving ? 'rgba(120,255,180,'+(0.9-sp*0.3)+')'
+                        : bad ? 'rgba(255,90,110,0.85)' : 'rgba(160,107,255,0.55)';
+      ctx.lineWidth = bad?3:2.5;
       ctx.beginPath(); ctx.moveTo(nodes[a].x,nodes[a].y); ctx.lineTo(nodes[b].x,nodes[b].y); ctx.stroke();
     }
-    // nodes
+    // nodes (pulse on solve)
+    const bump = solving ? Math.sin(sp*Math.PI)*6 : 0;
     for(let i=0;i<nodes.length;i++){
-      const n=nodes[i], big = i===drag;
-      const R = big?22:18;
+      const n=nodes[i], big=i===drag, R=(big?22:18)+bump;
+      const col = solving ? '120,255,180' : '255,179,71';
       const rg=ctx.createRadialGradient(n.x,n.y,1,n.x,n.y,R);
-      rg.addColorStop(0,'rgba(255,179,71,1)'); rg.addColorStop(0.5,'rgba(255,179,71,0.35)');
-      rg.addColorStop(1,'rgba(255,179,71,0)');
+      rg.addColorStop(0,'rgba('+col+',1)'); rg.addColorStop(0.5,'rgba('+col+',0.35)'); rg.addColorStop(1,'rgba('+col+',0)');
       ctx.fillStyle=rg; ctx.beginPath(); ctx.arc(n.x,n.y,R,0,7); ctx.fill();
       ctx.fillStyle='#2a1c0a'; ctx.beginPath(); ctx.arc(n.x,n.y,big?11:9,0,7); ctx.fill();
-      ctx.strokeStyle='#ffb347'; ctx.lineWidth=2.5; ctx.stroke();
+      ctx.strokeStyle='rgb('+col+')'; ctx.lineWidth=2.5; ctx.stroke();
     }
-    // minimal status (full HUD is Thursday)
-    ctx.textAlign='left'; ctx.textBaseline='middle';
-    ctx.fillStyle='rgba(244,236,255,0.8)';
-    ctx.font='700 18px -apple-system,Segoe UI,Roboto,sans-serif';
-    ctx.fillText('Level '+level, M.side, M.top*0.5);
-    ctx.textAlign='right'; ctx.fillStyle='rgba(244,236,255,0.5)';
-    ctx.font='600 14px -apple-system,Segoe UI,Roboto,sans-serif';
-    ctx.fillText(cr.count===0?'untangled!':cr.count+' crossing'+(cr.count>1?'s':''), W-M.side, M.top*0.5);
 
+    // HUD
+    ctx.textBaseline='middle';
+    ctx.textAlign='left';  ctx.fillStyle='rgba(244,236,255,0.85)'; ctx.font='700 20px '+FONT;
+    ctx.fillText('Level '+level, M.side, 40);
+    ctx.textAlign='right'; ctx.fillStyle='rgba(255,179,71,0.85)';
+    ctx.fillText('Best '+best, W-M.side, 40);
+    ctx.textAlign='left';  ctx.fillStyle='rgba(244,236,255,0.45)'; ctx.font='600 14px '+FONT;
+    ctx.fillText(moves+' move'+(moves===1?'':'s'), M.side, 68);
+    ctx.textAlign='right'; ctx.fillStyle = cr.count? 'rgba(255,120,140,0.7)':'rgba(120,255,180,0.85)';
+    ctx.fillText(cr.count? cr.count+' crossing'+(cr.count>1?'s':'') : 'untangled!', W-M.side, 68);
+
+    // solve banner
+    if(solving){
+      ctx.textAlign='center'; ctx.globalAlpha=Math.sin(sp*Math.PI);
+      ctx.fillStyle='#b6ffcf'; ctx.font='800 '+Math.min(W*0.11,52)+'px '+FONT;
+      ctx.fillText('UNTANGLED!', W/2, H*0.5);
+      ctx.globalAlpha=1;
+    }
     requestAnimationFrame(draw);
   }
 
   function resize(){
-    dpr = Math.min(window.devicePixelRatio||1, 2.5);
-    W = window.innerWidth; H = window.innerHeight;
-    cv.width = Math.floor(W*dpr); cv.height = Math.floor(H*dpr);
-    cv.style.width = W+'px'; cv.style.height = H+'px';
+    dpr=Math.min(window.devicePixelRatio||1,2.5);
+    W=window.innerWidth; H=window.innerHeight;
+    cv.width=Math.floor(W*dpr); cv.height=Math.floor(H*dpr);
+    cv.style.width=W+'px'; cv.style.height=H+'px';
     ctx.setTransform(dpr,0,0,dpr,0,0);
   }
   window.addEventListener('resize', resize);
 
   resize();
-  genLevel(4);
   requestAnimationFrame(draw);
 })();
 </script>

@@ -41,8 +41,16 @@ weekly-apps/current/
       line-crossing detection; crossing edges highlighted red; "solved" (zero
       crossings) triggers a flash and advances to a harder level. Live crossing
       count + level shown.
-- [ ] Thu: polish — level counter + move counter + best, solve animation, subtle
-      sound (WebAudio) + haptics, start/win overlays; mobile test; fix bugs.
+- [x] Thu: polish — HUD (level + moves + best-level saved to localStorage),
+      solve animation (green pulse + "UNTANGLED!" banner + rising chord), WebAudio
+      sound + haptics on grab/solve, start ("TAP TO PLAY") + win overlays; verified
+      on mobile viewport, no JS errors.
+
+## Friday readme notes
+- Self-contained single index.html, Canvas 2D. NO Supabase / NO Gemini API.
+- Therefore NO API keys, NO env vars, and NO api/ folder / Vercel serverless setup.
+  Runs by just opening index.html; host as a static file anywhere.
+- Controls: drag nodes (touch or mouse). Goal: no crossing lines. Solve to advance.
 
 ## Status notes
 - Mon 2026-07-27: plan + skeleton only, per the small-increment routine.
