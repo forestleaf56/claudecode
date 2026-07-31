@@ -23,6 +23,9 @@ Each app must be:
   uses **Supabase** or the **Gemini free API**, structured for **Vercel**:
   `index.html` plus an `api/` folder containing `app.js`.
 - **Planned before coding** (a `PLAN.md` is written first).
+- **Polished front end** — a **game** gets a nice title screen + menu; an **app**
+  gets a nice logo + menu (with any main navigation/options). This is designed in on
+  Monday (an explicit `PLAN.md` checklist item) and verified in Thursday's polish pass.
 
 ---
 
