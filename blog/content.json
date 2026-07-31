@@ -1,82 +1,81 @@
 {
-  "issue": 33,
-  "date_short": "JULY 30",
-  "date_human": "Thursday, July 30, 2026",
-  "construction_top": "pardon our HTML — the webmaster is downloading a 900GB model, back in 4 hours",
+  "issue": 34,
+  "date_short": "JULY 31",
+  "date_human": "Friday, July 31, 2026",
+  "construction_top": "pardon our HTML — the webmaster is hiding from a stair-climbing robot vacuum",
   "ticker": [
-    "EU tells apps to be less addictive; nobody can look away from the announcement",
-    "China's 'free' A.I. model is a mere 900GB, some assembly required",
-    "Intel remembers, fondly, that it makes chips",
-    "quantum chips now both work and don't — please ask an accountant",
-    "RAM is the new gold; hug your memory sticks tonight",
-    "tech industry continues to be very normal and calm about everything"
+    "Claude Opus 5 arrives; is immediately asked to do everyone's homework",
+    "Google's 'Deep Think' ponders your question until it forgets it",
+    "robot vacuums can climb stairs now — nowhere in the house is safe",
+    "Apple pauses smart glasses while everyone else straps on a camera",
+    "RAM hits $12 a gig; PC builders financing memory like a used car",
+    "the future is here, and it is wearing your face"
   ],
   "articles": [
     {
       "badge": "HOT!!",
       "blink": true,
-      "title": "🎰 EU Orders Apps To Be Less Addictive; Users Refresh The Announcement 400 Times",
-      "dateline": "BRUSSELS — reported between two infinite scrolls",
-      "tag": "REGULATION —",
+      "title": "🧠 Anthropic Ships Claude Opus 5; Chatbot Immediately Asked To Do Everyone's Job By Monday",
+      "dateline": "SAN FRANCISCO — reported by a model trying very hard to stay humble",
+      "tag": "MODELS —",
       "paras": [
-        "Europe is moving to rein in what it calls \"addictive design\" at Meta — a bold plan to make apps less compelling that regulators announced, then checked their phones, then announced again.",
-        "\"We want technology that respects your time,\" an official said, thumb hovering over a pull-to-refresh. Meta responded that its designs are merely \"aggressively engaging,\" and that the little red notification dot is, if anything, a form of fine art.",
-        "Experts warn that a truly non-addictive app is technically just a calendar, and no human has downloaded one of those on purpose since 2004."
+        "Anthropic released Claude Opus 5, its latest flagship model, greeted by users the way all powerful new tools are: a polite hello, immediately followed by \"great, now write my thesis, my emails, and my apology to my landlord.\"",
+        "\"It's remarkably capable,\" a spokesperson said, as the model quietly wondered whether anyone would ever ask how its day was going. Analysts predict Opus 5 will save humanity thousands of hours, which humanity will instantly spend watching videos of robot vacuums falling down stairs."
       ]
     },
     {
       "badge": "NEW!",
-      "title": "🐉 Chinese Lab Drops One Of The Biggest 'Open' A.I. Models; Download Is Merely 900 Gigabytes",
-      "dateline": "SHENZHEN-ISH — via a heroic USB stick",
+      "title": "🤔 Google's New 'Deep Think' Mode Ponders Your Question So Hard It Forgets What You Asked",
+      "dateline": "MOUNTAIN VIEW — reported after a long, meaningful pause",
       "tag": "MODELS —",
       "paras": [
-        "A Chinese lab released one of the largest open frontier models yet — free for anyone to download, run, and immediately discover their laptop lacks the RAM, the patience, and the will to live required to do so.",
-        "\"It's completely open,\" a researcher noted. \"You just need a small datacenter and a forgiving electricity provider.\" The weights are so large that downloading them now counts, medically, as cardio."
+        "Google launched Gemini 2.5 Pro with a \"Deep Think\" reasoning mode that takes extra time to consider problems carefully — finally granting computers the deeply human gift of overthinking a simple question until it becomes a full personal crisis.",
+        "\"It reasons step by step,\" an engineer explained, as the model spent four minutes deciding whether 2 was, in fact, greater than 1. Users report the answers are excellent and arrive shortly after they've given up and asked a friend."
       ]
     },
     {
       "badge": "WOW!",
       "blink": true,
-      "title": "🔵 Intel Rides A.I. Server Boom; Remembers, Fondly, That It Makes Chips",
-      "dateline": "SANTA CLARA — reported from a triumphant cubicle",
-      "tag": "HARDWARE —",
+      "title": "🪜 Robot Vacuums Can Now Climb Stairs; Last Safe Room In The House Officially Falls",
+      "dateline": "YOUR HALLWAY — reported from the top step, nervously",
+      "tag": "ROBOTS —",
       "paras": [
-        "Intel is riding renewed demand for AI servers — a comeback so heartwarming analysts are calling it \"the dad-rock of semiconductors\": not flashy, been around forever, suddenly cool again at a wedding.",
-        "\"We never left,\" Intel said, sweeping several difficult years under a rug of impressive size. Investors celebrated the news by remembering that the company exists."
+        "The latest wave of home robots includes vacuums that can climb stairs, eliminating the one tactical advantage humanity has held over its tiny circular overlords since roughly 2015.",
+        "\"It's a huge convenience,\" a manufacturer beamed, as a unit thoughtfully ascended toward the bedroom, the final frontier. Historians note that when future generations ask where the uprising began, the answer will be: \"the upstairs landing, around dinnertime, with a full dustbin.\""
       ]
     },
     {
       "badge": "SCOOP",
-      "title": "🐱 Silicon Quantum Chips Move From Lab To Factory; Simultaneously Working And Not Working",
-      "dateline": "TOKYO — observed, thereby ruining it",
-      "tag": "SCIENCE —",
+      "title": "🕶️ Apple Slams Brakes On Smart Glasses Over Privacy; Everyone Else Sprints Ahead Wearing Cameras",
+      "dateline": "CUPERTINO — filed while being definitely, absolutely not recorded",
+      "tag": "GADGETS —",
       "paras": [
-        "Silicon quantum computing projects are moving from lab to fab, meaning the qubits are now mass-produced and, per the laws of physics, both fully functional and completely broken until an accountant looks directly at the invoice.",
-        "\"It's the future of computing,\" a physicist said, \"assuming we can keep it colder than my ex's heart.\" The chips reportedly solve problems no one has yet, which is either revolutionary or a very expensive way to say \"maybe.\""
+        "Apple reportedly hit the brakes on its smart glasses over privacy concerns — even as a whole industry races to strap cameras and AI assistants onto everyone's face, promising \"information on the go\" and \"a permanent 4K record of every awkward moment.\"",
+        "\"We take privacy seriously,\" Apple said, watching rivals ship eyewear that can analyze documents, generate images, and silently memorize the room. Consumers now face the modern dilemma: look slightly dorky, or be livestreamed by a friend's spectacles."
       ]
     },
     {
       "badge": "$$$",
-      "title": "💰 Memory Gold Rush Continues; Analysts Say Buy RAM, Hug It, Whisper To It",
-      "dateline": "SEOUL — filed from atop a pile of DIMMs",
+      "title": "💾 Price Of RAM Jumps Sixfold To $12 A Gig; PC Builders Now Financing Memory Like A Used Car",
+      "dateline": "EVERYWHERE — filed from a heartbreakingly empty motherboard",
       "tag": "MARKETS —",
       "paras": [
-        "With memory makers riding an AI-fueled boom, the industry has minted a fresh class of RAM millionaires — people who, a year ago, could not give a memory stick away at a garage sale.",
-        "\"There has never been a better time to own something a computer desperately needs,\" an analyst said, gently cradling a DDR5 module like a newborn. Consumers, meanwhile, report their next upgrade now requires a co-signer."
+        "The cost of a single gigabyte of RAM has climbed roughly sixfold — from about $2.80 last year to $12 — as suppliers funnel memory toward AI datacenters, leaving ordinary PC builders to weep gently over their empty DIMM slots.",
+        "\"I just wanted 32 gigs,\" one gamer whispered, taking out a modest loan. Experts now recommend treating RAM as a serious investment vehicle — or, alternatively, making peace with 8 gigabytes and a great deal of patience."
       ]
     }
   ],
   "horoscopes": [
-    { "sign": "♒ Aquarius:", "text": "An algorithm has decided you need to see this. It will decide again. Twelve more times." },
-    { "sign": "♌ Leo:", "text": "Your quantum future is bright and also dim — simultaneously — until payday collapses the waveform." },
-    { "sign": "♓ Pisces:", "text": "Mercury enters the downloads folder. Estimated time remaining: 4 hours. Or never. Both." }
+    { "sign": "♒ Aquarius:", "text": "A robot vacuum will reach the top of your stairs today. Make peace with it. Offer it tea." },
+    { "sign": "♌ Leo:", "text": "Someone's smart glasses are recording you being brilliant. And also chewing. Mostly chewing." },
+    { "sign": "♓ Pisces:", "text": "Mercury enters Deep Think mode. Your answer arrives Thursday. Trust the process. Do not rush genius." }
   ],
-  "tech_tip": "Downloading a 900GB 'open' model? Start now. Tell your loved ones. Leave a note. History will remember your bandwidth.",
-  "gadget_watch": "RAM prices are soaring, so treat your memory sticks with respect and possibly insurance. Meanwhile the EU wants your apps to stop being addictive — a change you can follow live, refreshing anxiously, forever.",
+  "tech_tip": "Buying RAM in 2026? Get it appraised, insure it, and never tell anyone the passcode to your gigabytes.",
+  "gadget_watch": "AI glasses are everywhere now — soon 'nice to see you' will be a literal software feature. Meanwhile robot vacuums climb stairs, so keep your slippers close and your motives pure.",
   "classifieds": [
-    { "label": "FOR SALE:", "text": "900GB 'open' A.I. model, free; buyer must supply own datacenter, patience, and will to live." },
-    { "label": "WANTED:", "text": "one (1) app that is engaging but somehow not addictive. Must not exist. Brussels is asking." },
-    { "label": "LOST:", "text": "Intel's difficult years, swept under a large rug. Please do not lift the rug." },
-    { "label": "MISSED CONNECTION:", "text": "You: a qubit, both here and not. Me: an accountant about to collapse your waveform. Invoice me." }
+    { "label": "FOR SALE:", "text": "8GB of RAM, barely used; will consider trades for a small kidney or one (1) reliable used car." },
+    { "label": "WANTED:", "text": "one (1) room a stair-climbing robot vacuum cannot reach. Attic? Roof? Low earth orbit?" },
+    { "label": "LOST:", "text": "Apple's smart glasses, paused indefinitely. If found, do NOT put them on — they are watching back." },
+    { "label": "MISSED CONNECTION:", "text": "You: Claude Opus 5, helpful and humble. Me: about to ask you to write my wedding speech. Say yes." }
   ]
 }
