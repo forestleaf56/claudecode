@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#0a0e24">
+<title>Skyline</title>
+<style>
+  :root { --bg:#0a0e24; --cyan:#38e8ff; --magenta:#ff5cc8; --ink:#eaf2ff; }
+  * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  html, body { height:100%; overflow:hidden; background:var(--bg); }
+  body { font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+         color:var(--ink); user-select:none; -webkit-user-select:none; touch-action:none; }
+  #game { position:fixed; inset:0; display:block; }
+</style>
+</head>
+<body>
+<canvas id="game"></canvas>
+<script>
+(() => {
+  "use strict";
+  const cv = document.getElementById('game');
+  const ctx = cv.getContext('2d');
+  let W=0, H=0, dpr=1;
+
+  function resize(){
+    dpr = Math.min(window.devicePixelRatio||1, 2.5);
+    W = window.innerWidth; H = window.innerHeight;
+    cv.width = Math.floor(W*dpr); cv.height = Math.floor(H*dpr);
+    cv.style.width = W+'px'; cv.style.height = H+'px';
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+    draw();
+  }
+  window.addEventListener('resize', resize);
+
+  // Skeleton only — gameplay (sliding slab, drop, slicing, camera, scoring) and
+  // the full title screen + menu land Tue–Thu per PLAN.md. For now confirm the
+  // canvas boots, is mobile-sized/responsive, and shows the wordmark.
+  function draw(){
+    const g = ctx.createLinearGradient(0,0,0,H);
+    g.addColorStop(0,'#0c1130'); g.addColorStop(1,'#070915');
+    ctx.fillStyle=g; ctx.fillRect(0,0,W,H);
+
+    ctx.textAlign='center'; ctx.textBaseline='middle';
+    ctx.save();
+    ctx.shadowColor='#38e8ff'; ctx.shadowBlur=24;
+    ctx.fillStyle='#38e8ff';
+    ctx.font='800 '+Math.min(W*0.17,88)+'px -apple-system,Segoe UI,Roboto,sans-serif';
+    ctx.fillText('SKYLINE', W/2, H*0.42);
+    ctx.restore();
+
+    ctx.fillStyle='rgba(234,242,255,0.55)';
+    ctx.font='500 '+Math.min(W*0.045,18)+'px -apple-system,Segoe UI,Roboto,sans-serif';
+    ctx.fillText('how high can you build?', W/2, H*0.51);
+    ctx.fillStyle='rgba(255,92,200,0.65)';
+    ctx.font='600 14px -apple-system,Segoe UI,Roboto,sans-serif';
+    ctx.fillText('· coming this week ·', W/2, H*0.57);
+  }
+
+  resize();
+})();
+</script>
+</body>
+</html>
