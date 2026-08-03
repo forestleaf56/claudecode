@@ -63,10 +63,29 @@ GAME_PLAN.md            the design & build plan this was built from
 All sound is **synthesized at runtime** via the Web Audio API — there are
 no audio files.
 
-## Deploy (GitHub Pages)
+## Deploy
 
-Push to GitHub, then in **Settings → Pages** choose *Deploy from a branch*
-and select this branch with the `/ (root)` folder. The game is served as-is.
+The game is a static site with **no build step**, so it deploys anywhere
+that serves files.
+
+### Vercel (recommended)
+1. Import the repo at [vercel.com/new](https://vercel.com/new).
+2. Framework preset: **Other**. Leave **Build Command** and **Output
+   Directory** empty — the root is served as-is.
+3. Deploy.
+
+Or from the CLI:
+```bash
+npm i -g vercel
+vercel        # preview
+vercel --prod # production
+```
+`vercel.json` sets the correct `manifest.webmanifest` content type and the
+service-worker headers so the PWA installs and runs offline.
+
+### GitHub Pages
+In **Settings → Pages** choose *Deploy from a branch* and select the branch
+with the `/ (root)` folder.
 
 ## Credits & license
 
