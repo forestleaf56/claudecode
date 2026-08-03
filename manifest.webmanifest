@@ -1,0 +1,16 @@
+{
+  "name": "Plunder Seas",
+  "short_name": "Plunder Seas",
+  "description": "A one-thumb pirate naval combat roguelite. Sail, fight, loot, upgrade.",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "fullscreen",
+  "orientation": "any",
+  "background_color": "#3d6a86",
+  "theme_color": "#3d6a86",
+  "icons": [
+    { "src": "assets/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "assets/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "assets/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}
