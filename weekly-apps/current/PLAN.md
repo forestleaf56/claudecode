@@ -38,8 +38,9 @@ weekly-apps/current/
 ## Build checklist (Mon–Thu, small daily increments)
 - [ ] Mon: concept + plan; minimal `index.html` skeleton (title wordmark, responsive
       DPR canvas, boot/resize). No gameplay yet.
-- [ ] Tue: core mechanic — sliding slab, tap to drop, overhang slicing, tower grows,
-      upward camera scroll, game over on a full miss.
+- [x] Tue: core mechanic — sliding slab, tap to drop, overhang slicing (off-cuts
+      fall away), tower grows, eased upward camera scroll, game over on a full miss;
+      per-floor color gradient. Verified in browser, no JS errors.
 - [ ] Wed: scoring + perfect-drop combo (snap-to-align + bonus + narrowing feedback),
       per-floor color gradient with lit windows, best height saved (localStorage),
       collapse/lose animation.

@@ -22,42 +22,147 @@
   const cv = document.getElementById('game');
   const ctx = cv.getContext('2d');
   let W=0, H=0, dpr=1;
+  const rand=(a,b)=>a+Math.random()*(b-a);
+  const clamp=(v,a,b)=>v<a?a:v>b?b:v;
 
-  function resize(){
-    dpr = Math.min(window.devicePixelRatio||1, 2.5);
-    W = window.innerWidth; H = window.innerHeight;
-    cv.width = Math.floor(W*dpr); cv.height = Math.floor(H*dpr);
-    cv.style.width = W+'px'; cv.style.height = H+'px';
-    ctx.setTransform(dpr,0,0,dpr,0,0);
-    draw();
+  // ---- layout / world ----
+  // World y grows upward from the tower base (0). Block i occupies [i*BH,(i+1)*BH].
+  // Camera keeps the current tower top at screenTargetY; higher world y = higher up.
+  let BH=36, targetScreenY=0;
+  function metrics(){ BH = Math.max(28, Math.round(H*0.045)); targetScreenY = H*0.66; }
+  const screenY = (wy) => targetScreenY - (wy - camY);
+
+  let state='play';                 // 'play' | 'over'  (title screen + menu = Thursday)
+  let tower=[], slab=null, camY=0, camTarget=0, falling=[];
+
+  function reset(){
+    metrics();
+    const w = Math.min(W*0.52, 260);
+    tower = [{ x:(W-w)/2, w }];                       // base block (level 0)
+    camY = camTarget = tower.length*BH;
+    falling = [];
+    spawnSlab();
+    state='play';
   }
-  window.addEventListener('resize', resize);
+  function spawnSlab(){
+    const top = tower[tower.length-1];
+    const level = tower.length;
+    const fromLeft = Math.random()<0.5;
+    slab = { x: fromLeft ? W*0.06 : W*0.94 - top.w, w: top.w, level,
+             dir: fromLeft?1:-1, speed: clamp(W*0.55,190,430) + level*3 };
+  }
 
-  // Skeleton only — gameplay (sliding slab, drop, slicing, camera, scoring) and
-  // the full title screen + menu land Tue–Thu per PLAN.md. For now confirm the
-  // canvas boots, is mobile-sized/responsive, and shows the wordmark.
+  function drop(){
+    const top = tower[tower.length-1];
+    const l = Math.max(top.x, slab.x), r = Math.min(top.x+top.w, slab.x+slab.w);
+    const overlap = r - l;
+    if(overlap <= 2){ gameOver(); return; }           // full miss
+
+    // sliced off-cuts fall away
+    if(slab.x < l) addFalling(slab.x, l - slab.x, slab.level);
+    if(slab.x+slab.w > r) addFalling(r, (slab.x+slab.w) - r, slab.level);
+
+    tower.push({ x:l, w:overlap });
+    camTarget = tower.length*BH;                       // camera rises one floor
+    spawnSlab();
+  }
+  function addFalling(x, w, level){
+    falling.push({ x, w, wy: level*BH, vy: -20, vx: rand(-30,30)*(x<W/2?-1:1), life:1 });
+  }
+  function gameOver(){ state='over'; }
+
+  // ---- input ----
+  cv.addEventListener('pointerdown', e=>{
+    e.preventDefault();
+    if(state==='play') drop();
+    else reset();
+  }, {passive:false});
+
+  // ---- colors ----
+  function floorColor(i){
+    const t = (i*23 % 100)/100;                        // stable per-floor hue mix
+    const c1=[56,232,255], c2=[255,92,200];
+    const r=Math.round(c1[0]+(c2[0]-c1[0])*t), g=Math.round(c1[1]+(c2[1]-c1[1])*t), b=Math.round(c1[2]+(c2[2]-c1[2])*t);
+    return 'rgb('+r+','+g+','+b+')';
+  }
+
+  function block(x, wy, w, col){
+    const yTop = screenY(wy+BH);                       // top surface
+    if(yTop > H+BH || yTop < -BH*2) return;            // cull off-screen
+    ctx.fillStyle=col;
+    ctx.shadowColor=col; ctx.shadowBlur=14;
+    ctx.fillRect(x, yTop, w, BH);
+    ctx.shadowBlur=0;
+    // top highlight
+    ctx.fillStyle='rgba(255,255,255,0.18)';
+    ctx.fillRect(x, yTop, w, 3);
+  }
+
+  // ---- loop ----
+  let last=performance.now();
+  function frame(now){
+    const dt=Math.min((now-last)/1000,0.05); last=now;
+
+    if(state==='play'){
+      // slide slab, bounce at margins
+      slab.x += slab.dir*slab.speed*dt;
+      const minX=W*0.04, maxX=W*0.96 - slab.w;
+      if(slab.x<minX){ slab.x=minX; slab.dir=1; }
+      if(slab.x>maxX){ slab.x=maxX; slab.dir=-1; }
+    }
+    // camera ease
+    camY += (camTarget - camY) * Math.min(1, dt*9);
+    // falling pieces
+    for(const f of falling){ f.vy -= 900*dt; f.wy += f.vy*dt; f.x += f.vx*dt; f.life -= dt*0.8; }
+    falling = falling.filter(f=>f.life>0 && screenY(f.wy)<H+80);
+
+    draw();
+    requestAnimationFrame(frame);
+  }
+
   function draw(){
     const g = ctx.createLinearGradient(0,0,0,H);
     g.addColorStop(0,'#0c1130'); g.addColorStop(1,'#070915');
     ctx.fillStyle=g; ctx.fillRect(0,0,W,H);
 
-    ctx.textAlign='center'; ctx.textBaseline='middle';
-    ctx.save();
-    ctx.shadowColor='#38e8ff'; ctx.shadowBlur=24;
-    ctx.fillStyle='#38e8ff';
-    ctx.font='800 '+Math.min(W*0.17,88)+'px -apple-system,Segoe UI,Roboto,sans-serif';
-    ctx.fillText('SKYLINE', W/2, H*0.42);
-    ctx.restore();
+    // tower
+    for(let i=0;i<tower.length;i++) block(tower[i].x, i*BH, tower[i].w, floorColor(i));
+    // falling off-cuts
+    for(const f of falling){ ctx.globalAlpha=Math.max(0,f.life);
+      block(f.x, f.wy, f.w, floorColor((f.wy/BH)|0)); ctx.globalAlpha=1; }
+    // moving slab
+    if(state==='play' && slab) block(slab.x, slab.level*BH, slab.w, floorColor(slab.level));
 
-    ctx.fillStyle='rgba(234,242,255,0.55)';
-    ctx.font='500 '+Math.min(W*0.045,18)+'px -apple-system,Segoe UI,Roboto,sans-serif';
-    ctx.fillText('how high can you build?', W/2, H*0.51);
-    ctx.fillStyle='rgba(255,92,200,0.65)';
-    ctx.font='600 14px -apple-system,Segoe UI,Roboto,sans-serif';
-    ctx.fillText('· coming this week ·', W/2, H*0.57);
+    // floor count (minimal; full HUD/scoring = Wed)
+    ctx.textAlign='left'; ctx.textBaseline='top'; ctx.fillStyle='rgba(234,242,255,0.85)';
+    ctx.font='800 26px -apple-system,Segoe UI,Roboto,sans-serif';
+    ctx.fillText((tower.length-1)+'', 22, 26);
+
+    if(state==='over'){
+      ctx.fillStyle='rgba(6,9,20,0.72)'; ctx.fillRect(0,0,W,H);
+      ctx.textAlign='center'; ctx.textBaseline='middle';
+      ctx.fillStyle='#ff5cc8'; ctx.font='800 '+Math.min(W*0.12,54)+'px -apple-system,Segoe UI,Roboto,sans-serif';
+      ctx.fillText('TOPPLED', W/2, H*0.42);
+      ctx.fillStyle='rgba(234,242,255,0.85)'; ctx.font='600 20px -apple-system,Segoe UI,Roboto,sans-serif';
+      ctx.fillText('height '+(tower.length-1), W/2, H*0.50);
+      ctx.fillStyle='rgba(56,232,255,0.85)'; ctx.font='700 18px -apple-system,Segoe UI,Roboto,sans-serif';
+      ctx.fillText('tap to rebuild', W/2, H*0.58);
+    }
   }
 
+  function resize(){
+    dpr=Math.min(window.devicePixelRatio||1,2.5);
+    W=window.innerWidth; H=window.innerHeight;
+    cv.width=Math.floor(W*dpr); cv.height=Math.floor(H*dpr);
+    cv.style.width=W+'px'; cv.style.height=H+'px';
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+    metrics();
+  }
+  window.addEventListener('resize', ()=>{ resize(); });
+
   resize();
+  reset();
+  requestAnimationFrame(frame);
 })();
 </script>
 </body>
