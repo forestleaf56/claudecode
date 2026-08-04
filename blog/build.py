@@ -464,6 +464,8 @@ ARCHIVE_TEMPLATE = r'''<!DOCTYPE html>
     countEl.textContent = '';
   }
 
+  // If data was inlined ahead of us (offline / self-contained build), use it.
+  if(window.ARCHIVE && window.ARCHIVE.length){ start(window.ARCHIVE); return; }
   // Primary: fetch the JSON. Fallback (file://): load archive-data.js which
   // sets window.ARCHIVE, so the page also works when opened directly.
   fetch('archive.json', {cache:'no-cache'})
