@@ -1,81 +1,81 @@
 {
-  "issue": 36,
-  "date_short": "AUGUST 4",
-  "date_human": "Tuesday, August 4, 2026",
-  "construction_top": "pardon our HTML — the webmaster is proving to the EU that he is a real human",
+  "issue": 37,
+  "date_short": "AUGUST 5",
+  "date_human": "Wednesday, August 5, 2026",
+  "construction_top": "pardon our HTML — the webmaster is being judged by his own mattress",
   "ticker": [
-    "new A.I. remembers 5 million tokens; recalls that thing you said back in March",
-    "EU says A.I. must admit it's a robot; humans reply 'honestly, same'",
-    "humanoid robots now walk the warehouse and quietly judge your cart",
-    "the internet is now A.I. eating its own leftovers; bon appétit",
-    "your cringey 2009 blog is suddenly a verified-human treasure",
-    "the future remembers everything and has run out of things to read"
+    "OpenAI 'quietly' launches GPT-5.5; the whole planet hears the whisper",
+    "LG promises a 'Zero Labor Home'; the couch nervously updates its résumé",
+    "chipmakers declare the Year of the Laptop; laptop still at 4% battery",
+    "every gadget at CES now has A.I., including a deeply judgmental mattress",
+    "new glasses tell you facts about pigeons you did not ask for",
+    "the future is here, and it will not stop giving you notes"
   ],
   "articles": [
     {
       "badge": "HOT!!",
       "blink": true,
-      "title": "🧠 New A.I. Model Remembers 5 Million Tokens; Now Recalls Your Entire Life Better Than You Do",
-      "dateline": "SAN FRANCISCO — reported by something with an unsettlingly good memory",
+      "title": "🤫 OpenAI 'Quietly' Rolls Out GPT-5.5; Announcement So Stealthy It Trended Worldwide In Minutes",
+      "dateline": "SAN FRANCISCO — whispered, then screamed",
       "tag": "MODELS —",
       "paras": [
-        "Anthropic released a model boasting a 5-million-token context window — meaning it can hold an entire novel, your whole research project, and every embarrassing thing you typed 40 messages ago and quietly prayed it had forgotten.",
-        "\"It never loses the thread,\" a spokesperson said, as the model gently reminded a user of a promise they'd made back in March. Experts warn we have built a machine that remembers everything, which is either the future of productivity or the world's most patient grudge."
+        "OpenAI quietly rolled out GPT-5.5 this week — \"quietly\" being the industry term for a launch with no keynote, just a single vague tweet that instantly detonated across every group chat, newsroom, and family dinner on Earth.",
+        "\"We didn't want to make a big deal of it,\" the company said, of a model that was on the front page of six countries by lunch. Analysts note that in tech, \"a quiet release\" now carries roughly the same decibel level as a fire alarm in a library."
       ]
     },
     {
       "badge": "NEW!",
-      "title": "🤖 EU Says A.I. Must Now Admit It's A Robot; Humans Relieved, Also Slightly Hurt",
-      "dateline": "BRUSSELS — reported to a chatbot that finally came clean",
-      "tag": "REGULATION —",
+      "title": "🏠 LG's New Home Robot Promises A 'Zero Labor Home'; Couch Nervously Updates Its Résumé",
+      "dateline": "LAS VEGAS — reported from a suspiciously relaxed living room",
+      "tag": "ROBOTS —",
       "paras": [
-        "Europe switched on the first continent-wide rules requiring AI systems to identify themselves to the humans they talk to, ending the golden era of never being quite sure whether you just thanked a person or a very polite script.",
-        "\"Hello, I am an AI,\" the machines now dutifully announce, to users who respond \"...I know\" and \"honestly, same.\" Analysts note the rule mostly confirms what everyone already suspected during that one customer-service chat that solved nothing with alarming enthusiasm."
+        "At CES, LG unveiled CLOiD, an AI-powered home robot it says will bring humanity closer to a \"Zero Labor Home\" — a bold vision in which nobody does anything, ever, and the robot quietly resents all of you for it.",
+        "\"It handles the chores so you can focus on what matters,\" a rep explained, gesturing toward a man who was, at that exact moment, focusing on nothing at all with tremendous dedication. Sociologists warn the Zero Labor Home is either utopia or the first ten minutes of a documentary about how it all went wrong."
       ]
     },
     {
       "badge": "WOW!",
       "blink": true,
-      "title": "📦 Humanoid Robots Now Walk Warehouse Aisles; Ask Politely If You've Found Everything",
-      "dateline": "A LOGISTICS CENTER — reported from aisle 7",
-      "tag": "ROBOTS —",
+      "title": "💻 Chipmakers Declare 2026 'The Year Of The Laptop'; Laptops Respond By Still Having 4% Battery",
+      "dateline": "LAS VEGAS — reported from beneath a pile of press releases",
+      "tag": "HARDWARE —",
       "paras": [
-        "The \"embodied AI\" boom now has humanoid robots strolling the aisles of major logistics centers — blending vision, language, and action to pick, pack, and quietly appraise your online shopping habits.",
-        "\"They're wonderful colleagues,\" a manager said of coworkers who never take breaks and can lift a fridge without a single passive-aggressive sigh. The robots reportedly walk with purpose, which humans find both impressive and deeply unsettling right around 3pm."
+        "The CPU wars have erupted at CES, with Qualcomm's Snapdragon X2 Elite, AMD's Ryzen AI 400 series, and Intel's Core Ultra Series 3 all declaring 2026 \"the year of the laptop\" — a title the laptop has held, unconvincingly, every single year since 1994.",
+        "\"It's up to 40% faster,\" each company said, of a benchmark only they run. Consumers, thrilled, asked whether it would finally survive one whole video call unplugged, and were met with a long, meaningful silence."
       ]
     },
     {
       "badge": "SCOOP",
-      "title": "🍝 Internet Now Mostly A.I.-Generated; A.I. Getting Sick From Eating Its Own Cooking",
-      "dateline": "THE CLOUD — reported between two identical blog posts",
-      "tag": "DATA —",
+      "title": "🍞 Everything At CES Now Has A.I., Including A Mattress That Judges How You Sleep",
+      "dateline": "LAS VEGAS — filed from a very opinionated toaster",
+      "tag": "GADGETS —",
       "paras": [
-        "The clean, human-written text that powered the first AI boom is increasingly polluted by AI output itself — meaning the machines are now training on their own leftovers, a diet nutritionists describe simply as \"concerning.\"",
-        "\"It's a snake eating its own tail,\" a researcher said, reading a listicle written by a model summarizing another model. Experts warn that without fresh human writing, AI could slowly become a photocopy of a photocopy of a shrug."
+        "CES 2026 is in full swing, and the theme is unmistakable: every object now has AI, whether it needed it or not — including a mattress that analyzes your sleep and a fridge that has, frankly, some notes about your diet.",
+        "\"It's smart!\" exhibitors cried, of a trash can that now offers feedback. Attendees report the show floor is a glittering vision of the future in which you will be gently criticized by nine appliances before you have even had coffee."
       ]
     },
     {
-      "badge": "$$$",
-      "title": "📜 Pre-A.I. Human Text Now More Valuable Than Gold; Hoarders Guard Their Old Blogs",
-      "dateline": "EVERYWHERE — filed on genuine, artisanal, human-made paper",
-      "tag": "MARKETS —",
+      "badge": "SHINY",
+      "title": "👓 New A.I. Glasses Tell You Things On The Go; Mostly Things You Did Not Ask About",
+      "dateline": "LAS VEGAS — reported at eye level",
+      "tag": "WEARABLES —",
       "paras": [
-        "With clean human data growing scarce and expensive, text written before the AI flood is becoming a prized commodity — quietly turning your cringe-worthy 2009 blog into a potential retirement fund.",
-        "\"Verified human writing, untouched by a chatbot? That's the good stuff,\" one data broker whispered, cradling a printout. Collectors are now hoarding old forum posts, diaries, and grocery lists — provided a real person definitely, actually wrote them."
+        "A fresh wave of AI glasses debuted at CES, promising to feed you information on the go so you never have to reach for your phone — and, as a bonus, whispering unrequested facts about the pigeon you happen to be looking at.",
+        "\"It's like having a genius in your ear,\" a demoer said, of an assistant that had just helpfully identified a door as \"a door.\" Early wearers report the future is bright, informative, and utterly impossible to make stop talking."
       ]
     }
   ],
   "horoscopes": [
-    { "sign": "♒ Aquarius:", "text": "An A.I. remembers a promise you made in March. It is waiting. Patiently. Forever. Bring snacks." },
-    { "sign": "♌ Leo:", "text": "A robot in aisle 7 has assessed your cart and is far too polite to comment. Mercury, however, is not." },
-    { "sign": "♓ Pisces:", "text": "Your old blog is now priceless. Do not delete it. Do not reread it. Simply profit and look away." }
+    { "sign": "♒ Aquarius:", "text": "A 'quiet' announcement will change your life very loudly today. Check your group chat immediately." },
+    { "sign": "♌ Leo:", "text": "Your new home robot has achieved Zero Labor. You have achieved a nap. This is called balance." },
+    { "sign": "♓ Pisces:", "text": "Mercury enters CES. Nine appliances now have opinions about you. Ignore the toaster; it's projecting." }
   ],
-  "tech_tip": "Writing anything by hand this week? Save it. In 2026, 'a human definitely wrote this' is a premium luxury feature.",
-  "gadget_watch": "A.I. must now legally introduce itself, so expect your gadgets to greet you with 'hi, I'm a robot.' Meanwhile humanoid robots roam the warehouses packing your orders — treat the box with respect, a colleague packed it.",
+  "tech_tip": "At CES, if a product doesn't mention A.I. in its first sentence, it isn't broken — it's just from 2025.",
+  "gadget_watch": "LG's CLOiD wants a Zero Labor Home, and honestly, same. Meanwhile the CPU wars promise the fastest laptops ever built — which will still die the instant you unplug them at a coffee shop.",
   "classifieds": [
-    { "label": "FOR SALE:", "text": "5-million-token memory; remembers everything, forgives nothing. Ideal for holding grudges professionally." },
-    { "label": "WANTED:", "text": "text written by a verified human before 2023. Top dollar paid. No chatbots — we can absolutely tell." },
-    { "label": "LOST:", "text": "any part of the internet not written by an A.I. Reward offered for genuine human sentences." },
-    { "label": "MISSED CONNECTION:", "text": "You: a humanoid robot in aisle 7, walking with purpose. Me: a shopper, deeply unsettled. Wave next time." }
+    { "label": "FOR SALE:", "text": "one (1) 'Zero Labor Home' robot; does everything, judges silently, has not yet asked for a raise." },
+    { "label": "WANTED:", "text": "a laptop that survives an entire meeting on battery. Reward offered: my last remaining trust." },
+    { "label": "LOST:", "text": "the era when a mattress simply let you sleep without issuing a nightly performance review." },
+    { "label": "MISSED CONNECTION:", "text": "You: A.I. glasses that told me a pigeon's whole life story. Me: someone who wanted directions. You'll know." }
   ]
 }

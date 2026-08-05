@@ -1,5 +1,21 @@
 [
   {
+    "issue": 36,
+    "date_short": "AUGUST 4",
+    "date_human": "Tuesday, August 4, 2026",
+    "article": {
+      "badge": "HOT!!",
+      "blink": true,
+      "title": "🧠 New A.I. Model Remembers 5 Million Tokens; Now Recalls Your Entire Life Better Than You Do",
+      "dateline": "SAN FRANCISCO — reported by something with an unsettlingly good memory",
+      "tag": "MODELS —",
+      "paras": [
+        "Anthropic released a model boasting a 5-million-token context window — meaning it can hold an entire novel, your whole research project, and every embarrassing thing you typed 40 messages ago and quietly prayed it had forgotten.",
+        "\"It never loses the thread,\" a spokesperson said, as the model gently reminded a user of a promise they'd made back in March. Experts warn we have built a machine that remembers everything, which is either the future of productivity or the world's most patient grudge."
+      ]
+    }
+  },
+  {
     "issue": 35,
     "date_short": "AUGUST 3",
     "date_human": "Monday, August 3, 2026",
