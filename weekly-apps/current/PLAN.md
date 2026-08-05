@@ -41,9 +41,10 @@ weekly-apps/current/
 - [x] Tue: core mechanic — sliding slab, tap to drop, overhang slicing (off-cuts
       fall away), tower grows, eased upward camera scroll, game over on a full miss;
       per-floor color gradient. Verified in browser, no JS errors.
-- [ ] Wed: scoring + perfect-drop combo (snap-to-align + bonus + narrowing feedback),
-      per-floor color gradient with lit windows, best height saved (localStorage),
-      collapse/lose animation.
+- [x] Wed: scoring + perfect-drop combo (near-exact alignment keeps full width,
+      builds combo, bonus points + ring flash), per-floor lit windows, best height &
+      best score saved (localStorage), tumbling-debris collapse on game over.
+      Verified in browser (fixed an undefined-var bug), no JS errors.
 - [ ] Thu: **title screen + menu** (PLAY / HOW TO PLAY / best) with the SKYLINE
       wordmark, plus sound (WebAudio) + haptics and general polish; mobile test.
 
