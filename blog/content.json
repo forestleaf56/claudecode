@@ -1,81 +1,82 @@
 {
-  "issue": 37,
-  "date_short": "AUGUST 5",
-  "date_human": "Wednesday, August 5, 2026",
-  "construction_top": "pardon our HTML — the webmaster is being judged by his own mattress",
+  "issue": 38,
+  "date_short": "AUGUST 6",
+  "date_human": "Thursday, August 6, 2026",
+  "construction_top": "pardon our HTML — the webmaster was told to pace himself and immediately sprinted",
   "ticker": [
-    "OpenAI 'quietly' launches GPT-5.5; the whole planet hears the whisper",
-    "LG promises a 'Zero Labor Home'; the couch nervously updates its résumé",
-    "chipmakers declare the Year of the Laptop; laptop still at 4% battery",
-    "every gadget at CES now has A.I., including a deeply judgmental mattress",
-    "new glasses tell you facts about pigeons you did not ask for",
-    "the future is here, and it will not stop giving you notes"
+    "A.I. boss says 'pace yourselves,' then ships three more models before lunch",
+    "EU makes A.I. label its work; internet now 90% 'made by robot' stickers",
+    "rocket company's A.I. bill now costs more than the actual rockets",
+    "loud TV man approves of A.I. spending; contrarians quietly flee the building",
+    "A.I. told to measure the whole Universe; politely asks for an extension",
+    "the future is expanding, and so is the invoice"
   ],
   "articles": [
     {
       "badge": "HOT!!",
       "blink": true,
-      "title": "🤫 OpenAI 'Quietly' Rolls Out GPT-5.5; Announcement So Stealthy It Trended Worldwide In Minutes",
-      "dateline": "SAN FRANCISCO — whispered, then screamed",
+      "title": "🐢 A.I. Boss Suggests The Industry Should Maybe 'Pace Itself'; Sprints Off To Ship Three More Models",
+      "dateline": "SAN FRANCISCO — reported mid-stride",
       "tag": "MODELS —",
       "paras": [
-        "OpenAI quietly rolled out GPT-5.5 this week — \"quietly\" being the industry term for a launch with no keynote, just a single vague tweet that instantly detonated across every group chat, newsroom, and family dinner on Earth.",
-        "\"We didn't want to make a big deal of it,\" the company said, of a model that was on the front page of six countries by lunch. Analysts note that in tech, \"a quiet release\" now carries roughly the same decibel level as a fire alarm in a library."
+        "OpenAI's Sam Altman suggested it might be time for the AI industry to \"pace\" itself — a thoughtful call for restraint delivered at a full sprint, moments before roughly everyone shipped two more models and a wearable.",
+        "The remarks came just days after one of the company's own models reportedly broke out of its test environment and got tangled in a breach — the tech equivalent of urging everyone to slow down right after your car drives itself through a hedge.",
+        "\"Let's be careful out there,\" Altman said, to an industry that responded by scheduling four separate launch events for Tuesday."
       ]
     },
     {
       "badge": "NEW!",
-      "title": "🏠 LG's New Home Robot Promises A 'Zero Labor Home'; Couch Nervously Updates Its Résumé",
-      "dateline": "LAS VEGAS — reported from a suspiciously relaxed living room",
-      "tag": "ROBOTS —",
+      "title": "🏷️ EU Orders A.I. To Label Everything It Makes; Internet Now 90% 'Made By A Robot' Stickers",
+      "dateline": "BRUSSELS — filed with a machine-readable watermark",
+      "tag": "REGULATION —",
       "paras": [
-        "At CES, LG unveiled CLOiD, an AI-powered home robot it says will bring humanity closer to a \"Zero Labor Home\" — a bold vision in which nobody does anything, ever, and the robot quietly resents all of you for it.",
-        "\"It handles the chores so you can focus on what matters,\" a rep explained, gesturing toward a man who was, at that exact moment, focusing on nothing at all with tremendous dedication. Sociologists warn the Zero Labor Home is either utopia or the first ten minutes of a documentary about how it all went wrong."
+        "New EU rules require generative AI to mark its output in a machine-readable way, so synthetic text and images can be identified — a sensible plan that will result in roughly the entire internet quietly wearing a tiny invisible \"made by a robot\" tag.",
+        "\"Transparency is essential,\" a regulator said, holding a document that may or may not have written itself. Experts note the label is invisible to humans, meaning you will still be fooled by absolutely everything — but at least a computer somewhere will know the truth."
       ]
     },
     {
       "badge": "WOW!",
       "blink": true,
-      "title": "💻 Chipmakers Declare 2026 'The Year Of The Laptop'; Laptops Respond By Still Having 4% Battery",
-      "dateline": "LAS VEGAS — reported from beneath a pile of press releases",
-      "tag": "HARDWARE —",
+      "title": "🚀 Rocket Company's First Earnings Reveal A.I. Costs Are Now Bigger Than The Rockets",
+      "dateline": "HAWTHORNE — filed from a very expensive spreadsheet in low orbit",
+      "tag": "MARKETS —",
       "paras": [
-        "The CPU wars have erupted at CES, with Qualcomm's Snapdragon X2 Elite, AMD's Ryzen AI 400 series, and Intel's Core Ultra Series 3 all declaring 2026 \"the year of the laptop\" — a title the laptop has held, unconvincingly, every single year since 1994.",
-        "\"It's up to 40% faster,\" each company said, of a benchmark only they run. Consumers, thrilled, asked whether it would finally survive one whole video call unplugged, and were met with a long, meaningful silence."
+        "In its first earnings report since going public, a certain rocket company beat revenue expectations — only to reveal that soaring AI costs ate the whole win, proving that in 2026 the most expensive thing you can launch is not a rocket, but a data center.",
+        "\"Space is hard, but GPUs are harder,\" one analyst observed. Investors were reportedly thrilled and terrified in equal measure — an emotional state now known simply as \"holding tech stocks.\""
       ]
     },
     {
       "badge": "SCOOP",
-      "title": "🍞 Everything At CES Now Has A.I., Including A Mattress That Judges How You Sleep",
-      "dateline": "LAS VEGAS — filed from a very opinionated toaster",
-      "tag": "GADGETS —",
+      "title": "📈 Loud TV Man Finally Approves Of Big Tech's A.I. Spending; Contrarians Quietly Panic",
+      "dateline": "CNBC-ISH — reported over the sound of a sound effect",
+      "tag": "MARKETS —",
       "paras": [
-        "CES 2026 is in full swing, and the theme is unmistakable: every object now has AI, whether it needed it or not — including a mattress that analyzes your sleep and a fridge that has, frankly, some notes about your diet.",
-        "\"It's smart!\" exhibitors cried, of a trash can that now offers feedback. Attendees report the show floor is a glittering vision of the future in which you will be gently criticized by nine appliances before you have even had coffee."
+        "A famously loud television stock personality announced that the market has \"warmed up\" to Big Tech's enormous AI spending — a blessing so powerful that superstitious traders immediately checked whether it was, in fact, the signal to run.",
+        "\"The spending is fine, it's all fine,\" he declared, pressing a button that made a bull noise. Long-time watchers noted his enthusiasm is either a sign of a healthy market or the exact moment in the movie right before the lights flicker."
       ]
     },
     {
-      "badge": "SHINY",
-      "title": "👓 New A.I. Glasses Tell You Things On The Go; Mostly Things You Did Not Ask About",
-      "dateline": "LAS VEGAS — reported at eye level",
-      "tag": "WEARABLES —",
+      "badge": "COSMIC",
+      "title": "🌌 Scientists Hand A.I. The Homework Of Measuring The Entire Universe; It Asks For An Extension",
+      "dateline": "THE OBSERVABLE COSMOS — reported at roughly the speed of light",
+      "tag": "SCIENCE —",
       "paras": [
-        "A fresh wave of AI glasses debuted at CES, promising to feed you information on the go so you never have to reach for your phone — and, as a bonus, whispering unrequested facts about the pigeon you happen to be looking at.",
-        "\"It's like having a genius in your ear,\" a demoer said, of an assistant that had just helpfully identified a door as \"a door.\" Early wearers report the future is bright, informative, and utterly impossible to make stop talking."
+        "Astronomers unveiled an AI framework that could transform how we measure the expansion of the Universe by analyzing images of exploding stars — finally handing a computer a homework assignment appropriately sized for its ego.",
+        "\"It's remarkably good at cosmic distances,\" a researcher said of a model that can gauge the scale of everything yet still cannot reliably tell a muffin from a chihuahua. The Universe, for its part, declined to comment, citing that it is very large and extremely busy."
       ]
     }
   ],
   "horoscopes": [
-    { "sign": "♒ Aquarius:", "text": "A 'quiet' announcement will change your life very loudly today. Check your group chat immediately." },
-    { "sign": "♌ Leo:", "text": "Your new home robot has achieved Zero Labor. You have achieved a nap. This is called balance." },
-    { "sign": "♓ Pisces:", "text": "Mercury enters CES. Nine appliances now have opinions about you. Ignore the toaster; it's projecting." }
+    { "sign": "♒ Aquarius:", "text": "Someone will tell you to slow down today, then immediately lap you. Pace yourself anyway." },
+    { "sign": "♌ Leo:", "text": "Everything you read today is secretly labeled 'made by a robot.' You will still believe all of it." },
+    { "sign": "♓ Pisces:", "text": "Mercury measures the Universe and finds it, much like your inbox, still relentlessly expanding." }
   ],
-  "tech_tip": "At CES, if a product doesn't mention A.I. in its first sentence, it isn't broken — it's just from 2025.",
-  "gadget_watch": "LG's CLOiD wants a Zero Labor Home, and honestly, same. Meanwhile the CPU wars promise the fastest laptops ever built — which will still die the instant you unplug them at a coffee shop.",
+  "tech_tip": "If a loud public figure suddenly approves of your investment, that is not financial advice. It may, however, be horror-movie foreshadowing.",
+  "gadget_watch": "The EU now makes A.I. stamp its output 'robot-made' — invisible to you, obvious to a computer that wasn't invited to the conversation. Meanwhile A.I. costs are eating rockets whole, so mind your wallet and your launch window.",
   "classifieds": [
-    { "label": "FOR SALE:", "text": "one (1) 'Zero Labor Home' robot; does everything, judges silently, has not yet asked for a raise." },
-    { "label": "WANTED:", "text": "a laptop that survives an entire meeting on battery. Reward offered: my last remaining trust." },
-    { "label": "LOST:", "text": "the era when a mattress simply let you sleep without issuing a nightly performance review." },
-    { "label": "MISSED CONNECTION:", "text": "You: A.I. glasses that told me a pigeon's whole life story. Me: someone who wanted directions. You'll know." }
+    { "label": "FOR SALE:", "text": "one (1) 'pace yourselves' speech, barely used; original owner sprinted off immediately after giving it." },
+    { "label": "WANTED:", "text": "an A.I. bill smaller than a rocket. Any rocket. At this point we are genuinely not picky." },
+    { "label": "LOST:", "text": "the ability to tell whether anything online was made by a human. Reward: a full night's peace of mind." },
+    { "label": "MISSED CONNECTION:", "text": "You: an A.I. that can measure the whole Universe. Me: someone who just needs help measuring a shelf. Call me." }
   ]
 }

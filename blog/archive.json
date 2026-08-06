@@ -1,5 +1,21 @@
 [
   {
+    "issue": 37,
+    "date_short": "AUGUST 5",
+    "date_human": "Wednesday, August 5, 2026",
+    "article": {
+      "badge": "HOT!!",
+      "blink": true,
+      "title": "🤫 OpenAI 'Quietly' Rolls Out GPT-5.5; Announcement So Stealthy It Trended Worldwide In Minutes",
+      "dateline": "SAN FRANCISCO — whispered, then screamed",
+      "tag": "MODELS —",
+      "paras": [
+        "OpenAI quietly rolled out GPT-5.5 this week — \"quietly\" being the industry term for a launch with no keynote, just a single vague tweet that instantly detonated across every group chat, newsroom, and family dinner on Earth.",
+        "\"We didn't want to make a big deal of it,\" the company said, of a model that was on the front page of six countries by lunch. Analysts note that in tech, \"a quiet release\" now carries roughly the same decibel level as a fire alarm in a library."
+      ]
+    }
+  },
+  {
     "issue": 36,
     "date_short": "AUGUST 4",
     "date_human": "Tuesday, August 4, 2026",
