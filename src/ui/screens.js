@@ -45,7 +45,7 @@ export function title(ctx, w, h, save) {
 // ---------- SHIPYARD (treasury) ----------
 export function shipyard(ctx, w, h, save) {
   overlay(ctx, w, h, 0.55);
-  const pw = Math.min(w - 24, 460), ph = Math.min(h - 24, 620);
+  const pw = Math.min(w - 24, 460), ph = Math.min(h - 16, 690);
   const box = panelBox(ctx, w, h, pw, ph);
   const cx = w / 2;
   textShadow(ctx, 'SHIPYARD', cx, box.y + 40, 28, THEME.gold, 'center', 'bold');
@@ -66,7 +66,7 @@ export function shipyard(ctx, w, h, save) {
   }
 
   y += 6; text(ctx, 'UNLOCKS', x, y, 13, THEME.gold, 'left', 'bold'); y += 10;
-  const perks = ['startHull', 'startCannon', 'chain', 'grape'];
+  const perks = ['startHull', 'startCannon', 'startRegen', 'chain', 'grape', 'mortar'];
   const colW = (bw - 12) / 2;
   perks.forEach((id, i) => {
     const t = TREASURY[id];
@@ -77,7 +77,7 @@ export function shipyard(ctx, w, h, save) {
     button(ctx, b, t.name, { sub: owned ? '✓ owned' : `${t.cost}`, active: owned, disabled: !owned && save.doubloons < t.cost });
     if (!owned) buttons.push(b);
   });
-  y += 2 * 58 + 8;
+  y += 3 * 58 + 8;
 
   const back = { x: cx - 80, y: box.y + ph - 58, w: 160, h: 44, action: 'back' };
   button(ctx, back, '‹ BACK'); buttons.push(back);
@@ -136,15 +136,16 @@ export function shop(ctx, w, h, game, save) {
   const x = box.x + 22, bw = pw - 44;
   let y = box.y + 82;
 
-  const grid = ['hull', 'sails', 'cannon', 'reload'];
-  const colW = (bw - 12) / 2;
+  const grid = ['hull', 'sails', 'cannon', 'reload', 'carpenters', 'marauder'];
+  const cols = 3, gap = 8;
+  const colW = (bw - (cols - 1) * gap) / cols;
   grid.forEach((id, i) => {
     const u = UPGRADES[id];
     const lvl = game.up[id];
     const cost = game.upgradeCost(id);
     const maxed = lvl >= u.max;
-    const bx = x + (i % 2) * (colW + 12);
-    const by = y + Math.floor(i / 2) * 66;
+    const bx = x + (i % cols) * (colW + gap);
+    const by = y + Math.floor(i / cols) * 66;
     const b = { x: bx, y: by, w: colW, h: 58, action: 'buy', id };
     button(ctx, b, `${u.icon} ${u.name}`, {
       sub: maxed ? 'MAX' : `Lv${lvl} • ${cost}`,
@@ -161,11 +162,12 @@ export function shop(ctx, w, h, game, save) {
 
   text(ctx, 'AMMO', x, y, 13, THEME.gold, 'left', 'bold'); y += 10;
   const ammoIds = Object.keys(CANNON_TYPES);
-  const aw = (bw - 2 * 8) / 3;
+  const an = ammoIds.length, ag = 6;
+  const aw = (bw - (an - 1) * ag) / an;
   ammoIds.forEach((id, i) => {
     const unlocked = save.ammo[id];
     const active = game.player.ammo === CANNON_TYPES[id];
-    const b = { x: x + i * (aw + 8), y, w: aw, h: 46, action: unlocked ? 'ammo' : null, id };
+    const b = { x: x + i * (aw + ag), y, w: aw, h: 46, action: unlocked ? 'ammo' : null, id };
     button(ctx, b, CANNON_TYPES[id].name, { active, disabled: !unlocked });
     if (unlocked) buttons.push(b);
   });
@@ -190,7 +192,7 @@ export function gameover(ctx, w, h, game, save) {
   line('Gold plundered', game.gold, THEME.gold);
   line('Ships sunk', game.kills);
   line('Deepest zone', game.zone + 1);
-  if (game.bossDefeated) line('Leviathan', 'SLAIN', THEME.green);
+  if (game.bossKills > 0) line('Bosses slain', game.bossKills, THEME.green);
   y += 6;
   line('Doubloons banked', `+${game.doubloonsEarned}`, THEME.gold);
 

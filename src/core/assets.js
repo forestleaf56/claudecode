@@ -22,6 +22,7 @@ function manifest() {
   // The pack numbers ships 1..24; 19..24 are the greyed-out "sunk" variants.
   const ships = {
     sloop: 5, frigate: 11, galleon: 17,     // player classes (blue trim)
+    manowar: 13,                              // Man-o'-War class (white sails)
     e_red: 3, e_green: 4, e_yellow: 6,       // enemy factions
     e_skull: 8, e_skull2: 14,                // raiders
     boss: 2,                                  // flagship (scaled up)

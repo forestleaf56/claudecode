@@ -11,6 +11,8 @@ export class Projectiles {
     p.life = opts.life; p.t = 0;
     p.dmg = opts.dmg; p.sailDmg = opts.sailDmg || 0;
     p.friendly = opts.friendly;
+    p.splash = opts.splash || 0;
+    p.splashDmg = opts.splashDmg || 0;
     p.radius = 5;
     p.dead = false;
     this.list.push(p);

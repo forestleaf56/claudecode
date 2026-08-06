@@ -8,7 +8,7 @@ import { Pickups } from '../entities/pickup.js';
 import { Effects } from '../entities/effects.js';
 import { headingOf, dist, rand, randInt, clamp, pick } from '../core/math.js';
 import {
-  SHIP_CLASSES, ENEMIES, BOSS, CANNON_TYPES, UPGRADES, RUN,
+  SHIP_CLASSES, ENEMIES, BOSSES, CANNON_TYPES, UPGRADES, RUN, PLAYER,
 } from '../data/config.js';
 import * as Audio from '../core/audio.js';
 import * as Save from '../save/save.js';
@@ -43,15 +43,23 @@ export class Game {
     p.hp = p.maxHp;
     p.x = 0; p.y = 0; p.angle = 0;
     p.ammo = CANNON_TYPES[ammoId] && s.ammo[ammoId] ? CANNON_TYPES[ammoId] : CANNON_TYPES.round;
+    p.regenDelay = PLAYER.regenDelay;
+    p.regenIn = PLAYER.regenIn;
+    this.startRegenPerk = !!s.perks.startRegen;
     this.player = p;
 
     // snapshot base stats for upgrade math
     this.base = { hp: p.maxHp, speed: p.maxSpeed, turn: p.turn, dmg: p.dmgMult };
-    this.up = { hull: 0, sails: 0, cannon: 0, reload: 0 };
+    this.up = { hull: 0, sails: 0, cannon: 0, reload: 0, carpenters: 0, marauder: 0 };
+    this.goldMult = 1;
+    this.applyUpgrades(); // seeds regen + goldMult from base state
 
     this.enemies = [];
     this.boss = null;
     this.bossDefeated = false;
+    this.bossCount = 0;
+    this.bossKills = 0;
+    this.nextBossAt = RUN.killsToBoss;
     this.gold = 0;
     this.cargo = 0;
     this.score = 0;
@@ -150,6 +158,17 @@ export class Game {
             const died = e.takeDamage(pr.dmg, pr.sailDmg, pr.x, pr.y, env);
             this.effects.floatText(e.x, e.y - e.radius, Math.round(pr.dmg), '#ffd66b');
             if (died) this.onEnemyKilled(e);
+            // splash ammo (Mortar): damage nearby ships too
+            if (pr.splash) {
+              env.effects.explosion(pr.x, pr.y, 1.0);
+              for (const o of targets) {
+                if (o === e || o.sinking) continue;
+                if (dist(pr.x, pr.y, o.x, o.y) < pr.splash) {
+                  const d2 = o.takeDamage(pr.splashDmg, 0, pr.x, pr.y, env);
+                  if (d2) this.onEnemyKilled(o);
+                }
+              }
+            }
             break;
           }
         }
@@ -167,18 +186,24 @@ export class Game {
   onEnemyKilled(e) {
     this.kills++;
     this.score += e.def.score || 20;
-    const g = randInt(e.def.gold[0], e.def.gold[1]);
+    const g = Math.round(randInt(e.def.gold[0], e.def.gold[1]) * this.goldMult);
     this.pickups.spawnGold(e.x, e.y, g);
     if (Math.random() < 0.14) this.pickups.spawnCargo(e.x, e.y);
+    if (Math.random() < 0.09) this.pickups.spawnRepair(e.x, e.y);
     if (e === this.boss) {
       this.bossDefeated = true;
-      this.effects.floatText(this.player.x, this.player.y - 40, 'LEVIATHAN SLAIN!', '#ffce54');
+      this.bossKills++;
+      this.effects.floatText(this.player.x, this.player.y - 40, (e.def.name || 'BOSS').toUpperCase() + ' SLAIN!', '#ffce54');
     }
   }
 
   collect(p) {
     if (p.kind === 'gold') { this.gold += p.value; this.score += p.value; Audio.coin(); }
-    else { this.cargo += 1; this.gold += 40; this.score += 60; Audio.coin(); this.effects.floatText(this.player.x, this.player.y - 30, '+Cargo', '#8cc152'); }
+    else if (p.kind === 'repair') {
+      this.player.hp = Math.min(this.player.maxHp, this.player.hp + this.player.maxHp * 0.25);
+      this.player.sinceHit = 0; Audio.upgrade();
+      this.effects.floatText(this.player.x, this.player.y - 30, '+Repair', '#8cc152');
+    } else { this.cargo += 1; this.gold += 40; this.score += 60; Audio.coin(); this.effects.floatText(this.player.x, this.player.y - 30, '+Cargo', '#8cc152'); }
   }
 
   // Keep enemies from stacking on each other.
@@ -203,8 +228,8 @@ export class Game {
   spawn(dt) {
     // grace period at the start of a run so the player can find their sea legs
     if (this.time < RUN.grace) return;
-    // boss trigger
-    if (!this.boss && !this.bossDefeated && this.kills >= RUN.killsToBoss) {
+    // recurring boss encounters, escalating each time
+    if (!this.boss && this.kills >= this.nextBossAt) {
       this.spawnBoss();
     }
     this.spawnTimer -= dt;
@@ -250,14 +275,23 @@ export class Game {
   }
 
   spawnBoss() {
-    const def = { ...BOSS };
+    const variant = BOSSES[this.bossCount % BOSSES.length];
+    const cycle = Math.floor(this.bossCount / BOSSES.length);
+    const mult = 1 + cycle * 0.7;
+    const def = { ...variant };
+    def.gold = [Math.round(variant.gold[0] * mult), Math.round(variant.gold[1] * mult)];
+    def.score = Math.round(variant.score * mult);
     const b = new Ship(def, 'enemy');
     b.isBoss = true;
+    b.maxHp = Math.round(variant.hp * mult); b.hp = b.maxHp;
+    b.baseDamage = variant.damage * (1 + cycle * 0.2);
     const pt = this.spawnPoint();
     b.x = pt.x; b.y = pt.y;
     b.angle = headingOf(this.player.x - b.x, this.player.y - b.y);
     this.boss = b;
-    this.effects.floatText(this.player.x, this.player.y - 50, 'A LEVIATHAN APPROACHES', '#e9573f');
+    this.bossCount++;
+    this.nextBossAt = this.kills + RUN.killsToBoss + this.bossCount * 4;
+    this.effects.floatText(this.player.x, this.player.y - 50, (def.name || 'A BOSS').toUpperCase() + ' APPROACHES', '#e9573f');
     Audio.explosion();
   }
 
@@ -293,6 +327,8 @@ export class Game {
     p.turn = b.turn * (1 + 0.06 * u.sails);
     p.dmgMult = b.dmg * Math.pow(1.18, u.cannon);
     p.reloadMult = Math.pow(1.12, u.reload);
+    p.regenOut = PLAYER.regenOut * (1 + 0.6 * u.carpenters) * (this.startRegenPerk ? 1.5 : 1);
+    this.goldMult = 1 + 0.18 * u.marauder;
   }
 
   setAmmo(id) {

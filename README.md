@@ -32,14 +32,29 @@ plays **offline** after the first load.
   wind is faster; damaged sails slow you down.
 - **Desktop** — WASD/arrows to steer, click or Space to fire, Esc to pause.
 
+Your hull also **auto-repairs** — a trickle in combat, faster once you've
+gone a few seconds without being hit — so disengaging to heal is a valid
+tactic. Carpenters upgrades and the Ship's Surgeon perk make it faster.
+
 ### The loop
-1. **Sink ships** → they drop gold and the occasional cargo barrel.
+1. **Sink ships** → they drop gold, the occasional cargo barrel, and
+   sometimes a **repair barrel** that patches your hull.
 2. **Spend gold** at the ⚓ Quartermaster (pause or anchor button) on hull,
-   sails, cannons, crew, repairs, and ammo types.
+   sails, cannons, crew, auto-repair, plunder bonus, one-shot repairs, and
+   ammo types.
 3. **Retire** to bank a share of your gold as **doubloons**, or go down
    fighting — either way doubloons persist.
-4. **Doubloons** unlock new ship classes (Frigate, Galleon), permanent
-   perks, and ammo (Chain Shot, Grapeshot) in the **Shipyard**.
+4. **Doubloons** unlock ship classes (Frigate, Galleon, Man-o'-War),
+   permanent perks, and ammo (Chain, Grape, splash **Mortar**) in the
+   **Shipyard**.
+
+### Content
+- **4 ship classes**, **4 ammo types**, **10+ upgrade paths**.
+- **7 enemy archetypes** (Scout, Raider, Interceptor, Gunship, Bruiser,
+  Skull Raker, Ironclad) that unlock as you sail into deeper zones.
+- **Recurring, escalating bosses** — the Leviathan, the Dreadnought, and the
+  Gilded Terror cycle and grow stronger every encounter, so a run can go as
+  long as your hull holds.
 
 ## Project structure
 

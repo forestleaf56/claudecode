@@ -22,6 +22,10 @@ export class Pickups {
     this.list.push({ x, y, vx: 0, vy: 0, kind: 'cargo', value: 0, t: 0, life: 22, bob: rand(0, 6.28) });
   }
 
+  spawnRepair(x, y) {
+    this.list.push({ x, y, vx: 0, vy: 0, kind: 'repair', value: 0, t: 0, life: 20, bob: rand(0, 6.28) });
+  }
+
   update(dt, player, onCollect) {
     for (const p of this.list) {
       p.t += dt; p.bob += dt * 4;
@@ -52,6 +56,14 @@ export class Pickups {
         ctx.beginPath(); ctx.arc(p.x, yy, 6, 0, 6.28); ctx.fill(); ctx.stroke();
         ctx.fillStyle = '#fff3c4';
         ctx.beginPath(); ctx.arc(p.x - 1.5, yy - 1.5, 2, 0, 6.28); ctx.fill();
+      } else if (p.kind === 'repair') {
+        const im = img('t_barrel');
+        if (im) ctx.drawImage(im, p.x - 14, yy - 14, 28, 28);
+        else { ctx.fillStyle = '#a86b34'; ctx.fillRect(p.x - 8, yy - 10, 16, 20); }
+        // green cross badge
+        ctx.fillStyle = '#8cc152';
+        ctx.fillRect(p.x - 2, yy - 7, 4, 14);
+        ctx.fillRect(p.x - 7, yy - 2, 14, 4);
       } else {
         const im = img('t_barrel');
         if (im) ctx.drawImage(im, p.x - 14, yy - 14, 28, 28);

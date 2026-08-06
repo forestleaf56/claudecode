@@ -27,6 +27,12 @@ export const SHIP_CLASSES = {
     damage: 22, radius: 33, cost: 1100,
     desc: 'A floating fortress. Slow, but devastating.',
   },
+  manofwar: {
+    name: "Man-o'-War", sprite: 'ship_manowar', scale: 1.12,
+    hp: 360, speed: 168, turn: 1.5, cannons: 5, reload: 1.35,
+    damage: 26, radius: 38, cost: 2500,
+    desc: 'A dread flagship. Five guns a side and armour to match.',
+  },
 };
 
 // Cannon types (unlock/switch during a run or via treasury)
@@ -34,6 +40,7 @@ export const CANNON_TYPES = {
   round:  { name: 'Round Shot', speed: 620, life: 0.85, dmg: 1.0, sailDmg: 0.4, spread: 0.10, color: '#3a3a3a' },
   chain:  { name: 'Chain Shot', speed: 540, life: 0.8,  dmg: 0.6, sailDmg: 1.6, spread: 0.14, color: '#6b5a3a' },
   grape:  { name: 'Grapeshot', speed: 560, life: 0.5,  dmg: 0.55, sailDmg: 0.4, spread: 0.42, count: 3, color: '#555' },
+  mortar: { name: 'Mortar', speed: 470, life: 1.0, dmg: 0.95, sailDmg: 0.4, spread: 0.16, splash: 74, splashDmg: 0.6, color: '#2b2b2b' },
 };
 
 // Enemy archetypes. tier gates when they appear.
@@ -63,13 +70,32 @@ export const ENEMIES = {
     hp: 130, speed: 220, turn: 2.6, cannons: 3, reload: 1.25, damage: 16,
     radius: 26, range: 380, gold: [28, 50], score: 70, aggression: 1.25,
   },
+  interceptor: {
+    name: 'Interceptor', sprite: 'dinghy1', scale: 1.5, tier: 1,
+    hp: 34, speed: 288, turn: 3.5, cannons: 1, reload: 1.35, damage: 9,
+    radius: 16, range: 300, gold: [14, 26], score: 30, aggression: 1.4,
+  },
+  ironclad: {
+    name: 'Ironclad', sprite: 'ship_e_skull2', scale: 0.85, tier: 3,
+    hp: 240, speed: 150, turn: 1.5, cannons: 4, reload: 1.9, damage: 21,
+    radius: 32, range: 450, gold: [45, 80], score: 110, aggression: 0.8,
+  },
 };
 
-export const BOSS = {
-  name: 'The Leviathan', sprite: 'ship_boss', scale: 1.7,
-  hp: 900, speed: 130, turn: 1.15, cannons: 6, reload: 1.5, damage: 26,
-  radius: 52, range: 560, gold: [400, 500], score: 1000, aggression: 0.8,
-};
+// Bosses appear on a recurring cadence, cycling through these variants and
+// scaling up each cycle — a long-term escalating goal.
+export const BOSSES = [
+  { name: 'The Leviathan', sprite: 'ship_boss', scale: 1.7,
+    hp: 850, speed: 130, turn: 1.15, cannons: 6, reload: 1.5, damage: 22,
+    radius: 52, range: 560, gold: [380, 480], score: 1000, aggression: 0.8 },
+  { name: 'The Dreadnought', sprite: 'ship_e_skull2', scale: 1.8,
+    hp: 1250, speed: 122, turn: 1.05, cannons: 7, reload: 1.4, damage: 26,
+    radius: 56, range: 600, gold: [560, 720], score: 1600, aggression: 0.85 },
+  { name: 'The Gilded Terror', sprite: 'ship_e_yellow', scale: 1.9,
+    hp: 1750, speed: 126, turn: 1.1, cannons: 8, reload: 1.3, damage: 28,
+    radius: 60, range: 640, gold: [880, 1080], score: 2400, aggression: 0.9 },
+];
+export const BOSS = BOSSES[0]; // back-compat
 
 // In-run upgrade nodes bought from the Quartermaster with gold.
 export const UPGRADES = {
@@ -77,6 +103,8 @@ export const UPGRADES = {
   sails:  { name: 'Trim Sails',     desc: '+8% speed & turn', icon: '⛵', base: 55, growth: 1.5, max: 6 },
   cannon: { name: 'Cast Cannons',   desc: '+18% cannon damage', icon: '💥', base: 65, growth: 1.55, max: 6 },
   reload: { name: 'Drill Crew',     desc: '+12% reload speed', icon: '🎯', base: 55, growth: 1.5, max: 6 },
+  carpenters: { name: 'Carpenters', desc: '+60% auto-repair rate', icon: '🪚', base: 55, growth: 1.5, max: 5 },
+  marauder: { name: 'Marauder',     desc: '+18% gold from plunder', icon: '💰', base: 70, growth: 1.5, max: 5 },
   repair: { name: 'Repair Hull',    desc: 'Restore hull to full', icon: '🔧', base: 40, growth: 1.35, max: 99 },
 };
 
@@ -88,12 +116,22 @@ export const TREASURY = {
   startCannon: { name: 'Master Gunners', desc: '+15% damage, permanently', cost: 350, kind: 'stat', id: 'startCannon' },
   chain: { name: 'Chain Shot', desc: 'Unlock Chain Shot ammo', cost: 300, kind: 'ammo', id: 'chain' },
   grape: { name: 'Grapeshot', desc: 'Unlock Grapeshot ammo', cost: 300, kind: 'ammo', id: 'grape' },
+  mortar: { name: 'Mortar Shells', desc: 'Unlock splash Mortar ammo', cost: 500, kind: 'ammo', id: 'mortar' },
+  manofwar: { name: "Commission Man-o'-War", desc: "Unlock the Man-o'-War class", cost: 2500, kind: 'ship', id: 'manofwar' },
+  startRegen: { name: "Ship's Surgeon", desc: '+50% auto-repair, permanently', cost: 300, kind: 'stat', id: 'startRegen' },
 };
 
 export const RUN = {
   bankRate: 0.35,       // fraction of run gold converted to treasury on run end
   zoneRadius: 2600,     // world distance per difficulty zone
-  killsToBoss: 24,      // kills before the boss can appear
+  killsToBoss: 22,      // kills between boss encounters (recurring)
   baseEnemies: 2,       // target enemies near player at zone 0 (gentle start)
   grace: 5,             // seconds at run start before enemies spawn
+};
+
+// Player out-of-combat hull auto-repair (the main difficulty easer).
+export const PLAYER = {
+  regenDelay: 3.0,      // seconds without damage before fast repair kicks in
+  regenOut: 0.06,       // fraction of max hull per second, out of combat
+  regenIn: 0.01,        // small always-on trickle while in combat
 };

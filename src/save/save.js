@@ -7,9 +7,9 @@ const DEFAULT = {
   bestScore: 0,
   bestGold: 0,
   runs: 0,
-  ships: { sloop: true, frigate: false, galleon: false },
-  ammo: { round: true, chain: false, grape: false },
-  perks: { startHull: false, startCannon: false },
+  ships: { sloop: true, frigate: false, galleon: false, manofwar: false },
+  ammo: { round: true, chain: false, grape: false, mortar: false },
+  perks: { startHull: false, startCannon: false, startRegen: false },
   chosenShip: 'sloop',
   settings: { muted: false, leftHanded: false, reduceMotion: false, aimAssist: true },
 };

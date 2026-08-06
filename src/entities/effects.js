@@ -62,6 +62,14 @@ export class Effects {
     this.parts.push({ x, y, vx: 0, vy: 0, life: 0.28, t: 0, r: 9, col: '#fff0c0', grav: 0, fade: true });
   }
 
+  heal(x, y, r = 16) {
+    const a = rand(0, 6.28);
+    this.parts.push({
+      x: x + Math.cos(a) * r, y: y + Math.sin(a) * r,
+      vx: 0, vy: -30, life: 0.7, t: 0, r: 2.5, col: '#8cf07a', grav: 0, fade: true,
+    });
+  }
+
   debris(x, y) {
     for (let i = 0; i < 8; i++) {
       const a = rand(0, 6.28), sp = rand(20, 80);

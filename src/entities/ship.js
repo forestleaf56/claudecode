@@ -23,6 +23,8 @@ export class Ship {
     this.hurtFlash = 0;
     // multipliers (player upgrades)
     this.dmgMult = 1; this.reloadMult = 1;
+    // auto-repair (player only; enemies keep these at 0)
+    this.sinceHit = 999; this.regenOut = 0; this.regenIn = 0; this.regenDelay = 3;
     this.sprite = def.sprite;
     // AI
     this.aiTimer = rand(0, 1); this.aiSide = Math.random() < 0.5 ? 1 : -1;
@@ -113,6 +115,7 @@ export class Ship {
         env.projectiles.spawn(px, py, dx * sp + this.vx * 12, dy * sp + this.vy * 12, {
           life: ammo.life, dmg: this.damage * ammo.dmg, sailDmg: this.damage * ammo.sailDmg,
           friendly: this.team === 'player',
+          splash: ammo.splash || 0, splashDmg: this.damage * (ammo.splashDmg || 0),
         });
       }
       env.effects.muzzle(px, py);
@@ -147,6 +150,7 @@ export class Ship {
     this.sailHp = Math.max(0, this.sailHp - sailDmg);
     this.hp -= dmg;
     this.hurtFlash = 0.12;
+    this.sinceHit = 0;
     env.effects.splinters(this.x, this.y, this.x - fromX, this.y - fromY);
     env.audio.hit();
     if (this.hp <= 0) { this.startSink(env); return true; }
@@ -207,6 +211,18 @@ export class Ship {
     this.reloadL -= dt; this.reloadR -= dt;
     // slow sail self-repair
     this.sailHp = Math.min(this.maxSailHp, this.sailHp + this.maxSailHp * 0.03 * dt);
+
+    // hull auto-repair (player): trickle in combat, faster once unhit for a while
+    this.sinceHit += dt;
+    if (this.regenOut > 0 && this.hp < this.maxHp) {
+      const rate = this.sinceHit >= this.regenDelay ? this.regenOut : this.regenIn;
+      const before = this.hp;
+      this.hp = Math.min(this.maxHp, this.hp + this.maxHp * rate * dt);
+      // occasional green sparkle while actively repairing
+      if (this.sinceHit >= this.regenDelay && this.hp > before && Math.random() < 0.25) {
+        env.effects.heal(this.x, this.y, this.radius);
+      }
+    }
   }
 
   // ---- Draw ----
