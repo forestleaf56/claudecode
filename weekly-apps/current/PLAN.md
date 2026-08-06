@@ -45,8 +45,17 @@ weekly-apps/current/
       builds combo, bonus points + ring flash), per-floor lit windows, best height &
       best score saved (localStorage), tumbling-debris collapse on game over.
       Verified in browser (fixed an undefined-var bug), no JS errors.
-- [ ] Thu: **title screen + menu** (PLAY / HOW TO PLAY / best) with the SKYLINE
-      wordmark, plus sound (WebAudio) + haptics and general polish; mobile test.
+- [x] Thu: **title screen + menu** (PLAY / HOW TO PLAY, best readout, SKYLINE
+      wordmark over a city silhouette + stars) and a how-to screen; WebAudio sound
+      (drop / perfect / topple) + haptics; REBUILD/MENU on game over. Verified in
+      browser across title→howto→play→over, no JS errors.
+
+## Friday readme notes
+- Self-contained single index.html, Canvas 2D. NO Supabase / NO Gemini API.
+- Therefore NO API keys, NO env vars, and NO api/ folder / Vercel serverless setup.
+  Runs by just opening index.html; host as a static file anywhere.
+- One-tap: tap to drop each slab; line up with the floor below; perfect drops keep
+  full width + build a combo; a full miss topples the tower.
 
 ## Status notes
 - Mon 2026-08-03: plan + skeleton only, per the small-increment routine.
