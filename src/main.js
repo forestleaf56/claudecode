@@ -79,8 +79,23 @@ function handleTaps() {
   }
 }
 
+// Best-effort fullscreen. Must be called from a user gesture (the Set Sail
+// tap). Silently no-ops where unsupported (e.g. iPhone Safari, where the
+// installed PWA already runs fullscreen).
+function enterFullscreen() {
+  const el = document.documentElement;
+  if (document.fullscreenElement || document.webkitFullscreenElement) return;
+  const req = el.requestFullscreen || el.webkitRequestFullscreen || el.msRequestFullscreen;
+  if (!req) return;
+  try {
+    const p = req.call(el, { navigationUI: 'hide' });
+    if (p && p.catch) p.catch(() => {});
+  } catch (e) { /* ignore */ }
+}
+
 function startRun() {
   Audio.ensureStarted();
+  enterFullscreen();
   applySettings();
   game.start(save.chosenShip, 'round');
   state = 'play';
