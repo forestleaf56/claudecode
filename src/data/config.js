@@ -40,12 +40,12 @@ export const CANNON_TYPES = {
 export const ENEMIES = {
   scout: {
     name: 'Scout', sprite: 'dinghy2', scale: 1.3, tier: 0,
-    hp: 26, speed: 250, turn: 3.2, cannons: 1, reload: 1.6, damage: 8,
+    hp: 24, speed: 250, turn: 3.2, cannons: 1, reload: 1.9, damage: 6,
     radius: 15, range: 300, gold: [4, 9], score: 10, aggression: 1.15,
   },
   raider: {
     name: 'Raider', sprite: 'ship_e_red', scale: 0.62, tier: 0,
-    hp: 60, speed: 205, turn: 2.4, cannons: 2, reload: 1.5, damage: 12,
+    hp: 54, speed: 205, turn: 2.4, cannons: 2, reload: 1.8, damage: 9,
     radius: 22, range: 340, gold: [10, 20], score: 25, aggression: 1.0,
   },
   gunship: {
@@ -94,5 +94,6 @@ export const RUN = {
   bankRate: 0.35,       // fraction of run gold converted to treasury on run end
   zoneRadius: 2600,     // world distance per difficulty zone
   killsToBoss: 24,      // kills before the boss can appear
-  baseEnemies: 4,       // target enemies near player at zone 0
+  baseEnemies: 2,       // target enemies near player at zone 0 (gentle start)
+  grace: 5,             // seconds at run start before enemies spawn
 };

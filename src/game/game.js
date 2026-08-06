@@ -86,8 +86,13 @@ export class Game {
     if (this.state !== 'playing' || this.player.dead || this.player.sinking) return;
     const target = this.nearestEnemy();
     const s = Save.get();
-    const aim = (s.settings.aimAssist && target) ? { x: target.x, y: target.y } : null;
-    this.player.fireBroadside(this.env(), aim || target);
+    // aim the volley at the nearest enemy within reach so shots connect
+    let aimAt = null;
+    if (s.settings.aimAssist && target &&
+        dist(target.x, target.y, this.player.x, this.player.y) < 780) {
+      aimAt = { x: target.x, y: target.y };
+    }
+    this.player.fireBroadside(this.env(), target, aimAt);
   }
 
   setSteer(vec) { this.steer = vec; }
@@ -196,14 +201,17 @@ export class Game {
 
   // ---- Spawning & difficulty ----
   spawn(dt) {
+    // grace period at the start of a run so the player can find their sea legs
+    if (this.time < RUN.grace) return;
     // boss trigger
     if (!this.boss && !this.bossDefeated && this.kills >= RUN.killsToBoss) {
       this.spawnBoss();
     }
     this.spawnTimer -= dt;
-    const target = Math.min(12, RUN.baseEnemies + this.zone * 1.5) + (this.boss ? 2 : 0);
+    // ramp up slowly: gentle at zone 0, busier as you sail out
+    const target = Math.min(11, RUN.baseEnemies + this.zone * 1.5) + (this.boss ? 2 : 0);
     if (this.enemies.length < target && this.spawnTimer <= 0) {
-      this.spawnTimer = clamp(1.4 - this.zone * 0.12, 0.5, 1.4);
+      this.spawnTimer = clamp(2.4 - this.zone * 0.18, 0.65, 2.4);
       this.spawnEnemy();
     }
   }

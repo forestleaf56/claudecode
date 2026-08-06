@@ -83,25 +83,32 @@ export class Ship {
   }
 
   // ---- Firing ----
-  fireSide(side, env) {
+  // aimAt (optional): a {x,y} point the volley homes toward (aim assist).
+  // Without it, cannons fire straight out the broadside (perpendicular).
+  fireSide(side, env, aimAt = null) {
     const rem = side < 0 ? this.reloadL : this.reloadR;
     if (rem > 0 || this.sinking) return false;
     const fwd = forwardVec(this.angle);
     const nrm = side > 0 ? { x: -fwd.y, y: fwd.x } : { x: fwd.y, y: -fwd.x };
     const ammo = this.ammo || CANNON_TYPES.round;
     const len = this.hullLen;
-    const shots = ammo.count ? this.cannons * ammo.count : this.cannons;
     for (let i = 0; i < this.cannons; i++) {
       const frac = this.cannons === 1 ? 0 : (i / (this.cannons - 1) - 0.5);
       const off = frac * len * 0.55;
       const px = this.x + fwd.x * off + nrm.x * this.radius;
       const py = this.y + fwd.y * off + nrm.y * this.radius;
+      // base direction: toward the aim point, else straight out the side
+      let bdx = nrm.x, bdy = nrm.y;
+      if (aimAt) {
+        const ex = aimAt.x - px, ey = aimAt.y - py, el = Math.hypot(ex, ey) || 1;
+        bdx = ex / el; bdy = ey / el;
+      }
       const burst = ammo.count || 1;
       for (let b = 0; b < burst; b++) {
-        const spr = (rand(-1, 1)) * ammo.spread;
+        const spr = rand(-1, 1) * ammo.spread;
         const ca = Math.cos(spr), sa = Math.sin(spr);
-        let dx = nrm.x * ca - nrm.y * sa;
-        let dy = nrm.x * sa + nrm.y * ca;
+        const dx = bdx * ca - bdy * sa;
+        const dy = bdx * sa + bdy * ca;
         const sp = ammo.speed * rand(0.92, 1.06);
         env.projectiles.spawn(px, py, dx * sp + this.vx * 12, dy * sp + this.vy * 12, {
           life: ammo.life, dmg: this.damage * ammo.dmg, sailDmg: this.damage * ammo.sailDmg,
@@ -117,8 +124,9 @@ export class Ship {
     return true;
   }
 
-  // Player helper: fire the side that best faces a target point (or starboard).
-  fireBroadside(env, target) {
+  // Player helper: fire the side that best faces the target; aim the volley
+  // at aimAt (when aim assist is on) so shots actually connect.
+  fireBroadside(env, target, aimAt = null) {
     let side = 1;
     if (target) {
       const dx = target.x - this.x, dy = target.y - this.y;
@@ -126,11 +134,11 @@ export class Ship {
       const nR = { x: -fwd.y, y: fwd.x };
       side = (nR.x * dx + nR.y * dy) >= 0 ? 1 : -1;
     }
-    // if chosen side reloading but other ready, use the other
+    // if chosen side reloading but the other is ready, fire the other
     const rem = side < 0 ? this.reloadL : this.reloadR;
     const other = side < 0 ? this.reloadR : this.reloadL;
     if (rem > 0 && other <= 0) side = -side;
-    return this.fireSide(side, env);
+    return this.fireSide(side, env, aimAt);
   }
 
   // ---- Damage ----
@@ -214,7 +222,8 @@ export class Ship {
     ctx.fill();
     ctx.globalAlpha = 1;
 
-    ctx.rotate(this.angle);
+    // Sprite art points bow-DOWN, but logical forward is up, so add PI.
+    ctx.rotate(this.angle + Math.PI);
     if (this.sinking) {
       ctx.globalAlpha = Math.max(0, 1 - this.sinkT / 1.1);
       const s = this.scale * (1 - this.sinkT * 0.25);
