@@ -18,6 +18,12 @@ Every week, on a schedule, the routine:
    app to GitHub.
 
 Each app must be:
+- **Varied in kind** — rotate widely across ALL game genres (arcade, puzzle, word,
+  trivia, card, board, rhythm, strategy, idle, platformer, simulation, memory,
+  typing, …) AND all app types (utilities, creative/drawing/music makers,
+  generators, calculators, trackers, timers, visualizers, learning tools, toys, …).
+  Not just canvas arcade/puzzle games; each week deliberately picks a category
+  different from recent archived weeks so the collection stays diverse.
 - **Mobile-first / responsive** (designed for phones).
 - **Self-contained** as a single `index.html` when no backend is needed — OR, if it
   uses **Supabase** or the **Gemini free API**, structured for **Vercel**:
