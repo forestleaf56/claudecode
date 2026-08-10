@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#14110f">
+<title>Thump</title>
+<style>
+  :root{
+    --bg:#14110f; --panel:#1e1a17; --line:#2c2621;
+    --amber:#ff9838; --amber-soft:#ffb469; --ink:#f6efe8; --muted:#a99e93;
+  }
+  *{ margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  html,body{ height:100%; }
+  body{
+    background:var(--bg); color:var(--ink); overflow:hidden;
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+    user-select:none; -webkit-user-select:none; touch-action:manipulation;
+    display:flex; flex-direction:column;
+    padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+  }
+
+  /* ---- header / logo ---- */
+  header{ display:flex; align-items:center; gap:10px; padding:16px 18px 10px; }
+  .mark{ width:30px; height:30px; flex:0 0 auto; }
+  .logo{ font-size:30px; font-weight:900; letter-spacing:2px;
+    background:linear-gradient(120deg,var(--amber),var(--amber-soft));
+    -webkit-background-clip:text; background-clip:text; color:transparent; }
+  .tag{ margin-left:auto; font-size:12px; color:var(--muted); letter-spacing:1px; text-transform:uppercase; }
+
+  /* ---- toolbar (menu) placeholder ---- */
+  .toolbar{ display:flex; gap:8px; padding:8px 18px 14px; flex-wrap:wrap; }
+  .btn{ background:var(--panel); border:1px solid var(--line); color:var(--ink);
+    padding:10px 16px; border-radius:12px; font-size:14px; font-weight:700; opacity:.55; }
+  .btn.primary{ background:linear-gradient(120deg,var(--amber),#ff7a1a); border:none; color:#20140a; opacity:.55; }
+
+  /* ---- main surface / grid placeholder ---- */
+  main{ flex:1 1 auto; margin:6px 14px 18px; border:1px dashed var(--line);
+    border-radius:16px; background:var(--panel);
+    display:flex; align-items:center; justify-content:center; text-align:center; padding:20px; }
+  .placeholder h2{ font-size:18px; font-weight:800; color:var(--ink); margin-bottom:8px; }
+  .placeholder p{ font-size:14px; color:var(--muted); line-height:1.5; max-width:280px; }
+</style>
+</head>
+<body>
+  <header>
+    <svg class="mark" viewBox="0 0 32 32" aria-hidden="true">
+      <circle cx="16" cy="16" r="14" fill="none" stroke="#ff9838" stroke-width="2.5"/>
+      <circle cx="16" cy="16" r="4.5" fill="#ff9838"/>
+    </svg>
+    <span class="logo">THUMP</span>
+    <span class="tag">pocket drum machine</span>
+  </header>
+
+  <div class="toolbar">
+    <span class="btn primary">▶ Play</span>
+    <span class="btn">Tempo</span>
+    <span class="btn">Clear</span>
+    <span class="btn">Random</span>
+  </div>
+
+  <main>
+    <div class="placeholder">
+      <h2>step grid coming this week</h2>
+      <p>Tap pads to program a beat, hit play, and loop it. Synth drums, tempo,
+         save/load — all built across this week.</p>
+    </div>
+  </main>
+
+  <script>
+    "use strict";
+    // Skeleton only — the WebAudio engine, step grid, and working toolbar land
+    // Tue–Thu per PLAN.md. This shell just establishes the app layout (logo +
+    // toolbar/menu + grid surface) and confirms it opens responsively on mobile.
+    (function(){
+      // keep the viewport height correct on mobile browsers (address-bar resize)
+      function vh(){ document.body.style.height = window.innerHeight + 'px'; }
+      window.addEventListener('resize', vh); vh();
+    })();
+  </script>
+</body>
+</html>
