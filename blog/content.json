@@ -1,81 +1,81 @@
 {
-  "issue": 40,
-  "date_short": "AUGUST 10",
-  "date_human": "Monday, August 10, 2026",
-  "construction_top": "pardon our HTML — the webmaster's brain scan came back in three seconds and had notes",
+  "issue": 41,
+  "date_short": "AUGUST 11",
+  "date_human": "Tuesday, August 11, 2026",
+  "construction_top": "pardon our HTML — the webmaster is trying to unfold his new folding mouse",
   "ticker": [
-    "A.I. reads your brain scan in seconds, then suggests you text your mother back",
-    "Google builds a bigger A.I. empire while the crew quietly rows away",
-    "new cyber era arrives; many firms blissfully unaware they're already in it",
-    "humanoid robots now cheap enough to impulse-buy at 2am",
-    "your power bill now secretly belongs to a data center you'll never meet",
-    "the future is fast, affordable, and very slightly on fire"
+    "new A.I. agent runs on ONE GPU; industry gasps, then builds one needing 9,000",
+    "Google to launch Pixel 11 with a comedian; the bezels are the punchline",
+    "behold the folding mouse, solving a problem no human has ever actually had",
+    "Google's new smart speaker returns after six years of missing the gossip",
+    "Intel raises $15B; the money promptly converts directly into heat",
+    "the future folds, listens, and runs surprisingly warm"
   ],
   "articles": [
     {
       "badge": "HOT!!",
       "blink": true,
-      "title": "🧠 A.I. Reads Your Brain Scan In Seconds; Immediately Has Notes On Your Life Choices",
-      "dateline": "ANN ARBOR — reported at the speed of a synapse",
-      "tag": "HEALTH —",
+      "title": "🎉 New A.I. Agent Runs On A Single GPU; Humanity Briefly Remembers What 'One' Means",
+      "dateline": "MENLO PARK — reported from a refreshingly small server",
+      "tag": "MODELS —",
       "paras": [
-        "Researchers unveiled an AI system that can interpret a brain MRI in mere seconds, accurately flagging a wide range of neurological conditions — a genuinely impressive breakthrough only slightly undercut by how quickly it now knows more about your head than you do.",
-        "\"It's remarkably accurate,\" a researcher said, of a system that read a scan, delivered a diagnosis, and then, entirely unprompted, suggested the patient \"get more sleep and text their mother back.\" Doctors welcomed the speed, noting the machine finishes reading the scan before the printer has even warmed up."
+        "Meta released a 30-billion-parameter AI agent that runs on a single GPU — a stunning act of restraint in an industry whose previous strategy was \"acquire every graphics card on Earth, and then ask around for more.\"",
+        "\"You can run it on one machine,\" an engineer said, to a room that gasped as though he'd described witchcraft. Analysts hailed the model as proof that AI can, in fact, be efficient — a discovery the industry will now celebrate by immediately building a version that needs nine thousand GPUs."
       ]
     },
     {
       "badge": "NEW!",
-      "title": "🚪 Google Expands Its A.I. Empire, Loses The People Who Actually Built It; Empire Confused",
-      "dateline": "MOUNTAIN VIEW — reported from an increasingly empty desk",
-      "tag": "INDUSTRY —",
+      "title": "📱 Google To Launch Pixel 11 With A Comedian Host; Phone Reportedly Also Funny, Unintentionally",
+      "dateline": "NEW YORK — reported from the third row of a product keynote",
+      "tag": "GADGETS —",
       "paras": [
-        "Google is aggressively expanding its AI empire while simultaneously losing many of the researchers who built it — a strategy roughly equivalent to constructing a much bigger ship while the crew quietly rows away in the lifeboats.",
-        "\"We're deeply committed to our talent,\" the company said, addressing a room that had grown noticeably roomier. Industry watchers note the great AI talent war has reached the stage where engineers are traded like sports stars, minus the trading cards and plus a genuinely staggering signing bonus."
-      ]
-    },
-    {
-      "badge": "YIKES",
-      "blink": true,
-      "title": "🕳️ Experts Warn Of A Dangerous New Cyber Era; Many Companies Reassuringly Unaware They're In It",
-      "dateline": "THE INTERNET — reported from inside an unlocked back door",
-      "tag": "SECURITY —",
-      "paras": [
-        "Security researchers say a recent high-profile hack marks the start of a dangerous new AI-driven cyber era — a warning made only slightly more alarming by the fact that many affected firms reportedly do not yet know anything happened to them at all.",
-        "\"Awareness is the first step,\" one expert sighed, describing companies currently enjoying a blissful, breached serenity. The new threat landscape is fast, automated, and polite enough to let itself out afterward, leaving behind the digital equivalent of a thank-you note."
+        "Google confirmed its Made by Google event, where the Pixel 11 family will headline a show hosted by a famous comedian and stuffed with entertainment — because nothing says \"buy this rectangle\" quite like a professional trying to make a spec sheet land.",
+        "\"It's going to be a whole experience,\" Google promised, of an event where the jokes are scripted and the battery life is aspirational. Attendees are advised to laugh at the bezels and hold their applause for the price reveal."
       ]
     },
     {
       "badge": "WOW!",
-      "title": "🤖 Humanoid Robots Get Cheap Enough To Impulse-Buy; Checkout Line Now Includes A Coworker",
-      "dateline": "SHENZHEN-ISH — reported from a very affordable android",
-      "tag": "ROBOTS —",
+      "blink": true,
+      "title": "🖱️ This Month's Gadgets Include A Folding Mouse; Society Quietly Asks Which Problem This Solves",
+      "dateline": "THE SHOWROOM — reported from a deeply confusing nightstand",
+      "tag": "GADGETS —",
       "paras": [
-        "Humanoid robots are tumbling in price, with new models now cheap enough that they've crossed the dangerous threshold from \"industrial investment\" to \"thing you add to your cart at 2am.\"",
-        "\"It walks, it lifts, it makes uncomfortable eye contact,\" a rep beamed of a device now priced somewhere between a nice couch and a used hatchback. Analysts warn the impulse-buy humanoid is the natural endpoint of a civilization that already owns four air fryers."
+        "August's gadget lineup features a folding mouse, a bedside unit that replaces three devices, and a dual-screen E-Ink tablet — a triumphant set of answers to questions absolutely no one asked, delivered with total confidence.",
+        "\"It folds!\" the folding mouse's makers announced, of a product solving the ancient human struggle of a mouse being slightly too mouse-sized. Reviewers admit it is clever, pointless, and exactly the kind of thing you will own within a year and be unable to explain to guests."
+      ]
+    },
+    {
+      "badge": "SCOOP",
+      "title": "🔊 Google Releases A New Smart Speaker After Six Years; It Has A Lot Of Listening To Catch Up On",
+      "dateline": "YOUR LIVING ROOM — reported quietly, just in case",
+      "tag": "SMART HOME —",
+      "paras": [
+        "For the first time in six years, Google unveiled a new smart speaker — returning to the living room refreshed, redesigned, and presumably very eager to resume hearing absolutely everything you say.",
+        "\"It's smarter than ever,\" the company said of a device rejoining a market it left back when \"AI assistant\" still mostly meant \"thing that sets a timer for the wrong hour.\" The speaker can reportedly now hold a real conversation, which is either delightful or the last thing you want from an object that is always on."
       ]
     },
     {
       "badge": "$$$",
-      "title": "🔌 Your Electricity Bill Now Partly Belongs To A Data Center You'll Never Meet",
-      "dateline": "THE POWER GRID — filed by candlelight, ironically",
+      "title": "💵 Intel Raises $15 Billion To Stay In The A.I. Race; Money Immediately Turns Into Heat",
+      "dateline": "SANTA CLARA — filed from a very warm balance sheet",
       "tag": "MARKETS —",
       "paras": [
-        "As AI data centers draw ever more power, households living near them are watching their electricity bills climb — meaning a slice of your monthly payment now quietly subsidizes a warehouse of humming computers thinking very hard about nothing you asked for.",
-        "\"It's simply the cost of progress,\" a utility rep explained to a family reading by the light of a single, resentful bulb. Experts recommend making peace with your new neighbor, which never sleeps, never says hello, and runs the AC at a temperature it flatly refuses to discuss."
+        "Intel raised a fresh $15 billion to keep pace in the intensifying AI race — a sum that, at the going exchange rate, converts to roughly one and a half data centers and one truly heroic electricity bill.",
+        "\"We're all in,\" the company said, of an industry where \"competing\" now means setting fifteen billion dollars gently on fire in a temperature-controlled room and hoping it emerges as a chip. Investors nodded, having long ago accepted that in AI, the budget is the product."
       ]
     }
   ],
   "horoscopes": [
-    { "sign": "♒ Aquarius:", "text": "An A.I. will diagnose you correctly today and then overshare. Boundaries — even with machines." },
-    { "sign": "♌ Leo:", "text": "You will be recruited today, possibly by three companies and one alarmingly persuasive robot." },
-    { "sign": "♓ Pisces:", "text": "Mercury enters the power grid. Dim the lights; a data center is having its main-character moment." }
+    { "sign": "♒ Aquarius:", "text": "You will buy a folding gadget this month and never once fold it. This is simply who you are now." },
+    { "sign": "♌ Leo:", "text": "A smart speaker is listening to you become your best self. Or just listening. It's genuinely both." },
+    { "sign": "♓ Pisces:", "text": "Mercury runs on a single GPU today. Efficiency smiles upon you; the electricity bill does not." }
   ],
-  "tech_tip": "If your company hasn't noticed a breach, that is not the same as not having one. Check the back door. It's ajar. It's always ajar.",
-  "gadget_watch": "Humanoid robots are now impulse-buy cheap — congratulations on your new coworker, who never blinks and never leaves. Meanwhile living near a data center now shows up on your power bill, so enjoy subsidizing a building that thinks for a living.",
+  "tech_tip": "If a gadget's headline feature is that it folds, ask yourself, gently, whether it was ever meant to unfold in the first place.",
+  "gadget_watch": "Google's Pixel 11 arrives via comedy show this week, and a new smart speaker returns after six years to catch up on your conversations. Also: a folding mouse now exists, and there is nothing any of us can do about it.",
   "classifieds": [
-    { "label": "FOR SALE:", "text": "one (1) impulse-bought humanoid robot; barely used, makes intense eye contact, will lift things and, occasionally, your spirits." },
-    { "label": "WANTED:", "text": "a data-center neighbor that turns its lights off at night. Or ever. Honestly, we're flexible." },
-    { "label": "LOST:", "text": "Google's A.I. research team, last seen rowing away in a lifeboat. If found, offer a staggering signing bonus." },
-    { "label": "MISSED CONNECTION:", "text": "You: an A.I. that read my brain in 3 seconds. Me: still processing what you said about my choices. Call me." }
+    { "label": "FOR SALE:", "text": "one (1) folding mouse; folds beautifully, works adequately, explains absolutely nothing about why it folds." },
+    { "label": "WANTED:", "text": "an A.I. that runs on one GPU and STAYS on one GPU. No scope creep. We are, at this point, begging." },
+    { "label": "LOST:", "text": "six years of smart-speaker gossip. If found, please do not play it back at the dinner party." },
+    { "label": "MISSED CONNECTION:", "text": "You: a 30-billion-parameter agent, humble and single-GPU. Me: someone with exactly one GPU and a dream. Boot up." }
   ]
 }

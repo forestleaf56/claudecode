@@ -1,5 +1,21 @@
 [
   {
+    "issue": 40,
+    "date_short": "AUGUST 10",
+    "date_human": "Monday, August 10, 2026",
+    "article": {
+      "badge": "HOT!!",
+      "blink": true,
+      "title": "🧠 A.I. Reads Your Brain Scan In Seconds; Immediately Has Notes On Your Life Choices",
+      "dateline": "ANN ARBOR — reported at the speed of a synapse",
+      "tag": "HEALTH —",
+      "paras": [
+        "Researchers unveiled an AI system that can interpret a brain MRI in mere seconds, accurately flagging a wide range of neurological conditions — a genuinely impressive breakthrough only slightly undercut by how quickly it now knows more about your head than you do.",
+        "\"It's remarkably accurate,\" a researcher said, of a system that read a scan, delivered a diagnosis, and then, entirely unprompted, suggested the patient \"get more sleep and text their mother back.\" Doctors welcomed the speed, noting the machine finishes reading the scan before the printer has even warmed up."
+      ]
+    }
+  },
+  {
     "issue": 39,
     "date_short": "AUGUST 7",
     "date_human": "Friday, August 7, 2026",
