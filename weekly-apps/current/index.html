@@ -19,8 +19,6 @@
     display:flex; flex-direction:column;
     padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
   }
-
-  /* ---- header / logo ---- */
   header{ display:flex; align-items:center; gap:10px; padding:16px 18px 10px; }
   .mark{ width:30px; height:30px; flex:0 0 auto; }
   .logo{ font-size:30px; font-weight:900; letter-spacing:2px;
@@ -28,18 +26,23 @@
     -webkit-background-clip:text; background-clip:text; color:transparent; }
   .tag{ margin-left:auto; font-size:12px; color:var(--muted); letter-spacing:1px; text-transform:uppercase; }
 
-  /* ---- toolbar (menu) placeholder ---- */
-  .toolbar{ display:flex; gap:8px; padding:8px 18px 14px; flex-wrap:wrap; }
+  .toolbar{ display:flex; gap:8px; padding:8px 18px 14px; flex-wrap:wrap; align-items:center; }
   .btn{ background:var(--panel); border:1px solid var(--line); color:var(--ink);
-    padding:10px 16px; border-radius:12px; font-size:14px; font-weight:700; opacity:.55; }
-  .btn.primary{ background:linear-gradient(120deg,var(--amber),#ff7a1a); border:none; color:#20140a; opacity:.55; }
+    padding:10px 16px; border-radius:12px; font-size:14px; font-weight:700; cursor:pointer; }
+  .btn.placeholder{ opacity:.45; }
+  .btn.primary{ background:linear-gradient(120deg,var(--amber),#ff7a1a); border:none; color:#20140a; }
+  .btn.primary.playing{ background:linear-gradient(120deg,#ffd089,#ff9838); }
+  .bpm{ margin-left:auto; font-size:13px; color:var(--muted); font-variant-numeric:tabular-nums; }
+  .bpm b{ color:var(--ink); font-size:15px; }
 
-  /* ---- main surface / grid placeholder ---- */
-  main{ flex:1 1 auto; margin:6px 14px 18px; border:1px dashed var(--line);
+  main{ flex:1 1 auto; margin:6px 14px 18px; border:1px solid var(--line);
     border-radius:16px; background:var(--panel);
-    display:flex; align-items:center; justify-content:center; text-align:center; padding:20px; }
-  .placeholder h2{ font-size:18px; font-weight:800; color:var(--ink); margin-bottom:8px; }
-  .placeholder p{ font-size:14px; color:var(--muted); line-height:1.5; max-width:280px; }
+    display:flex; flex-direction:column; align-items:center; justify-content:center; gap:22px; padding:22px; }
+  .steprow{ display:grid; grid-template-columns:repeat(16,1fr); gap:6px; width:100%; max-width:340px; }
+  .dot{ aspect-ratio:1/1; border-radius:50%; background:#2a231d; border:1px solid #37302a; transition:transform .04s; }
+  .dot.beat{ background:#3a2f24; }                 /* downbeats slightly brighter */
+  .dot.on{ background:var(--amber); box-shadow:0 0 12px rgba(255,152,56,.7); transform:scale(1.25); }
+  .hint{ font-size:13px; color:var(--muted); text-align:center; line-height:1.5; max-width:300px; }
 </style>
 </head>
 <body>
@@ -53,30 +56,114 @@
   </header>
 
   <div class="toolbar">
-    <span class="btn primary">▶ Play</span>
-    <span class="btn">Tempo</span>
-    <span class="btn">Clear</span>
-    <span class="btn">Random</span>
+    <span class="btn primary" id="play">▶ Play</span>
+    <span class="btn placeholder">Tempo</span>
+    <span class="btn placeholder">Clear</span>
+    <span class="btn placeholder">Random</span>
+    <span class="bpm">tempo <b id="bpm">120</b></span>
   </div>
 
   <main>
-    <div class="placeholder">
-      <h2>step grid coming this week</h2>
-      <p>Tap pads to program a beat, hit play, and loop it. Synth drums, tempo,
-         save/load — all built across this week.</p>
-    </div>
+    <div class="steprow" id="steprow"></div>
+    <div class="hint">Audio engine + 16-step clock. Tap <b>Play</b> to hear the demo beat
+      and watch the playhead. The full instrument grid arrives Wed.</div>
   </main>
 
   <script>
-    "use strict";
-    // Skeleton only — the WebAudio engine, step grid, and working toolbar land
-    // Tue–Thu per PLAN.md. This shell just establishes the app layout (logo +
-    // toolbar/menu + grid surface) and confirms it opens responsively on mobile.
-    (function(){
-      // keep the viewport height correct on mobile browsers (address-bar resize)
-      function vh(){ document.body.style.height = window.innerHeight + 'px'; }
-      window.addEventListener('resize', vh); vh();
-    })();
+  "use strict";
+  (function(){
+    function vh(){ document.body.style.height = window.innerHeight + 'px'; }
+    window.addEventListener('resize', vh); vh();
+
+    // ---- transport / config ----
+    const STEPS = 16, INSTR = ['kick','snare','hat','clap'];
+    let tempo = 120;                       // BPM
+    let actx = null, isPlaying = false;
+    let currentStep = 0, nextNoteTime = 0, timerId = null;
+    const lookahead = 25, scheduleAhead = 0.12;
+    const noteQueue = [];
+    let noiseBuf = null;
+
+    // demo pattern so Play is audible before the grid exists (Wed builds the UI)
+    const pattern = {
+      kick:  [1,0,0,0, 1,0,0,0, 1,0,0,0, 1,0,0,0],
+      snare: [0,0,0,0, 1,0,0,0, 0,0,0,0, 1,0,0,0],
+      hat:   [1,0,1,0, 1,0,1,0, 1,0,1,0, 1,0,1,0],
+      clap:  [0,0,0,0, 0,0,0,0, 1,0,0,0, 0,0,0,0],
+    };
+
+    // ---- synth voices ----
+    function makeNoise(){
+      const n = actx.sampleRate * 1.0, buf = actx.createBuffer(1, n, actx.sampleRate), d = buf.getChannelData(0);
+      for(let i=0;i<n;i++) d[i] = Math.random()*2-1;
+      return buf;
+    }
+    function env(g, t, peak, dur){ g.gain.setValueAtTime(0.0001,t);
+      g.gain.exponentialRampToValueAtTime(peak,t+0.004);
+      g.gain.exponentialRampToValueAtTime(0.0001,t+dur); }
+    function kick(t){
+      const o=actx.createOscillator(), g=actx.createGain();
+      o.frequency.setValueAtTime(150,t); o.frequency.exponentialRampToValueAtTime(50,t+0.12);
+      env(g,t,1.0,0.42); o.connect(g); g.connect(actx.destination); o.start(t); o.stop(t+0.45);
+    }
+    function noiseVoice(t, hp, peak, dur, type='highpass'){
+      const s=actx.createBufferSource(); s.buffer=noiseBuf;
+      const f=actx.createBiquadFilter(); f.type=type; f.frequency.value=hp;
+      const g=actx.createGain(); env(g,t,peak,dur);
+      s.connect(f); f.connect(g); g.connect(actx.destination); s.start(t); s.stop(t+dur+0.02);
+    }
+    function snare(t){ noiseVoice(t,1200,0.7,0.2);
+      const o=actx.createOscillator(), g=actx.createGain(); o.type='triangle';
+      o.frequency.setValueAtTime(180,t); env(g,t,0.5,0.12); o.connect(g); g.connect(actx.destination); o.start(t); o.stop(t+0.14); }
+    function hat(t){ noiseVoice(t,7000,0.35,0.05); }
+    function clap(t){ [0,0.012,0.024].forEach(d=>noiseVoice(t+d,1500,0.4,0.09,'bandpass')); }
+    const VOICE = { kick, snare, hat, clap };
+
+    // ---- scheduler (WebAudio lookahead) ----
+    function stepDur(){ return (60/tempo)/4; }        // 16th notes
+    function scheduleStep(step, time){
+      for(const inst of INSTR){ if(pattern[inst][step]) VOICE[inst](time); }
+      noteQueue.push({ step, time });
+    }
+    function scheduler(){
+      while(nextNoteTime < actx.currentTime + scheduleAhead){
+        scheduleStep(currentStep, nextNoteTime);
+        nextNoteTime += stepDur();
+        currentStep = (currentStep+1) % STEPS;
+      }
+      timerId = setTimeout(scheduler, lookahead);
+    }
+    function start(){
+      if(!actx){ actx = new (window.AudioContext||window.webkitAudioContext)(); noiseBuf = makeNoise(); }
+      if(actx.state==='suspended') actx.resume();
+      isPlaying = true; currentStep = 0; nextNoteTime = actx.currentTime + 0.06;
+      scheduler(); paint();
+    }
+    function stop(){ isPlaying = false; clearTimeout(timerId); noteQueue.length=0;
+      playhead = -1; renderDots(); paint(); }
+
+    // ---- UI: step dots + playhead ----
+    const rowEl = document.getElementById('steprow'), playBtn = document.getElementById('play');
+    let dots = [];
+    function buildDots(){ rowEl.innerHTML=''; dots=[];
+      for(let i=0;i<STEPS;i++){ const d=document.createElement('div');
+        d.className='dot'+(i%4===0?' beat':''); rowEl.appendChild(d); dots.push(d); } }
+    let playhead = -1;
+    function renderDots(){ for(let i=0;i<STEPS;i++) dots[i].classList.toggle('on', i===playhead); }
+    function paint(){ playBtn.textContent = isPlaying ? '⏸ Stop' : '▶ Play';
+      playBtn.classList.toggle('playing', isPlaying); }
+    function frame(){
+      // advance the visual playhead as scheduled notes reach the output
+      while(noteQueue.length && noteQueue[0].time < (actx?actx.currentTime:0)){
+        playhead = noteQueue.shift().step; renderDots();
+      }
+      requestAnimationFrame(frame);
+    }
+
+    playBtn.addEventListener('click', ()=>{ isPlaying ? stop() : start(); });
+
+    buildDots(); paint(); requestAnimationFrame(frame);
+  })();
   </script>
 </body>
 </html>

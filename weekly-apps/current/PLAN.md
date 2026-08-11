@@ -39,8 +39,11 @@ weekly-apps/current/
 - [x] Mon: concept + plan; minimal `index.html` app shell skeleton (THUMP logo +
       wave mark header, toolbar placeholder, grid surface placeholder, responsive
       HTML/CSS). Boots clean on mobile, no JS. No audio/logic yet.
-- [ ] Tue: audio engine — WebAudio synths for kick/snare/hi-hat/clap and a
-      step clock that plays through 16 steps at a set tempo; Play/Stop.
+- [x] Tue: audio engine — WebAudio synth voices (kick/snare/hi-hat/clap, no
+      samples) + a lookahead step clock through 16 steps at tempo, with Play/Stop
+      and a synced playhead over a 16-dot indicator (demo pattern until the grid
+      lands Wed). Verified: transport toggles, playhead advances, audio clock runs,
+      no JS errors.
 - [ ] Wed: the step grid UI — instrument rows × 16 columns, tap to toggle steps,
       moving playhead highlight, tempo control; wire grid to the engine.
 - [ ] Thu: **logo + menu/toolbar** polish (Play/Stop, Tempo, Clear, Random,
