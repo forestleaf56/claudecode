@@ -44,8 +44,10 @@ weekly-apps/current/
       and a synced playhead over a 16-dot indicator (demo pattern until the grid
       lands Wed). Verified: transport toggles, playhead advances, audio clock runs,
       no JS errors.
-- [ ] Wed: the step grid UI — instrument rows × 16 columns, tap to toggle steps,
-      moving playhead highlight, tempo control; wire grid to the engine.
+- [x] Wed: the step grid UI — 4 color-coded instrument rows (kick/snare/hat/clap)
+      × 16 columns, tap to toggle steps (wired to the pattern the engine reads), a
+      moving playhead column highlight, and a working tempo slider (60–180 BPM).
+      Verified in browser: toggle, tempo, and playhead all work, no JS errors.
 - [ ] Thu: **logo + menu/toolbar** polish (Play/Stop, Tempo, Clear, Random,
       Save/Load), pattern persistence (localStorage), visual/sound polish; mobile test.
 
