@@ -1,5 +1,21 @@
 [
   {
+    "issue": 41,
+    "date_short": "AUGUST 11",
+    "date_human": "Tuesday, August 11, 2026",
+    "article": {
+      "badge": "HOT!!",
+      "blink": true,
+      "title": "🎉 New A.I. Agent Runs On A Single GPU; Humanity Briefly Remembers What 'One' Means",
+      "dateline": "MENLO PARK — reported from a refreshingly small server",
+      "tag": "MODELS —",
+      "paras": [
+        "Meta released a 30-billion-parameter AI agent that runs on a single GPU — a stunning act of restraint in an industry whose previous strategy was \"acquire every graphics card on Earth, and then ask around for more.\"",
+        "\"You can run it on one machine,\" an engineer said, to a room that gasped as though he'd described witchcraft. Analysts hailed the model as proof that AI can, in fact, be efficient — a discovery the industry will now celebrate by immediately building a version that needs nine thousand GPUs."
+      ]
+    }
+  },
+  {
     "issue": 40,
     "date_short": "AUGUST 10",
     "date_human": "Monday, August 10, 2026",

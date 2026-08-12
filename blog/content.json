@@ -1,81 +1,81 @@
 {
-  "issue": 41,
-  "date_short": "AUGUST 11",
-  "date_human": "Tuesday, August 11, 2026",
-  "construction_top": "pardon our HTML — the webmaster is trying to unfold his new folding mouse",
+  "issue": 42,
+  "date_short": "AUGUST 12",
+  "date_human": "Wednesday, August 12, 2026",
+  "construction_top": "pardon our HTML — the webmaster is looking for the key tracker he just lost",
   "ticker": [
-    "new A.I. agent runs on ONE GPU; industry gasps, then builds one needing 9,000",
-    "Google to launch Pixel 11 with a comedian; the bezels are the punchline",
-    "behold the folding mouse, solving a problem no human has ever actually had",
-    "Google's new smart speaker returns after six years of missing the gossip",
-    "Intel raises $15B; the money promptly converts directly into heat",
-    "the future folds, listens, and runs surprisingly warm"
+    "new Pixel adds glowing RGB to the camera bar; it's a gaming phone now, emotionally",
+    "Google's first key tracker lets you lose your keys in a whole new ecosystem",
+    "phone chip hits '2 nanometers'; engineers running out of numbers smaller than numbers",
+    "assistant now ruins your plans in three convenient steps instead of one",
+    "phone launch has more celebrities than a wedding; nobody remembers the phone",
+    "the future glows, tracks, and still cannot be found under the couch"
   ],
   "articles": [
     {
       "badge": "HOT!!",
       "blink": true,
-      "title": "🎉 New A.I. Agent Runs On A Single GPU; Humanity Briefly Remembers What 'One' Means",
-      "dateline": "MENLO PARK — reported from a refreshingly small server",
-      "tag": "MODELS —",
+      "title": "🌈 New Pixel Adds Glowing RGB Light To The Camera Bar; Now It's A Gaming Phone, Emotionally",
+      "dateline": "NEW YORK — reported under a soft, pulsing glow",
+      "tag": "GADGETS —",
       "paras": [
-        "Meta released a 30-billion-parameter AI agent that runs on a single GPU — a stunning act of restraint in an industry whose previous strategy was \"acquire every graphics card on Earth, and then ask around for more.\"",
-        "\"You can run it on one machine,\" an engineer said, to a room that gasped as though he'd described witchcraft. Analysts hailed the model as proof that AI can, in fact, be efficient — a discovery the industry will now celebrate by immediately building a version that needs nine thousand GPUs."
+        "Google's new Pixel 11 debuted with \"Pixel Glow,\" an RGB notification light on the camera bar — because the one thing your phone was apparently missing was the ability to gently pulse like a gaming keyboard while you actively ignore it.",
+        "\"It's expressive,\" Google said of a feature that turns every text into a small light show and every price tag into a slightly larger number. The phones ship with higher prices, a 2nm chip, and the quiet confidence of a device that already knows you'll buy it anyway."
       ]
     },
     {
       "badge": "NEW!",
-      "title": "📱 Google To Launch Pixel 11 With A Comedian Host; Phone Reportedly Also Funny, Unintentionally",
-      "dateline": "NEW YORK — reported from the third row of a product keynote",
+      "title": "🔎 Google Launches Its First Key Tracker; Now You Can Lose Your Keys In A Whole New Ecosystem",
+      "dateline": "NEW YORK — reported from under the couch cushions",
       "tag": "GADGETS —",
       "paras": [
-        "Google confirmed its Made by Google event, where the Pixel 11 family will headline a show hosted by a famous comedian and stuffed with entertainment — because nothing says \"buy this rectangle\" quite like a professional trying to make a spec sheet land.",
-        "\"It's going to be a whole experience,\" Google promised, of an event where the jokes are scripted and the battery life is aspirational. Attendees are advised to laugh at the bezels and hold their applause for the price reveal."
+        "Google unveiled the Pixel Tag, its first competitor to the little item trackers everyone else already makes — finally letting Android users experience the modern joy of being told exactly where their keys are while remaining completely unable to physically reach them.",
+        "\"Never lose anything again,\" Google promised of a coin-sized device that will itself immediately become the single most-lost object in your home. Analysts note the tracker works flawlessly, right up until the precise moment you need to find the tracker."
       ]
     },
     {
       "badge": "WOW!",
       "blink": true,
-      "title": "🖱️ This Month's Gadgets Include A Folding Mouse; Society Quietly Asks Which Problem This Solves",
-      "dateline": "THE SHOWROOM — reported from a deeply confusing nightstand",
-      "tag": "GADGETS —",
+      "title": "🔬 New Phone Chip Hits '2 Nanometers'; Engineers Running Out Of Numbers Smaller Than Numbers",
+      "dateline": "TAIWAN-ISH — reported through an electron microscope",
+      "tag": "HARDWARE —",
       "paras": [
-        "August's gadget lineup features a folding mouse, a bedside unit that replaces three devices, and a dual-screen E-Ink tablet — a triumphant set of answers to questions absolutely no one asked, delivered with total confidence.",
-        "\"It folds!\" the folding mouse's makers announced, of a product solving the ancient human struggle of a mouse being slightly too mouse-sized. Reviewers admit it is clever, pointless, and exactly the kind of thing you will own within a year and be unable to explain to guests."
+        "The Pixel's new Tensor G6 chip is built on a \"2-nanometer\" process, the first of its kind in a phone — a figure so small it is now essentially a rumor about atoms, arranged very neatly and sold at a premium.",
+        "\"Smaller is faster,\" an engineer explained of a manufacturing race that will, at current pace, soon require measuring transistors in units of 'vibes.' Consumers celebrated by noticing absolutely no difference whatsoever and buying it immediately."
       ]
     },
     {
       "badge": "SCOOP",
-      "title": "🔊 Google Releases A New Smart Speaker After Six Years; It Has A Lot Of Listening To Catch Up On",
-      "dateline": "YOUR LIVING ROOM — reported quietly, just in case",
-      "tag": "SMART HOME —",
+      "title": "🧩 Phone's Assistant Now Does 'Multi-Step Tasks'; Ruins Your Plans In Three Steps Instead Of One",
+      "dateline": "INSIDE YOUR POCKET — reported between two reminders",
+      "tag": "MODELS —",
       "paras": [
-        "For the first time in six years, Google unveiled a new smart speaker — returning to the living room refreshed, redesigned, and presumably very eager to resume hearing absolutely everything you say.",
-        "\"It's smarter than ever,\" the company said of a device rejoining a market it left back when \"AI assistant\" still mostly meant \"thing that sets a timer for the wrong hour.\" The speaker can reportedly now hold a real conversation, which is either delightful or the last thing you want from an object that is always on."
+        "Google's new Pixel leans hard on Gemini Intelligence, an assistant that can now handle multi-step tasks and \"understand visual context\" — meaning it can book your dinner, cancel your dinner, and apologize for the confusion, all without ever being asked.",
+        "\"It's proactive,\" Google said of a helper that watches, listens, and reasons its way through your entire day like an intern with root access. Early users report it is genuinely useful and occasionally too enthusiastic, like a very smart dog that has learned to open doors."
       ]
     },
     {
-      "badge": "$$$",
-      "title": "💵 Intel Raises $15 Billion To Stay In The A.I. Race; Money Immediately Turns Into Heat",
-      "dateline": "SANTA CLARA — filed from a very warm balance sheet",
-      "tag": "MARKETS —",
+      "badge": "STARS",
+      "title": "🌟 Phone Launch Now Has More Celebrities Than A Wedding; Nobody Remembers The Phone",
+      "dateline": "NEW YORK — reported from the red carpet, somehow",
+      "tag": "EVENT —",
       "paras": [
-        "Intel raised a fresh $15 billion to keep pace in the intensifying AI race — a sum that, at the going exchange rate, converts to roughly one and a half data centers and one truly heroic electricity bill.",
-        "\"We're all in,\" the company said, of an industry where \"competing\" now means setting fifteen billion dollars gently on fire in a temperature-controlled room and hoping it emerges as a chip. Investors nodded, having long ago accepted that in AI, the budget is the product."
+        "Google's hardware event featured a comedian host plus a lineup of famous athletes and personalities — because in 2026, a product launch is legally required to be at least 40% celebrity by volume, with the actual gadget appearing briefly as a special guest.",
+        "\"We wanted it to feel like an event,\" Google said, having achieved something precisely between a keynote and an awards show. Attendees left thrilled, entertained, and unable to name a single specification — which is, industry insiders confirm, the entire point."
       ]
     }
   ],
   "horoscopes": [
-    { "sign": "♒ Aquarius:", "text": "You will buy a folding gadget this month and never once fold it. This is simply who you are now." },
-    { "sign": "♌ Leo:", "text": "A smart speaker is listening to you become your best self. Or just listening. It's genuinely both." },
-    { "sign": "♓ Pisces:", "text": "Mercury runs on a single GPU today. Efficiency smiles upon you; the electricity bill does not." }
+    { "sign": "♒ Aquarius:", "text": "Your phone will glow softly tonight to tell you something you already knew. Ignore it beautifully." },
+    { "sign": "♌ Leo:", "text": "You will buy a tracker today and lose it by Friday. The prophecy, in this case, is the product." },
+    { "sign": "♓ Pisces:", "text": "Mercury shrinks to 2 nanometers. You feel faster. You are not. It's fine. It's all fine." }
   ],
-  "tech_tip": "If a gadget's headline feature is that it folds, ask yourself, gently, whether it was ever meant to unfold in the first place.",
-  "gadget_watch": "Google's Pixel 11 arrives via comedy show this week, and a new smart speaker returns after six years to catch up on your conversations. Also: a folding mouse now exists, and there is nothing any of us can do about it.",
+  "tech_tip": "When a new chip brags about nanometers, remember: you will use all that power to check the weather and lose an argument in a group chat.",
+  "gadget_watch": "The Pixel 11 line brings RGB glow, a 2nm chip, a new key tracker, and higher prices — a full upgrade to your ability to be notified. Just know the tracker will, eventually, need its own tracker.",
   "classifieds": [
-    { "label": "FOR SALE:", "text": "one (1) folding mouse; folds beautifully, works adequately, explains absolutely nothing about why it folds." },
-    { "label": "WANTED:", "text": "an A.I. that runs on one GPU and STAYS on one GPU. No scope creep. We are, at this point, begging." },
-    { "label": "LOST:", "text": "six years of smart-speaker gossip. If found, please do not play it back at the dinner party." },
-    { "label": "MISSED CONNECTION:", "text": "You: a 30-billion-parameter agent, humble and single-GPU. Me: someone with exactly one GPU and a dream. Boot up." }
+    { "label": "FOR SALE:", "text": "one (1) Pixel Tag, brand new, already lost. Buyer must supply a second tracker to locate the first." },
+    { "label": "WANTED:", "text": "a phone feature that isn't a light. Any feature. We are open to suggestions and also, currently, dim." },
+    { "label": "LOST:", "text": "the actual phone from the celebrity launch event. Last seen being upstaged by a basketball player." },
+    { "label": "MISSED CONNECTION:", "text": "You: a 2-nanometer chip, impossibly small and fast. Me: someone who just wanted longer battery life. We can't keep meeting like this." }
   ]
 }
