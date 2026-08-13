@@ -48,8 +48,19 @@ weekly-apps/current/
       × 16 columns, tap to toggle steps (wired to the pattern the engine reads), a
       moving playhead column highlight, and a working tempo slider (60–180 BPM).
       Verified in browser: toggle, tempo, and playhead all work, no JS errors.
-- [ ] Thu: **logo + menu/toolbar** polish (Play/Stop, Tempo, Clear, Random,
-      Save/Load), pattern persistence (localStorage), visual/sound polish; mobile test.
+- [x] Thu: **logo + toolbar/menu** finished — two-row toolbar (Play/Stop + tempo;
+      Clear / Random / Save / Load). Clear zeros the pattern, Random makes a musical
+      beat, Save/Load use a localStorage slot, and the working pattern+tempo auto-save
+      and restore on reload. Polish: master gain, playhead pad hit-flash, columns
+      grouped in 4s. Verified in browser (all controls + persistence), no JS errors.
+
+## Friday readme notes
+- Self-contained single index.html, HTML/CSS + WebAudio. NO Supabase / NO Gemini API.
+- Therefore NO API keys, NO env vars, and NO api/ folder / Vercel serverless setup.
+  Runs by just opening index.html; host as a static file anywhere.
+- Usage: tap pads to toggle drum hits (kick/snare/hat/clap x 16 steps), press Play,
+  adjust the tempo slider; Clear/Random to start over, Save/Load a pattern; your beat
+  auto-saves. All sounds are synthesized (no audio files).
 
 ## Status notes
 - Mon 2026-08-10: plan + skeleton only, per the small-increment routine.

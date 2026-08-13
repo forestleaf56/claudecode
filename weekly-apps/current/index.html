@@ -6,19 +6,14 @@
 <meta name="theme-color" content="#14110f">
 <title>Thump</title>
 <style>
-  :root{
-    --bg:#14110f; --panel:#1e1a17; --line:#2c2621;
-    --amber:#ff9838; --amber-soft:#ffb469; --ink:#f6efe8; --muted:#a99e93;
-  }
+  :root{ --bg:#14110f; --panel:#1e1a17; --line:#2c2621; --amber:#ff9838; --amber-soft:#ffb469; --ink:#f6efe8; --muted:#a99e93; }
   *{ margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
   html,body{ height:100%; }
-  body{
-    background:var(--bg); color:var(--ink); overflow:hidden;
+  body{ background:var(--bg); color:var(--ink); overflow:hidden;
     font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
     user-select:none; -webkit-user-select:none; touch-action:manipulation;
     display:flex; flex-direction:column;
-    padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
-  }
+    padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left); }
   header{ display:flex; align-items:center; gap:10px; padding:16px 18px 8px; }
   .mark{ width:28px; height:28px; flex:0 0 auto; }
   .logo{ font-size:28px; font-weight:900; letter-spacing:2px;
@@ -26,29 +21,32 @@
     -webkit-background-clip:text; background-clip:text; color:transparent; }
   .tag{ margin-left:auto; font-size:11px; color:var(--muted); letter-spacing:1px; text-transform:uppercase; }
 
-  .toolbar{ display:flex; gap:8px; padding:6px 18px 12px; align-items:center; }
+  .toolbar{ display:flex; flex-direction:column; gap:8px; padding:6px 16px 12px; }
+  .trow{ display:flex; gap:8px; align-items:center; }
   .btn{ background:var(--panel); border:1px solid var(--line); color:var(--ink);
-    padding:10px 16px; border-radius:12px; font-size:14px; font-weight:700; cursor:pointer; }
-  .btn.placeholder{ opacity:.45; }
-  .btn.primary{ background:linear-gradient(120deg,var(--amber),#ff7a1a); border:none; color:#20140a; min-width:92px; text-align:center; }
+    padding:10px 14px; border-radius:12px; font-size:13px; font-weight:700; cursor:pointer; text-align:center; }
+  .btn:active{ transform:scale(.96); }
+  .btn.sm{ flex:1; }
+  .btn.primary{ background:linear-gradient(120deg,var(--amber),#ff7a1a); border:none; color:#20140a; min-width:96px; }
   .btn.primary.playing{ background:linear-gradient(120deg,#ffd089,#ff9838); }
   .tempo{ margin-left:auto; display:flex; align-items:center; gap:8px; font-size:12px; color:var(--muted); }
-  .tempo input{ width:96px; accent-color:var(--amber); }
+  .tempo input{ width:104px; accent-color:var(--amber); }
   .tempo b{ color:var(--ink); font-size:14px; font-variant-numeric:tabular-nums; min-width:28px; text-align:right; }
 
-  main{ flex:1 1 auto; margin:4px 12px 16px; border:1px solid var(--line);
-    border-radius:16px; background:var(--panel); padding:16px 12px;
-    display:flex; flex-direction:column; justify-content:center; gap:12px; }
-  .row{ display:grid; grid-template-columns:40px repeat(16,1fr); gap:5px; align-items:center; }
+  main{ flex:1 1 auto; margin:2px 12px 14px; border:1px solid var(--line); border-radius:16px;
+    background:linear-gradient(180deg,#201b17,#1a1613); padding:18px 12px;
+    display:flex; flex-direction:column; justify-content:center; gap:14px; }
+  .row{ display:grid; grid-template-columns:42px repeat(16,1fr); gap:5px; align-items:center; }
   .rlabel{ font-size:11px; font-weight:800; letter-spacing:.5px; }
-  .pad{ aspect-ratio:1/1; border-radius:6px; background:#2a231d; border:1px solid #37302a; }
-  .pad.beat{ background:#342a21; }
+  .pad{ aspect-ratio:1/1; border-radius:6px; background:#2a231d; border:1px solid #37302a; transition:transform .05s, filter .05s; }
+  .pad.beat{ background:#352a20; }
   .pad.on[data-i="0"]{ background:#ff9838; box-shadow:0 0 8px rgba(255,152,56,.55); }
   .pad.on[data-i="1"]{ background:#ff5c7a; box-shadow:0 0 8px rgba(255,92,122,.55); }
   .pad.on[data-i="2"]{ background:#38e8ff; box-shadow:0 0 8px rgba(56,232,255,.5); }
   .pad.on[data-i="3"]{ background:#8cff9e; box-shadow:0 0 8px rgba(140,255,158,.5); }
   .pad.ph{ box-shadow:0 0 0 2px rgba(255,255,255,.45) inset; }
-  .hint{ font-size:12px; color:var(--muted); text-align:center; padding-top:2px; }
+  .pad.on.hit{ transform:scale(1.22); filter:brightness(1.4); }
+  .hint{ font-size:12px; color:var(--muted); text-align:center; }
 </style>
 </head>
 <body>
@@ -62,15 +60,21 @@
   </header>
 
   <div class="toolbar">
-    <span class="btn primary" id="play">▶ Play</span>
-    <span class="btn placeholder">Clear</span>
-    <span class="btn placeholder">Random</span>
-    <label class="tempo">tempo <input type="range" id="tempo" min="60" max="180" value="120"><b id="bpm">120</b></label>
+    <div class="trow">
+      <span class="btn primary" id="play">▶ Play</span>
+      <label class="tempo">tempo <input type="range" id="tempo" min="60" max="180" value="120"><b id="bpm">120</b></label>
+    </div>
+    <div class="trow">
+      <span class="btn sm" id="clear">Clear</span>
+      <span class="btn sm" id="random">Random</span>
+      <span class="btn sm" id="save">Save</span>
+      <span class="btn sm" id="load">Load</span>
+    </div>
   </div>
 
   <main>
     <div id="grid"></div>
-    <div class="hint">Tap the pads to build a beat · press Play</div>
+    <div class="hint">Tap pads to build a beat · Random for inspiration · your work auto-saves</div>
   </main>
 
   <script>
@@ -80,14 +84,11 @@
     window.addEventListener('resize', vh); vh();
 
     const STEPS=16;
-    const INSTR=[
-      {key:'kick', label:'KICK'}, {key:'snare',label:'SNR'},
-      {key:'hat',  label:'HAT'},  {key:'clap', label:'CLAP'}
-    ];
-    let tempo=120, actx=null, isPlaying=false;
+    const INSTR=[ {key:'kick',label:'KICK'},{key:'snare',label:'SNR'},{key:'hat',label:'HAT'},{key:'clap',label:'CLAP'} ];
+    const COL=['#ff9838','#ff5c7a','#38e8ff','#8cff9e'];
+    let tempo=120, actx=null, master=null, isPlaying=false;
     let currentStep=0, nextNoteTime=0, timerId=null;
-    const lookahead=25, scheduleAhead=0.12, noteQueue=[];
-    let noiseBuf=null;
+    const lookahead=25, scheduleAhead=0.12, noteQueue=[]; let noiseBuf=null;
 
     const pattern={
       kick:  [1,0,0,0, 1,0,0,0, 1,0,0,0, 1,0,0,0],
@@ -96,19 +97,30 @@
       clap:  [0,0,0,0, 0,0,0,0, 1,0,0,0, 0,0,0,0],
     };
 
-    // ---- synth voices ----
-    function makeNoise(){ const n=actx.sampleRate, buf=actx.createBuffer(1,n,actx.sampleRate), d=buf.getChannelData(0);
+    // ---- persistence ----
+    function snapshot(){ return JSON.stringify({tempo, pattern}); }
+    function applyState(obj){
+      if(!obj||!obj.pattern) return false;
+      for(const it of INSTR){ const a=obj.pattern[it.key];
+        if(Array.isArray(a)&&a.length===STEPS) pattern[it.key]=a.map(v=>v?1:0); }
+      if(obj.tempo){ tempo=+obj.tempo; document.getElementById('tempo').value=tempo; document.getElementById('bpm').textContent=tempo; }
+      return true;
+    }
+    function autosave(){ try{ localStorage.setItem('thump_state', snapshot()); }catch(e){} }
+
+    // ---- synth voices (routed through a master gain) ----
+    function makeNoise(){ const n=actx.sampleRate,buf=actx.createBuffer(1,n,actx.sampleRate),d=buf.getChannelData(0);
       for(let i=0;i<n;i++) d[i]=Math.random()*2-1; return buf; }
     function env(g,t,peak,dur){ g.gain.setValueAtTime(0.0001,t);
       g.gain.exponentialRampToValueAtTime(peak,t+0.004); g.gain.exponentialRampToValueAtTime(0.0001,t+dur); }
     function kick(t){ const o=actx.createOscillator(),g=actx.createGain();
       o.frequency.setValueAtTime(150,t); o.frequency.exponentialRampToValueAtTime(50,t+0.12);
-      env(g,t,1.0,0.42); o.connect(g); g.connect(actx.destination); o.start(t); o.stop(t+0.45); }
+      env(g,t,1.0,0.42); o.connect(g); g.connect(master); o.start(t); o.stop(t+0.45); }
     function noiseVoice(t,freq,peak,dur,type='highpass'){ const s=actx.createBufferSource(); s.buffer=noiseBuf;
       const f=actx.createBiquadFilter(); f.type=type; f.frequency.value=freq;
-      const g=actx.createGain(); env(g,t,peak,dur); s.connect(f); f.connect(g); g.connect(actx.destination); s.start(t); s.stop(t+dur+0.02); }
+      const g=actx.createGain(); env(g,t,peak,dur); s.connect(f); f.connect(g); g.connect(master); s.start(t); s.stop(t+dur+0.02); }
     function snare(t){ noiseVoice(t,1200,0.7,0.2); const o=actx.createOscillator(),g=actx.createGain();
-      o.type='triangle'; o.frequency.setValueAtTime(180,t); env(g,t,0.5,0.12); o.connect(g); g.connect(actx.destination); o.start(t); o.stop(t+0.14); }
+      o.type='triangle'; o.frequency.setValueAtTime(180,t); env(g,t,0.5,0.12); o.connect(g); g.connect(master); o.start(t); o.stop(t+0.14); }
     function hat(t){ noiseVoice(t,7000,0.35,0.05); }
     function clap(t){ [0,0.012,0.024].forEach(d=>noiseVoice(t+d,1500,0.4,0.09,'bandpass')); }
     const VOICE={kick,snare,hat,clap};
@@ -119,54 +131,68 @@
     function scheduler(){ while(nextNoteTime < actx.currentTime + scheduleAhead){
         scheduleStep(currentStep,nextNoteTime); nextNoteTime += stepDur(); currentStep=(currentStep+1)%STEPS; }
       timerId=setTimeout(scheduler,lookahead); }
-    function start(){ if(!actx){ actx=new (window.AudioContext||window.webkitAudioContext)(); noiseBuf=makeNoise(); }
+    function start(){ if(!actx){ actx=new (window.AudioContext||window.webkitAudioContext)(); noiseBuf=makeNoise();
+        master=actx.createGain(); master.gain.value=0.85; master.connect(actx.destination); }
       if(actx.state==='suspended') actx.resume();
       isPlaying=true; currentStep=0; nextNoteTime=actx.currentTime+0.06; scheduler(); paint(); }
     function stop(){ isPlaying=false; clearTimeout(timerId); noteQueue.length=0; setPlayhead(-1); paint(); }
 
-    // ---- grid UI ----
+    // ---- grid ----
     const gridEl=document.getElementById('grid'), playBtn=document.getElementById('play');
-    const columns=Array.from({length:STEPS},()=>[]);
+    const columns=Array.from({length:STEPS},()=>[]); let padOf={};
     function buildGrid(){
-      gridEl.innerHTML='';
+      gridEl.innerHTML=''; columns.forEach(c=>c.length=0); padOf={};
       INSTR.forEach((it,i)=>{
         const row=document.createElement('div'); row.className='row';
-        const lab=document.createElement('div'); lab.className='rlabel'; lab.textContent=it.label;
-        lab.style.color=['#ff9838','#ff5c7a','#38e8ff','#8cff9e'][i]; row.appendChild(lab);
+        const lab=document.createElement('div'); lab.className='rlabel'; lab.textContent=it.label; lab.style.color=COL[i]; row.appendChild(lab);
+        padOf[it.key]=[];
         for(let s=0;s<STEPS;s++){
           const pad=document.createElement('div');
           pad.className='pad'+(s%4===0?' beat':'')+(pattern[it.key][s]?' on':'');
           pad.dataset.inst=it.key; pad.dataset.i=i; pad.dataset.step=s;
-          row.appendChild(pad); columns[s].push(pad);
+          if(s%4===0 && s>0) pad.style.marginLeft='4px';
+          row.appendChild(pad); columns[s].push(pad); padOf[it.key].push(pad);
         }
         gridEl.appendChild(row);
       });
     }
-    gridEl.addEventListener('click', e=>{
-      const pad=e.target.closest('.pad'); if(!pad) return;
+    function refreshPads(){ for(const it of INSTR) for(let s=0;s<STEPS;s++) padOf[it.key][s].classList.toggle('on', !!pattern[it.key][s]); }
+
+    gridEl.addEventListener('click', e=>{ const pad=e.target.closest('.pad'); if(!pad) return;
       const inst=pad.dataset.inst, step=+pad.dataset.step;
-      pattern[inst][step]=pattern[inst][step]?0:1;
-      pad.classList.toggle('on', !!pattern[inst][step]);
-    });
+      pattern[inst][step]=pattern[inst][step]?0:1; pad.classList.toggle('on', !!pattern[inst][step]); autosave(); });
 
     let playhead=-1;
-    function setPlayhead(step){
-      if(step===playhead) return;
-      if(playhead>=0) columns[playhead].forEach(p=>p.classList.remove('ph'));
+    function setPlayhead(step){ if(step===playhead) return;
+      if(playhead>=0) columns[playhead].forEach(p=>p.classList.remove('ph','hit'));
       playhead=step;
-      if(step>=0) columns[step].forEach(p=>p.classList.add('ph'));
+      if(step>=0) columns[step].forEach(p=>{ p.classList.add('ph'); if(p.classList.contains('on')) p.classList.add('hit'); });
     }
     function paint(){ playBtn.textContent=isPlaying?'⏸ Stop':'▶ Play'; playBtn.classList.toggle('playing',isPlaying); }
-    function frame(){
-      while(noteQueue.length && noteQueue[0].time < (actx?actx.currentTime:0)) setPlayhead(noteQueue.shift().step);
-      requestAnimationFrame(frame);
+    function frame(){ while(noteQueue.length && noteQueue[0].time < (actx?actx.currentTime:0)) setPlayhead(noteQueue.shift().step);
+      requestAnimationFrame(frame); }
+
+    // ---- controls ----
+    playBtn.addEventListener('click', ()=> isPlaying?stop():start());
+    document.getElementById('tempo').addEventListener('input', e=>{ tempo=+e.target.value; document.getElementById('bpm').textContent=tempo; autosave(); });
+    document.getElementById('clear').addEventListener('click', ()=>{ for(const it of INSTR) pattern[it.key]=Array(STEPS).fill(0); refreshPads(); autosave(); });
+    document.getElementById('random').addEventListener('click', ()=>{ randomize(); refreshPads(); autosave(); });
+    function flash(btn,txt){ const o=btn.textContent; btn.textContent=txt; setTimeout(()=>btn.textContent=o,800); }
+    document.getElementById('save').addEventListener('click', e=>{ try{ localStorage.setItem('thump_saved', snapshot()); flash(e.target,'Saved ✓'); }catch(_){}});
+    document.getElementById('load').addEventListener('click', e=>{ try{ const s=localStorage.getItem('thump_saved');
+      if(s && applyState(JSON.parse(s))){ refreshPads(); autosave(); flash(e.target,'Loaded ✓'); } else flash(e.target,'No save'); }catch(_){}});
+
+    function randomize(){
+      for(let s=0;s<STEPS;s++){
+        pattern.kick[s]  = ((s%8===0)&&Math.random()<0.9) || Math.random()<0.10 ? 1:0;
+        pattern.snare[s] = ((s===4||s===12)&&Math.random()<0.92) || Math.random()<0.05 ? 1:0;
+        pattern.hat[s]   = (s%2===0? Math.random()<0.8 : Math.random()<0.35) ? 1:0;
+        pattern.clap[s]  = ((s===8)&&Math.random()<0.5) || Math.random()<0.05 ? 1:0;
+      }
     }
 
-    playBtn.addEventListener('click', ()=> isPlaying?stop():start());
-    document.getElementById('tempo').addEventListener('input', e=>{
-      tempo=+e.target.value; document.getElementById('bpm').textContent=tempo;
-    });
-
+    // ---- boot: restore last session ----
+    try{ const s=localStorage.getItem('thump_state'); if(s) applyState(JSON.parse(s)); }catch(e){}
     buildGrid(); paint(); requestAnimationFrame(frame);
   })();
   </script>
