@@ -1,81 +1,81 @@
 {
-  "issue": 42,
-  "date_short": "AUGUST 12",
-  "date_human": "Wednesday, August 12, 2026",
-  "construction_top": "pardon our HTML — the webmaster is looking for the key tracker he just lost",
+  "issue": 43,
+  "date_short": "AUGUST 13",
+  "date_human": "Thursday, August 13, 2026",
+  "construction_top": "pardon our HTML — the webmaster left the meeting before it could compromise his laptop",
   "ticker": [
-    "new Pixel adds glowing RGB to the camera bar; it's a gaming phone now, emotionally",
-    "Google's first key tracker lets you lose your keys in a whole new ecosystem",
-    "phone chip hits '2 nanometers'; engineers running out of numbers smaller than numbers",
-    "assistant now ruins your plans in three convenient steps instead of one",
-    "phone launch has more celebrities than a wedding; nobody remembers the phone",
-    "the future glows, tracks, and still cannot be found under the couch"
+    "new flaw lets a video call silently hack everyone on it; the meeting was a trap all along",
+    "Swedish startup raises $400M to let you build apps by just describing them out loud",
+    "half a trillion dollars in A.I. financing appears; the number now has its own climate",
+    "A.I. platform hits a billion users; all of them softening exactly one email",
+    "every tech firm now builds A.I. that writes code; programmers automate the next chair",
+    "the future compiles, funds itself, and joins your meeting uninvited"
   ],
   "articles": [
     {
-      "badge": "HOT!!",
+      "badge": "YIKES",
       "blink": true,
-      "title": "🌈 New Pixel Adds Glowing RGB Light To The Camera Bar; Now It's A Gaming Phone, Emotionally",
-      "dateline": "NEW YORK — reported under a soft, pulsing glow",
-      "tag": "GADGETS —",
+      "title": "📹 New Flaw Lets A Video Call Silently Hack Everyone On It; The Meeting Was A Trap All Along",
+      "dateline": "THE CONFERENCE ROOM — reported on mute, thankfully",
+      "tag": "SECURITY —",
       "paras": [
-        "Google's new Pixel 11 debuted with \"Pixel Glow,\" an RGB notification light on the camera bar — because the one thing your phone was apparently missing was the ability to gently pulse like a gaming keyboard while you actively ignore it.",
-        "\"It's expressive,\" Google said of a feature that turns every text into a small light show and every price tag into a slightly larger number. The phones ship with higher prices, a 2nm chip, and the quiet confidence of a device that already knows you'll buy it anyway."
+        "Security researchers disclosed a major video-conferencing vulnerability that could let a single participant silently compromise every other device on the call — finally confirming what everyone always suspected: the meeting could, in fact, have been an attack.",
+        "\"Patch immediately,\" experts urged, of a flaw that turns \"you're on mute\" into the least of your problems. The discovery lends new weight to the eternal office prayer that this call could have been an email — an email that, for once, would not have quietly breached your laptop."
       ]
     },
     {
       "badge": "NEW!",
-      "title": "🔎 Google Launches Its First Key Tracker; Now You Can Lose Your Keys In A Whole New Ecosystem",
-      "dateline": "NEW YORK — reported from under the couch cushions",
-      "tag": "GADGETS —",
+      "title": "🇸🇪 Swedish Startup Raises $400 Million To Let You Build Apps By Describing Them; Developers Nervously Describe Their Feelings",
+      "dateline": "STOCKHOLM — reported over a very expensive cinnamon bun",
+      "tag": "STARTUPS —",
       "paras": [
-        "Google unveiled the Pixel Tag, its first competitor to the little item trackers everyone else already makes — finally letting Android users experience the modern joy of being told exactly where their keys are while remaining completely unable to physically reach them.",
-        "\"Never lose anything again,\" Google promised of a coin-sized device that will itself immediately become the single most-lost object in your home. Analysts note the tracker works flawlessly, right up until the precise moment you need to find the tracker."
+        "A Stockholm-based AI startup raised $400 million at a $13.3 billion valuation for letting people build websites and software simply by describing what they want in plain language — elevating software engineering to the thrilling new discipline of \"asking nicely.\"",
+        "\"Just tell it what you want,\" the company says of a tool that will happily build your dream app and, occasionally, a slightly different app it privately thinks you'll like better. Developers greeted the news with excitement, dread, and the quiet realization that \"describe the thing you want\" has always been the genuinely hard part."
       ]
     },
     {
       "badge": "WOW!",
       "blink": true,
-      "title": "🔬 New Phone Chip Hits '2 Nanometers'; Engineers Running Out Of Numbers Smaller Than Numbers",
-      "dateline": "TAIWAN-ISH — reported through an electron microscope",
-      "tag": "HARDWARE —",
+      "title": "🏦 Half A Trillion Dollars In New A.I. Financing Appears; Number Now Requires Its Own Weather System",
+      "dateline": "WALL STREET — filed from atop a mountain of term sheets",
+      "tag": "MARKETS —",
       "paras": [
-        "The Pixel's new Tensor G6 chip is built on a \"2-nanometer\" process, the first of its kind in a phone — a figure so small it is now essentially a rumor about atoms, arranged very neatly and sold at a premium.",
-        "\"Smaller is faster,\" an engineer explained of a manufacturing race that will, at current pace, soon require measuring transistors in units of 'vibes.' Consumers celebrated by noticing absolutely no difference whatsoever and buying it immediately."
+        "Roughly half a trillion dollars in fresh AI infrastructure financing is taking shape — a sum so large it has stopped being money and started being a geographic feature, with its own microclimate and, quite possibly, a gift shop.",
+        "\"It's a generational investment,\" financiers said of a figure that could fund several small countries or one truly heroic electricity bill. Economists note the AI industry now measures success not in profit but in how confidently it can say the word \"trillion\" with a completely straight face."
       ]
     },
     {
       "badge": "SCOOP",
-      "title": "🧩 Phone's Assistant Now Does 'Multi-Step Tasks'; Ruins Your Plans In Three Steps Instead Of One",
-      "dateline": "INSIDE YOUR POCKET — reported between two reminders",
+      "title": "🌍 A.I. Platform Crosses One Billion Users; All Of Them Ask It To 'Make This Email Sound Nicer'",
+      "dateline": "THE ENTIRE PLANET — reported one prompt at a time",
       "tag": "MODELS —",
       "paras": [
-        "Google's new Pixel leans hard on Gemini Intelligence, an assistant that can now handle multi-step tasks and \"understand visual context\" — meaning it can book your dinner, cancel your dinner, and apologize for the confusion, all without ever being asked.",
-        "\"It's proactive,\" Google said of a helper that watches, listens, and reasons its way through your entire day like an intern with root access. Early users report it is genuinely useful and occasionally too enthusiastic, like a very smart dog that has learned to open doors."
+        "Frontier AI platforms have crossed the billion-user mark — a staggering milestone representing a full eighth of humanity, united at last by the shared dream of never again writing their own emails.",
+        "\"It's changing how people work,\" a spokesperson said of a billion souls collectively asking a supercomputer to \"make this sound more professional\" and \"add a part where I seem excited.\" Historians note it is the largest coordinated human effort in history, and it is being used mainly to soften the phrase \"per my last email.\""
       ]
     },
     {
-      "badge": "STARS",
-      "title": "🌟 Phone Launch Now Has More Celebrities Than A Wedding; Nobody Remembers The Phone",
-      "dateline": "NEW YORK — reported from the red carpet, somehow",
-      "tag": "EVENT —",
+      "badge": "NEAT",
+      "title": "👩‍💻 Every Tech Company Now Builds A.I. That Writes Code; Programmers Cheerfully Automate The Person In The Next Chair",
+      "dateline": "THE OPEN-PLAN OFFICE — reported between two very quiet keyboards",
+      "tag": "TECH —",
       "paras": [
-        "Google's hardware event featured a comedian host plus a lineup of famous athletes and personalities — because in 2026, a product launch is legally required to be at least 40% celebrity by volume, with the actual gadget appearing briefly as a special guest.",
-        "\"We wanted it to feel like an event,\" Google said, having achieved something precisely between a keynote and an awards show. Attendees left thrilled, entertained, and unable to name a single specification — which is, industry insiders confirm, the entire point."
+        "OpenAI, Anthropic, Google, Microsoft, and a growing crowd of startups are all racing to push AI deeper into software development — meaning programmers are now enthusiastically building the very tools designed to do their jobs, out of a heady mix of curiosity and denial.",
+        "\"It makes us more productive,\" one developer said, watching an AI finish their function before they'd finished the thought. The tools are genuinely impressive, occasionally too confident, and have introduced the modern engineer to the humbling experience of code-reviewing a machine that is, annoyingly, usually right."
       ]
     }
   ],
   "horoscopes": [
-    { "sign": "♒ Aquarius:", "text": "Your phone will glow softly tonight to tell you something you already knew. Ignore it beautifully." },
-    { "sign": "♌ Leo:", "text": "You will buy a tracker today and lose it by Friday. The prophecy, in this case, is the product." },
-    { "sign": "♓ Pisces:", "text": "Mercury shrinks to 2 nanometers. You feel faster. You are not. It's fine. It's all fine." }
+    { "sign": "♒ Aquarius:", "text": "Decline the meeting today. Not for productivity — for safety. Trust the horoscope on this one." },
+    { "sign": "♌ Leo:", "text": "You will describe an app in one sentence and receive a slightly different, better app. Accept the gift." },
+    { "sign": "♓ Pisces:", "text": "Mercury crosses a billion users, all asking it to sound more excited. You, too, may fake enthusiasm today." }
   ],
-  "tech_tip": "When a new chip brags about nanometers, remember: you will use all that power to check the weather and lose an argument in a group chat.",
-  "gadget_watch": "The Pixel 11 line brings RGB glow, a 2nm chip, a new key tracker, and higher prices — a full upgrade to your ability to be notified. Just know the tracker will, eventually, need its own tracker.",
+  "tech_tip": "Before your next video call, ask yourself: does this need to be a meeting, or an email, or — increasingly — a security incident?",
+  "gadget_watch": "A.I. can now build your whole app from a sentence and finish your code before you do — great news, unless your job was 'finishing the code.' Meanwhile, maybe update your video-call app before the video call updates you.",
   "classifieds": [
-    { "label": "FOR SALE:", "text": "one (1) Pixel Tag, brand new, already lost. Buyer must supply a second tracker to locate the first." },
-    { "label": "WANTED:", "text": "a phone feature that isn't a light. Any feature. We are open to suggestions and also, currently, dim." },
-    { "label": "LOST:", "text": "the actual phone from the celebrity launch event. Last seen being upstaged by a basketball player." },
-    { "label": "MISSED CONNECTION:", "text": "You: a 2-nanometer chip, impossibly small and fast. Me: someone who just wanted longer battery life. We can't keep meeting like this." }
+    { "label": "FOR SALE:", "text": "one (1) app, built by describing my feelings out loud. Does something. Unclear what. $13.3 billion OBO." },
+    { "label": "WANTED:", "text": "a meeting that is definitely just a meeting. No surprises, no breaches. We genuinely miss those." },
+    { "label": "LOST:", "text": "half a trillion dollars, somewhere in 'A.I. infrastructure.' If found, it has almost certainly already been spent." },
+    { "label": "MISSED CONNECTION:", "text": "You: an A.I. that finished my code before I did. Me: the human whose name is still on the commit. Let's talk." }
   ]
 }
