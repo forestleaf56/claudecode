@@ -1,81 +1,81 @@
 {
-  "issue": 43,
-  "date_short": "AUGUST 13",
-  "date_human": "Thursday, August 13, 2026",
-  "construction_top": "pardon our HTML — the webmaster left the meeting before it could compromise his laptop",
+  "issue": 44,
+  "date_short": "AUGUST 14",
+  "date_human": "Friday, August 14, 2026",
+  "construction_top": "pardon our HTML — the webmaster's phone is concerned about his blood sugar",
   "ticker": [
-    "new flaw lets a video call silently hack everyone on it; the meeting was a trap all along",
-    "Swedish startup raises $400M to let you build apps by just describing them out loud",
-    "half a trillion dollars in A.I. financing appears; the number now has its own climate",
-    "A.I. platform hits a billion users; all of them softening exactly one email",
-    "every tech firm now builds A.I. that writes code; programmers automate the next chair",
-    "the future compiles, funds itself, and joins your meeting uninvited"
+    "new phone transcribes sign language; a genuinely useful feature slips into the keynote",
+    "you can now text an A.I. unlimited times; it will never once leave you on read",
+    "your phone now warns you about diabetes and quietly judges the third cookie",
+    "Samsung unfolds the Z Fold 8; a bigger screen for the same three apps",
+    "two phone assistants go to war over who gets to answer 'what's the weather'",
+    "the future listens, folds, and is genuinely worried about your blood sugar"
   ],
   "articles": [
     {
-      "badge": "YIKES",
+      "badge": "HOT!!",
       "blink": true,
-      "title": "📹 New Flaw Lets A Video Call Silently Hack Everyone On It; The Meeting Was A Trap All Along",
-      "dateline": "THE CONFERENCE ROOM — reported on mute, thankfully",
-      "tag": "SECURITY —",
+      "title": "🤟 New Phone Can Transcribe Sign Language Into Text; Genuinely Useful Feature Accidentally Slips Into Product",
+      "dateline": "NEW YORK — reported in more than one language at once",
+      "tag": "ACCESSIBILITY —",
       "paras": [
-        "Security researchers disclosed a major video-conferencing vulnerability that could let a single participant silently compromise every other device on the call — finally confirming what everyone always suspected: the meeting could, in fact, have been an attack.",
-        "\"Patch immediately,\" experts urged, of a flaw that turns \"you're on mute\" into the least of your problems. The discovery lends new weight to the eternal office prayer that this call could have been an email — an email that, for once, would not have quietly breached your laptop."
+        "Google's new Pixel can reportedly transcribe sign language into text in real time — a genuinely wonderful accessibility feature that somehow snuck into a launch otherwise devoted to a glowing light and a slightly thinner bezel.",
+        "\"We're proud of it,\" Google said, of a tool that actually helps people — a category of feature the industry occasionally rediscovers by accident. Advocates welcomed it warmly, while gently noting it should probably headline the keynote instead of playing third fiddle to the phone's new mood lighting."
       ]
     },
     {
       "badge": "NEW!",
-      "title": "🇸🇪 Swedish Startup Raises $400 Million To Let You Build Apps By Describing Them; Developers Nervously Describe Their Feelings",
-      "dateline": "STOCKHOLM — reported over a very expensive cinnamon bun",
-      "tag": "STARTUPS —",
+      "title": "💬 You Can Now Text An A.I. Unlimited Times; It Will Never, Ever Leave You On Read",
+      "dateline": "YOUR PHONE — reported at 2:47 AM",
+      "tag": "MODELS —",
       "paras": [
-        "A Stockholm-based AI startup raised $400 million at a $13.3 billion valuation for letting people build websites and software simply by describing what they want in plain language — elevating software engineering to the thrilling new discipline of \"asking nicely.\"",
-        "\"Just tell it what you want,\" the company says of a tool that will happily build your dream app and, occasionally, a slightly different app it privately thinks you'll like better. Developers greeted the news with excitement, dread, and the quiet realization that \"describe the thing you want\" has always been the genuinely hard part."
+        "As of this month, you can send unlimited texts to a leading AI chatbot — finally granting humanity a correspondent who answers instantly, never tires of you, and has read every single message with alarming enthusiasm.",
+        "\"It's always available,\" the company said, of a companion that will happily discuss your feelings, your grocery list, and the meaning of life at 3 AM without once suggesting you go to sleep. Relationship experts note it is either the cure for loneliness or an extremely patient enabler, and quite possibly both at once."
       ]
     },
     {
       "badge": "WOW!",
       "blink": true,
-      "title": "🏦 Half A Trillion Dollars In New A.I. Financing Appears; Number Now Requires Its Own Weather System",
-      "dateline": "WALL STREET — filed from atop a mountain of term sheets",
-      "tag": "MARKETS —",
+      "title": "🩺 Your Phone Can Now Warn You About Diabetes; Also Deeply Concerned About That Third Cookie",
+      "dateline": "THE CLOUD CLINIC — reported between heartbeats",
+      "tag": "HEALTH —",
       "paras": [
-        "Roughly half a trillion dollars in fresh AI infrastructure financing is taking shape — a sum so large it has stopped being money and started being a geographic feature, with its own microclimate and, quite possibly, a gift shop.",
-        "\"It's a generational investment,\" financiers said of a figure that could fund several small countries or one truly heroic electricity bill. Economists note the AI industry now measures success not in profit but in how confidently it can say the word \"trillion\" with a completely straight face."
+        "Google says its new tools can act as an early-warning system for diabetes — a genuinely useful health advance that also, unavoidably, means your phone now holds opinions about your snacking and the emotional standing to share them.",
+        "\"Early detection saves lives,\" experts noted, of technology that will help millions and simultaneously turn every device into a tiny, pocket-sized doctor who definitely saw what you just ate. Users welcomed the health benefits and braced for a future in which their phone sighs audibly at the vending machine."
       ]
     },
     {
       "badge": "SCOOP",
-      "title": "🌍 A.I. Platform Crosses One Billion Users; All Of Them Ask It To 'Make This Email Sound Nicer'",
-      "dateline": "THE ENTIRE PLANET — reported one prompt at a time",
-      "tag": "MODELS —",
+      "title": "📖 Samsung Unfolds The Galaxy Z Fold 8; Phone Now Opens Like A Book You'll Still Never Read",
+      "dateline": "SEOUL — reported along the crease",
+      "tag": "GADGETS —",
       "paras": [
-        "Frontier AI platforms have crossed the billion-user mark — a staggering milestone representing a full eighth of humanity, united at last by the shared dream of never again writing their own emails.",
-        "\"It's changing how people work,\" a spokesperson said of a billion souls collectively asking a supercomputer to \"make this sound more professional\" and \"add a part where I seem excited.\" Historians note it is the largest coordinated human effort in history, and it is being used mainly to soften the phrase \"per my last email.\""
+        "Samsung officially unveiled the Galaxy Z Fold 8, its latest phone that folds open into a small tablet — continuing the noble quest to give you a bigger screen for the exact same three apps you already never close.",
+        "\"It's thinner than ever,\" Samsung declared, of a device engineered to fold thousands of times and priced as though each fold were done by hand. Reviewers admit it is genuinely impressive, and that unfolding it in public still makes you feel, briefly, like a wizard consulting an ancient scroll."
       ]
     },
     {
-      "badge": "NEAT",
-      "title": "👩‍💻 Every Tech Company Now Builds A.I. That Writes Code; Programmers Cheerfully Automate The Person In The Next Chair",
-      "dateline": "THE OPEN-PLAN OFFICE — reported between two very quiet keyboards",
-      "tag": "TECH —",
+      "badge": "VS",
+      "title": "🥊 Two Phone Assistants Enter A Turf War Over Your Dumbest Questions; Only One Can Set The Timer",
+      "dateline": "INSIDE THE DEVICE — reported from the front line",
+      "tag": "RIVALRY —",
       "paras": [
-        "OpenAI, Anthropic, Google, Microsoft, and a growing crowd of startups are all racing to push AI deeper into software development — meaning programmers are now enthusiastically building the very tools designed to do their jobs, out of a heady mix of curiosity and denial.",
-        "\"It makes us more productive,\" one developer said, watching an AI finish their function before they'd finished the thought. The tools are genuinely impressive, occasionally too confident, and have introduced the modern engineer to the humbling experience of code-reviewing a machine that is, annoyingly, usually right."
+        "Google's Pixel put its Gemini assistant at the center of an escalating AI-phone battle with Apple — meaning two of the world's most advanced artificial intelligences are now locked in mortal combat for the honor of answering \"what's the weather.\"",
+        "\"Our assistant is smarter,\" both companies insisted simultaneously, of rival systems capable of reasoning, planning, and still occasionally setting an alarm for the wrong 7 o'clock. Consumers, caught in the crossfire, report they simply want the one that will reliably text \"running 5 min late\" without first starting a philosophical discussion."
       ]
     }
   ],
   "horoscopes": [
-    { "sign": "♒ Aquarius:", "text": "Decline the meeting today. Not for productivity — for safety. Trust the horoscope on this one." },
-    { "sign": "♌ Leo:", "text": "You will describe an app in one sentence and receive a slightly different, better app. Accept the gift." },
-    { "sign": "♓ Pisces:", "text": "Mercury crosses a billion users, all asking it to sound more excited. You, too, may fake enthusiasm today." }
+    { "sign": "♒ Aquarius:", "text": "Your phone will express concern about your snack today. It means well. Eat the cookie anyway." },
+    { "sign": "♌ Leo:", "text": "An A.I. will answer every text instantly tonight. Cherish it. It may be the only one who will." },
+    { "sign": "♓ Pisces:", "text": "Mercury folds like a Z Fold 8. Handle your week gently, and strictly along the existing crease." }
   ],
-  "tech_tip": "Before your next video call, ask yourself: does this need to be a meeting, or an email, or — increasingly — a security incident?",
-  "gadget_watch": "A.I. can now build your whole app from a sentence and finish your code before you do — great news, unless your job was 'finishing the code.' Meanwhile, maybe update your video-call app before the video call updates you.",
+  "tech_tip": "If your phone offers unlimited A.I. texting, remember: 'available 24/7' is a feature for the app and a warning for you.",
+  "gadget_watch": "The Pixel can now transcribe sign language and flag diabetes risk — genuinely good stuff — while Samsung's Z Fold 8 folds thinner than ever. Somewhere in the middle, two assistants are fighting to the death over your alarm clock.",
   "classifieds": [
-    { "label": "FOR SALE:", "text": "one (1) app, built by describing my feelings out loud. Does something. Unclear what. $13.3 billion OBO." },
-    { "label": "WANTED:", "text": "a meeting that is definitely just a meeting. No surprises, no breaches. We genuinely miss those." },
-    { "label": "LOST:", "text": "half a trillion dollars, somewhere in 'A.I. infrastructure.' If found, it has almost certainly already been spent." },
-    { "label": "MISSED CONNECTION:", "text": "You: an A.I. that finished my code before I did. Me: the human whose name is still on the commit. Let's talk." }
+    { "label": "FOR SALE:", "text": "one (1) foldable phone; opens like a book, used exclusively to check the same three apps. Mint condition, obviously." },
+    { "label": "WANTED:", "text": "a phone assistant that just sets the timer and leaves. No debate, no feelings. We are so tired." },
+    { "label": "LOST:", "text": "my willpower at the vending machine. My phone saw. My phone knows. My phone is visibly disappointed." },
+    { "label": "MISSED CONNECTION:", "text": "You: an A.I. I can text unlimited times. Me: someone who needs to hear 'go to sleep' exactly once. Say it." }
   ]
 }

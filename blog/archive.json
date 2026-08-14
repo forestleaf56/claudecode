@@ -1,5 +1,21 @@
 [
   {
+    "issue": 43,
+    "date_short": "AUGUST 13",
+    "date_human": "Thursday, August 13, 2026",
+    "article": {
+      "badge": "YIKES",
+      "blink": true,
+      "title": "📹 New Flaw Lets A Video Call Silently Hack Everyone On It; The Meeting Was A Trap All Along",
+      "dateline": "THE CONFERENCE ROOM — reported on mute, thankfully",
+      "tag": "SECURITY —",
+      "paras": [
+        "Security researchers disclosed a major video-conferencing vulnerability that could let a single participant silently compromise every other device on the call — finally confirming what everyone always suspected: the meeting could, in fact, have been an attack.",
+        "\"Patch immediately,\" experts urged, of a flaw that turns \"you're on mute\" into the least of your problems. The discovery lends new weight to the eternal office prayer that this call could have been an email — an email that, for once, would not have quietly breached your laptop."
+      ]
+    }
+  },
+  {
     "issue": 42,
     "date_short": "AUGUST 12",
     "date_human": "Wednesday, August 12, 2026",
