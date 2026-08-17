@@ -1,5 +1,21 @@
 [
   {
+    "issue": 44,
+    "date_short": "AUGUST 14",
+    "date_human": "Friday, August 14, 2026",
+    "article": {
+      "badge": "HOT!!",
+      "blink": true,
+      "title": "🤟 New Phone Can Transcribe Sign Language Into Text; Genuinely Useful Feature Accidentally Slips Into Product",
+      "dateline": "NEW YORK — reported in more than one language at once",
+      "tag": "ACCESSIBILITY —",
+      "paras": [
+        "Google's new Pixel can reportedly transcribe sign language into text in real time — a genuinely wonderful accessibility feature that somehow snuck into a launch otherwise devoted to a glowing light and a slightly thinner bezel.",
+        "\"We're proud of it,\" Google said, of a tool that actually helps people — a category of feature the industry occasionally rediscovers by accident. Advocates welcomed it warmly, while gently noting it should probably headline the keynote instead of playing third fiddle to the phone's new mood lighting."
+      ]
+    }
+  },
+  {
     "issue": 43,
     "date_short": "AUGUST 13",
     "date_human": "Thursday, August 13, 2026",
