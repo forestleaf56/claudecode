@@ -2,6 +2,11 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+<!-- Locks the page to itself: no external scripts, styles, images, frames or
+     fonts can load, and the only network egress is to a radio's HTTP API on the
+     LAN. Enforces the "nothing is downloaded" promise and blunts any injection. -->
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; img-src 'self' data: blob:; connect-src 'self' http: https:; manifest-src 'self' data:; font-src 'self' data:; media-src 'none'; object-src 'none'; child-src 'none'; frame-src 'none'; worker-src 'none'; base-uri 'none'; form-action 'none'">
+<meta name="referrer" content="no-referrer">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, interactive-widget=resizes-content">
 <meta name="description" content="Offline Meshtastic client - real protobuf protocol over Bluetooth, WiFi and USB serial">
 <meta name="theme-color" content="#0a0e17">
@@ -1190,7 +1195,9 @@ function renderDevice(){
   if (d.firmware) bits.push("Firmware " + d.firmware);
   if (d.hwModel) bits.push(HW[d.hwModel] || ("HW model " + d.hwModel));
   if (client.transport) bits.push("Link: " + client.transport.label + " · " + (client.transport.name||""));
-  $("device-info").innerHTML = bits.length ? bits.join("<br>") : "No radio connected.";
+  const box = $("device-info"); box.textContent = "";
+  if (!bits.length){ box.textContent = "No radio connected."; return; }
+  bits.forEach((b,i) => { if (i) box.appendChild(document.createElement("br")); box.appendChild(document.createTextNode(b)); });
 }
 function updateComposer(){
   const ok = client.connected;
@@ -1463,7 +1470,8 @@ window.addEventListener("beforeunload", save);
 const modalRoot = $("modal-root");
 let modalOnClose = null;
 function openModal(title, sub, bodyEl, footEls){
-  $("modal-title").innerHTML = title + (sub ? ' <span class="sub">'+sub+'</span>' : "");
+  const tl = $("modal-title"); tl.textContent = title || "";
+  if (sub){ const s = el("span","sub"," "+sub); tl.appendChild(s); }   // title/sub are text, not markup
   const body = $("modal-body"); body.innerHTML = ""; body.appendChild(bodyEl);
   const foot = $("modal-foot"); foot.innerHTML = "";
   (footEls||[]).forEach(e => foot.appendChild(e));
@@ -1479,7 +1487,11 @@ function toast(msg){
   const t = $("toast"); t.textContent = msg; t.classList.add("show");
   clearTimeout(toastTimer); toastTimer = setTimeout(() => t.classList.remove("show"), 2600);
 }
-function el(tag, cls, html){ const e=document.createElement(tag); if(cls)e.className=cls; if(html!=null)e.innerHTML=html; return e; }
+// el() assigns textContent, never innerHTML — every caller passes data that can
+// originate from a remote node (names, channel labels, firmware strings), so
+// treating it as text is what keeps hostile payloads from executing. The few
+// places that need mixed markup build child nodes explicitly.
+function el(tag, cls, text){ const e=document.createElement(tag); if(cls)e.className=cls; if(text!=null)e.textContent=text; return e; }
 function btn(label, cls, fn){ const b=el("button","btn "+(cls||""),label); if(fn)b.onclick=fn; return b; }
 function field(labelText, control, desc){
   const g = el("div","fgroup");
@@ -1733,7 +1745,8 @@ function openNode(num){
   const av = el("div","nd-av"+(self?" self":"")); av.textContent = shortName(num);
   head.appendChild(av);
   const hi = el("div"); hi.style.minWidth="0";
-  hi.appendChild(el("div",null,'<b style="font-size:1rem">'+ (nodeName(num)) +'</b>'));
+  const nameWrap = el("div"); const nameB = el("b", null, nodeName(num));
+  nameB.style.fontSize="1rem"; nameWrap.appendChild(nameB); hi.appendChild(nameWrap);
   const sub = [nodeId(num)];
   if (u.role != null && ROLE[u.role]) sub.push(ROLE[u.role]);
   if (u.hwModel && HW[u.hwModel]) sub.push(HW[u.hwModel]);
@@ -1791,7 +1804,9 @@ client.on("traceroute", tr => {
   chain.forEach((h,i) => {
     const row = el("div","hop");
     row.appendChild(el("span","idx", i));
-    row.appendChild(el("span",null, nodeName(h) + '  <span style="color:var(--dim)">'+nodeId(h)+'</span>'));
+    const label = el("span"); label.appendChild(document.createTextNode(nodeName(h) + "  "));
+    const idSpan = el("span", null, nodeId(h)); idSpan.style.color="var(--dim)"; label.appendChild(idSpan);
+    row.appendChild(label);
     // SNR values are reported in quarter-dB towards each successive hop.
     if (i>0 && tr.snrTowards && tr.snrTowards[i-1]!=null)
       row.appendChild(el("span","snr",(tr.snrTowards[i-1]/4).toFixed(1)+" dB"));
