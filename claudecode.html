@@ -1,1 +1,1824 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, interactive-widget=resizes-content">
+<meta name="description" content="Offline Meshtastic client - real protobuf protocol over Bluetooth, WiFi and USB serial">
+<meta name="theme-color" content="#0a0e17">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="MESHLINK">
+<title>MESHLINK — Offline Meshtastic Client</title>
+<link rel="manifest" href="data:application/json;base64,eyJuYW1lIjoiTUVTSExJTksiLCJzaG9ydF9uYW1lIjoiTUVTSExJTksiLCJzdGFydF91cmwiOiIuLyIsImRpc3BsYXkiOiJzdGFuZGFsb25lIiwiYmFja2dyb3VuZF9jb2xvciI6IiMwYTBlMTciLCJ0aGVtZV9jb2xvciI6IiMwMGQ5ZmYiLCJpY29ucyI6W3sic3JjIjoiZGF0YTppbWFnZS9zdmcreG1sLCUzQ3N2ZyUyMHhtbG5zJTNEJ2h0dHAlM0ElMkYlMkZ3d3cudzMub3JnJTJGMjAwMCUyRnN2ZyclMjB2aWV3Qm94JTNEJzAlMjAwJTIwMTAwJTIwMTAwJyUzRSUzQ3RleHQlMjB5JTNEJy45ZW0nJTIwZm9udC1zaXplJTNEJzkwJyUzRSVGMCU5RiU5MyVBMSUzQyUyRnRleHQlM0UlM0MlMkZzdmclM0UiLCJ0eXBlIjoiaW1hZ2Uvc3ZnK3htbCIsInNpemVzIjoiNTEyeDUxMiJ9XX0=">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#0a0e17; --bg-deep:#050810; --card:#0f1419; --elev:#161c28;
+  --cyan:#00d9ff; --magenta:#ff006e; --amber:#ffbe0b; --green:#06ffa5; --red:#ff4d5e;
+  --tx:#e8eaed; --tx2:#9ba3af; --dim:#64748b;
+  --line:rgba(255,255,255,.09);
+  --mono:ui-monospace,SFMono-Regular,"SF Mono",Menlo,Consolas,monospace;
+}
+html,body{height:100%}
+body{
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+  background:var(--bg); color:var(--tx); line-height:1.5;
+  -webkit-font-smoothing:antialiased; overflow:hidden;
+}
+button,input,select,textarea{font:inherit;color:inherit}
+button{touch-action:manipulation}
+:focus-visible{outline:2px solid var(--cyan);outline-offset:2px}
+::-webkit-scrollbar{width:8px;height:8px}
+::-webkit-scrollbar-thumb{background:rgba(255,255,255,.13);border-radius:4px}
 
+/* ---------- shell ---------- */
+.app{display:grid;grid-template-rows:auto 1fr;height:100dvh}
+header{
+  display:flex;align-items:center;gap:.7rem;flex-wrap:nowrap;
+  padding:.55rem .8rem;background:var(--bg-deep);border-bottom:1px solid var(--line);
+  padding-top:calc(.55rem + env(safe-area-inset-top));
+  padding-left:calc(.8rem + env(safe-area-inset-left));
+  padding-right:calc(.8rem + env(safe-area-inset-right));
+}
+.brand{flex:none}
+.link-state{min-width:0;overflow:hidden}
+#state{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.brand{font-family:var(--mono);font-weight:700;letter-spacing:.18em;font-size:.85rem;color:var(--cyan)}
+.brand small{display:block;letter-spacing:.05em;font-weight:400;color:var(--dim);font-size:.62rem}
+.link-state{display:flex;align-items:center;gap:.45rem;font-family:var(--mono);font-size:.72rem;color:var(--tx2)}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--dim);flex:none}
+.dot.on{background:var(--green);box-shadow:0 0 8px var(--green)}
+.dot.wait{background:var(--amber);animation:pulse 1s infinite}
+.dot.err{background:var(--red)}
+@keyframes pulse{50%{opacity:.25}}
+.spacer{flex:1;min-width:.25rem}
+.hdr-btn{
+  background:var(--elev);border:1px solid var(--line);border-radius:8px;
+  padding:.5rem .75rem;font-size:.72rem;cursor:pointer;color:var(--tx2);
+  min-height:38px;flex:none;white-space:nowrap
+}
+.hdr-btn:hover{border-color:var(--cyan);color:var(--cyan)}
+
+main{display:grid;grid-template-columns:320px 1fr;min-height:0}
+.side{border-right:1px solid var(--line);overflow-y:auto;background:var(--bg-deep);min-height:0}
+.pane{display:grid;grid-template-rows:auto 1fr auto;min-height:0}
+
+.sec{padding:.85rem}
+.sec+.sec{border-top:1px solid var(--line)}
+.sec h2{
+  font-family:var(--mono);font-size:.65rem;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--dim);margin-bottom:.6rem;display:flex;align-items:center;gap:.5rem
+}
+.sec h2 .count{color:var(--cyan)}
+
+/* ---------- connect ---------- */
+.conn-grid{display:grid;gap:.45rem}
+.conn{
+  display:flex;align-items:center;gap:.6rem;padding:.7rem;cursor:pointer;min-height:56px;
+  background:var(--card);border:1px solid var(--line);border-radius:8px;text-align:left;width:100%
+}
+.conn:hover:not(:disabled){border-color:var(--cyan);background:var(--elev)}
+.conn:disabled{opacity:.4;cursor:not-allowed}
+.conn .ico{font-size:1.1rem}
+.conn b{display:block;font-size:.8rem;font-weight:600}
+.conn span{display:block;font-size:.66rem;color:var(--dim)}
+.conn.active{border-color:var(--green)}
+.opt{display:flex;align-items:center;gap:.4rem;font-size:.68rem;color:var(--dim);margin-top:.5rem}
+.hint{font-size:.66rem;color:var(--dim);margin-top:.5rem;line-height:1.45}
+.hint code{font-family:var(--mono);color:var(--tx2)}
+
+/* ---------- nodes ---------- */
+.node{
+  display:flex;gap:.6rem;align-items:center;padding:.55rem .6rem;border-radius:8px;min-height:50px;
+  cursor:pointer;border:1px solid transparent
+}
+.node:hover{background:var(--elev);border-color:var(--line)}
+.node .av{
+  width:34px;height:34px;border-radius:8px;flex:none;display:grid;place-items:center;
+  font-family:var(--mono);font-size:.62rem;font-weight:700;background:var(--elev);color:var(--cyan);
+  border:1px solid var(--line)
+}
+.node .av.self{color:var(--amber);border-color:var(--amber)}
+.node .meta{min-width:0;flex:1}
+.node .nm{font-size:.8rem;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.node .sub{font-family:var(--mono);font-size:.62rem;color:var(--dim);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sig{font-family:var(--mono);font-size:.6rem;padding:.1rem .3rem;border-radius:4px;background:var(--elev)}
+.sig.good{color:var(--green)}.sig.ok{color:var(--amber)}.sig.bad{color:var(--red)}
+.empty{font-size:.72rem;color:var(--dim);padding:.6rem;text-align:center;line-height:1.5}
+
+/* ---------- map ---------- */
+#map{width:100%;height:190px;display:block;border-radius:8px;background:var(--bg);border:1px solid var(--line)}
+
+/* ---------- chat ---------- */
+.tabs-row{display:flex;align-items:center;gap:.5rem;padding:.5rem .8rem;border-bottom:1px solid var(--line);
+  background:var(--bg-deep)}
+.tabs-row .hdr-btn{flex:none}
+.tabs{display:flex;gap:.35rem;overflow-x:auto;flex:1;min-width:0;
+  scrollbar-width:none;-webkit-overflow-scrolling:touch;overscroll-behavior-x:contain}
+.tabs::-webkit-scrollbar{display:none}
+.tab{
+  flex:none;padding:.45rem .85rem;min-height:36px;border-radius:999px;font-size:.78rem;cursor:pointer;
+  background:var(--card);border:1px solid var(--line);color:var(--tx2);white-space:nowrap
+}
+.tab.on{border-color:var(--cyan);color:var(--cyan);background:rgba(0,217,255,.08)}
+.tab .badge{display:inline-block;margin-left:.35rem;background:var(--magenta);color:#fff;border-radius:999px;padding:0 .3rem;font-size:.6rem}
+
+.log{overflow-y:auto;padding:1rem .9rem;display:flex;flex-direction:column;gap:.55rem;min-height:0;
+  -webkit-overflow-scrolling:touch;overscroll-behavior-y:contain}
+.msg{max-width:min(560px,86%);padding:.5rem .7rem;border-radius:10px;background:var(--card);border:1px solid var(--line)}
+.msg.me{align-self:flex-end;background:rgba(0,217,255,.09);border-color:rgba(0,217,255,.3)}
+.msg.sys{align-self:center;max-width:100%;background:transparent;border:none;color:var(--dim);font-family:var(--mono);font-size:.66rem;text-align:center}
+.msg .who{font-size:.66rem;color:var(--cyan);font-weight:600;margin-bottom:.15rem}
+.msg .body{font-size:.86rem;word-wrap:break-word;white-space:pre-wrap}
+.msg .foot{font-family:var(--mono);font-size:.6rem;color:var(--dim);margin-top:.25rem;display:flex;gap:.5rem;justify-content:flex-end}
+.st-queued{color:var(--dim)}.st-sent{color:var(--tx2)}.st-ack{color:var(--green)}.st-fail{color:var(--red)}
+
+.composer{border-top:1px solid var(--line);padding:.7rem .9rem;background:var(--bg-deep);padding-bottom:calc(.7rem + env(safe-area-inset-bottom))}
+.crow{display:flex;gap:.5rem;align-items:flex-end}
+textarea#input{
+  flex:1;resize:none;min-height:44px;max-height:130px;padding:.65rem .75rem;border-radius:10px;
+  background:var(--card);border:1px solid var(--line);font-size:16px
+}
+textarea#input:focus{border-color:var(--cyan);outline:none}
+.send{
+  background:var(--cyan);color:#04121a;border:none;border-radius:10px;padding:.65rem 1.15rem;
+  min-height:44px;min-width:44px;font-weight:700;font-size:.82rem;cursor:pointer
+}
+.send:disabled{background:var(--elev);color:var(--dim);cursor:not-allowed}
+.crow2{display:flex;gap:.75rem;align-items:center;margin-top:.4rem;font-family:var(--mono);font-size:.64rem;color:var(--dim)}
+.crow2 label{display:flex;align-items:center;gap:.3rem}
+.crow2 select{background:var(--card);border:1px solid var(--line);border-radius:6px;padding:.15rem .3rem;font-size:.64rem}
+.crow2 label{min-height:28px}
+.crow2 input[type=checkbox]{width:15px;height:15px}
+#bytes.over{color:var(--red)}
+#sec-note.ok{color:var(--green)}
+#sec-note.warn{color:var(--amber)}
+
+/* ---------- packet monitor (signature element) ---------- */
+.monitor{
+  position:fixed;right:0;bottom:0;width:min(430px,100vw);max-height:52vh;z-index:40;
+  background:rgba(5,8,16,.97);border-left:1px solid var(--line);border-top:1px solid var(--line);
+  display:flex;flex-direction:column;transform:translateY(calc(100% - 32px));transition:transform .22s ease
+}
+.monitor.open{transform:translateY(0)}
+.monitor-bar{
+  height:32px;flex:none;display:flex;align-items:center;gap:.5rem;padding:0 .7rem;cursor:pointer;
+  touch-action:manipulation;
+  font-family:var(--mono);font-size:.64rem;letter-spacing:.1em;color:var(--dim);text-transform:uppercase
+}
+.monitor-bar .rx{color:var(--green)}.monitor-bar .tx{color:var(--magenta)}
+.monitor-body{overflow-y:auto;padding:.4rem .7rem calc(.9rem + env(safe-area-inset-bottom));
+  font-family:var(--mono);font-size:.62rem;line-height:1.6;-webkit-overflow-scrolling:touch}
+.pkt{display:flex;gap:.5rem;border-bottom:1px solid rgba(255,255,255,.04);padding:.15rem 0}
+.pkt .dir{flex:none;width:22px}
+.pkt.in .dir{color:var(--green)}.pkt.out .dir{color:var(--magenta)}
+.pkt .kind{flex:none;width:112px;color:var(--tx2);overflow:hidden;text-overflow:ellipsis}
+.pkt .hex{color:var(--dim);word-break:break-all;flex:1}
+
+.backdrop{
+  position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:45;opacity:0;pointer-events:none;
+  transition:opacity .2s ease
+}
+.backdrop.show{opacity:1;pointer-events:auto}
+@media (max-width:860px){
+  main{grid-template-columns:1fr}
+  .side{position:fixed;inset:0;top:auto;height:82dvh;z-index:50;border-right:none;border-top:1px solid var(--line);
+        transform:translateY(100%);transition:transform .25s ease;border-radius:14px 14px 0 0;
+        padding-bottom:env(safe-area-inset-bottom)}
+  .side.open{transform:translateY(0)}
+  .sheet-grip{display:block;width:38px;height:4px;border-radius:2px;background:var(--dim);margin:.6rem auto;cursor:pointer}
+  .conn,.node{min-height:58px}
+  .hdr-btn{padding:.55rem .8rem}
+  .monitor{max-height:42vh}
+  /* keep the collapsed monitor strip from sitting on top of the compose box */
+  .composer{padding-bottom:calc(.7rem + env(safe-area-inset-bottom) + 34px)}
+  .node{touch-action:manipulation}
+}
+@media (min-width:861px){.sheet-grip,#side-toggle,.backdrop{display:none}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+
+/* ---------- modal ---------- */
+.modal-root{position:fixed;inset:0;z-index:60;display:none;align-items:center;justify-content:center;padding:1rem}
+.modal-root.show{display:flex}
+.modal-scrim{position:absolute;inset:0;background:rgba(0,0,0,.62)}
+.modal{
+  position:relative;width:min(560px,100%);max-height:88dvh;display:flex;flex-direction:column;
+  background:var(--card);border:1px solid var(--line);border-radius:14px;overflow:hidden;
+  box-shadow:0 24px 60px rgba(0,0,0,.55)
+}
+.modal-head{display:flex;align-items:center;gap:.6rem;padding:.85rem 1rem;border-bottom:1px solid var(--line);background:var(--bg-deep)}
+.modal-head h3{font-size:.92rem;font-weight:700;flex:1;min-width:0}
+.modal-head .sub{font-family:var(--mono);font-size:.62rem;color:var(--dim);font-weight:400}
+.modal-x{background:var(--elev);border:1px solid var(--line);border-radius:8px;min-width:34px;min-height:34px;cursor:pointer;color:var(--tx2);font-size:1rem}
+.modal-x:hover{border-color:var(--red);color:var(--red)}
+.modal-body{overflow-y:auto;padding:1rem;display:flex;flex-direction:column;gap:1rem;-webkit-overflow-scrolling:touch}
+.modal-foot{display:flex;gap:.5rem;justify-content:flex-end;padding:.8rem 1rem;border-top:1px solid var(--line);background:var(--bg-deep);flex-wrap:wrap}
+
+.fgroup{display:flex;flex-direction:column;gap:.3rem}
+.fgroup label{font-family:var(--mono);font-size:.62rem;letter-spacing:.08em;text-transform:uppercase;color:var(--dim)}
+.fgroup .desc{font-size:.66rem;color:var(--dim);line-height:1.45}
+.fld{background:var(--bg-deep);border:1px solid var(--line);border-radius:8px;padding:.6rem .7rem;font-size:.82rem;width:100%;min-height:42px}
+.fld:focus{border-color:var(--cyan);outline:none}
+select.fld{cursor:pointer}
+.frow{display:grid;grid-template-columns:1fr 1fr;gap:.75rem}
+@media (max-width:520px){.frow{grid-template-columns:1fr}}
+.fieldset{border:1px solid var(--line);border-radius:10px;padding:.85rem;display:flex;flex-direction:column;gap:.8rem}
+.fieldset>.fs-title{font-family:var(--mono);font-size:.64rem;letter-spacing:.14em;text-transform:uppercase;color:var(--cyan);margin:-.2rem 0 .1rem}
+.btn{background:var(--elev);border:1px solid var(--line);border-radius:9px;padding:.6rem 1rem;font-size:.78rem;cursor:pointer;color:var(--tx);min-height:42px;font-weight:600}
+.btn:hover{border-color:var(--cyan);color:var(--cyan)}
+.btn:disabled{opacity:.4;cursor:not-allowed}
+.btn.primary{background:var(--cyan);color:#04121a;border-color:var(--cyan)}
+.btn.primary:hover{color:#04121a;filter:brightness(1.08)}
+.btn.danger{color:var(--red);border-color:rgba(255,77,94,.4)}
+.btn.danger:hover{background:rgba(255,77,94,.12);border-color:var(--red)}
+.btn.sm{padding:.4rem .7rem;min-height:34px;font-size:.7rem;font-weight:500}
+.toolbtns{display:flex;gap:.5rem;flex-wrap:wrap}
+
+/* node detail */
+.nd-head{display:flex;gap:.75rem;align-items:center}
+.nd-av{width:46px;height:46px;border-radius:10px;flex:none;display:grid;place-items:center;font-family:var(--mono);font-weight:700;font-size:.78rem;background:var(--elev);border:1px solid var(--line);color:var(--cyan)}
+.nd-av.self{color:var(--amber);border-color:var(--amber)}
+.stat-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:.6rem}
+.stat{background:var(--bg-deep);border:1px solid var(--line);border-radius:9px;padding:.55rem .65rem}
+.stat b{display:block;font-size:.95rem;font-weight:700}
+.stat span{display:block;font-family:var(--mono);font-size:.58rem;letter-spacing:.08em;text-transform:uppercase;color:var(--dim);margin-top:.15rem}
+.tele-bar{height:6px;border-radius:3px;background:var(--elev);overflow:hidden;margin-top:.35rem}
+.tele-bar>i{display:block;height:100%;background:var(--green)}
+
+/* channel rows */
+.ch-row{display:flex;align-items:center;gap:.6rem;padding:.55rem .65rem;background:var(--bg-deep);border:1px solid var(--line);border-radius:9px}
+.ch-row .ci{width:26px;height:26px;border-radius:6px;display:grid;place-items:center;font-family:var(--mono);font-size:.68rem;background:var(--elev);color:var(--cyan);flex:none}
+.ch-row .cmeta{flex:1;min-width:0}
+.ch-row .cn{font-size:.82rem;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ch-row .cs{font-family:var(--mono);font-size:.6rem;color:var(--dim)}
+.pill{font-family:var(--mono);font-size:.56rem;padding:.1rem .35rem;border-radius:4px;background:var(--elev);color:var(--tx2)}
+.pill.pri{color:var(--amber)}.pill.sec{color:var(--cyan)}.pill.off{color:var(--dim)}
+.trace-hops{display:flex;flex-direction:column;gap:.3rem;font-family:var(--mono);font-size:.72rem}
+.trace-hops .hop{display:flex;gap:.5rem;align-items:center;padding:.35rem .5rem;background:var(--bg-deep);border:1px solid var(--line);border-radius:7px}
+.trace-hops .hop .idx{color:var(--dim);width:20px;flex:none}
+.trace-hops .hop .snr{margin-left:auto;color:var(--tx2)}
+.toast{position:fixed;left:50%;bottom:calc(1.2rem + env(safe-area-inset-bottom));transform:translateX(-50%);z-index:80;
+  background:var(--elev);border:1px solid var(--cyan);color:var(--tx);padding:.6rem 1rem;border-radius:10px;font-size:.78rem;
+  box-shadow:0 10px 30px rgba(0,0,0,.5);opacity:0;transition:opacity .2s,transform .2s;pointer-events:none;max-width:90vw}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(-4px)}
+</style>
+</head>
+<body>
+<div class="app">
+  <header>
+    <div class="brand">MESHLINK<small>meshtastic client · offline</small></div>
+    <div class="link-state"><span class="dot" id="dot"></span><span id="state">Not connected</span></div>
+    <div class="spacer"></div>
+    <button class="hdr-btn" id="disconnect" style="display:none">Disconnect</button>
+  </header>
+
+  <div class="backdrop" id="backdrop"></div>
+  <main>
+    <aside class="side" id="side">
+      <div class="sheet-grip" id="sheet-grip"></div>
+
+      <div class="sec">
+        <h2>Connect to a radio</h2>
+        <div class="conn-grid">
+          <button class="conn" id="btn-ble"><span class="ico">📶</span><span><b>Bluetooth</b><span>Chrome/Edge on macOS, Windows, Linux, Android</span></span></button>
+          <button class="conn" id="btn-serial"><span class="ico">🔌</span><span><b>USB serial</b><span>Chrome/Edge desktop — most reliable</span></span></button>
+          <button class="conn" id="btn-wifi"><span class="ico">🌐</span><span><b>WiFi (HTTP API)</b><span>ESP32 radios only, same LAN</span></span></button>
+        </div>
+        <label class="opt"><input type="checkbox" id="ble-all"> Show all Bluetooth devices (if yours doesn't appear)</label>
+        <div class="hint" id="support-hint"></div>
+      </div>
+
+      <div class="sec">
+        <h2>Mesh map <span class="count" id="pos-count"></span></h2>
+        <canvas id="map"></canvas>
+        <div class="hint">Relative positions from node reports. No tiles — nothing is downloaded.</div>
+      </div>
+
+      <div class="sec">
+        <h2>Nodes <span class="count" id="node-count">0</span></h2>
+        <div id="node-list"><div class="empty">Connect a radio to see the mesh.</div></div>
+      </div>
+
+      <div class="sec">
+        <h2>Configuration</h2>
+        <div class="toolbtns">
+          <button class="hdr-btn" id="btn-config" disabled>⚙ Radio settings</button>
+          <button class="hdr-btn" id="btn-channels" disabled># Channels</button>
+        </div>
+      </div>
+
+      <div class="sec">
+        <h2>Device</h2>
+        <div id="device-info" class="hint">No radio connected.</div>
+        <div class="toolbtns" style="margin-top:.6rem">
+          <button class="hdr-btn" id="export">Export data</button>
+          <button class="hdr-btn" id="btn-import-ch">Import channel URL</button>
+        </div>
+      </div>
+    </aside>
+
+    <section class="pane">
+      <div class="tabs-row">
+        <button class="hdr-btn" id="side-toggle">Radio</button>
+        <div class="tabs" id="tabs"></div>
+      </div>
+      <div class="log" id="log"></div>
+      <div class="composer">
+        <div class="crow">
+          <textarea id="input" rows="1" placeholder="Message the mesh…"></textarea>
+          <button class="send" id="send" disabled>Send</button>
+        </div>
+        <div class="crow2">
+          <span id="target">No conversation</span>
+          <span id="sec-note"></span>
+          <label><input type="checkbox" id="want-ack" checked> Request ack</label>
+          <label>Hops <select id="hops"><option>1</option><option>2</option><option selected>3</option><option>5</option><option>7</option></select></label>
+          <span class="spacer"></span>
+          <span id="bytes">0 / 200 bytes</span>
+        </div>
+      </div>
+    </section>
+  </main>
+</div>
+
+<div class="monitor" id="monitor">
+  <div class="monitor-bar" id="monitor-bar">
+    <span>▲ Packet monitor</span>
+    <span class="rx" id="rx-count">RX 0</span>
+    <span class="tx" id="tx-count">TX 0</span>
+  </div>
+  <div class="monitor-body" id="monitor-body"></div>
+</div>
+
+<div class="modal-root" id="modal-root">
+  <div class="modal-scrim" id="modal-scrim"></div>
+  <div class="modal" role="dialog" aria-modal="true">
+    <div class="modal-head">
+      <h3 id="modal-title">—</h3>
+      <button class="modal-x" id="modal-close" aria-label="Close">✕</button>
+    </div>
+    <div class="modal-body" id="modal-body"></div>
+    <div class="modal-foot" id="modal-foot"></div>
+  </div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+"use strict";
+/* =====================================================================
+   MESHLINK — a real Meshtastic client in one file.
+
+   Wire protocol implemented here (nothing is faked):
+     ToRadio / FromRadio protobufs, hand-rolled encoder + decoder
+     BLE GATT transport   (Web Bluetooth)
+     Serial transport     (Web Serial, 0x94 0xC3 framing)
+     HTTP transport       (ESP32 /api/v1/toradio + /api/v1/fromradio)
+     want_config handshake, node DB, channel DB, text messages,
+     routing ACK/NAK tracking, queue status, heartbeats.
+     AdminMessage config: owner, device role, LoRa region/preset/hops,
+     channel editor with PSK generation, reboot/shutdown/factory reset,
+     favorite/remove nodes, traceroute, position requests,
+     meshtastic.org/e channel-URL import & export.
+   ===================================================================== */
+
+/* ------------------------- protobuf primitives ---------------------- */
+class PB {
+  constructor(){ this.b = []; }
+  static varint(v){
+    const out=[]; v = Math.floor(Number(v)); if (v < 0) v = v >>> 0;
+    do { let x = v % 128; v = Math.floor(v/128); if (v > 0) x |= 0x80; out.push(x); } while (v > 0);
+    return out;
+  }
+  _push(a){ for (let i=0;i<a.length;i++) this.b.push(a[i]); }
+  tag(f,w){ this._push(PB.varint((f<<3)|w)); return this; }
+  uint(f,v){ if(!v) return this; this.tag(f,0); this._push(PB.varint(v)); return this; }
+  bool(f,v){ if(!v) return this; this.tag(f,0); this.b.push(1); return this; }
+  fix32(f,v){ if(!v) return this; this.tag(f,5); v=v>>>0;
+    this.b.push(v&255,(v>>>8)&255,(v>>>16)&255,(v>>>24)&255); return this; }
+  bytes(f,arr){ if(!arr||!arr.length) return this; this.tag(f,2); this._push(PB.varint(arr.length)); this._push(arr); return this; }
+  str(f,s){ return this.bytes(f, ENC.encode(s)); }
+  sub(f,pb){ return this.bytes(f, pb.b); }
+  emptySub(f){ this.tag(f,2); this.b.push(0); return this; }
+  // Forced writers: emit the field even when the value is 0/false — required for
+  // enum-valued admin fields (e.g. get_config_request = DEVICE = 0) and for
+  // config values that are legitimately zero.
+  vintF(f,v){ this.tag(f,0); this._push(PB.varint(v)); return this; }
+  boolF(f,v){ this.tag(f,0); this.b.push(v?1:0); return this; }
+  sfix32(f,v){ if(v==null) return this; this.tag(f,5); v=(v|0)>>>0;
+    this.b.push(v&255,(v>>>8)&255,(v>>>16)&255,(v>>>24)&255); return this; }
+  out(){ return new Uint8Array(this.b); }
+}
+class PBR {
+  constructor(u8){ this.d=u8; this.p=0; }
+  get eof(){ return this.p >= this.d.length; }
+  varint(){ let r=0,s=1,b;
+    do { if (this.p >= this.d.length) throw new Error("truncated varint");
+         b=this.d[this.p++]; r += (b & 0x7f) * s; s *= 128; } while (b & 0x80);
+    return r; }
+  // Negative int32 is sign-extended to a 10-byte varint, so accumulate the
+  // low 32 bits with shifts instead of float multiplication.
+  int32(){ let lo=0, shift=0, b;
+    do { if (this.p >= this.d.length) throw new Error("truncated varint");
+         b=this.d[this.p++]; if (shift < 32) lo |= (b & 0x7f) << shift; shift += 7; } while (b & 0x80);
+    return lo | 0; }
+  fix32(){ const d=this.d,p=this.p; this.p+=4;
+    return ((d[p]) | (d[p+1]<<8) | (d[p+2]<<16) | (d[p+3]<<24)) >>> 0; }
+  sfix32(){ const v=this.fix32(); return v > 0x7FFFFFFF ? v - 0x100000000 : v; }
+  f32(){ const dv=new DataView(this.d.buffer, this.d.byteOffset+this.p, 4); this.p+=4; return dv.getFloat32(0,true); }
+  len(){ const n=this.varint(); const s=this.d.subarray(this.p, this.p+n); this.p+=n; return s; }
+  str(){ return DEC.decode(this.len()); }
+  skip(w){ if(w===0) this.varint(); else if(w===1) this.p+=8; else if(w===2) this.len();
+           else if(w===5) this.p+=4; else throw new Error("bad wire type "+w); }
+  each(cb){ while(!this.eof){ const t=this.varint(); const f=t>>>3, w=t&7;
+    if (cb(f,w) !== true) this.skip(w); } }
+}
+const ENC = new TextEncoder(), DEC = new TextDecoder();
+
+/* ------------------------- meshtastic constants --------------------- */
+const BROADCAST = 0xFFFFFFFF;
+const PORT = { TEXT:1, POSITION:3, NODEINFO:4, ROUTING:5, ADMIN:6, TELEMETRY:67, TRACEROUTE:70 };
+const PORT_NAME = {1:"TEXT",3:"POSITION",4:"NODEINFO",5:"ROUTING",6:"ADMIN",8:"WAYPOINT",67:"TELEMETRY",70:"TRACEROUTE",71:"NEIGHBORINFO"};
+const ROUTE_ERR = {0:"delivered",1:"no route",2:"got NAK",3:"timeout",4:"no interface",5:"max retransmit",
+  6:"no channel",7:"too large",8:"no response",9:"duty cycle limit",10:"bad request",32:"bad request",33:"not authorized",34:"PKI failed"};
+const HW = {1:"TLORA V2",4:"HELTEC V2.0",9:"HELTEC V1",10:"LILYGO TBEAM",31:"HELTEC V3",39:"RAK4631",43:"HELTEC WSL V3",
+  49:"HELTEC WIRELESS TRACKER",50:"HELTEC WIRELESS PAPER",71:"HELTEC MESH NODE T114",99:"PRIVATE_HW"};
+
+// Config / admin enums — numbers are the on-wire values (verified against the
+// Meshtastic protobufs).
+const REGION = ["UNSET","US","EU_433","EU_868","CN","JP","ANZ","KR","TW","RU","IN","NZ_865","TH","LORA_24",
+  "UA_433","UA_868","MY_433","MY_919","SG_923","PH_433","PH_868","PH_915","ANZ_433","KZ_433","KZ_863",
+  "NP_865","BR_902","ITU1_2M","ITU2_2M","EU_866","EU_874","EU_917","EU_N_868","ITU3_2M","ITU1_70CM",
+  "ITU2_70CM","ITU3_70CM","ITU2_125CM"];
+const MODEM_PRESET = ["Long Fast","Long Slow","Very Long Slow","Medium Slow","Medium Fast","Short Slow",
+  "Short Fast","Long Moderate","Short Turbo","Long Turbo","Lite Fast","Lite Slow","Narrow Fast","Narrow Slow",
+  "Tiny Fast","Tiny Slow","Medium Turbo"];
+const ROLE = ["Client","Client Mute","Router","Router Client","Repeater","Tracker","Sensor","TAK",
+  "Client Hidden","Lost & Found","TAK Tracker","Router Late","Client Base"];
+const CHAN_ROLE = ["Disabled","Primary","Secondary"];
+// AdminMessage.ConfigType for get_config_request
+const CFG = { DEVICE:0, POSITION:1, POWER:2, NETWORK:3, DISPLAY:4, LORA:5, BLUETOOTH:6, SECURITY:7 };
+// Config oneof field numbers
+const CFGF = { device:1, position:2, power:3, network:4, display:5, lora:6, bluetooth:7, security:8 };
+// AdminMessage field numbers
+const ADM = {
+  getChannelReq:1, getOwnerReq:3, getConfigReq:5, getMetaReq:12,
+  setOwner:32, setChannel:33, setConfig:34, setModuleConfig:35,
+  removeByNodenum:38, setFavorite:39, removeFavorite:40,
+  setFixedPos:41, removeFixedPos:42, setIgnored:47, removeIgnored:48,
+  beginEdit:64, commitEdit:65,
+  factoryResetDevice:94, rebootOta:95, exitSim:96, reboot:97, shutdown:98,
+  factoryResetConfig:99, nodedbReset:100
+};
+
+/* ------------------------- decoders --------------------------------- */
+function decUser(u8){ const r=new PBR(u8),o={}; r.each((f)=>{
+  if(f===1){o.id=r.str();return true} if(f===2){o.longName=r.str();return true}
+  if(f===3){o.shortName=r.str();return true} if(f===5){o.hwModel=r.varint();return true}
+  if(f===7){o.role=r.varint();return true} if(f===8){o.publicKey=r.len().slice();return true} }); return o; }
+
+function decPosition(u8){ const r=new PBR(u8),o={}; r.each((f)=>{
+  if(f===1){o.lat=r.sfix32()/1e7;return true} if(f===2){o.lon=r.sfix32()/1e7;return true}
+  if(f===3){o.alt=r.int32();return true} if(f===4){o.time=r.fix32();return true} }); return o; }
+
+function decMetrics(u8){ const r=new PBR(u8),o={}; r.each((f)=>{
+  if(f===1){o.battery=r.varint();return true} if(f===2){o.voltage=r.f32();return true}
+  if(f===3){o.chUtil=r.f32();return true} if(f===4){o.airUtil=r.f32();return true}
+  if(f===5){o.uptime=r.varint();return true} }); return o; }
+
+function decTelemetry(u8){ const r=new PBR(u8),o={}; r.each((f)=>{
+  if(f===1){o.time=r.fix32();return true} if(f===2){o.device=decMetrics(r.len());return true} }); return o; }
+
+function decNodeInfo(u8){ const r=new PBR(u8),o={}; r.each((f)=>{
+  if(f===1){o.num=r.varint();return true} if(f===2){o.user=decUser(r.len());return true}
+  if(f===3){o.position=decPosition(r.len());return true} if(f===4){o.snr=r.f32();return true}
+  if(f===5){o.lastHeard=r.fix32();return true} if(f===6){o.metrics=decMetrics(r.len());return true}
+  if(f===7){o.channel=r.varint();return true} if(f===9){o.hopsAway=r.varint();return true}
+  if(f===10){o.isFavorite=!!r.varint();return true} if(f===11){o.isIgnored=!!r.varint();return true} }); return o; }
+
+function decChannelSettings(u8){ const r=new PBR(u8),o={}; r.each((f)=>{
+  if(f===2){o.psk=r.len().slice();return true} if(f===3){o.name=r.str();return true}
+  if(f===4){o.id=r.fix32();return true} if(f===5){o.uplinkEnabled=!!r.varint();return true}
+  if(f===6){o.downlinkEnabled=!!r.varint();return true} }); return o; }
+
+function decChannel(u8){ const r=new PBR(u8),o={}; r.each((f)=>{
+  if(f===1){o.index=r.int32();return true} if(f===2){o.settings=decChannelSettings(r.len());return true}
+  if(f===3){o.role=r.varint();return true} }); return o; }
+
+function decMyInfo(u8){ const r=new PBR(u8),o={}; r.each((f)=>{
+  if(f===1){o.myNodeNum=r.varint();return true} if(f===8){o.rebootCount=r.varint();return true} }); return o; }
+
+function decMetadata(u8){ const r=new PBR(u8),o={}; r.each((f)=>{
+  if(f===1){o.firmware=r.str();return true} if(f===4){o.hasWifi=!!r.varint();return true}
+  if(f===5){o.hasBluetooth=!!r.varint();return true} if(f===7){o.role=r.varint();return true}
+  if(f===9){o.hwModel=r.varint();return true} }); return o; }
+
+function decQueueStatus(u8){ const r=new PBR(u8),o={}; r.each((f)=>{
+  if(f===1){o.res=r.int32();return true} if(f===2){o.free=r.varint();return true}
+  if(f===3){o.maxlen=r.varint();return true} if(f===4){o.packetId=r.fix32();return true} }); return o; }
+
+function decRouting(u8){ const r=new PBR(u8),o={}; r.each((f)=>{
+  if(f===3){o.error=r.varint();return true} }); return o; }
+
+function decData(u8){ const r=new PBR(u8),o={}; r.each((f)=>{
+  if(f===1){o.portnum=r.varint();return true} if(f===2){o.payload=r.len().slice();return true}
+  if(f===3){o.wantResponse=!!r.varint();return true} if(f===4){o.dest=r.fix32();return true}
+  if(f===5){o.source=r.fix32();return true} if(f===6){o.requestId=r.fix32();return true}
+  if(f===7){o.replyId=r.fix32();return true} if(f===8){o.emoji=r.fix32();return true} }); return o; }
+
+function decMeshPacket(u8){ const r=new PBR(u8),o={}; r.each((f)=>{
+  if(f===1){o.from=r.fix32();return true} if(f===2){o.to=r.fix32();return true}
+  if(f===3){o.channel=r.varint();return true} if(f===4){o.decoded=decData(r.len());return true}
+  if(f===5){o.encrypted=r.len().slice();return true} if(f===6){o.id=r.fix32();return true}
+  if(f===7){o.rxTime=r.fix32();return true} if(f===8){o.rxSnr=r.f32();return true}
+  if(f===9){o.hopLimit=r.varint();return true} if(f===10){o.wantAck=!!r.varint();return true}
+  if(f===12){o.rxRssi=r.int32();return true} if(f===15){o.hopStart=r.varint();return true}
+  if(f===16){o.publicKey=r.len().slice();return true} if(f===17){o.pkiEncrypted=!!r.varint();return true} }); return o; }
+
+function decRouteDiscovery(u8){ const r=new PBR(u8),o={route:[],snrTowards:[],routeBack:[],snrBack:[]};
+  r.each((f,w)=>{
+    if(f===1){ o.route.push(r.fix32()); return true }
+    if(f===2){ o.snrTowards.push(r.int32()); return true }
+    if(f===3){ o.routeBack.push(r.fix32()); return true }
+    if(f===4){ o.snrBack.push(r.int32()); return true } }); return o; }
+
+function decDeviceConfig(u8){ const r=new PBR(u8),o={}; r.each((f)=>{
+  if(f===1){o.role=r.varint();return true} if(f===2){o.serialEnabled=!!r.varint();return true}
+  if(f===6){o.rebroadcastMode=r.varint();return true} if(f===7){o.nodeInfoBroadcastSecs=r.varint();return true} }); return o; }
+
+function decLoraConfig(u8){ const r=new PBR(u8),o={}; r.each((f)=>{
+  if(f===1){o.usePreset=!!r.varint();return true} if(f===2){o.modemPreset=r.varint();return true}
+  if(f===3){o.bandwidth=r.varint();return true} if(f===4){o.spreadFactor=r.varint();return true}
+  if(f===5){o.codingRate=r.varint();return true} if(f===7){o.region=r.varint();return true}
+  if(f===8){o.hopLimit=r.varint();return true} if(f===9){o.txEnabled=!!r.varint();return true}
+  if(f===10){o.txPower=r.int32();return true} if(f===11){o.channelNum=r.varint();return true}
+  if(f===13){o.rxBoostedGain=!!r.varint();return true} }); return o; }
+
+// Config is a oneof; capture whichever sub-config this message carries.
+function decConfig(u8){ const r=new PBR(u8),o={}; r.each((f)=>{
+  if(f===CFGF.device){o.device=decDeviceConfig(r.len());return true}
+  if(f===CFGF.lora){o.lora=decLoraConfig(r.len());return true} }); return o; }
+
+// Incoming AdminMessage — we only surface get_config_response (field 6) and
+// get_owner_response (field 4).
+function decAdmin(u8){ const r=new PBR(u8),o={}; r.each((f)=>{
+  if(f===4){o.owner=decUser(r.len());return true}
+  if(f===6){o.config=decConfig(r.len());return true} }); return o; }
+
+/* ------------------------- ToRadio encoders ------------------------- */
+const toRadioWantConfig = id => new PB().uint(3, id).out();
+const toRadioDisconnect = () => new PB().bool(4, true).out();
+const toRadioHeartbeat  = () => new PB().emptySub(7).out();
+
+function toRadioText(text, {to=BROADCAST, channel=0, id, wantAck=false, hopLimit=3}={}){
+  const payload = ENC.encode(text);
+  const data = new PB().uint(1, PORT.TEXT).bytes(2, payload);
+  const pkt = new PB()
+    .fix32(2, to)          // to
+    .uint(3, channel)      // channel index
+    .sub(4, data)          // decoded
+    .fix32(6, id)          // packet id
+    .uint(9, hopLimit)     // hop_limit
+    .bool(10, wantAck);    // want_ack
+  return new PB().sub(1, pkt).out();          // ToRadio.packet
+}
+// `from` is deliberately omitted: the firmware refuses to let a phone app
+// assign a node number and fills it in itself.
+
+// Generic Data packet: portnum + payload, optional want_response. Wrapped in a
+// MeshPacket and a ToRadio.packet. Used for admin, traceroute and position
+// requests.
+function toRadioData(portnum, payload, {to=BROADCAST, channel=0, id, wantAck=false, wantResponse=false, hopLimit=3}={}){
+  const data = new PB().uint(1, portnum);
+  if (payload && payload.length) data.bytes(2, payload);
+  if (wantResponse) data.boolF(3, true);
+  const pkt = new PB()
+    .fix32(2, to)
+    .uint(3, channel)
+    .sub(4, data)
+    .fix32(6, id)
+    .uint(9, hopLimit)
+    .bool(10, wantAck);
+  return new PB().sub(1, pkt).out();
+}
+
+/* ------------------------- Admin encoders --------------------------- */
+// Each admin action returns the raw AdminMessage bytes; the client wraps them
+// in a Data(portnum=ADMIN) packet addressed to the target node.
+const admGetConfig  = t   => new PB().vintF(ADM.getConfigReq, t).out();
+const admGetOwner   = ()  => new PB().boolF(ADM.getOwnerReq, true).out();
+const admReboot     = s   => new PB().vintF(ADM.reboot, s).out();
+const admShutdown   = s   => new PB().vintF(ADM.shutdown, s).out();
+const admFactoryCfg = ()  => new PB().vintF(ADM.factoryResetConfig, 1).out();
+const admNodedbReset= ()  => new PB().boolF(ADM.nodedbReset, true).out();
+const admRemoveNode = num => new PB().vintF(ADM.removeByNodenum, num>>>0).out();
+const admFavorite   = num => new PB().vintF(ADM.setFavorite, num>>>0).out();
+const admUnfavorite = num => new PB().vintF(ADM.removeFavorite, num>>>0).out();
+const admBeginEdit  = ()  => new PB().boolF(ADM.beginEdit, true).out();
+const admCommitEdit = ()  => new PB().boolF(ADM.commitEdit, true).out();
+
+function admSetOwner({longName, shortName, isLicensed}){
+  const u = new PB();
+  if (longName != null)  u.str(2, longName);
+  if (shortName != null) u.str(3, shortName);
+  if (isLicensed) u.boolF(6, true);
+  return new PB().sub(ADM.setOwner, u).out();
+}
+function admSetDevice({role}){
+  const dev = new PB(); if (role != null) dev.vintF(1, role);
+  const cfg = new PB().sub(CFGF.device, dev);
+  return new PB().sub(ADM.setConfig, cfg).out();
+}
+function admSetLora(l){
+  const lo = new PB();
+  lo.boolF(1, l.usePreset !== false);
+  if (l.modemPreset != null) lo.vintF(2, l.modemPreset);
+  if (l.region != null) lo.vintF(7, l.region);
+  if (l.hopLimit != null) lo.vintF(8, l.hopLimit);
+  lo.boolF(9, l.txEnabled !== false);
+  const cfg = new PB().sub(CFGF.lora, lo);
+  return new PB().sub(ADM.setConfig, cfg).out();
+}
+function encChannelSettings(s){
+  const cs = new PB();
+  if (s.psk && s.psk.length) cs.bytes(2, s.psk);
+  if (s.name) cs.str(3, s.name);
+  if (s.id) cs.fix32(4, s.id);
+  cs.boolF(5, !!s.uplink);
+  cs.boolF(6, !!s.downlink);
+  return cs;
+}
+function admSetChannel(ch){
+  const c = new PB();
+  c.vintF(1, ch.index|0);
+  c.sub(2, encChannelSettings(ch.settings || {}));
+  if (ch.role != null) c.vintF(3, ch.role);
+  return new PB().sub(ADM.setChannel, c).out();
+}
+
+/* ------------------------- transports ------------------------------- */
+const BLE_UUID = {
+  service : "6ba1b218-15a8-461f-9fa8-5dcae273eafd",
+  toRadio : "f75c76d2-129e-4dad-a1dd-7866124401e7",
+  fromRadio:"2c55e69e-4993-11ed-b878-0242ac120002",
+  fromNum : "ed9da18c-a800-4f66-a670-aa7547e34453"
+};
+const sleep = ms => new Promise(r => setTimeout(r, ms));
+
+class BleTransport {
+  constructor(showAll){ this.label="Bluetooth"; this.showAll=showAll; }
+  async open(){
+    if (!navigator.bluetooth) throw new Error("Web Bluetooth is unavailable in this browser.");
+    const req = this.showAll
+      ? { acceptAllDevices:true, optionalServices:[BLE_UUID.service] }
+      : { filters:[{services:[BLE_UUID.service]},{namePrefix:"Meshtastic"}], optionalServices:[BLE_UUID.service] };
+    this.device = await navigator.bluetooth.requestDevice(req);
+    this.device.addEventListener("gattserverdisconnected", () => this.onClose && this.onClose());
+    const server = await this.device.gatt.connect();
+    const svc = await server.getPrimaryService(BLE_UUID.service);
+    this.chTo   = await svc.getCharacteristic(BLE_UUID.toRadio);
+    this.chFrom = await svc.getCharacteristic(BLE_UUID.fromRadio);
+    try {
+      this.chNum = await svc.getCharacteristic(BLE_UUID.fromNum);
+      await this.chNum.startNotifications();
+      this.chNum.addEventListener("characteristicvaluechanged", () => this.drain());
+    } catch(e){ /* notify unsupported — polling below covers it */ }
+    this.timer = setInterval(() => this.drain(), 2500);
+    this.name = this.device.name || "Meshtastic";
+  }
+  async drain(){
+    if (this.busy){ this.pending = true; return; }
+    this.busy = true;
+    try {
+      for (let i=0; i<250; i++){
+        const v = await this.chFrom.readValue();
+        if (!v || v.byteLength === 0) break;
+        this.onBytes(new Uint8Array(v.buffer, v.byteOffset, v.byteLength).slice());
+      }
+    } catch(e){ this.onError && this.onError(e); }
+    this.busy = false;
+    if (this.pending){ this.pending = false; this.drain(); }
+  }
+  async send(bytes){
+    if (this.chTo.writeValueWithResponse) await this.chTo.writeValueWithResponse(bytes);
+    else await this.chTo.writeValue(bytes);
+  }
+  async close(){
+    clearInterval(this.timer);
+    try { await this.send(toRadioDisconnect()); } catch(e){}
+    try { this.device.gatt.disconnect(); } catch(e){}
+  }
+}
+
+class SerialTransport {
+  constructor(){ this.label="USB serial"; this.name="Serial"; }
+  async open(){
+    if (!navigator.serial) throw new Error("Web Serial is unavailable in this browser.");
+    this.port = await navigator.serial.requestPort();
+    await this.port.open({ baudRate:115200, bufferSize:8192 });
+    this.writer = this.port.writable.getWriter();
+    // Wake a sleeping radio and resync its frame parser.
+    await this.writer.write(new Uint8Array(32).fill(0xC3));
+    await sleep(120);
+    this.readLoop();
+  }
+  // Frames are 0x94 0xC3 <len hi> <len lo> <protobuf>. Radios also emit plain
+  // debug text on the same wire, so scan for the magic bytes and resync.
+  feed(chunk){
+    const merged = new Uint8Array(this.buf.length + chunk.length);
+    merged.set(this.buf); merged.set(chunk, this.buf.length);
+    let buf = merged, i = 0;
+    for(;;){
+      let s = -1;
+      for (let k=i; k+1 < buf.length; k++){ if (buf[k]===0x94 && buf[k+1]===0xC3){ s=k; break; } }
+      if (s < 0){ i = Math.max(i, buf.length - 1); break; }   // keep 1 byte: split magic
+      if (s + 4 > buf.length){ i = s; break; }
+      const len = (buf[s+2] << 8) | buf[s+3];
+      if (len > 512){ i = s + 1; continue; }                  // bogus header, resync
+      if (s + 4 + len > buf.length){ i = s; break; }
+      this.onBytes(buf.subarray(s+4, s+4+len).slice());
+      i = s + 4 + len;
+    }
+    this.buf = buf.subarray(i).slice();
+  }
+  async readLoop(){
+    this.reader = this.port.readable.getReader();
+    this.buf = new Uint8Array(0);
+    try {
+      while (true){
+        const { value, done } = await this.reader.read();
+        if (done) break;
+        this.feed(value);
+      }
+    } catch(e){ this.onError && this.onError(e); }
+    this.onClose && this.onClose();
+  }
+  async send(bytes){
+    const f = new Uint8Array(4 + bytes.length);
+    f[0]=0x94; f[1]=0xC3; f[2]=(bytes.length>>8)&255; f[3]=bytes.length&255;
+    f.set(bytes, 4);
+    await this.writer.write(f);
+  }
+  async close(){
+    try { await this.send(toRadioDisconnect()); } catch(e){}
+    try { await this.reader.cancel(); } catch(e){}
+    try { this.writer.releaseLock(); } catch(e){}
+    try { await this.port.close(); } catch(e){}
+  }
+}
+
+class HttpTransport {
+  constructor(base){
+    this.label="WiFi";
+    this.base = base.replace(/\/+$/,"");
+    if (!/^https?:\/\//i.test(this.base)) this.base = "http://" + this.base;
+    this.name = this.base.replace(/^https?:\/\//,"");
+  }
+  async open(){
+    if (location.protocol === "https:" && this.base.startsWith("http://"))
+      throw new Error("This page is on HTTPS, so the browser blocks plain HTTP to the radio. Open this file locally (file://) or use https:// on the device.");
+    await this.drain(true);
+    this.timer = setInterval(() => this.drain(), 1200);
+  }
+  async drain(strict){
+    if (this.busy) return; this.busy = true;
+    try {
+      for (let i=0; i<60; i++){
+        const r = await fetch(this.base + "/api/v1/fromradio?all=false", { method:"GET", cache:"no-store" });
+        if (!r.ok) throw new Error("radio replied HTTP " + r.status);
+        const b = new Uint8Array(await r.arrayBuffer());
+        if (b.length === 0) break;
+        this.onBytes(b);
+      }
+    } catch(e){
+      if (strict) { this.busy=false; throw e; }
+      this.onError && this.onError(e);
+    }
+    this.busy = false;
+  }
+  async send(bytes){
+    const r = await fetch(this.base + "/api/v1/toradio", {
+      method:"PUT", headers:{ "Content-Type":"application/x-protobuf" }, body:bytes
+    });
+    if (!r.ok) throw new Error("radio replied HTTP " + r.status);
+  }
+  async close(){ clearInterval(this.timer); try{ await this.send(toRadioDisconnect()); }catch(e){} }
+}
+
+/* ------------------------- client ----------------------------------- */
+const nodeId = n => "!" + (n >>> 0).toString(16).padStart(8,"0");
+const rand32 = () => { const a=new Uint32Array(1); crypto.getRandomValues(a); return (a[0] || 1) >>> 0; };
+
+class MeshClient {
+  constructor(){
+    this.nodes = new Map();      // num -> node
+    this.channels = new Map();   // index -> channel
+    this.config = {};            // { device, lora, ... } from the handshake
+    this.myNodeNum = 0;
+    this.device = {};
+    this.connected = false;
+    this.configComplete = false;
+    this.seen = new Set();
+    this.handlers = {};
+  }
+  on(evt, fn){ (this.handlers[evt] = this.handlers[evt] || []).push(fn); return this; }
+  emit(evt, ...a){ (this.handlers[evt]||[]).forEach(f => f(...a)); }
+
+  async connect(transport){
+    this.transport = transport;
+    transport.onBytes = u8 => { try { this.handleFromRadio(u8); } catch(e){ console.warn("parse", e); } };
+    transport.onError = e => this.emit("error", e);
+    transport.onClose = () => this.handleClose();
+    await transport.open();
+    this.connected = true;
+    this.emit("open", transport);
+    this.configId = rand32();
+    this.configComplete = false;
+    await transport.send(toRadioWantConfig(this.configId));
+    this.emit("tx", "want_config", toRadioWantConfig(this.configId));
+    this.hb = setInterval(() => this.heartbeat(), 60000);
+  }
+  async heartbeat(){
+    if (!this.connected) return;
+    try { await this.transport.send(toRadioHeartbeat()); } catch(e){ this.emit("error", e); }
+  }
+  handleClose(){
+    if (!this.connected) return;
+    clearInterval(this.hb);
+    this.connected = false; this.configComplete = false;
+    this.emit("close");
+  }
+  async disconnect(){
+    clearInterval(this.hb);
+    this.connected = false; this.configComplete = false;
+    try { await this.transport.close(); } catch(e){}
+    this.emit("close");
+  }
+
+  handleFromRadio(u8){
+    const r = new PBR(u8);
+    r.each((f) => {
+      switch(f){
+        case 1: r.varint(); return true;                                   // id
+        case 2: this.onPacket(decMeshPacket(r.len())); return true;        // packet
+        case 3: { const m = decMyInfo(r.len()); this.myNodeNum = m.myNodeNum;
+                  this.emit("myinfo", m); return true; }
+        case 4: this.onNodeInfo(decNodeInfo(r.len())); return true;
+        case 5: { const c = decConfig(r.len()); Object.assign(this.config, c);
+                  this.emit("config", this.config); return true; }
+        case 9: r.len(); return true;                                      // moduleConfig (not surfaced)
+        case 7: { const id = r.varint();
+                  if (id === this.configId){ this.configComplete = true; this.emit("ready"); }
+                  return true; }
+        case 8: r.varint(); this.emit("log","Radio rebooted"); return true;
+        case 10:{ const c = decChannel(r.len()); if (c.role) this.channels.set(c.index||0, c);
+                  this.emit("channels"); return true; }
+        case 11:{ const q = decQueueStatus(r.len()); this.emit("queue", q); return true; }
+        case 13:{ this.device = Object.assign(this.device, decMetadata(r.len()));
+                  this.emit("device", this.device); return true; }
+      }
+    });
+    this.emit("rx", u8);
+  }
+
+  onNodeInfo(ni){
+    if (!ni.num) return;
+    const prev = this.nodes.get(ni.num) || { num: ni.num };
+    const node = Object.assign(prev, {
+      num: ni.num,
+      user: ni.user || prev.user,
+      position: (ni.position && ni.position.lat) ? ni.position : prev.position,
+      snr: ni.snr !== undefined ? ni.snr : prev.snr,
+      lastHeard: ni.lastHeard || prev.lastHeard,
+      metrics: ni.metrics || prev.metrics,
+      hopsAway: ni.hopsAway !== undefined ? ni.hopsAway : prev.hopsAway,
+      isFavorite: ni.isFavorite !== undefined ? ni.isFavorite : prev.isFavorite,
+      isIgnored: ni.isIgnored !== undefined ? ni.isIgnored : prev.isIgnored
+    });
+    this.nodes.set(ni.num, node);
+    this.emit("nodes");
+  }
+
+  touch(num, patch){
+    if (!num) return;
+    const n = this.nodes.get(num) || { num };
+    Object.assign(n, patch);
+    n.lastHeard = Math.floor(Date.now()/1000);
+    this.nodes.set(num, n);
+    this.emit("nodes");
+  }
+
+  onPacket(p){
+    if (p.id){
+      if (this.seen.has(p.id)) return;
+      this.seen.add(p.id);
+      if (this.seen.size > 3000) this.seen = new Set([...this.seen].slice(-1500));
+    }
+    if (p.from) this.touch(p.from, { snr: p.rxSnr, rssi: p.rxRssi,
+      hopsAway: (p.hopStart != null && p.hopLimit != null) ? (p.hopStart - p.hopLimit) : undefined });
+
+    if (p.encrypted && !p.decoded){ this.emit("encrypted", p); return; }
+    const d = p.decoded; if (!d) return;
+
+    switch(d.portnum){
+      case PORT.TEXT: {
+        const text = DEC.decode(d.payload || new Uint8Array());
+        this.emit("text", {
+          from: p.from, to: p.to, channel: p.channel || 0, text, id: p.id,
+          rxTime: p.rxTime, snr: p.rxSnr, rssi: p.rxRssi, emoji: !!d.emoji, replyId: d.replyId,
+          pki: !!p.pkiEncrypted
+        });
+        break;
+      }
+      case PORT.NODEINFO: {
+        const u = decUser(d.payload || new Uint8Array());
+        this.touch(p.from, { user: u });
+        break;
+      }
+      case PORT.POSITION: {
+        const pos = decPosition(d.payload || new Uint8Array());
+        if (pos.lat || pos.lon) this.touch(p.from, { position: pos });
+        break;
+      }
+      case PORT.TELEMETRY: {
+        const t = decTelemetry(d.payload || new Uint8Array());
+        if (t.device) this.touch(p.from, { metrics: t.device });
+        break;
+      }
+      case PORT.ROUTING: {
+        const rt = decRouting(d.payload || new Uint8Array());
+        if (d.requestId) this.emit("ack", { id: d.requestId, error: rt.error || 0, from: p.from });
+        break;
+      }
+      case PORT.TRACEROUTE: {
+        const rd = decRouteDiscovery(d.payload || new Uint8Array());
+        this.emit("traceroute", { from: p.from, to: p.to, route: rd.route,
+          snrTowards: rd.snrTowards, routeBack: rd.routeBack, snrBack: rd.snrBack, snr: p.rxSnr });
+        break;
+      }
+      case PORT.ADMIN: {
+        const a = decAdmin(d.payload || new Uint8Array());
+        if (a.config){ Object.assign(this.config, a.config); this.emit("config", this.config); }
+        break;
+      }
+    }
+    this.emit("packet", p);
+  }
+
+  // Admin messages are addressed to a node (the connected radio for local
+  // config). The firmware fills in the routing; we set to = target.
+  async sendAdmin(adminBytes, { to, wantResponse=false } = {}){
+    if (!this.connected) throw new Error("No radio connected.");
+    to = to || this.myNodeNum || BROADCAST;
+    const id = rand32();
+    const frame = toRadioData(PORT.ADMIN, adminBytes,
+      { to, channel: 0, id, wantAck: true, wantResponse, hopLimit: 3 });
+    await this.transport.send(frame);
+    this.emit("tx", "admin→" + nodeId(to), frame);
+    return id;
+  }
+  // Config writes must be bracketed by begin/commit edit transactions.
+  async writeConfig(adminBytes){
+    await this.sendAdmin(admBeginEdit());
+    await sleep(60);
+    await this.sendAdmin(adminBytes);
+    await sleep(60);
+    await this.sendAdmin(admCommitEdit());
+  }
+  async traceroute(num){
+    if (!this.connected) throw new Error("No radio connected.");
+    const id = rand32();
+    const frame = toRadioData(PORT.TRACEROUTE, new Uint8Array(),
+      { to: num, channel: 0, id, wantAck: true, wantResponse: true, hopLimit: 7 });
+    await this.transport.send(frame);
+    this.emit("tx", "traceroute→" + nodeId(num), frame);
+    return id;
+  }
+  async requestPosition(num){
+    if (!this.connected) throw new Error("No radio connected.");
+    const id = rand32();
+    const frame = toRadioData(PORT.POSITION, new Uint8Array(),
+      { to: num, channel: 0, id, wantAck: true, wantResponse: true, hopLimit: 3 });
+    await this.transport.send(frame);
+    this.emit("tx", "pos-req→" + nodeId(num), frame);
+    return id;
+  }
+
+  async sendText(text, opts={}){
+    if (!this.connected) throw new Error("No radio connected.");
+    const bytes = ENC.encode(text);
+    if (bytes.length > 233) throw new Error("Message is " + bytes.length + " bytes; the radio limit is 233.");
+    const to = opts.to || BROADCAST;
+    const id = rand32();
+    const frame = toRadioText(text, {
+      to, channel: opts.channel || 0, id,
+      wantAck: opts.wantAck !== undefined ? opts.wantAck : (to !== BROADCAST),
+      hopLimit: opts.hopLimit || 3
+    });
+    await this.transport.send(frame);
+    this.emit("tx", "text→" + (to === BROADCAST ? "^all" : nodeId(to)), frame);
+    return id;
+  }
+}
+
+/* =====================================================================
+   UI
+   ===================================================================== */
+const $ = id => document.getElementById(id);
+const client = new MeshClient();
+let convo = "ch:0";               // active conversation key
+let msgs = [];                    // {key,dir,from,text,ts,id,status,meta}
+let unread = {};
+
+/* ---- storage ---- */
+function save(){
+  try {
+    localStorage.setItem("meshlink_msgs", JSON.stringify(msgs.slice(-400)));
+    localStorage.setItem("meshlink_nodes", JSON.stringify([...client.nodes.values()].map(n => ({
+      num:n.num, user:n.user, position:n.position, snr:n.snr, lastHeard:n.lastHeard, metrics:n.metrics
+    }))));
+  } catch(e){}
+}
+function load(){
+  try {
+    msgs = JSON.parse(localStorage.getItem("meshlink_msgs") || "[]");
+    const ns = JSON.parse(localStorage.getItem("meshlink_nodes") || "[]");
+    ns.forEach(n => client.nodes.set(n.num, n));
+  } catch(e){ msgs = []; }
+}
+
+/* ---- helpers ---- */
+function nodeName(num){
+  if (num === BROADCAST) return "Everyone";
+  if (num === client.myNodeNum) return "You";
+  const n = client.nodes.get(num);
+  return (n && n.user && (n.user.longName || n.user.shortName)) || nodeId(num || 0);
+}
+function shortName(num){
+  const n = client.nodes.get(num);
+  if (n && n.user && n.user.shortName) return n.user.shortName.slice(0,4);
+  return (num >>> 0).toString(16).slice(-4).toUpperCase();
+}
+function channelName(i){
+  const c = client.channels.get(i);
+  const nm = c && c.settings && c.settings.name;
+  if (nm) return nm;
+  return i === 0 ? "Primary" : "Channel " + i;
+}
+// The radio does the LoRa encryption, so what matters is which key it holds.
+// psk = [0]      -> channel sends in the clear
+// psk = [1..10]  -> one of the published default keys, i.e. readable by anyone
+// psk = 16/32 B  -> a key someone actually generated
+function channelSecurity(i){
+  const c = client.channels.get(i);
+  const psk = c && c.settings && c.settings.psk;
+  if (!psk || psk.length === 0) return { icon:"◌", label:"default key — public", safe:false };
+  if (psk.length === 1){
+    if (psk[0] === 0) return { icon:"⚠", label:"no encryption", safe:false };
+    return { icon:"◌", label:"default key — public", safe:false };
+  }
+  return { icon:"🔒", label:"private " + (psk.length * 8) + "-bit key", safe:true };
+}
+// A DM is end-to-end encrypted only when the radio holds the peer's public key.
+// Without it the firmware falls back to the channel key, so anyone on that
+// channel can read it.
+function dmSecurity(num){
+  const n = client.nodes.get(num);
+  const pk = n && n.user && n.user.publicKey;
+  if (pk && pk.length >= 32) return { icon:"🔒", label:"end-to-end (PKI)", safe:true };
+  return { icon:"◌", label:"no public key yet — falls back to the channel key", safe:false };
+}
+function timeStr(ts){ return new Date(ts).toLocaleTimeString([], {hour:"2-digit", minute:"2-digit"}); }
+function sysMsg(text){
+  msgs.push({ key:"*", dir:"sys", text, ts:Date.now() });
+  renderLog();
+}
+
+/* ---- rendering ---- */
+function renderTabs(){
+  const keys = new Map();
+  for (const [i,c] of client.channels) keys.set("ch:"+i, channelName(i));
+  if (!keys.size) keys.set("ch:0", "Primary");
+  msgs.forEach(m => { if (m.key && m.key.startsWith("dm:")) keys.set(m.key, nodeName(+m.key.slice(3))); });
+  if (convo.startsWith("dm:")) keys.set(convo, nodeName(+convo.slice(3)));
+  if (!keys.has(convo)) convo = keys.keys().next().value;
+
+  const t = $("tabs"); t.innerHTML = "";
+  for (const [k,label] of keys){
+    const b = document.createElement("button");
+    b.className = "tab" + (k === convo ? " on" : "");
+    const sec = k.startsWith("dm:") ? dmSecurity(+k.slice(3)) : channelSecurity(+k.slice(3));
+    b.textContent = (k.startsWith("dm:") ? "@ " : "# ") + label + (sec.safe ? " 🔒" : "");
+    b.title = sec.label;
+    if (unread[k]) { const s=document.createElement("span"); s.className="badge"; s.textContent=unread[k]; b.appendChild(s); }
+    b.onclick = () => { convo = k; unread[k]=0; renderTabs(); renderLog(); updateComposer(); };
+    t.appendChild(b);
+  }
+}
+function renderLog(){
+  const log = $("log");
+  const atBottom = log.scrollHeight - log.scrollTop - log.clientHeight < 60;
+  log.innerHTML = "";
+  const list = msgs.filter(m => m.dir === "sys" || m.key === convo);
+  if (!list.length){
+    const e = document.createElement("div");
+    e.className = "empty";
+    e.textContent = client.connected ? "No messages here yet. Say something." : "Connect a radio, then send a message.";
+    log.appendChild(e);
+  }
+  list.slice(-300).forEach(m => {
+    const d = document.createElement("div");
+    if (m.dir === "sys"){ d.className = "msg sys"; d.textContent = m.text; log.appendChild(d); return; }
+    d.className = "msg" + (m.dir === "out" ? " me" : "");
+    if (m.dir === "in"){
+      const w = document.createElement("div"); w.className = "who"; w.textContent = nodeName(m.from); d.appendChild(w);
+    }
+    const b = document.createElement("div"); b.className = "body"; b.textContent = m.text; d.appendChild(b);
+    const f = document.createElement("div"); f.className = "foot";
+    if (m.meta){ const s = document.createElement("span"); s.textContent = m.meta; f.appendChild(s); }
+    const t = document.createElement("span"); t.textContent = timeStr(m.ts); f.appendChild(t);
+    if (m.dir === "out"){
+      const st = document.createElement("span");
+      st.className = "st-" + (m.status || "queued");
+      st.textContent = { queued:"…", sent:"sent", ack:"✓ delivered", fail:"✗ " + (m.err || "failed") }[m.status || "queued"];
+      f.appendChild(st);
+    }
+    d.appendChild(f);
+    log.appendChild(d);
+  });
+  if (atBottom) log.scrollTop = log.scrollHeight;
+}
+function renderNodes(){
+  const list = $("node-list");
+  const rank = n => (n.num === client.myNodeNum ? 2 : n.isFavorite ? 1 : 0);
+  const arr = [...client.nodes.values()].sort((a,b) =>
+    (rank(b) - rank(a)) || ((b.lastHeard||0) - (a.lastHeard||0)));
+  $("node-count").textContent = arr.length;
+  list.innerHTML = "";
+  if (!arr.length){ list.innerHTML = '<div class="empty">Connect a radio to see the mesh.</div>'; return; }
+  arr.forEach(n => {
+    const row = document.createElement("div"); row.className = "node";
+    const av = document.createElement("div");
+    av.className = "av" + (n.num === client.myNodeNum ? " self" : "");
+    av.textContent = shortName(n.num);
+    const meta = document.createElement("div"); meta.className = "meta";
+    const nm = document.createElement("div"); nm.className = "nm";
+    nm.textContent = (n.isFavorite && n.num !== client.myNodeNum ? "★ " : "") +
+      nodeName(n.num) + (n.num === client.myNodeNum ? " (this radio)" : "");
+    const sub = document.createElement("div"); sub.className = "sub";
+    const bits = [nodeId(n.num)];
+    if (n.hopsAway != null && n.hopsAway >= 0) bits.push(n.hopsAway === 0 ? "direct" : n.hopsAway + " hop" + (n.hopsAway>1?"s":""));
+    if (n.metrics && n.metrics.battery != null) bits.push(n.metrics.battery > 100 ? "plugged in" : n.metrics.battery + "%");
+    if (n.lastHeard) bits.push(timeStr(n.lastHeard * 1000));
+    sub.textContent = bits.join(" · ");
+    meta.appendChild(nm); meta.appendChild(sub);
+    const sig = document.createElement("div");
+    if (n.snr != null && n.num !== client.myNodeNum){
+      sig.className = "sig " + (n.snr > 5 ? "good" : n.snr > 0 ? "ok" : "bad");
+      sig.textContent = n.snr.toFixed(1) + "dB";
+    }
+    row.appendChild(av); row.appendChild(meta); row.appendChild(sig);
+    row.title = "Node details & actions";
+    row.onclick = () => openNode(n.num);
+    list.appendChild(row);
+  });
+  drawMap();
+}
+function renderDevice(){
+  const d = client.device, bits = [];
+  if (client.myNodeNum) bits.push("Node " + nodeId(client.myNodeNum));
+  if (d.firmware) bits.push("Firmware " + d.firmware);
+  if (d.hwModel) bits.push(HW[d.hwModel] || ("HW model " + d.hwModel));
+  if (client.transport) bits.push("Link: " + client.transport.label + " · " + (client.transport.name||""));
+  $("device-info").innerHTML = bits.length ? bits.join("<br>") : "No radio connected.";
+}
+function updateComposer(){
+  const ok = client.connected;
+  $("input").placeholder = ok ? "Message the mesh…" : "Connect a radio to send…";
+  $("send").title = ok ? "" : "Connect a radio first";
+  const dm = convo.startsWith("dm:");
+  const sec = dm ? dmSecurity(+convo.slice(3)) : channelSecurity(+convo.slice(3));
+  $("target").textContent = (dm ? "Direct to " + nodeName(+convo.slice(3))
+                                : "Broadcast on #" + channelName(+convo.slice(3)));
+  const s2 = $("sec-note");
+  s2.textContent = sec.icon + " " + sec.label;
+  s2.className = sec.safe ? "ok" : "warn";
+  countBytes();
+}
+function countBytes(){
+  const n = ENC.encode($("input").value).length;
+  const el = $("bytes");
+  el.textContent = n + " / 233 bytes";
+  el.classList.toggle("over", n > 233);
+  $("send").disabled = !client.connected || n === 0 || n > 233;
+}
+
+/* ---- offline map (no tiles, nothing downloaded) ---- */
+function drawMap(){
+  const cv = $("map"), ctx = cv.getContext("2d");
+  const dpr = window.devicePixelRatio || 1;
+  const w = cv.clientWidth, h = 190;
+  cv.width = w * dpr; cv.height = h * dpr; cv.style.height = h + "px";
+  ctx.setTransform(dpr,0,0,dpr,0,0);
+  ctx.clearRect(0,0,w,h);
+
+  const pts = [...client.nodes.values()].filter(n => n.position && n.position.lat);
+  $("pos-count").textContent = pts.length ? pts.length + " located" : "";
+  ctx.strokeStyle = "rgba(255,255,255,.05)"; ctx.lineWidth = 1;
+  for (let x=0; x<w; x+=28){ ctx.beginPath(); ctx.moveTo(x,0); ctx.lineTo(x,h); ctx.stroke(); }
+  for (let y=0; y<h; y+=28){ ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(w,y); ctx.stroke(); }
+
+  if (!pts.length){
+    ctx.fillStyle = "#64748b"; ctx.font = "11px " + getComputedStyle(document.body).fontFamily;
+    ctx.textAlign = "center";
+    ctx.fillText("No node has reported a position yet", w/2, h/2);
+    return;
+  }
+  const lats = pts.map(p => p.position.lat), lons = pts.map(p => p.position.lon);
+  let minLa = Math.min(...lats), maxLa = Math.max(...lats);
+  let minLo = Math.min(...lons), maxLo = Math.max(...lons);
+  const padLa = Math.max((maxLa-minLa)*0.2, 0.002), padLo = Math.max((maxLo-minLo)*0.2, 0.002);
+  minLa-=padLa; maxLa+=padLa; minLo-=padLo; maxLo+=padLo;
+  const px = p => ({ x: ((p.position.lon - minLo)/(maxLo-minLo))*(w-30)+15,
+                     y: h - (((p.position.lat - minLa)/(maxLa-minLa))*(h-30)+15) });
+  const me = pts.find(p => p.num === client.myNodeNum);
+  if (me){
+    const c = px(me);
+    ctx.strokeStyle = "rgba(0,217,255,.18)";
+    [30,60,90].forEach(r => { ctx.beginPath(); ctx.arc(c.x,c.y,r,0,7); ctx.stroke(); });
+    pts.forEach(p => { if (p.num === client.myNodeNum) return;
+      const q = px(p); ctx.strokeStyle = "rgba(0,217,255,.12)";
+      ctx.beginPath(); ctx.moveTo(c.x,c.y); ctx.lineTo(q.x,q.y); ctx.stroke(); });
+  }
+  ctx.font = "600 9px " + getComputedStyle(document.body).fontFamily;
+  ctx.textAlign = "center";
+  pts.forEach(p => {
+    const c = px(p), self = p.num === client.myNodeNum;
+    ctx.fillStyle = self ? "#ffbe0b" : "#00d9ff";
+    ctx.beginPath(); ctx.arc(c.x, c.y, self ? 6 : 4, 0, 7); ctx.fill();
+    ctx.fillStyle = "#9ba3af";
+    ctx.fillText(shortName(p.num), c.x, c.y - 9);
+  });
+  // scale bar
+  const kmPerDeg = 111.32;
+  const spanKm = (maxLo - minLo) * kmPerDeg * Math.cos(((minLa+maxLa)/2) * Math.PI/180);
+  ctx.fillStyle = "#64748b"; ctx.textAlign = "left"; ctx.font = "9px monospace";
+  ctx.fillText("~" + (spanKm < 1 ? (spanKm*1000).toFixed(0)+" m" : spanKm.toFixed(1)+" km") + " across", 8, h-8);
+}
+
+/* ---- packet monitor ---- */
+let rxN = 0, txN = 0;
+function logPacket(dir, kind, bytes){
+  if (dir === "in") $("rx-count").textContent = "RX " + (++rxN);
+  else $("tx-count").textContent = "TX " + (++txN);
+  const body = $("monitor-body");
+  const row = document.createElement("div");
+  row.className = "pkt " + (dir === "in" ? "in" : "out");
+  const hex = [...bytes.slice(0,28)].map(b => b.toString(16).padStart(2,"0")).join(" ") + (bytes.length>28 ? " …" : "");
+  row.innerHTML = '<span class="dir">' + (dir==="in"?"RX":"TX") + '</span>' +
+                  '<span class="kind"></span><span class="hex"></span>';
+  row.children[1].textContent = kind + " " + bytes.length + "B";
+  row.children[2].textContent = hex;
+  body.appendChild(row);
+  while (body.children.length > 200) body.removeChild(body.firstChild);
+  body.scrollTop = body.scrollHeight;
+}
+
+/* ---- client events ---- */
+function setState(text, cls){
+  $("state").textContent = text;
+  $("dot").className = "dot" + (cls ? " " + cls : "");
+}
+client.on("open", t => {
+  setState("Handshaking…", "wait");
+  sysMsg("Connected over " + t.label + (t.name ? " (" + t.name + ")" : "") + ". Requesting radio config…");
+  $("disconnect").style.display = "";
+  renderDevice();
+});
+client.on("ready", () => {
+  setState("Connected", "on");
+  sysMsg("Radio config received. " + client.nodes.size + " nodes known, " + client.channels.size + " channels.");
+  renderTabs(); renderNodes(); renderDevice(); updateComposer(); save();
+});
+client.on("myinfo", () => { renderNodes(); renderDevice(); });
+client.on("device", renderDevice);
+client.on("nodes", () => { renderNodes(); renderTabs(); });
+client.on("channels", renderTabs);
+client.on("close", () => {
+  setState("Not connected");
+  $("disconnect").style.display = "none";
+  sysMsg("Radio disconnected.");
+  updateComposer(); save();
+});
+client.on("error", e => { sysMsg("Link error: " + (e.message || e)); });
+client.on("log", t => sysMsg(t));
+client.on("rx", u8 => logPacket("in", "FromRadio", u8));
+client.on("tx", (kind, u8) => logPacket("out", kind, u8));
+client.on("encrypted", p => {
+  // Packet on a channel whose key this radio doesn't hold.
+  logPacket("in", "encrypted " + nodeId(p.from||0), p.encrypted);
+});
+client.on("text", m => {
+  const key = (m.to === BROADCAST || m.to === 0) ? "ch:" + m.channel : "dm:" + (m.from === client.myNodeNum ? m.to : m.from);
+  const mine = m.from === client.myNodeNum;
+  if (m.id){
+    // The radio echoes our own sent packets back so multiple clients stay in
+    // sync — don't show ours twice.
+    const dup = msgs.find(x => x.id === m.id);
+    if (dup){ if (dup.status === "queued") dup.status = "sent"; renderLog(); return; }
+  }
+  const meta = [];
+  if (m.pki) meta.push("🔒 e2e");
+  if (m.snr != null) meta.push(m.snr.toFixed(1) + "dB");
+  if (m.rssi) meta.push(m.rssi + "dBm");
+  msgs.push({ key, dir: mine ? "out" : "in", from: m.from, text: m.text,
+              ts: (m.rxTime ? m.rxTime*1000 : Date.now()), id: m.id,
+              status: mine ? "sent" : undefined, meta: meta.join(" "), pki: m.pki });
+  if (key !== convo && !mine) unread[key] = (unread[key]||0) + 1;
+  renderTabs(); renderLog(); save();
+});
+client.on("ack", a => {
+  const m = msgs.find(x => x.id === a.id && x.dir === "out");
+  if (!m) return;
+  if (a.error){ m.status = "fail"; m.err = ROUTE_ERR[a.error] || ("error " + a.error); }
+  else { m.status = "ack"; }
+  renderLog(); save();
+});
+client.on("queue", q => {
+  if (q.res < 0 && q.packetId){
+    const m = msgs.find(x => x.id === q.packetId && x.dir === "out");
+    if (m && m.status !== "ack"){ m.status = "fail"; m.err = "radio queue rejected it"; renderLog(); }
+  }
+});
+
+/* ---- connection buttons ---- */
+async function attach(transport){
+  if (client.connected) await client.disconnect();
+  try {
+    setState("Connecting…", "wait");
+    await client.connect(transport);
+    openSide(false);
+  } catch(e){
+    setState("Not connected", "err");
+    if (e && (e.name === "NotFoundError" || /cancel/i.test(e.message||""))) sysMsg("No device picked.");
+    else sysMsg("Could not connect: " + (e.message || e));
+  }
+}
+$("btn-ble").onclick    = () => attach(new BleTransport($("ble-all").checked));
+$("btn-serial").onclick = () => attach(new SerialTransport());
+$("btn-wifi").onclick   = () => {
+  const last = localStorage.getItem("meshlink_ip") || "192.168.1.100";
+  const ip = prompt("Radio IP address or hostname on your WiFi:", last);
+  if (!ip) return;
+  localStorage.setItem("meshlink_ip", ip);
+  attach(new HttpTransport(ip));
+};
+$("disconnect").onclick = () => client.disconnect();
+
+/* ---- sending ---- */
+async function doSend(){
+  const text = $("input").value.trim();
+  if (!text) return;
+  const to = convo.startsWith("dm:") ? +convo.slice(3) : BROADCAST;
+  const channel = convo.startsWith("ch:") ? +convo.slice(3) : 0;
+  const entry = { key: convo, dir:"out", from: client.myNodeNum, text, ts: Date.now(), status:"queued" };
+  msgs.push(entry); renderLog();
+  $("input").value = ""; countBytes();
+  try {
+    entry.id = await client.sendText(text, {
+      to, channel,
+      wantAck: $("want-ack").checked,
+      hopLimit: +$("hops").value
+    });
+    entry.status = "sent";
+    if (!$("want-ack").checked || to === BROADCAST) entry.meta = "no ack requested";
+  } catch(e){
+    entry.status = "fail"; entry.err = e.message || String(e);
+  }
+  renderLog(); save();
+}
+$("send").onclick = () => { doSend(); $("input").focus(); };
+$("input").addEventListener("input", () => {
+  countBytes();
+  $("input").style.height = "auto";
+  $("input").style.height = Math.min($("input").scrollHeight, 130) + "px";
+});
+$("input").addEventListener("keydown", e => {
+  if (e.key === "Enter" && !e.shiftKey && !matchMedia("(max-width:860px)").matches && !$("send").disabled){
+    e.preventDefault(); doSend();
+  }
+});
+
+/* ---- chrome ---- */
+function openSide(open){
+  $("side").classList.toggle("open", open);
+  $("backdrop").classList.toggle("show", open);
+  if (open) requestAnimationFrame(drawMap);
+}
+$("side-toggle").onclick = () => openSide(!$("side").classList.contains("open"));
+$("sheet-grip").onclick = () => openSide(false);
+$("backdrop").onclick = () => openSide(false);
+$("monitor-bar").onclick = () => $("monitor").classList.toggle("open");
+$("export").onclick = () => {
+  const blob = new Blob([JSON.stringify({
+    exported: new Date().toISOString(),
+    myNodeNum: client.myNodeNum ? nodeId(client.myNodeNum) : null,
+    device: client.device,
+    nodes: [...client.nodes.values()],
+    channels: [...client.channels.values()].map(c => ({index:c.index, name:c.settings && c.settings.name, role:c.role})),
+    messages: msgs
+  }, null, 2)], { type:"application/json" });
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = "meshlink-" + Date.now() + ".json";
+  a.click();
+  setTimeout(() => URL.revokeObjectURL(a.href), 4000);
+};
+window.addEventListener("resize", drawMap);
+window.addEventListener("beforeunload", save);
+
+/* ---- capability report ---- */
+(function capabilities(){
+  const ble = !!navigator.bluetooth, ser = !!navigator.serial;
+  $("btn-ble").disabled = !ble;
+  $("btn-serial").disabled = !ser;
+  const notes = [];
+  const ua = navigator.userAgent;
+  if (!ble && /iPhone|iPad|iPod/.test(ua))
+    notes.push("iOS Safari has no Web Bluetooth. Use the <code>Bluefy</code> browser to open this file, or the official Meshtastic iOS app.");
+  else if (!ble)
+    notes.push("Web Bluetooth needs Chrome, Edge, or another Chromium browser. Firefox and Safari don't support it.");
+  if (!ser && !/iPhone|iPad|iPod|Android/.test(ua))
+    notes.push("Web Serial needs Chrome or Edge on desktop.");
+  if (location.protocol === "https:")
+    notes.push("Page is on HTTPS, so the WiFi option needs the radio's <code>https://</code> address.");
+  notes.push("Bluetooth pairing PIN is <code>123456</code> on most Heltec and RAK radios unless you changed it.");
+  notes.push("Battery-bank radios (Heltec Mesh Pocket, T114, RAK) are nRF52 — Bluetooth and USB only, no WiFi.");
+  $("support-hint").innerHTML = notes.join("<br><br>");
+})();
+
+/* =====================================================================
+   Modal system + configuration / channel / node-detail UI
+   ===================================================================== */
+const modalRoot = $("modal-root");
+let modalOnClose = null;
+function openModal(title, sub, bodyEl, footEls){
+  $("modal-title").innerHTML = title + (sub ? ' <span class="sub">'+sub+'</span>' : "");
+  const body = $("modal-body"); body.innerHTML = ""; body.appendChild(bodyEl);
+  const foot = $("modal-foot"); foot.innerHTML = "";
+  (footEls||[]).forEach(e => foot.appendChild(e));
+  modalRoot.classList.add("show");
+}
+function closeModal(){ modalRoot.classList.remove("show"); if (modalOnClose){ const f=modalOnClose; modalOnClose=null; f(); } }
+$("modal-close").onclick = closeModal;
+$("modal-scrim").onclick = closeModal;
+document.addEventListener("keydown", e => { if (e.key === "Escape" && modalRoot.classList.contains("show")) closeModal(); });
+
+let toastTimer;
+function toast(msg){
+  const t = $("toast"); t.textContent = msg; t.classList.add("show");
+  clearTimeout(toastTimer); toastTimer = setTimeout(() => t.classList.remove("show"), 2600);
+}
+function el(tag, cls, html){ const e=document.createElement(tag); if(cls)e.className=cls; if(html!=null)e.innerHTML=html; return e; }
+function btn(label, cls, fn){ const b=el("button","btn "+(cls||""),label); if(fn)b.onclick=fn; return b; }
+function field(labelText, control, desc){
+  const g = el("div","fgroup");
+  g.appendChild(el("label",null,labelText));
+  g.appendChild(control);
+  if (desc) g.appendChild(el("div","desc",desc));
+  return g;
+}
+function selectFrom(list, selected, {offset=0}={}){
+  const s = el("select","fld");
+  list.forEach((name,i) => { const o=el("option",null,name); o.value=i+offset; if(i+offset===selected)o.selected=true; s.appendChild(o); });
+  return s;
+}
+
+/* ---- radio settings ---- */
+function openConfig(){
+  const cfg = client.config || {};
+  const dev = cfg.device || {}, lora = cfg.lora || {};
+  const me = client.nodes.get(client.myNodeNum);
+  const user = (me && me.user) || {};
+
+  const body = el("div");
+
+  // Owner
+  const fsOwner = el("div","fieldset");
+  fsOwner.appendChild(el("div","fs-title","Owner / identity"));
+  const inLong = el("input","fld"); inLong.value = user.longName || ""; inLong.maxLength = 39; inLong.placeholder="e.g. Base Station";
+  const inShort = el("input","fld"); inShort.value = user.shortName || ""; inShort.maxLength = 4; inShort.placeholder="4 chars";
+  fsOwner.appendChild(field("Long name", inLong, "Shown across the mesh for this radio."));
+  fsOwner.appendChild(field("Short name", inShort, "Up to 4 characters, used on tiny displays."));
+  const roleSel = selectFrom(ROLE, dev.role || 0);
+  fsOwner.appendChild(field("Device role", roleSel, "Client is normal. Router/Repeater rebroadcast for everyone — only for permanent, well-placed nodes."));
+  body.appendChild(fsOwner);
+
+  // LoRa
+  const fsLora = el("div","fieldset");
+  fsLora.appendChild(el("div","fs-title","LoRa radio"));
+  const regSel = selectFrom(REGION, lora.region || 0);
+  const preSel = selectFrom(MODEM_PRESET, lora.modemPreset || 0);
+  const hopSel = el("select","fld");
+  [1,2,3,4,5,6,7].forEach(h => { const o=el("option",null,h+" hop"+(h>1?"s":"")); o.value=h; if(h===(lora.hopLimit||3))o.selected=true; hopSel.appendChild(o); });
+  const txChk = el("input"); txChk.type="checkbox"; txChk.checked = lora.txEnabled !== false;
+  const txWrap = el("label","desc"); txWrap.style.display="flex"; txWrap.style.gap=".4rem"; txWrap.style.alignItems="center";
+  txWrap.appendChild(txChk); txWrap.appendChild(document.createTextNode("Transmit enabled"));
+  fsLora.appendChild(field("Region", regSel, "Must match your country's LoRa band — wrong region is illegal to transmit and won't reach others."));
+  fsLora.appendChild(field("Modem preset", preSel, "All nodes must share a preset to hear each other. Long Fast is the default."));
+  fsLora.appendChild(field("Hop limit", hopSel, "How many times a packet may be rebroadcast."));
+  fsLora.appendChild(txWrap);
+  body.appendChild(fsLora);
+
+  // Danger zone
+  const fsD = el("div","fieldset");
+  fsD.appendChild(el("div","fs-title","Device actions"));
+  const acts = el("div","toolbtns");
+  acts.appendChild(btn("Reboot", "sm", () => { if(confirm("Reboot the radio now?")){ client.sendAdmin(admReboot(5)); toast("Reboot requested"); closeModal(); } }));
+  acts.appendChild(btn("Shutdown", "sm", () => { if(confirm("Shut the radio down? You'll need to power it back on physically.")){ client.sendAdmin(admShutdown(5)); toast("Shutdown requested"); closeModal(); } }));
+  acts.appendChild(btn("Reset node DB", "sm danger", () => { if(confirm("Clear the radio's list of known nodes?")){ client.sendAdmin(admNodedbReset()); toast("Node DB reset"); } }));
+  acts.appendChild(btn("Factory reset", "sm danger", () => { if(confirm("Factory-reset the radio's configuration? This wipes channels and settings.")){ client.sendAdmin(admFactoryCfg()); toast("Factory reset requested"); closeModal(); } }));
+  fsD.appendChild(acts);
+  body.appendChild(fsD);
+
+  const save = btn("Save to radio", "primary", async () => {
+    try {
+      const longName = inLong.value.trim(), shortName = inShort.value.trim();
+      if (longName !== (user.longName||"") || shortName !== (user.shortName||""))
+        await client.sendAdmin(admSetOwner({ longName, shortName }));
+      const newRole = +roleSel.value;
+      if (newRole !== (dev.role||0)) await client.writeConfig(admSetDevice({ role:newRole }));
+      const newLora = { region:+regSel.value, modemPreset:+preSel.value, hopLimit:+hopSel.value, txEnabled:txChk.checked, usePreset:true };
+      const changed = newLora.region!==(lora.region||0) || newLora.modemPreset!==(lora.modemPreset||0)
+        || newLora.hopLimit!==(lora.hopLimit||3) || newLora.txEnabled!==(lora.txEnabled!==false);
+      if (changed) await client.writeConfig(admSetLora(newLora));
+      toast("Settings sent — the radio may reboot to apply them.");
+      closeModal();
+    } catch(e){ toast("Failed: " + (e.message||e)); }
+  });
+  openModal("Radio settings", nodeId(client.myNodeNum||0), body, [ btn("Close", "", closeModal), save ]);
+}
+
+/* ---- channels ---- */
+function pskB64(psk){ if(!psk||!psk.length) return ""; return btoa(String.fromCharCode(...psk)); }
+function b64ToBytes(s){ try { const bin=atob(s.trim()); return Uint8Array.from(bin, c=>c.charCodeAt(0)); } catch(e){ return null; } }
+function genPsk(bytes){ const a=new Uint8Array(bytes); crypto.getRandomValues(a); return a; }
+
+function openChannels(){
+  const body = el("div");
+  const list = el("div"); list.style.display="flex"; list.style.flexDirection="column"; list.style.gap=".5rem";
+  function refresh(){
+    list.innerHTML = "";
+    const chans = [...client.channels.values()].sort((a,b)=>(a.index||0)-(b.index||0));
+    if (!chans.length){ list.appendChild(el("div","empty","No channels reported yet.")); }
+    chans.forEach(c => {
+      const idx = c.index||0;
+      const row = el("div","ch-row");
+      row.appendChild(el("div","ci", idx));
+      const meta = el("div","cmeta");
+      meta.appendChild(el("div","cn", channelName(idx)));
+      const sec = channelSecurity(idx);
+      meta.appendChild(el("div","cs", sec.icon+" "+sec.label));
+      row.appendChild(meta);
+      const roleName = CHAN_ROLE[c.role||0] || "?";
+      const pillCls = c.role===1?"pri":c.role===2?"sec":"off";
+      row.appendChild(el("span","pill "+pillCls, roleName));
+      row.appendChild(btn("Edit","sm",()=>editChannel(idx, refresh)));
+      list.appendChild(row);
+    });
+  }
+  refresh();
+  body.appendChild(list);
+
+  const addBtn = btn("+ Add channel", "sm", () => {
+    let free = 0; while (client.channels.has(free) && (client.channels.get(free).role||0)!==0) free++;
+    if (free > 7){ toast("All 8 channel slots are in use."); return; }
+    editChannel(free, refresh, true);
+  });
+  const shareBtn = btn("Share URL", "sm", shareChannels);
+  const importBtn = btn("Import URL", "sm", () => importChannelUrl(refresh));
+  const tools = el("div","toolbtns"); tools.appendChild(addBtn); tools.appendChild(shareBtn); tools.appendChild(importBtn);
+  body.appendChild(tools);
+  openModal("Channels", client.channels.size + " configured", body, [ btn("Close","",closeModal) ]);
+}
+
+function editChannel(idx, after, isNew){
+  const c = client.channels.get(idx) || { index:idx, settings:{}, role: idx===0?1:2 };
+  const s = c.settings || {};
+  const body = el("div");
+  const inName = el("input","fld"); inName.value = s.name || ""; inName.maxLength=11; inName.placeholder = idx===0?"(primary — often blank)":"channel name";
+  const roleSel = selectFrom(CHAN_ROLE, c.role!=null?c.role:(idx===0?1:2));
+  const inPsk = el("input","fld"); inPsk.value = pskB64(s.psk); inPsk.placeholder="base64 key (blank = default)"; inPsk.style.fontFamily="var(--mono)"; inPsk.style.fontSize=".72rem";
+  const upChk = el("input"); upChk.type="checkbox"; upChk.checked=!!s.uplinkEnabled;
+  const dnChk = el("input"); dnChk.type="checkbox"; dnChk.checked=!!s.downlinkEnabled;
+
+  body.appendChild(field("Name", inName, "Blank on the primary channel uses the modem preset name."));
+  body.appendChild(field("Role", roleSel, "Primary is your main channel. Secondary channels ride alongside. Disabled removes it."));
+  const pskField = field("Encryption key (PSK)", inPsk, "base64. Blank = the well-known default key (public). A random 32-byte key is private.");
+  const keyTools = el("div","toolbtns");
+  keyTools.appendChild(btn("Random 256-bit","sm",()=>{ inPsk.value = pskB64(genPsk(32)); }));
+  keyTools.appendChild(btn("Random 128-bit","sm",()=>{ inPsk.value = pskB64(genPsk(16)); }));
+  keyTools.appendChild(btn("Default (public)","sm",()=>{ inPsk.value = pskB64(new Uint8Array([1])); }));
+  pskField.appendChild(keyTools);
+  body.appendChild(pskField);
+
+  const mqtt = el("div","frow");
+  const upL = el("label","desc"); upL.style.cssText="display:flex;gap:.4rem;align-items:center"; upL.appendChild(upChk); upL.appendChild(document.createTextNode("MQTT uplink"));
+  const dnL = el("label","desc"); dnL.style.cssText="display:flex;gap:.4rem;align-items:center"; dnL.appendChild(dnChk); dnL.appendChild(document.createTextNode("MQTT downlink"));
+  mqtt.appendChild(upL); mqtt.appendChild(dnL);
+  body.appendChild(field("MQTT gateway", mqtt, "Bridge this channel to an MQTT server, if one is configured."));
+
+  const save = btn("Save channel","primary", async () => {
+    try {
+      const role = +roleSel.value;
+      let psk = null;
+      const v = inPsk.value.trim();
+      if (v){ psk = b64ToBytes(v); if(!psk){ toast("PSK isn't valid base64."); return; } }
+      await client.writeConfig(admSetChannel({
+        index: idx, role,
+        settings: { name: inName.value.trim(), psk, uplink: upChk.checked, downlink: dnChk.checked }
+      }));
+      // optimistic local update
+      client.channels.set(idx, { index:idx, role, settings:{ name:inName.value.trim(), psk: psk||s.psk, uplinkEnabled:upChk.checked, downlinkEnabled:dnChk.checked } });
+      renderTabs();
+      toast("Channel saved.");
+      closeModal(); if (after) setTimeout(()=>{ openChannels(); }, 50);
+    } catch(e){ toast("Failed: "+(e.message||e)); }
+  });
+  const foot = [ btn("Back","",()=>{ closeModal(); setTimeout(openChannels,40); }), save ];
+  if (!isNew && idx!==0){
+    foot.splice(1,0, btn("Delete","danger", async () => {
+      if(!confirm("Disable this channel?")) return;
+      try { await client.writeConfig(admSetChannel({ index:idx, role:0, settings:{} }));
+        client.channels.delete(idx); renderTabs(); toast("Channel disabled."); closeModal(); setTimeout(openChannels,40);
+      } catch(e){ toast("Failed: "+(e.message||e)); }
+    }));
+  }
+  openModal((isNew?"New channel ":"Edit channel ")+idx, "slot "+idx, body, foot);
+}
+
+/* ---- channel URL (meshtastic.org/e/#…) ---- */
+function b64urlEncode(bytes){ let s=btoa(String.fromCharCode(...bytes)); return s.replace(/\+/g,"-").replace(/\//g,"_").replace(/=+$/,""); }
+function b64urlDecode(str){ str=str.replace(/-/g,"+").replace(/_/g,"/"); while(str.length%4)str+="="; return b64ToBytes(str); }
+function encLoraForUrl(lora){
+  const lo = new PB();
+  lo.boolF(1, true);                                   // use_preset
+  if (lora && lora.modemPreset) lo.vintF(2, lora.modemPreset);
+  if (lora && lora.region) lo.vintF(7, lora.region);
+  return lo;
+}
+function encChannelSet(){
+  const cs = new PB();
+  [...client.channels.values()].filter(c => (c.role||0)!==0).sort((a,b)=>(a.index||0)-(b.index||0))
+    .forEach(c => cs.sub(1, encChannelSettings({
+      name: c.settings&&c.settings.name, psk: c.settings&&c.settings.psk,
+      id: c.settings&&c.settings.id, uplink: c.settings&&c.settings.uplinkEnabled, downlink: c.settings&&c.settings.downlinkEnabled
+    })));
+  cs.sub(2, encLoraForUrl(client.config && client.config.lora));
+  return cs.out();
+}
+function decChannelSet(u8){ const r=new PBR(u8),o={settings:[]}; r.each((f)=>{
+  if(f===1){o.settings.push(decChannelSettings(r.len()));return true}
+  if(f===2){o.lora=decLoraConfig(r.len());return true} }); return o; }
+
+function shareChannels(){
+  if (!client.channels.size){ toast("No channels to share yet."); return; }
+  const url = "https://meshtastic.org/e/#" + b64urlEncode(encChannelSet());
+  const body = el("div");
+  body.appendChild(el("div","desc","Anyone who opens this link (in the official app or here) can join your channel set. It contains your channel names and keys — share it only with people you trust."));
+  const ta = el("textarea","fld"); ta.value=url; ta.rows=4; ta.style.fontFamily="var(--mono)"; ta.style.fontSize=".7rem"; ta.readOnly=true;
+  body.appendChild(ta);
+  const copy = btn("Copy link","primary", async () => {
+    try { await navigator.clipboard.writeText(url); toast("Copied."); }
+    catch(e){ ta.select(); document.execCommand&&document.execCommand("copy"); toast("Copied."); }
+  });
+  openModal("Share channels", "", body, [ btn("Back","",()=>{closeModal();setTimeout(openChannels,40);}), copy ]);
+}
+function importChannelUrl(after){
+  const body = el("div");
+  body.appendChild(el("div","desc","Paste a meshtastic.org/e/#… channel link. Its channels and LoRa preset will be written to the connected radio."));
+  const ta = el("textarea","fld"); ta.rows=4; ta.placeholder="https://meshtastic.org/e/#…"; ta.style.fontFamily="var(--mono)"; ta.style.fontSize=".72rem";
+  body.appendChild(ta);
+  const doImport = btn("Import to radio","primary", async () => {
+    const raw = ta.value.trim();
+    const hash = raw.includes("#") ? raw.slice(raw.indexOf("#")+1) : raw;
+    const bytes = b64urlDecode(hash);
+    if (!bytes){ toast("That doesn't look like a valid channel link."); return; }
+    let set; try { set = decChannelSet(bytes); } catch(e){ toast("Couldn't parse the link."); return; }
+    if (!set.settings.length){ toast("No channels found in that link."); return; }
+    if (!client.connected){ toast("Connect a radio first."); return; }
+    try {
+      for (let i=0;i<set.settings.length;i++){
+        await client.writeConfig(admSetChannel({ index:i, role: i===0?1:2, settings:{
+          name:set.settings[i].name, psk:set.settings[i].psk, uplink:false, downlink:false } }));
+        await sleep(80);
+      }
+      if (set.lora && (set.lora.region!=null || set.lora.modemPreset!=null))
+        await client.writeConfig(admSetLora({ region:set.lora.region, modemPreset:set.lora.modemPreset, usePreset:true }));
+      toast("Imported "+set.settings.length+" channel(s). The radio may reboot.");
+      closeModal(); if (after) setTimeout(openChannels,60);
+    } catch(e){ toast("Import failed: "+(e.message||e)); }
+  });
+  openModal("Import channel link", "", body, [ btn("Cancel","",closeModal), doImport ]);
+}
+
+/* ---- node detail + actions ---- */
+function openNode(num){
+  const n = client.nodes.get(num); if (!n) return;
+  const self = num === client.myNodeNum;
+  const u = n.user || {}, m = n.metrics || {}, pos = n.position || {};
+  const body = el("div");
+
+  const head = el("div","nd-head");
+  const av = el("div","nd-av"+(self?" self":"")); av.textContent = shortName(num);
+  head.appendChild(av);
+  const hi = el("div"); hi.style.minWidth="0";
+  hi.appendChild(el("div",null,'<b style="font-size:1rem">'+ (nodeName(num)) +'</b>'));
+  const sub = [nodeId(num)];
+  if (u.role != null && ROLE[u.role]) sub.push(ROLE[u.role]);
+  if (u.hwModel && HW[u.hwModel]) sub.push(HW[u.hwModel]);
+  hi.appendChild(el("div","cs", sub.join(" · ")));
+  head.appendChild(hi);
+  body.appendChild(head);
+
+  const stats = el("div","stat-grid");
+  function stat(val, label, extra){ const s=el("div","stat"); s.appendChild(el("b",null,val)); s.appendChild(el("span",null,label)); if(extra)s.appendChild(extra); stats.appendChild(s); }
+  if (m.battery != null){
+    let bar=null;
+    if (m.battery<=100){ bar=el("div","tele-bar"); const i=el("i"); i.style.width=m.battery+"%"; if(m.battery<20)i.style.background="var(--red)"; bar.appendChild(i); }
+    stat(m.battery>100?"Plugged in":m.battery+"%","Battery",bar);
+  }
+  if (m.voltage != null) stat(m.voltage.toFixed(2)+"V","Voltage");
+  if (n.snr != null && !self) stat(n.snr.toFixed(1)+" dB","SNR");
+  if (n.rssi) stat(n.rssi+" dBm","RSSI");
+  if (n.hopsAway != null) stat(n.hopsAway===0?"Direct":n.hopsAway+" hop"+(n.hopsAway>1?"s":""),"Distance");
+  if (m.chUtil != null) stat(m.chUtil.toFixed(1)+"%","Channel util");
+  if (m.airUtil != null) stat(m.airUtil.toFixed(1)+"%","Air TX");
+  if (m.uptime != null) stat(fmtUptime(m.uptime),"Uptime");
+  if (pos.lat || pos.lon) stat(pos.lat.toFixed(4)+", "+pos.lon.toFixed(4),"Position");
+  if (pos.alt) stat(pos.alt+" m","Altitude");
+  if (n.lastHeard) stat(timeStr(n.lastHeard*1000),"Last heard");
+  if (u.publicKey && u.publicKey.length>=32) stat("🔒 present","Public key");
+  if (!stats.children.length) stats.appendChild(el("div","desc","No telemetry received from this node yet."));
+  body.appendChild(stats);
+
+  const foot = [];
+  if (!self){
+    foot.push(btn("Message","primary",()=>{ closeModal(); convo="dm:"+num; unread[convo]=0; renderTabs(); renderLog(); updateComposer(); openSide(false); $("input").focus(); }));
+    const traceB = btn("Traceroute","sm",async()=>{ try{ await client.traceroute(num); toast("Traceroute sent — waiting for the path…"); closeModal(); }catch(e){ toast(e.message||e); } });
+    const posB = btn("Request position","sm",async()=>{ try{ await client.requestPosition(num); toast("Position requested."); closeModal(); }catch(e){ toast(e.message||e); } });
+    const favB = btn(n.isFavorite?"★ Unfavorite":"☆ Favorite","sm",async()=>{
+      try{ await client.sendAdmin(n.isFavorite?admUnfavorite(num):admFavorite(num)); n.isFavorite=!n.isFavorite; renderNodes(); toast(n.isFavorite?"Favorited":"Unfavorited"); closeModal(); }catch(e){ toast(e.message||e); } });
+    const rmB = btn("Remove","sm danger",async()=>{ if(!confirm("Remove this node from the radio's database?"))return;
+      try{ await client.sendAdmin(admRemoveNode(num)); client.nodes.delete(num); renderNodes(); toast("Node removed."); closeModal(); }catch(e){ toast(e.message||e); } });
+    foot.push(traceB, posB, favB, rmB);
+  } else {
+    foot.push(btn("Radio settings","primary",()=>{ closeModal(); openConfig(); }));
+  }
+  foot.push(btn("Close","",closeModal));
+  openModal(nodeName(num), self?"this radio":"", body, foot);
+}
+function fmtUptime(s){ s=+s; if(s<60)return s+"s"; if(s<3600)return Math.floor(s/60)+"m"; if(s<86400)return Math.floor(s/3600)+"h"; return Math.floor(s/86400)+"d"; }
+
+/* ---- traceroute results ---- */
+client.on("traceroute", tr => {
+  // The response carries the intermediate hops between us and the target.
+  const chain = [client.myNodeNum, ...(tr.route||[]), tr.from];
+  sysMsg("Traceroute to " + nodeName(tr.from) + " — " + (chain.length-1) + " hop(s): " +
+    chain.map(h => shortName(h)).join(" → "));
+  const body = el("div");
+  const hops = el("div","trace-hops");
+  chain.forEach((h,i) => {
+    const row = el("div","hop");
+    row.appendChild(el("span","idx", i));
+    row.appendChild(el("span",null, nodeName(h) + '  <span style="color:var(--dim)">'+nodeId(h)+'</span>'));
+    // SNR values are reported in quarter-dB towards each successive hop.
+    if (i>0 && tr.snrTowards && tr.snrTowards[i-1]!=null)
+      row.appendChild(el("span","snr",(tr.snrTowards[i-1]/4).toFixed(1)+" dB"));
+    hops.appendChild(row);
+  });
+  body.appendChild(el("div","desc","Path the mesh used to reach the node — each row is a hop, SNR is the link into that hop."));
+  body.appendChild(hops);
+  openModal("Traceroute", nodeId(tr.from), body, [ btn("Close","",closeModal) ]);
+});
+
+/* ---- wire config buttons + connection state ---- */
+function setConfigButtons(on){
+  $("btn-config").disabled = !on;
+  $("btn-channels").disabled = !on;
+}
+$("btn-config").onclick   = () => { if(client.connected) openConfig(); };
+$("btn-channels").onclick = () => { if(client.connected) openChannels(); };
+$("btn-import-ch").onclick = () => { if(!client.connected){ toast("Connect a radio first."); return; } importChannelUrl(); };
+client.on("ready", () => setConfigButtons(true));
+client.on("close", () => setConfigButtons(false));
+client.on("config", () => { /* live settings available; refresh device panel */ renderDevice(); });
+
+/* ---- boot ---- */
+load();
+renderTabs(); renderLog(); renderNodes(); renderDevice(); updateComposer();
+if (msgs.length === 0) sysMsg("MESHLINK ready. Pick a link on the left to reach your radio.");
+setInterval(save, 20000);
+</script>
+</body>
+</html>
