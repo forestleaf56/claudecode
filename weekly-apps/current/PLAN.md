@@ -36,8 +36,10 @@ weekly-apps/current/
 ## Build checklist (Mon–Thu, small daily increments)
 - [x] Mon: concept + plan; minimal `index.html` skeleton — FIVES logo header + the
       empty 6×5 board, responsive HTML/CSS. Boots clean on mobile, no JS errors.
-- [ ] Tue: board (6 rows × 5 tiles) + on-screen keyboard; typing/delete/enter input
-      fills the current row; embed the word list and pick a random answer. No scoring.
+- [x] Tue: board (6×5 tiles) + QWERTY on-screen keyboard (with Enter/⌫); type/delete
+      fills the current row, Enter validates length + against the embedded word list
+      (~330 common words) and advances, with a shake + toast on invalid; random answer
+      picked and kept for Wed. Physical keyboard also works. Verified, no JS errors.
 - [ ] Wed: guess evaluation — green/amber/slate coloring with correct duplicate-letter
       handling; keyboard key states; win/lose detection and the answer reveal.
 - [ ] Thu: **title screen + menu** (PLAY / HOW TO PLAY / STATS) with the FIVES logo,

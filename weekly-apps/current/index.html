@@ -18,20 +18,36 @@
     display:flex; flex-direction:column; align-items:center;
     padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left); }
 
-  header{ width:100%; max-width:460px; display:flex; align-items:center; justify-content:center;
-    gap:8px; padding:18px 16px 10px; border-bottom:1px solid var(--line); }
-  .logo{ font-size:30px; font-weight:900; letter-spacing:8px; padding-left:8px;
+  header{ position:relative; width:100%; max-width:460px; display:flex; align-items:center; justify-content:center;
+    padding:16px; border-bottom:1px solid var(--line); }
+  .logo{ font-size:28px; font-weight:900; letter-spacing:8px; padding-left:8px;
     background:linear-gradient(120deg,var(--green),#bfe8cf); -webkit-background-clip:text; background-clip:text; color:transparent; }
-  .tag{ position:absolute; right:18px; top:24px; font-size:11px; color:var(--muted); letter-spacing:1px; text-transform:uppercase; }
+  .tag{ position:absolute; right:16px; font-size:11px; color:var(--muted); letter-spacing:1px; text-transform:uppercase; }
 
   main{ flex:1 1 auto; width:100%; max-width:460px; display:flex; flex-direction:column;
-    align-items:center; justify-content:center; gap:18px; padding:18px; }
+    align-items:center; justify-content:space-between; gap:10px; padding:14px 12px 12px; }
+
+  .toast{ position:fixed; top:70px; left:50%; transform:translateX(-50%);
+    background:#eef3f7; color:#12161b; font-weight:700; font-size:13px; padding:8px 14px; border-radius:8px;
+    opacity:0; pointer-events:none; transition:opacity .15s; z-index:5; }
+  .toast.show{ opacity:1; }
+
   .board{ display:grid; grid-template-rows:repeat(6,1fr); gap:6px; }
   .brow{ display:grid; grid-template-columns:repeat(5,1fr); gap:6px; }
+  .brow.shake{ animation:shake .4s; }
+  @keyframes shake{ 0%,100%{transform:translateX(0)} 20%,60%{transform:translateX(-6px)} 40%,80%{transform:translateX(6px)} }
   .tile{ width:52px; height:52px; border:2px solid var(--line); border-radius:8px; background:var(--tile);
     display:flex; align-items:center; justify-content:center; font-size:26px; font-weight:800; text-transform:uppercase; }
-  .note{ font-size:13px; color:var(--muted); text-align:center; line-height:1.5; max-width:280px; }
-  @media (max-height:680px){ .tile{ width:46px; height:46px; } }
+  .tile.filled{ border-color:#4a5765; animation:pop .1s; }
+  @keyframes pop{ 0%{transform:scale(.9)} 100%{transform:scale(1)} }
+  @media (max-height:700px){ .tile{ width:46px; height:46px; font-size:23px; } }
+
+  .kb{ width:100%; max-width:460px; display:flex; flex-direction:column; gap:6px; }
+  .krow{ display:flex; gap:5px; justify-content:center; }
+  .key{ flex:1 1 auto; max-width:38px; height:50px; border-radius:6px; background:var(--slate); color:var(--ink);
+    font-weight:700; font-size:15px; display:flex; align-items:center; justify-content:center; text-transform:uppercase; cursor:pointer; }
+  .key:active{ filter:brightness(1.25); }
+  .key.wide{ max-width:60px; font-size:12px; flex:1.5 1 auto; }
 </style>
 </head>
 <body>
@@ -40,10 +56,11 @@
     <span class="tag">guess the word</span>
   </header>
 
+  <div class="toast" id="toast"></div>
+
   <main>
     <div class="board" id="board"></div>
-    <div class="note">Guess the five-letter word in six tries. Board, keyboard, and
-      scoring are built across this week.</div>
+    <div class="kb" id="kb"></div>
   </main>
 
   <script>
@@ -52,15 +69,89 @@
     function vh(){ document.body.style.height = window.innerHeight + 'px'; }
     window.addEventListener('resize', vh); vh();
 
-    // Skeleton only — keyboard input, word list, guess evaluation, and the title
-    // screen + menu land Tue–Thu per PLAN.md. For now just render the empty 6x5
-    // board so the layout is visible and responsive on mobile.
-    const board = document.getElementById('board');
-    for(let r=0;r<6;r++){
-      const row=document.createElement('div'); row.className='brow';
-      for(let c=0;c<5;c++){ const t=document.createElement('div'); t.className='tile'; row.appendChild(t); }
-      board.appendChild(row);
+    // ---- word list (common 5-letter words; answers + allowed guesses) ----
+    const WORDS = ("about above abuse actor acute admit adopt adult after again agent agree ahead alarm album "+
+    "alert alike alive allow alone along alter among anger angle angry apart apple apply arena argue arise array "+
+    "aside asset audio audit avoid award aware badly baker basic basis beach began begin begun being below bench "+
+    "birth black blame blank blast blind block blood board boost booth bound brain brand brass brave bread break "+
+    "breed brief bring broad broke brown build built buyer cable carry catch cause chain chair chaos charm chart "+
+    "chase cheap check chest chief child chose civil claim class clean clear click climb clock close cloud coach "+
+    "coast could count court cover craft crash crazy cream crime cross crowd crown crude curve cycle daily dance "+
+    "dated death debut delay depth doing doubt dozen draft drama drawn dream dress drill drink drive drove dying "+
+    "eager early earth eight elite empty enemy enjoy enter entry equal error event every exact exist extra faith "+
+    "false fault fiber field fifth fifty fight final first fixed flash fleet floor fluid focus force forth forty "+
+    "forum found frame frank fraud fresh front fruit fully funny giant given glass globe going grace grade grand "+
+    "grant grass great green gross group grown guard guess guest guide happy heart heavy hence horse hotel house "+
+    "human ideal image index inner input issue joint judge known label large laser later laugh layer learn lease "+
+    "least leave legal level light limit links lives local logic loose lower lucky lunch lying magic major maker "+
+    "march match maybe mayor meant media metal might minor minus mixed model money month moral motor mount mouse "+
+    "mouth movie music needs never newly night noise north noted novel nurse occur ocean offer often order other "+
+    "ought paint panel paper party peace phase phone photo piece pilot pitch place plain plane plant plate point "+
+    "pound power press price pride prime print prior prize proof proud prove queen quick quiet quite radio raise "+
+    "range rapid ratio reach ready refer right rival river rough round route royal rural scale scene scope score "+
+    "sense serve seven shall shape share sharp sheet shelf shell shift shirt shock shoot short shown sight since "+
+    "sixth sixty sized skill sleep slide small smart smile smoke solid solve sorry sound south space spare speak "+
+    "speed spend spent split spoke sport staff stage stake stand start state steam steel stick still stock stone "+
+    "stood store storm story strip stuck study stuff style sugar suite super sweet table taken taste taxes teach "+
+    "teeth thank theft their theme there these thick thing think third those three threw throw tight times tired "+
+    "title today topic total touch tough tower track trade train treat trend trial tribe trick tried tries truck "+
+    "truly trust truth twice under undue union unity until upper upset urban usage usual valid value video virus "+
+    "visit vital voice waste watch water wheel where which while white whole whose woman women world worry worse "+
+    "worst worth would wound write wrong wrote young youth").split(/\s+/);
+    const ALLOWED = new Set(WORDS);
+
+    const ROWS=6, COLS=5;
+    let answer = WORDS[Math.floor(Math.random()*WORDS.length)];
+    let row=0, col=0;
+
+    // ---- board ----
+    const board=document.getElementById('board'); const tiles=[];
+    for(let r=0;r<ROWS;r++){ const rowEl=document.createElement('div'); rowEl.className='brow'; const rt=[];
+      for(let c=0;c<COLS;c++){ const t=document.createElement('div'); t.className='tile'; rowEl.appendChild(t); rt.push(t); }
+      board.appendChild(rowEl); tiles.push(rt); }
+
+    // ---- keyboard ----
+    const KB=[ "QWERTYUIOP", "ASDFGHJKL", "↵ZXCVBNM⌫" ];  // Enter, Backspace glyphs
+    const kb=document.getElementById('kb');
+    KB.forEach((line,i)=>{ const rowEl=document.createElement('div'); rowEl.className='krow';
+      for(const ch of line){ const k=document.createElement('div');
+        const isEnter=ch==='↵', isBack=ch==='⌫';
+        k.className='key'+(isEnter||isBack?' wide':'');
+        k.textContent = isEnter?'Enter' : isBack?'⌫' : ch;
+        k.dataset.k = isEnter?'enter' : isBack?'back' : ch.toLowerCase();
+        rowEl.appendChild(k); }
+      kb.appendChild(rowEl); });
+    kb.addEventListener('click', e=>{ const k=e.target.closest('.key'); if(!k) return; handle(k.dataset.k); });
+
+    // ---- toast ----
+    let toastT=null; const toastEl=document.getElementById('toast');
+    function toast(msg){ toastEl.textContent=msg; toastEl.classList.add('show');
+      clearTimeout(toastT); toastT=setTimeout(()=>toastEl.classList.remove('show'),1100); }
+
+    // ---- input handling (no scoring yet — evaluation lands Wed) ----
+    function addLetter(ch){ if(col>=COLS||row>=ROWS) return;
+      tiles[row][col].textContent=ch; tiles[row][col].classList.add('filled'); col++; }
+    function delLetter(){ if(col<=0) return; col--; tiles[row][col].textContent=''; tiles[row][col].classList.remove('filled'); }
+    function submit(){
+      if(col<COLS){ toast('Not enough letters'); shake(); return; }
+      const guess = tiles[row].map(t=>t.textContent.toLowerCase()).join('');
+      if(!ALLOWED.has(guess)){ toast('Not in word list'); shake(); return; }
+      // Wed will color the tiles + keyboard and detect win/lose. For now advance.
+      row++; col=0;
+      if(row>=ROWS) toast('word list + input ready');
     }
+    function shake(){ const el=board.children[row]; el.classList.remove('shake'); void el.offsetWidth; el.classList.add('shake'); }
+    function handle(k){ if(k==='enter') submit(); else if(k==='back') delLetter();
+      else if(/^[a-z]$/.test(k)) addLetter(k.toUpperCase()); }
+
+    window.addEventListener('keydown', e=>{
+      if(e.key==='Enter') handle('enter');
+      else if(e.key==='Backspace') handle('back');
+      else if(/^[a-zA-Z]$/.test(e.key)) handle(e.key.toLowerCase());
+    });
+
+    // answer kept for Wed's evaluation (not revealed)
+    window.__answer = answer;
   })();
   </script>
 </body>
