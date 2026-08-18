@@ -1,5 +1,21 @@
 [
   {
+    "issue": 45,
+    "date_short": "AUGUST 17",
+    "date_human": "Monday, August 17, 2026",
+    "article": {
+      "badge": "HOT!!",
+      "blink": true,
+      "title": "🤸 China Builds Robots That Can Do Backflips; Humanity's Last Advantage Was Apparently Gymnastics",
+      "dateline": "SHENZHEN — reported from a safe, seated distance",
+      "tag": "ROBOTS —",
+      "paras": [
+        "Chinese engineers unveiled robots capable of doing backflips, clearing the final athletic hurdle between humanoid machines and the Olympics, and quietly retiring one of the last physical things humans could do that robots couldn't.",
+        "\"It's a demonstration of balance and control,\" a researcher explained, of a machine now measurably more coordinated than most of the people watching it. Experts note that a robot which can backflip can also, theoretically, backflip away from your attempts to unplug it — which is either brilliant engineering or the plot of a film nobody meant to greenlight."
+      ]
+    }
+  },
+  {
     "issue": 44,
     "date_short": "AUGUST 14",
     "date_human": "Friday, August 14, 2026",

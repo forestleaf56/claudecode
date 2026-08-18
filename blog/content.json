@@ -1,81 +1,81 @@
 {
-  "issue": 45,
-  "date_short": "AUGUST 17",
-  "date_human": "Monday, August 17, 2026",
-  "construction_top": "pardon our HTML — the webmaster is being out-competed at gymnastics by a robot",
+  "issue": 46,
+  "date_short": "AUGUST 18",
+  "date_human": "Tuesday, August 18, 2026",
+  "construction_top": "pardon our HTML — the webmaster's laptop grew DNA and asked for a nap",
   "ticker": [
-    "China builds backflipping robots; humanity's last advantage was apparently gymnastics",
-    "chipmaker bets $720 billion on memory; the number now has its own U.N. seat",
-    "chip giant buys $21B of a rocket company; the money is officially in orbit",
-    "A.I. star faces talent exodus right before its IPO; everyone leaves as the cake arrives",
-    "A.I. firms discover they can make real money; accountants faint from the sheer novelty",
-    "the future backflips, funds rockets, and has finally, somehow, turned a profit"
+    "scientists fuse DNA with a chip; your laptop is now, technically, a little bit alive",
+    "billionaire gives away a powerful A.I. 'for everyone'; everyone quietly reads the fine print",
+    "2,000 robotaxis meet Europe's medieval streets and one very confident local",
+    "A.I. becomes electricity's hungriest customer; utilities eye the sun nervously",
+    "humanity gains godlike A.I., immediately makes the cat a Renaissance king",
+    "the future is alive, free-ish, self-driving, and extremely funny"
   ],
   "articles": [
     {
       "badge": "HOT!!",
       "blink": true,
-      "title": "🤸 China Builds Robots That Can Do Backflips; Humanity's Last Advantage Was Apparently Gymnastics",
-      "dateline": "SHENZHEN — reported from a safe, seated distance",
-      "tag": "ROBOTS —",
+      "title": "🧬 Scientists Fuse DNA With A Computer Chip; Your Laptop Is Now, Technically, A Little Bit Alive",
+      "dateline": "THE LAB — reported to a faintly breathing motherboard",
+      "tag": "SCIENCE —",
       "paras": [
-        "Chinese engineers unveiled robots capable of doing backflips, clearing the final athletic hurdle between humanoid machines and the Olympics, and quietly retiring one of the last physical things humans could do that robots couldn't.",
-        "\"It's a demonstration of balance and control,\" a researcher explained, of a machine now measurably more coordinated than most of the people watching it. Experts note that a robot which can backflip can also, theoretically, backflip away from your attempts to unplug it — which is either brilliant engineering or the plot of a film nobody meant to greenlight."
+        "Researchers combined synthetic DNA with a semiconductor to build an ultra-low-power memory device that stores and processes information in the very same place — blurring the line between \"computer\" and \"organism\" and quietly giving your gadgets a biology to worry about.",
+        "\"It's incredibly efficient,\" a scientist said, of a chip that now technically contains more genetic material than a small houseplant. Experts are thrilled about the low power draw and only mildly concerned about the day the laptop asks for a glass of water and a nap."
       ]
     },
     {
       "badge": "NEW!",
-      "title": "🏭 Chipmaker Bets $720 Billion On Memory; Sum So Large It Now Qualifies For A U.N. Seat",
-      "dateline": "SEOUL — filed in a denomination we had to look up",
-      "tag": "MARKETS —",
+      "title": "🎁 Billionaire Gives Away A Powerful A.I. Model 'For Everyone'; Everyone Says Thanks, Then Reads The Fine Print",
+      "dateline": "MENLO PARK — reported from behind a very generous curtain",
+      "tag": "MODELS —",
       "paras": [
-        "A major chipmaker announced a $720 billion plan to build AI memory across Korea and the U.S. — an investment so colossal that economists have stopped calling it \"spending\" and started calling it \"a small planet's GDP, expressed entirely in RAM.\"",
-        "\"Demand is insatiable,\" the company said, of a world that apparently cannot get enough of the stuff that makes computers slightly less forgetful. Analysts confirm the AI era's defining product is no longer intelligence, ambition, or vision — it is, and always quietly has been, memory sticks."
+        "Meta released Glimmer, an open-weight AI model anyone can download and run themselves, with Mark Zuckerberg arguing AI should be \"for everyone\" rather than controlled by a handful of labs — a heartwarming gift, graciously offered by one of the handful of labs.",
+        "\"Power to the people,\" the company said, handing the people a frontier model and, separately, the electricity bill required to run it. Enthusiasts celebrated genuine open access while gently noting that \"free for everyone\" and \"runs on your laptop\" remain, thrillingly, two entirely different promises."
       ]
     },
     {
       "badge": "WOW!",
       "blink": true,
-      "title": "🚀 Chip Giant Quietly Buys $21 Billion Of A Rocket Company; The Money Is Now Officially In Orbit",
-      "dateline": "LOW EARTH ORBIT — reported at escape velocity",
-      "tag": "DEALS —",
+      "title": "🚕 2,000 Robotaxis Descend On Europe; Ancient Cobblestone Streets Meet Their Confused New Overlords",
+      "dateline": "SOMEWHERE WITH A ROUNDABOUT — reported from the back seat",
+      "tag": "AUTONOMY —",
       "paras": [
-        "A leading chipmaker disclosed a $21 billion stake in a rocket company — because in 2026, the natural next step after cornering the AI chip market is, apparently, owning a tidy slice of space itself.",
-        "\"It's a strategic alignment,\" the company said of a deal that means your graphics card and a Mars mission now share a shareholder. Analysts note the AI industry has reached the tier of wealth where it invests in rockets not for any specific reason, but simply because they are there and it can."
-      ]
-    },
-    {
-      "badge": "SCOOP",
-      "title": "🚪 A.I. Giant Faces Talent Exodus Right Before Its Big IPO; Everyone Leaving The Party As The Cake Arrives",
-      "dateline": "SAN FRANCISCO — reported near the exit",
-      "tag": "INDUSTRY —",
-      "paras": [
-        "A major AI company is reportedly facing a talent exodus just ahead of a hotly anticipated IPO — the corporate equivalent of the band walking offstage moments before the encore, taking their instruments and roughly half the audience with them.",
-        "\"We remain deeply confident,\" the company said, addressing a room that had recently developed several new echoes. Industry watchers note that in the AI talent war, \"competing\" now mostly means watching your best researchers get poached by a rival, a startup, or occasionally one very persuasive email."
+        "A ride-hailing giant partnered with a Chinese firm to bring 2,000 robotaxis to Europe, unleashing a fleet of self-driving cars onto a continent whose roads were, for the most part, designed by a horse in the year 1400.",
+        "\"They handle complex environments,\" the company said, of vehicles now facing the ultimate exam: a medieval one-way street, a double-parked delivery van, and a local gesturing with the full authority of someone who has lived here for sixty years. Pedestrians report the robotaxis are polite, cautious, and visibly bewildered by a roundabout that has no discernible rules."
       ]
     },
     {
       "badge": "$$$",
-      "title": "💵 A.I. Companies Discover They Can Make Actual Money; Accountants Faint From The Novelty",
-      "dateline": "THE BALANCE SHEET — reported, remarkably, in black ink",
+      "title": "⚡ A.I. Becomes The World's Hungriest Customer For Electricity; Politely Asks The Sun To Work Overtime",
+      "dateline": "THE POWER PLANT — reported by flashlight",
       "tag": "MARKETS —",
       "paras": [
-        "In a shocking break from tradition, leading AI firms reported real, substantial revenue this quarter — one topping $11.5 billion, another admitting its boring enterprise business now quietly out-earns its flashy consumer app.",
-        "\"Turns out businesses will actually pay for this,\" an executive said, of the wild discovery that selling a useful product to companies generates money. The revelation stunned an industry that had spent years treating profitability as a myth — like a unicorn, or a phone that lasts two days."
+        "With every new model, chip, and data center, artificial intelligence has quietly become one of the planet's largest consumers of electricity — an appetite so vast that utilities have begun eyeing the sun itself with a mix of hope and open desperation.",
+        "\"We're investing heavily in clean energy,\" companies insist, of an industry that now treats a gigawatt roughly the way most people treat a light snack. Analysts note the real bottleneck in AI is no longer talent or chips, but the ancient, humbling question of where on Earth all the electricity is supposed to come from."
+      ]
+    },
+    {
+      "badge": "NEAT",
+      "title": "💾 Now That Anyone Can Run A Frontier A.I., Humanity Uses This Godlike Power To Generate Memes",
+      "dateline": "A BEDROOM — reported at 1 AM, laughing alone",
+      "tag": "CULTURE —",
+      "paras": [
+        "With powerful open models now downloadable by anyone, ordinary people finally hold world-changing artificial intelligence in their own hands — and are using it, overwhelmingly, to make pictures of their cat as a Renaissance king.",
+        "\"The applications are truly limitless,\" one enthusiast said, having just asked a superintelligence to rewrite a breakup text as a pirate. Historians note this is exactly what happened with the printing press, the internet, and every powerful tool before it: first the revolution, then the memes, then mostly just the memes."
       ]
     }
   ],
   "horoscopes": [
-    { "sign": "♒ Aquarius:", "text": "A robot will do a backflip near you today. Applaud politely. Do not, under any circumstances, challenge it." },
-    { "sign": "♌ Leo:", "text": "Great wealth is coming — mostly to a memory-chip factory. Bask, from afar, in its distant humming glow." },
-    { "sign": "♓ Pisces:", "text": "Mercury goes into orbit via a chipmaker's rocket investment. Aim high; expect turbulence and one shared shareholder." }
+    { "sign": "♒ Aquarius:", "text": "Your devices are now a little bit alive. Be kind to the toaster today. It remembers everything." },
+    { "sign": "♌ Leo:", "text": "You will be given something powerful for free today. Check the electricity bill before you celebrate." },
+    { "sign": "♓ Pisces:", "text": "Mercury takes a robotaxi through a roundabout and is never again seen making a confident decision." }
   ],
-  "tech_tip": "If a company's best people are leaving right before the IPO, that's not a vibe — that's a forecast. Bring an umbrella.",
-  "gadget_watch": "No new gadget can compete with a robot that does backflips, so we won't even try. Just know the RAM inside your next device now costs more than the device, the car it shipped in, and possibly the road.",
+  "tech_tip": "When a lab gives you a free frontier model 'for everyone,' remember: the model is free. The 400-watt habit it requires is very much not.",
+  "gadget_watch": "Your next chip may contain actual DNA — either the future of efficiency or the start of a very awkward conversation with your laptop. Meanwhile, robotaxis are hitting European streets, so pour one out for the cobblestones.",
   "classifieds": [
-    { "label": "FOR SALE:", "text": "one (1) backflipping robot; incredibly coordinated, mildly terrifying, cannot be unplugged mid-flip." },
-    { "label": "WANTED:", "text": "$720 billion. For memory. Just the memory. We'll figure out the rest of the computer later." },
-    { "label": "LOST:", "text": "an entire A.I. research team, walked out right before the IPO. If found, they have probably already signed elsewhere." },
-    { "label": "MISSED CONNECTION:", "text": "You: a chipmaker who owns rockets AND my graphics card. Me: someone who just wanted a fair GPU price. Come back down to Earth." }
+    { "label": "FOR SALE:", "text": "one (1) DNA-powered chip; ultra-efficient, faintly alive, occasionally hungry. Water and understanding not included." },
+    { "label": "WANTED:", "text": "enough electricity to run the free A.I. I just downloaded 'for everyone.' A small hydroelectric dam would do." },
+    { "label": "LOST:", "text": "a robotaxi, somewhere in a European roundabout, still politely waiting its turn. It may be there forever." },
+    { "label": "MISSED CONNECTION:", "text": "You: a superintelligence anyone can run. Me: someone using you to make my dog talk like a lawyer. No regrets." }
   ]
 }
