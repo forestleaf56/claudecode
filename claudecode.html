@@ -321,13 +321,13 @@
     <label id="suLog">Conversation log</label>
     <div id="logBox"></div>
     <button id="clearLog">Clear log &amp; memory</button>
-    <div class="meta" style="text-align:center;opacity:.55;margin-top:14px">build 2026-08-19 · r7</div>
+    <div class="meta" style="text-align:center;opacity:.55;margin-top:14px">build 2026-08-19 · r5</div>
   </div>
 </div>
 
 <script type="module">
 'use strict';
-console.log('Mia build 2026-08-19 r7');
+console.log('Mia build 2026-08-19 r5');
 /* Show any uncaught script error on screen (Android has no easy console), so a
    failure that only happens when hosted is visible instead of a silent dead UI. */
 window.addEventListener('error', (e) => {
@@ -619,41 +619,31 @@ async function ensureModelReady(){
   return engine;
 }
 
-/* Shared generation settings. Low temperature + penalties keep tiny models from
-   rambling; a small token budget keeps replies quick on mobile WebGPU. */
-const GEN_PARAMS = { temperature: 0.6, top_p: 0.9, frequency_penalty: 0.4, presence_penalty: 0.2, max_tokens: 128 };
-
-function stripThink(txt){
-  return (txt || '')
-    .replace(/<think>[\s\S]*?<\/think>/gi, '')   // paired blocks
-    .replace(/<think>[\s\S]*$/i, '')             // unclosed / truncated block
-    .replace(/<\/?think>/gi, '')
-    .trim();
-}
-
-/* One LLM call over an OpenAI-style message array (non-streaming). */
+/* One LLM call over an OpenAI-style message array. */
 async function llmChat(messages){
   const eng = await ensureModelReady();
+  // Model is loaded — show "Thinking…" instead of leaving the last load message
+  // ("Finished loading on WebGPU") on screen while the model generates.
   if (onCall) setState(S.THINKING, T().thinking);
-  const out = await eng.chat.completions.create({ messages, ...GEN_PARAMS });
-  return stripThink(out?.choices?.[0]?.message?.content || '');
-}
-
-/* Streaming LLM call. Calls onDelta(deltaText, fullText) as tokens arrive and
-   returns the cleaned full reply. This is what makes Mia start answering within
-   a couple of seconds instead of waiting for the whole reply. */
-async function llmStream(messages, onDelta){
-  const eng = await ensureModelReady();
-  if (onCall) setState(S.THINKING, T().thinking);
-  const stream = await eng.chat.completions.create({ messages, ...GEN_PARAMS, stream: true });
-  let full = '';
-  for await (const chunk of stream){
-    const delta = chunk?.choices?.[0]?.delta?.content || '';
-    if (!delta) continue;
-    full += delta;
-    if (onDelta) { try { onDelta(delta, full); } catch(e){} }
-  }
-  return stripThink(full);
+  // Necessary offline settings: on-device models are slow and, at temperature
+  // 1.0 with a 1024-token budget, ramble without stopping — which left the app
+  // stuck after "Finished loading on WebGPU". Lower temperature + penalties make
+  // them stop, and a smaller budget keeps a spoken reply quick.
+  const out = await eng.chat.completions.create({
+    messages,
+    temperature: 0.6,
+    top_p: 0.9,
+    frequency_penalty: 0.4,
+    presence_penalty: 0.2,
+    max_tokens: 128        // spoken replies are short; fewer tokens = much faster on mobile WebGPU
+  });
+  let txt = (out?.choices?.[0]?.message?.content || '');
+  // Necessary offline-only cleanup: some local models (e.g. DeepSeek-R1) emit
+  // <think>…</think> reasoning that Gemini never produced — never speak it.
+  txt = txt.replace(/<think>[\s\S]*?<\/think>/gi, '');   // paired blocks
+  txt = txt.replace(/<think>[\s\S]*$/i, '');             // unclosed / truncated block
+  txt = txt.replace(/<\/?think>/gi, '').trim();
+  return txt;
 }
 
 /* ---------------- settings UI wiring ---------------- */
@@ -1576,11 +1566,6 @@ async function disposeWhisper(){
   transcriber = null; whisperLoadPromise = null;
   try { if (t && t.dispose) await t.dispose(); } catch(e){}
 }
-/* Small models (SmolLM2) fit in memory alongside the recognizer, so we KEEP the
-   recognizer loaded between turns — no per-turn reload (that added ~5–10 s).
-   Larger models need the recognizer freed each turn to avoid the OOM crash. */
-const KEEP_STT_MODELS = /SmolLM2-(135M|360M)/i;
-function keepWhisperResident(){ return KEEP_STT_MODELS.test(loadedModelId || currentModelId() || ''); }
 
 /* mic voice-activity capture: collect audio while the user talks, and when they
    go quiet, transcribe the utterance with Whisper. */
@@ -1653,10 +1638,9 @@ async function finalizeWhisper(samples, rate){
   // whisper emits things like "[BLANK_AUDIO]" / "(silence)" for non-speech
   const clean = text.replace(/\[[^\]]*\]|\([^)]*\)/g, '').trim();
   if (!clean){ startWhisperListening(); return; }   // nothing said → keep listening
-  // With a larger LLM, free the recognizer before the LLM + voice run so the
-  // phone isn't holding all three at once (that OOM-crashed it). With a small
-  // model there's room, so keep it loaded and skip the slow per-turn reload.
-  if (!keepWhisperResident()) await disposeWhisper();
+  // Free the recognizer before the LLM + voice run, so the phone isn't holding
+  // all three models at once (that OOM-crashed the device).
+  await disposeWhisper();
   handleUserSpeech(clean);
 }
 function resampleTo16k(samples, rate){
@@ -1710,13 +1694,13 @@ async function askMia(userText, imageB64){
   }
 }
 
-/* Push the user turn to history and build the (windowed) message array for the
-   model. Shared by the streaming and non-streaming paths. */
-function buildTurnMessages(userText, imageB64){
+async function askMiaOnce(userText, imageB64){
+  // persistent history is text-only
   history.push({ role:'user', content: userText });
   if (history.length > 40) history = history.slice(-40);
   saveHistory();
 
+  // build the outgoing turn (attachments/vision only affect this request)
   let outHistory = history;
   const modelId = currentModelId() || '';
   const modelVision = /vision|-VL-|VL-/i.test(modelId);
@@ -1726,11 +1710,13 @@ function buildTurnMessages(userText, imageB64){
     if (attachment && attachment.kind === 'text'){
       content = userText + '\n\n--- ' + attachment.name + ' ---\n' + attachment.text + '\n--- end of file ---';
     } else if ((imageB64 || (attachment && attachment.kind === 'image')) && modelVision){
+      // vision-capable local model: send the actual image
       content = [{ type:'text', text: (imageB64 ? T().camCue + ' ' : '') + userText }];
       if (imageB64) content.push({ type:'image_url', image_url:{ url:'data:image/jpeg;base64,' + imageB64 } });
       if (attachment && attachment.kind === 'image')
         content.push({ type:'image_url', image_url:{ url:'data:' + attachment.mime + ';base64,' + attachment.dataB64 } });
     } else {
+      // text-only local model can't see images / read PDFs
       let note = '';
       if (imageB64 || (attachment && attachment.kind === 'image')) note += T().noVision;
       if (attachment && (attachment.kind === 'pdf' || attachment.kind === 'image')) note += T().noRead.replace('NAME', attachment.name);
@@ -1739,25 +1725,11 @@ function buildTurnMessages(userText, imageB64){
     outHistory = history.slice(0, -1).concat([{ role:'user', content }]);
   }
 
-  // Send only a short recent window — less prompt to prefill each turn = faster.
+  // Send only a short recent window — less prompt to prefill each turn = faster
+  // on mobile WebGPU. Full history is still kept for the log/memory.
   const windowed = outHistory.slice(-4);
-  return [{ role:'system', content: SYSTEM_PROMPT() }, ...windowed];
-}
-
-async function askMiaOnce(userText, imageB64){
-  const messages = buildTurnMessages(userText, imageB64);
+  const messages = [{ role:'system', content: SYSTEM_PROMPT() }, ...windowed];
   const reply = await llmChat(messages);
-  if (!reply) throw new Error('Empty reply from local model');
-  history.push({ role:'assistant', content: reply });
-  saveHistory();
-  return reply;
-}
-
-/* Streaming variant — onDelta(delta, full) fires as tokens arrive. */
-async function askMiaStream(userText, imageB64, onDelta){
-  lastGrounded = false;
-  const messages = buildTurnMessages(userText, imageB64);
-  const reply = await llmStream(messages, onDelta);
   if (!reply) throw new Error('Empty reply from local model');
   history.push({ role:'assistant', content: reply });
   saveHistory();
@@ -1773,11 +1745,8 @@ function inferExpression(text){
 }
 
 /* ---------------- TTS: local (browser or Piper) ---------------- */
-/* Speak one chunk of text and resolve when it finishes. Returns true if it used
-   speechSynthesis (so the caller can do the mic handoff). Does NOT start
-   listening — the caller manages that after the last chunk. */
-async function speakChunk(text){
-  if (!text) return false;
+async function speak(text){
+  setState(S.SPEAKING, T().speaking);
   const expr = inferExpression(text);
   let usedSynth = false;
   try {
@@ -1789,28 +1758,23 @@ async function speakChunk(text){
       await speakBrowser(text, expr);
     }
   } catch(e){
+    // realistic voice failed → fall back to built-in browser voices
     hintEl.textContent = '⚠ ' + T().voiceErr;
     usedSynth = true;
-    try { await speakBrowser(text, expr); } catch(_){}
+    await speakBrowser(text, expr);
   }
-  return usedSynth;
-}
-/* After all speaking: release the TTS engine (speechSynthesis fights the mic on
-   Android) and resume listening. */
-function afterSpeakingResumeListening(usedSynth){
   if (!onCall) return;
   if (usedSynth){
+    // speechSynthesis and the mic fight over Android's audio session. Fully
+    // release the TTS engine ONCE and let the audio drain before we start
+    // recognition — otherwise the mic stays "listening" but never returns a
+    // result. (The realistic/audio voice doesn't touch speechSynthesis, so it
+    // starts listening immediately, just like online Mia's ElevenLabs audio.)
     try { speechSynthesis.cancel(); } catch(e){}
     setTimeout(() => { if (onCall) startListening(); }, 400);
   } else {
     startListening();
   }
-}
-async function speak(text){
-  setState(S.SPEAKING, T().speaking);
-  const usedSynth = await speakChunk(text);
-  if (!onCall) return;
-  afterSpeakingResumeListening(usedSynth);
 }
 
 function playBlob(blob, expr){
@@ -2019,29 +1983,28 @@ async function sendChat(){
   }
   addBubble('user', text);
   logMsg('user', text);
-  const bubble = addBubble('mia typing', '…');   // fills in live as tokens stream
+  const typing = addBubble('mia typing', '…');
   try {
-    let shown = false;
-    const reply = await askMiaStream(text, null, (d, full) => {
-      // stream text into the bubble live (hide any markers/think from view)
-      if (/\[\[|<think/i.test(full)) return;
-      if (!shown){ shown = true; bubble.className = 'bub mia'; }
-      bubble.textContent = full;
-      scrollChat();
-    });
+    const reply = await askMia(text, null);
+    typing.remove();
     const holder = chatCardHolder();
     const spoken = processReply(reply, holder);
     if (!holder.children.length) holder.remove();
     if (history.length && history[history.length-1].role === 'assistant')
       history[history.length-1] = { role:'assistant', content: spoken };
     saveHistory();
-    bubble.className = 'bub mia';
-    bubble.textContent = spoken;     // final cleaned text (markers removed)
-    scrollChat();
+    addBubble('mia', spoken);
+    if (lastGrounded){
+      const badge = document.createElement('div');
+      badge.className = 'bub mia typing';
+      badge.textContent = '🔎 web';
+      chatMsgs.appendChild(badge);
+      scrollChat();
+    }
     logMsg('model', spoken, lastGrounded);
     attachment = null; clearAttachmentCard();
   } catch(e){
-    bubble.remove();
+    typing.remove();
     if (e.noModel){ chatBusy = false; showSetup(); return; }
     if (history.length && history[history.length-1].role === 'user') history.pop();
     saveHistory();
@@ -2052,71 +2015,22 @@ async function sendChat(){
 document.getElementById('chatSend').addEventListener('click', sendChat);
 chatInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') sendChat(); });
 
-/* ---------------- conversation flow (streaming voice) ----------------
-   Stream the reply and speak each sentence as soon as it's complete, so Mia
-   starts talking within a couple of seconds instead of after the whole reply.
-   If a [[…]] file/image marker or <think> block appears, fall back to speaking
-   the whole cleaned reply at the end. */
+/* ---------------- conversation flow ---------------- */
 async function handleUserSpeech(text){
   stopListening();
   setState(S.THINKING, T().thinking);
   const frame = camStream ? captureFrame() : null;
   logMsg('user', text);
-
-  const queue = [];
-  let streamDone = false, spokenIdx = 0, sawMarker = false, usedSynth = false;
-
-  // consumer: speaks queued sentences in order until streaming is finished
-  const consumer = (async () => {
-    while (onCall){
-      if (queue.length){
-        setState(S.SPEAKING, T().speaking);
-        usedSynth = (await speakChunk(queue.shift())) || usedSynth;
-      } else if (streamDone){ break; }
-      else { await new Promise(r => setTimeout(r, 40)); }
-    }
-  })();
-
-  function feed(full){
-    if (!onCall || sawMarker) return;
-    if (/\[\[|<think/i.test(full)){ sawMarker = true; return; }   // markers → handle at end
-    const rest = full.slice(spokenIdx);
-    const re = /[.!?…]+["')\]]?\s/g;   // sentence end confirmed by trailing space; last one is the tail
-    let m, lastEnd = 0;
-    while ((m = re.exec(rest))){
-      const end = m.index + m[0].length;
-      const s = rest.slice(lastEnd, end).trim();
-      if (s.length >= 2) queue.push(s);
-      lastEnd = end;
-    }
-    if (lastEnd) spokenIdx += lastEnd;
-  }
-
   try {
-    const reply = await askMiaStream(text, frame, (d, full) => feed(full));
-    if (!onCall){ streamDone = true; try { await consumer; } catch(_){} return; }
+    const reply = await askMia(text, frame);
+    if (!onCall) return;
     const spoken = processReply(reply);
     if (history.length && history[history.length-1].role === 'assistant')
       history[history.length-1] = { role:'assistant', content: spoken };
     saveHistory();
     logMsg('model', spoken, lastGrounded);
-
-    if (sawMarker){
-      queue.length = 0;
-      // If nothing was streamed yet, speak the cleaned reply. If sentences were
-      // already streamed, the marker (file/image) is handled by processReply —
-      // don't re-speak what was already said.
-      if (spokenIdx === 0 && spoken) queue.push(spoken);
-    } else {
-      const tail = reply.slice(spokenIdx).trim();   // last sentence with no ending punctuation
-      if (tail) queue.push(tail);
-      if (!spokenIdx && !queue.length && spoken) queue.push(spoken);   // nothing had punctuation
-    }
-    streamDone = true;
-    await consumer;                     // wait until everything is spoken
-    afterSpeakingResumeListening(usedSynth);
+    await speak(spoken);
   } catch(e){
-    streamDone = true; try { await consumer; } catch(_){}
     if (!onCall) return;
     if (e.noModel){ endCall(); showSetup(); return; }
     if (history.length && history[history.length-1].role === 'user') history.pop();
