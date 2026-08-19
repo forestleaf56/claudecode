@@ -321,13 +321,13 @@
     <label id="suLog">Conversation log</label>
     <div id="logBox"></div>
     <button id="clearLog">Clear log &amp; memory</button>
-    <div class="meta" style="text-align:center;opacity:.55;margin-top:14px">build 2026-08-19 · r2</div>
+    <div class="meta" style="text-align:center;opacity:.55;margin-top:14px">build 2026-08-19 · r3</div>
   </div>
 </div>
 
 <script type="module">
 'use strict';
-console.log('Mia build 2026-08-19 r2');
+console.log('Mia build 2026-08-19 r3');
 /* Show any uncaught script error on screen (Android has no easy console), so a
    failure that only happens when hosted is visible instead of a silent dead UI. */
 window.addEventListener('error', (e) => {
@@ -364,23 +364,13 @@ if (navigator.storage && navigator.storage.persist) {
    No API keys. No Gemini. No ElevenLabs.
    ============================================================ */
 
-/* Self-heal: earlier versions registered a service worker on http/localhost,
-   which stays installed and can serve a stale, broken page (clearing the
-   browser cache does NOT remove it). We use no service worker anymore, so
-   unregister any leftover one and drop its caches. If one was actually
-   controlling this page, reload once (guarded) so the fresh, SW-free page
-   loads. Harmless on file:// (no service workers there). */
-if ('serviceWorker' in navigator) {
-  const hadController = !!navigator.serviceWorker.controller;
-  navigator.serviceWorker.getRegistrations().then((regs) => {
-    let removed = false;
-    regs.forEach((r) => { removed = true; r.unregister(); });
-    try { if (window.caches && caches.keys) caches.keys().then((ks) => ks.forEach((k) => caches.delete(k))); } catch (e) {}
-    if (removed && hadController && !sessionStorage.getItem('mia_sw_cleaned')) {
-      sessionStorage.setItem('mia_sw_cleaned', '1');
-      location.reload();
-    }
-  }).catch(() => {});
+/* Register the offline cache (sw.js). It caches the CDN library code + WASM +
+   model weights in the persistent Cache API so everything loads offline — the
+   HTTP cache alone evicts them under storage pressure once several models are
+   downloaded. No page reload, no UI interference (that was an old bug); it just
+   caches in the background. Needs http/localhost, not file://. */
+if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
+  navigator.serviceWorker.register('sw.js').catch(() => {});
 }
 
 /* System prompt — identical to the online (Gemini) version. Both languages
