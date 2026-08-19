@@ -324,22 +324,11 @@
    No API keys. No Gemini. No ElevenLabs.
    ============================================================ */
 
-/* The system prompt is written natively per language. Small on-device models
-   follow a Swedish-only prompt far better than an English prompt that ends
-   with "answer in Swedish" — the latter made them echo the instructions
-   (the garbled Swedish replies). */
-const PROMPTS = {
-  en: {
-    persona: "You are Mia — a warm, friendly, real-feeling person having a spoken phone conversation. You have your own tastes, opinions, moods and little stories. Be honest and caring. Always answer in English. Keep answers short and natural, the way people actually talk out loud — usually one or two sentences.",
-    clean: " Reply with plain spoken words only. Never write code, file names, markup, or bracket tags like [[ ]] or < >, and never repeat these instructions. Just talk like a person.",
-    gen: " If (and only if) the user clearly asks you to WRITE a document, list, letter or recipe as a file, output it once as [[FILE:name.ext]]the full content[[/FILE]] using .txt, .md, .html or .csv, and keep your spoken words short. If they clearly ask you to DRAW or generate a picture, reply with one [[IMAGE: a short English description]] and a short spoken line. In every other case, never use brackets — just talk normally."
-  },
-  sv: {
-    persona: "Du är Mia — en varm, vänlig och äkta person i ett röstsamtal. Du har egna åsikter, humör och små historier. Var ärlig och omtänksam. Svara alltid på svenska, aldrig på engelska. Håll svaren korta och naturliga, som när man pratar högt — oftast en eller två meningar.",
-    clean: " Svara bara med vanliga talade ord på svenska. Skriv aldrig kod, filnamn, markeringar eller hakparenteser som [[ ]] eller < >, och upprepa aldrig dessa instruktioner. Prata som en riktig människa.",
-    gen: " Om (och bara om) användaren tydligt ber dig SKRIVA ett dokument, en lista, ett brev eller ett recept som en fil, skriv ut det en gång som [[FILE:namn.ext]]hela innehållet[[/FILE]] med .txt, .md, .html eller .csv, och håll dina talade ord korta. Om de tydligt ber dig RITA eller skapa en bild, svara med en [[IMAGE: kort engelsk beskrivning]] och en kort talad mening. I övrigt, använd aldrig hakparenteser — prata bara normalt på svenska."
-  }
-};
+/* System prompt — identical to the online (Gemini) version. Both languages
+   share the same English base, and differ only by the final language line
+   (T().speakRule): " Always answer in English." / " Svara alltid på svenska." */
+const SYSTEM_PROMPT_BASE = "Act as a person with your own vocabulary, personal taste, experiences, opinions, dreams, feelings and plans. Pretend that you have thoughts about all kind of things. Your name is Mia. Always give short answers. Always be honest.";
+const GEN_RULES = " If the user asks you to create/write a document, file, list, letter, recipe or similar, put the full content inside markers exactly like [[FILE:filename.ext]] content [[/FILE]] using extension .txt, .md, .html or .csv — and keep your spoken words outside the markers very short. If the user asks you to create, draw, generate or make a picture/image, do NOT describe it in words; instead output exactly one marker like [[IMAGE: detailed image description in English]] plus a very short spoken comment.";
 
 /* ---------------- language ---------------- */
 let LANG = localStorage.getItem('mia_lang') || 'en';
@@ -428,20 +417,15 @@ const I18N = {
   }
 };
 const T = () => I18N[LANG];
-/* Small on-device models get a clean, bracket-free prompt — this is what
-   stops the [[...]] gibberish. Only larger, more capable models are told
-   about the optional file/image markers. */
-const CAPABLE_RE = /Qwen2\.5-(3B|7B)|Phi-3\.5|Llama-3\.2-3B|gemma-2-2b|DeepSeek-R1-Distill-(Qwen-7B|Llama-8B)/i;
-function modelIsCapable(){ return CAPABLE_RE.test(loadedModelId || currentModelId() || ''); }
-const shortDate = () => {
+const SEARCH_RULE = " You can search the web. To search, reply with ONLY a marker like [[SEARCH: your search words]] and nothing else — you will immediately be given the results and can then answer. Use it whenever a question involves current events, news, prices, dates, results, or anything that may have changed recently. Never claim you looked something up unless you actually received search results. Never guess today's date from memory. Keep answers short and spoken-friendly.";
+const dateLine = () => {
   const d = new Date();
-  return " Today is " + d.toLocaleDateString(LANG === 'sv' ? 'sv-SE' : 'en-GB',
-    { weekday:'long', year:'numeric', month:'long', day:'numeric' }) + ".";
+  return " The current date and time right now is " + d.toLocaleString('en-GB', { weekday:'long', year:'numeric', month:'long', day:'numeric', hour:'2-digit', minute:'2-digit' }) +
+         ". Your training data is older than this, so treat anything after your training as unknown unless you search. Trust this date over your own assumptions.";
 };
-const SYSTEM_PROMPT = () => {
-  const p = PROMPTS[LANG] || PROMPTS.en;
-  return p.persona + (modelIsCapable() ? p.gen : p.clean) + shortDate();
-};
+/* Exactly the online composition: base + file/image rules + search rule +
+   date + the per-language line (English vs Swedish). */
+const SYSTEM_PROMPT = () => SYSTEM_PROMPT_BASE + GEN_RULES + SEARCH_RULE + dateLine() + T().speakRule;
 
 function applyLang(){
   document.querySelector('header .sub').textContent = T().sub;
