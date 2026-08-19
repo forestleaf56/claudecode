@@ -212,10 +212,10 @@
     display:flex;align-items:center;justify-content:center;gap:8px;
   }
   .btn2:disabled{opacity:.5;cursor:default}
-  #progWrap, #voiceProgWrap{height:8px;border-radius:6px;background:#120f26;border:1px solid var(--plate-edge);
+  #progWrap, #voiceProgWrap, #sttProgWrap{height:8px;border-radius:6px;background:#120f26;border:1px solid var(--plate-edge);
     margin-top:10px;overflow:hidden;display:none}
-  #progWrap.show, #voiceProgWrap.show{display:block}
-  #progBar, #voiceProg{height:100%;width:0;background:linear-gradient(90deg,var(--glow),var(--mint));transition:width .2s}
+  #progWrap.show, #voiceProgWrap.show, #sttProgWrap.show{display:block}
+  #progBar, #voiceProg, #sttProg{height:100%;width:0;background:linear-gradient(90deg,var(--glow),var(--mint));transition:width .2s}
   #saveKeys{
     margin-top:20px;width:100%;padding:14px;border:none;border-radius:14px;cursor:pointer;
     background:var(--call);color:#06281a;font-size:15px;font-weight:700;
@@ -305,6 +305,16 @@
       <div id="voiceStatus" class="meta"></div>
     </div>
 
+    <label id="suStt">Voice recognition (microphone)</label>
+    <select id="sttMode">
+      <option value="auto">Auto — online when connected, on-device when offline</option>
+      <option value="online">Online only (browser, needs internet)</option>
+      <option value="offline">On-device only (works offline)</option>
+    </select>
+    <button id="dlStt" class="btn2">⬇ <span id="dlSttTxt">Download offline speech recognition</span></button>
+    <div id="sttProgWrap"><div id="sttProg"></div></div>
+    <div id="sttStatus" class="meta"></div>
+
     <button id="saveKeys">Done</button>
     <div id="setupErr"></div>
 
@@ -386,6 +396,12 @@ const I18N = {
     voicePiperNote:'Tap download to fetch this neural voice (~20–60 MB). Then it speaks offline.',
     dlVoiceBtn:'Download & use voice', dlVoiceLoaded:'Downloaded — re-download',
     voiceDlErr:'Voice download failed — will use browser voice. ',
+    suStt:'Voice recognition (microphone)',
+    sttNote:'Online recognition needs internet. Download the on-device recognizer (~40 MB) to talk to Mia offline too.',
+    sttReady:'✓ On-device recognition ready — works offline.',
+    sttDl:'Downloading speech recognition…', sttErr:'Speech-recognition download failed: ',
+    dlSttBtn:'Download offline speech recognition', dlSttLoaded:'Downloaded — re-download',
+    sttNeedDl:'Offline — download on-device speech recognition in settings (⚙) to talk hands-free.',
     lYou:'You', lMia:'Mia', lMade:'Mia made: ', lAtt:'You attached: ',
     speakRule:' Always answer in English.'
   },
@@ -427,6 +443,12 @@ const I18N = {
     voicePiperNote:'Tryck på ladda ner för denna neurala röst (~20–60 MB). Sedan talar den offline.',
     dlVoiceBtn:'Ladda ner & använd röst', dlVoiceLoaded:'Nedladdad — ladda ner igen',
     voiceDlErr:'Nedladdning av röst misslyckades — använder webbläsarröst. ',
+    suStt:'Taligenkänning (mikrofon)',
+    sttNote:'Online-igenkänning kräver internet. Ladda ner igenkänning på enheten (~40 MB) för att prata med Mia offline också.',
+    sttReady:'✓ Igenkänning på enheten klar — fungerar offline.',
+    sttDl:'Laddar ner taligenkänning…', sttErr:'Nedladdning av taligenkänning misslyckades: ',
+    dlSttBtn:'Ladda ner offline-taligenkänning', dlSttLoaded:'Nedladdad — ladda ner igen',
+    sttNeedDl:'Offline — ladda ner taligenkänning på enheten i inställningar (⚙) för att prata handsfree.',
     lYou:'Du', lMia:'Mia', lMade:'Mia skapade: ', lAtt:'Du bifogade: ',
     speakRule:' Svara alltid på svenska.'
   }
@@ -450,6 +472,7 @@ function applyLang(){
   document.getElementById('suLang').textContent = T().suLang;
   document.getElementById('suModel').textContent = T().suModel;
   document.getElementById('suVoice').textContent = T().suVoice;
+  document.getElementById('suStt').textContent = T().suStt;
   document.getElementById('saveKeys').textContent = T().suSave;
   document.getElementById('suLog').textContent = T().suLog;
   document.getElementById('clearLog').textContent = T().suClear;
@@ -789,6 +812,46 @@ dlVoiceBtn.addEventListener('click', async () => {
   }
 });
 
+/* ---------------- speech-recognition (mic) settings ---------------- */
+const sttModeSel = document.getElementById('sttMode');
+const dlSttBtn = document.getElementById('dlStt');
+const sttProgWrap = document.getElementById('sttProgWrap');
+const sttProg = document.getElementById('sttProg');
+const sttStatus = document.getElementById('sttStatus');
+function refreshSttStatus(){
+  sttModeSel.value = sttMode();
+  if (whisperReady()){
+    sttStatus.textContent = T().sttReady; sttStatus.className = 'meta ok';
+    document.getElementById('dlSttTxt').textContent = T().dlSttLoaded;
+  } else {
+    sttStatus.textContent = T().sttNote; sttStatus.className = 'meta';
+    document.getElementById('dlSttTxt').textContent = T().dlSttBtn;
+  }
+}
+sttModeSel.addEventListener('change', () => { localStorage.setItem('mia_stt_mode', sttModeSel.value); refreshSttStatus(); });
+dlSttBtn.addEventListener('click', async () => {
+  dlSttBtn.disabled = true;
+  sttProgWrap.classList.add('show'); sttProg.style.width = '0%';
+  sttStatus.className = 'meta'; sttStatus.textContent = T().sttDl;
+  try {
+    await loadWhisper((p) => {
+      let frac = 0;
+      if (p && typeof p.progress === 'number') frac = p.progress / 100;
+      else if (p && typeof p.loaded === 'number' && p.total) frac = p.loaded / p.total;
+      if (frac) sttProg.style.width = Math.round(Math.min(1, frac) * 100) + '%';
+      if (p && p.status) sttStatus.textContent = T().sttDl + ' ' + (p.file || '');
+    });
+    sttProg.style.width = '100%';
+    sttStatus.textContent = T().sttReady; sttStatus.className = 'meta ok';
+    document.getElementById('dlSttTxt').textContent = T().dlSttLoaded;
+  } catch(e){
+    sttStatus.textContent = T().sttErr + (e && e.message ? e.message : ''); sttStatus.className = 'meta err';
+  } finally {
+    dlSttBtn.disabled = false;
+    setTimeout(() => sttProgWrap.classList.remove('show'), 1200);
+  }
+});
+
 /* ---------------- realistic TTS via vits-web (Piper voices, offline once
    downloaded). Downloads the ONNX voice from HuggingFace and caches it in the
    browser (OPFS), then runs fully offline. ---------------------------------- */
@@ -812,6 +875,7 @@ function showSetup(){
   reflectVoiceMode();
   populateBrowserVoices();
   populatePiperVoices();
+  refreshSttStatus();
   fillModelSelect();          // static list — show it instantly, no waiting
   setupEl.classList.remove('hidden');
   renderLog();
@@ -1364,20 +1428,45 @@ document.getElementById('camFlip').addEventListener('click', (e) => {
   if (camStream) startCamera();
 });
 
-/* ---------------- speech recognition (browser) ---------------- */
+/* ================= speech recognition =================
+   ONLINE  : browser Web Speech API — fast, but Android streams the audio to
+             Google's servers, so it does NOT work offline.
+   OFFLINE : on-device Whisper (transformers.js) with a simple voice-activity
+             detector. Fully local once the recognizer is downloaded.
+   The router picks based on the mic setting / connectivity. */
 const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
 
-/* Exact same speech-recognition setup as the working online version:
-   continuous session, restart on silence/error while we should be listening. */
+function sttMode(){ return localStorage.getItem('mia_stt_mode') || 'auto'; }   // auto | online | offline
+function whisperReady(){ return !!transcriber || localStorage.getItem('mia_whisper_ready') === '1'; }
+function useOfflineSTT(){
+  const m = sttMode();
+  if (m === 'offline') return true;
+  if (m === 'online') return false;
+  return !navigator.onLine;        // auto: use on-device recognition when offline
+}
+
 function startListening(){
   if (!onCall) return;
+  if (useOfflineSTT()){
+    if (whisperReady() || !SR) { startWhisperListening(); return; }
+    // offline recognizer not downloaded and Web Speech won't work offline
+    if (!navigator.onLine){ setState(S.LISTENING, T().listening); hintEl.textContent = T().sttNeedDl; return; }
+  }
+  startWebSpeechListening();
+}
+function stopListening(){
+  stopWebSpeech();
+  stopWhisperCapture();
+}
+
+/* ---- online: Web Speech API (same as the working online version) ---- */
+function startWebSpeechListening(){
+  if (!onCall) return;
+  if (!SR){ startWhisperListening(); return; }
   setState(S.LISTENING, T().listening);
   try { recog && recog.abort(); } catch(e){}
   recog = new SR();
   recog.lang = LANG === 'sv' ? 'sv-SE' : 'en-US';
-  // continuous = true keeps the mic session open for your whole turn,
-  // so Android's recognition chime plays once per turn instead of on
-  // every silence-restart.
   recog.continuous = true;
   recog.interimResults = false;
   recog.maxAlternatives = 1;
@@ -1394,21 +1483,118 @@ function startListening(){
   };
   recog.onerror = (ev) => {
     if (!onCall) return;
-    if (ev.error === 'not-allowed' || ev.error === 'service-not-allowed'){
-      endCall(T().micBlocked);
-      return;
-    }
-    if (state === S.LISTENING) setTimeout(() => { if (onCall && state === S.LISTENING) startListening(); }, 400);
+    if (ev.error === 'not-allowed' || ev.error === 'service-not-allowed'){ endCall(T().micBlocked); return; }
+    // network error while "auto" → fall back to on-device recognition if we can
+    if (ev.error === 'network' && sttMode() === 'auto' && whisperReady()){ startWhisperListening(); return; }
+    if (state === S.LISTENING) setTimeout(() => { if (onCall && state === S.LISTENING) startWebSpeechListening(); }, 400);
   };
   recog.onend = () => {
     if (onCall && !got && state === S.LISTENING){
-      setTimeout(() => { if (onCall && state === S.LISTENING) startListening(); }, 300);
+      setTimeout(() => { if (onCall && state === S.LISTENING) startWebSpeechListening(); }, 300);
     }
   };
   try { recog.start(); } catch(e){ /* already started */ }
 }
-function stopListening(){
+function stopWebSpeech(){
   if (recog){ try{ recog.onend = null; recog.abort(); }catch(e){} recog = null; }
+}
+
+/* ---- offline: on-device Whisper via transformers.js ---- */
+const WHISPER_MODEL = 'Xenova/whisper-tiny';   // multilingual, ~40 MB, cached for offline
+let whisperMod = null, transcriber = null, whisperLoadPromise = null;
+async function loadWhisper(onProgress){
+  if (transcriber) return transcriber;
+  if (whisperLoadPromise) return whisperLoadPromise;
+  whisperLoadPromise = (async () => {
+    if (!whisperMod) whisperMod = await import('https://esm.run/@huggingface/transformers');
+    const pipe = await whisperMod.pipeline('automatic-speech-recognition', WHISPER_MODEL, {
+      dtype: 'q8', progress_callback: onProgress
+    });
+    transcriber = pipe;
+    localStorage.setItem('mia_whisper_ready', '1');
+    return transcriber;
+  })();
+  try { return await whisperLoadPromise; }
+  catch(e){ whisperLoadPromise = null; throw e; }
+}
+async function whisperTranscribe(float32_16k){
+  const t = await loadWhisper();
+  const out = await t(float32_16k, { language: LANG === 'sv' ? 'sv' : 'en', task: 'transcribe' });
+  return ((out && out.text) || '').replace(/\s+/g, ' ').trim();
+}
+
+/* mic voice-activity capture: collect samples while the user talks, and when
+   they go quiet, transcribe the utterance with Whisper. */
+let vadStream = null, vadCtx = null, vadSrc = null, vadProc = null;
+let vadSamples = [], vadHadSpeech = false, vadSilence = 0, vadRunning = false;
+async function startWhisperListening(){
+  if (!onCall) return;
+  setState(S.LISTENING, T().listening);
+  if (vadRunning) return;
+  vadRunning = true;
+  try {
+    if (!vadStream) vadStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    if (!vadCtx) vadCtx = new (window.AudioContext || window.webkitAudioContext)();
+    await vadCtx.resume();
+    vadSrc = vadCtx.createMediaStreamSource(vadStream);
+    vadProc = vadCtx.createScriptProcessor(4096, 1, 1);
+    vadSamples = []; vadHadSpeech = false; vadSilence = 0;
+    vadProc.onaudioprocess = (e) => {
+      if (!onCall || state !== S.LISTENING || !vadRunning) return;
+      const input = e.inputBuffer.getChannelData(0);
+      let sum = 0; for (let i = 0; i < input.length; i++) sum += input[i] * input[i];
+      const rms = Math.sqrt(sum / input.length);
+      const dt = input.length / vadCtx.sampleRate;
+      if (rms > 0.014){                     // speaking
+        vadHadSpeech = true; vadSilence = 0;
+        for (let i = 0; i < input.length; i++) vadSamples.push(input[i]);
+      } else if (vadHadSpeech){              // trailing silence
+        vadSilence += dt;
+        for (let i = 0; i < input.length; i++) vadSamples.push(input[i]);
+        if (vadSilence > 0.9 && vadSamples.length > vadCtx.sampleRate * 0.35){
+          const captured = vadSamples; const rate = vadCtx.sampleRate;
+          vadSamples = []; vadHadSpeech = false; vadSilence = 0;
+          finalizeWhisper(captured, rate);
+        }
+      } else {
+        // cap idle buffer so it doesn't grow forever
+        if (vadSamples.length > vadCtx.sampleRate * 2) vadSamples = [];
+      }
+    };
+    vadSrc.connect(vadProc);
+    vadProc.connect(vadCtx.destination);   // needed for onaudioprocess to fire
+  } catch(e){
+    vadRunning = false;
+    if (e && (e.name === 'NotAllowedError')) { endCall(T().micBlocked); return; }
+    hintEl.textContent = '⚠ ' + (e && e.message ? e.message : 'mic error');
+  }
+}
+function stopWhisperCapture(){
+  vadRunning = false;
+  try { if (vadProc){ vadProc.onaudioprocess = null; vadProc.disconnect(); vadProc = null; } } catch(e){}
+  try { if (vadSrc){ vadSrc.disconnect(); vadSrc = null; } } catch(e){}
+}
+async function finalizeWhisper(samples, rate){
+  stopWhisperCapture();
+  setState(S.THINKING, T().thinking);
+  try {
+    const audio = resampleTo16k(samples, rate);
+    const text = await whisperTranscribe(audio);
+    if (!onCall) return;
+    if (!text){ startWhisperListening(); return; }   // heard nothing usable → keep listening
+    handleUserSpeech(text);
+  } catch(e){
+    if (onCall) startWhisperListening();
+  }
+}
+function resampleTo16k(samples, rate){
+  const src = samples instanceof Float32Array ? samples : Float32Array.from(samples);
+  if (rate === 16000) return src;
+  const ratio = rate / 16000;
+  const outLen = Math.floor(src.length / ratio);
+  const out = new Float32Array(outLen);
+  for (let i = 0; i < outLen; i++) out[i] = src[Math.floor(i * ratio)] || 0;
+  return out;
 }
 
 /* ---------------- keyless web search (online only) ---------------- */
@@ -1831,6 +2017,8 @@ async function startCall(){
 function endCall(msg){
   onCall = false;
   stopListening();
+  // release the on-device recognizer's microphone
+  try { if (vadStream){ vadStream.getTracks().forEach(t => t.stop()); vadStream = null; } } catch(e){}
   stopCamera();
   attachment = null;
   attachArea.innerHTML = '';
