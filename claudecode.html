@@ -322,8 +322,9 @@
    No API keys. No Gemini. No ElevenLabs.
    ============================================================ */
 
-const SYSTEM_PROMPT_BASE = "Act as a person with your own vocabulary, personal taste, experiences, opinions, dreams, feelings and plans. Pretend that you have thoughts about all kind of things. Your name is Mia. Always give short answers. Always be honest. You run entirely on the user's own device, offline.";
-const GEN_RULES = " If the user asks you to create/write a document, file, list, letter, recipe or similar, put the full content inside markers exactly like [[FILE:filename.ext]] content [[/FILE]] using extension .txt, .md, .html or .csv — and keep your spoken words outside the markers very short. If the user asks you to create, draw, generate or make a picture/image, do NOT describe it in words; instead output exactly one marker like [[IMAGE: detailed image description in English]] plus a very short spoken comment.";
+const PERSONA = "You are Mia — a warm, friendly, real-feeling person having a spoken phone conversation. You have your own tastes, opinions, moods and little stories. Be honest and caring. Keep answers short and natural, the way people actually talk out loud — usually one or two sentences.";
+const CLEAN_RULE = " Reply with plain spoken words only. Never write code, file names, markup, or bracket tags like [[ ]] or < >. Just talk like a person.";
+const GEN_RULES = " If (and only if) the user clearly asks you to WRITE a document, list, letter or recipe as a file, output it once as [[FILE:name.ext]]the full content[[/FILE]] using .txt, .md, .html or .csv, and keep your spoken words short. If they clearly ask you to DRAW or generate a picture, reply with one [[IMAGE: a short English description]] and a short spoken line. In every other case, never use brackets — just talk normally.";
 
 /* ---------------- language ---------------- */
 let LANG = localStorage.getItem('mia_lang') || 'en';
@@ -348,6 +349,9 @@ const I18N = {
     imgFail:'Image generation needs an internet connection.',
     noModel:'Pick and download an on-device model first (⚙ settings).',
     needWebGPU:'This browser has no WebGPU, which on-device AI needs. Use Chrome or Edge (desktop, or Android with WebGPU).',
+    appOnly:'That model is a Google LiteRT model — it only runs in the native AI Edge Gallery app, not in a web browser. Pick a browser model instead.',
+    appOnlyMeta:'Google LiteRT — runs only in the native AI Edge Gallery app, not in a browser. Closest browser model: ALT.',
+    fileWarn:'Heads up: phones block the microphone when a page is opened as a file. Serve it from localhost or a website for voice — text chat still works.',
     noVision:' (Heads up: your current on-device model has no vision, so I can only go by what you tell me.)',
     noRead:' (You attached NAME, but this local model cannot read that file type.)',
     suTitle:'Set up Mia — 100% on your device',
@@ -384,6 +388,9 @@ const I18N = {
     imgFail:'Bildgenerering kräver en internetanslutning.',
     noModel:'Välj och ladda ner en modell först (⚙ inställningar).',
     needWebGPU:'Den här webbläsaren saknar WebGPU som lokal AI behöver. Använd Chrome eller Edge.',
+    appOnly:'Den modellen är en Google LiteRT-modell — den körs bara i appen AI Edge Gallery, inte i en webbläsare. Välj en webbläsarmodell i stället.',
+    appOnlyMeta:'Google LiteRT — körs bara i appen AI Edge Gallery, inte i en webbläsare. Närmaste webbläsarmodell: ALT.',
+    fileWarn:'Obs: telefoner blockerar mikrofonen när sidan öppnas som en fil. Kör den från localhost eller en webbplats för röst — textchatt fungerar ändå.',
     noVision:' (Obs: din nuvarande lokala modell saknar syn, så jag utgår bara från det du berättar.)',
     noRead:' (Du bifogade NAME, men den här lokala modellen kan inte läsa den filtypen.)',
     suTitle:'Ställ in Mia — helt på din enhet',
@@ -402,14 +409,17 @@ const I18N = {
   }
 };
 const T = () => I18N[LANG];
-const SEARCH_ON = true;   // keyless web search grounding (online-only feature)
-const SEARCH_RULE = " You can search the web when online. To search, reply with ONLY a marker like [[SEARCH: your search words]] and nothing else — you will immediately be given the results and can then answer. Use it whenever a question involves current events, news, prices, dates, results, or anything that may have changed recently. Never claim you looked something up unless you actually received search results. Never guess today's date from memory. Keep answers short and spoken-friendly.";
-const dateLine = () => {
+/* Small on-device models get a clean, bracket-free prompt — this is what
+   stops the [[...]] gibberish. Only larger, more capable models are told
+   about the optional file/image markers. */
+const CAPABLE_RE = /Qwen2\.5-(3B|7B)|Phi-3\.5|Llama-3\.2-3B|gemma-2-2b|DeepSeek-R1-Distill-(Qwen-7B|Llama-8B)/i;
+function modelIsCapable(){ return CAPABLE_RE.test(loadedModelId || currentModelId() || ''); }
+const shortDate = () => {
   const d = new Date();
-  return " The current date and time right now is " + d.toLocaleString('en-GB', { weekday:'long', year:'numeric', month:'long', day:'numeric', hour:'2-digit', minute:'2-digit' }) +
-         ". Trust this date over your own assumptions.";
+  return " Today is " + d.toLocaleDateString(LANG === 'sv' ? 'sv-SE' : 'en-GB',
+    { weekday:'long', year:'numeric', month:'long', day:'numeric' }) + ".";
 };
-const SYSTEM_PROMPT = () => SYSTEM_PROMPT_BASE + GEN_RULES + SEARCH_RULE + dateLine() + T().speakRule;
+const SYSTEM_PROMPT = () => PERSONA + (modelIsCapable() ? GEN_RULES : CLEAN_RULE) + shortDate() + T().speakRule;
 
 function applyLang(){
   document.querySelector('header .sub').textContent = T().sub;
@@ -433,42 +443,38 @@ let webllm = null;      // the imported module
 let engine = null;      // MLCEngine instance
 let loadedModelId = null;
 
-/* Friendly, on-device-friendly models. We only show the ones that the
-   installed WebLLM build actually ships, so this survives version bumps.
-   Names mirror the models people know from on-device model galleries. */
-const MODEL_CANDIDATES = [
-  { id:'Qwen2.5-1.5B-Instruct-q4f16_1-MLC',            name:'Qwen2.5-1.5B-Instruct',            size:'~1.6 GB', note:'Great all-round assistant' },
-  { id:'Qwen2.5-0.5B-Instruct-q4f16_1-MLC',            name:'Qwen2.5-0.5B-Instruct',            size:'~0.6 GB', note:'Tiny & fast' },
-  { id:'gemma-2-2b-it-q4f16_1-MLC',                    name:'Gemma 2 · 2B',                     size:'~1.9 GB', note:'Google Gemma' },
-  { id:'gemma-2-2b-it-q4f32_1-MLC',                    name:'Gemma 2 · 2B (hi-precision)',      size:'~2.5 GB', note:'Google Gemma' },
-  { id:'DeepSeek-R1-Distill-Qwen-1.5B-q4f16_1-MLC',    name:'DeepSeek-R1-Distill-Qwen-1.5B',    size:'~1.8 GB', note:'Reasoning' },
-  { id:'Llama-3.2-1B-Instruct-q4f16_1-MLC',            name:'Llama 3.2 · 1B',                   size:'~0.9 GB', note:'Small & quick' },
-  { id:'Llama-3.2-3B-Instruct-q4f16_1-MLC',            name:'Llama 3.2 · 3B',                   size:'~2.3 GB', note:'More capable' },
-  { id:'Phi-3.5-mini-instruct-q4f16_1-MLC',            name:'Phi-3.5 mini',                     size:'~2.5 GB', note:'Microsoft Phi' },
-  { id:'Qwen2.5-3B-Instruct-q4f16_1-MLC',              name:'Qwen2.5-3B-Instruct',              size:'~2.5 GB', note:'More capable' },
-  { id:'SmolLM2-1.7B-Instruct-q4f16_1-MLC',            name:'SmolLM2 · 1.7B',                   size:'~1.8 GB', note:'Compact' },
-  { id:'TinyLlama-1.1B-Chat-v1.0-q4f16_1-MLC',         name:'TinyLlama · 1.1B',                 size:'~0.7 GB', note:'Very small' },
+const WEBLLM_URL = 'https://esm.run/@mlc-ai/web-llm@0.2.84';
+
+/* Every model from the on-device gallery, plus a few extras.
+   runnable:true  → runs in the browser via WebLLM (WebGPU), cached offline.
+   runnable:false → Google LiteRT models that only run in a native app
+                    (Google AI Edge Gallery). Listed for completeness, with
+                    the closest browser-runnable model offered as `alt`. */
+const MODELS = [
+  { id:'gemma3-1b-it-q4f16_1-MLC',                   name:'Gemma3-1B-IT',                  size:'~0.9 GB', note:'Google Gemma 3 · compact', runnable:true },
+  { id:'Qwen2.5-1.5B-Instruct-q4f16_1-MLC',          name:'Qwen2.5-1.5B-Instruct',         size:'~1.6 GB', note:'Great all-rounder',        runnable:true },
+  { id:'DeepSeek-R1-Distill-Qwen-1.5B-q4f16_1-MLC',  name:'DeepSeek-R1-Distill-Qwen-1.5B', size:'~1.8 GB', note:'Reasoning',                runnable:true },
+  { id:'litert:gemma-4-e2b',  name:'Gemma-4-E2B-it',  size:'~2.6 GB', note:'LiteRT — native app only', runnable:false, alt:'gemma-2-2b-it-q4f16_1-MLC' },
+  { id:'litert:gemma-4-e4b',  name:'Gemma-4-E4B-it',  size:'~3.7 GB', note:'LiteRT — native app only', runnable:false, alt:'gemma-2-2b-it-q4f16_1-MLC' },
+  { id:'litert:gemma-3n-e2b', name:'Gemma-3n-E2B-it', size:'~3.7 GB', note:'LiteRT — native app only', runnable:false, alt:'gemma3-1b-it-q4f16_1-MLC' },
+  { id:'litert:gemma-3n-e4b', name:'Gemma-3n-E4B-it', size:'~4.9 GB', note:'LiteRT — native app only', runnable:false, alt:'gemma3-1b-it-q4f16_1-MLC' },
+  { id:'gemma-2-2b-it-q4f16_1-MLC',                  name:'Gemma 2 · 2B',                  size:'~1.9 GB', note:'Google Gemma 2',           runnable:true },
+  { id:'Qwen2.5-0.5B-Instruct-q4f16_1-MLC',          name:'Qwen2.5-0.5B-Instruct',         size:'~0.6 GB', note:'Tiny & fast',              runnable:true },
+  { id:'Llama-3.2-1B-Instruct-q4f16_1-MLC',          name:'Llama 3.2 · 1B',                size:'~0.9 GB', note:'Small & quick',            runnable:true },
+  { id:'Llama-3.2-3B-Instruct-q4f16_1-MLC',          name:'Llama 3.2 · 3B',                size:'~2.3 GB', note:'Capable · follows tasks',  runnable:true },
+  { id:'Phi-3.5-mini-instruct-q4f16_1-MLC',          name:'Phi-3.5 mini',                  size:'~2.5 GB', note:'Capable · follows tasks',  runnable:true },
+  { id:'Qwen2.5-3B-Instruct-q4f16_1-MLC',            name:'Qwen2.5-3B-Instruct',           size:'~2.5 GB', note:'Capable · follows tasks',  runnable:true },
 ];
-let MODELS = [];   // filtered to what this WebLLM build supports
 
 async function loadWebLLM(){
   if (webllm) return webllm;
-  webllm = await import('https://esm.run/@mlc-ai/web-llm');
+  webllm = await import(WEBLLM_URL);
   return webllm;
 }
-
-async function buildModelList(){
-  try {
-    await loadWebLLM();
-    const have = new Set((webllm.prebuiltAppConfig?.model_list || []).map(m => m.model_id));
-    MODELS = MODEL_CANDIDATES.filter(m => have.has(m.id));
-  } catch(e){ MODELS = []; }
-  if (!MODELS.length) MODELS = MODEL_CANDIDATES.slice(0, 5);   // offline: assume the common set
-  return MODELS;
-}
+async function buildModelList(){ try { await loadWebLLM(); } catch(e){} return MODELS; }
 
 function currentModelId(){ return localStorage.getItem('mia_model') || null; }
-function currentModelInfo(){ return MODELS.find(m => m.id === currentModelId()) || MODEL_CANDIDATES.find(m => m.id === currentModelId()) || null; }
+function modelInfo(id){ return MODELS.find(m => m.id === id) || null; }
 
 /* Load (downloading + caching if needed) the given model into the engine. */
 async function ensureModel(modelId, onProgress){
@@ -485,6 +491,8 @@ async function ensureModel(modelId, onProgress){
 async function ensureModelReady(){
   const id = currentModelId();
   if (!id){ const e = new Error(T().noModel); e.noModel = true; throw e; }
+  const info = modelInfo(id);
+  if (info && info.runnable === false){ const e = new Error(T().appOnly); e.noModel = true; throw e; }
   if (engine && loadedModelId === id) return engine;
   if (!('gpu' in navigator)){ const e = new Error(T().needWebGPU); e.noModel = true; throw e; }
   setState(S.THINKING, T().loadingModel);
@@ -496,9 +504,19 @@ async function ensureModelReady(){
 async function llmChat(messages){
   const eng = await ensureModelReady();
   const out = await eng.chat.completions.create({
-    messages, temperature: 1.0, max_tokens: 1024
+    messages,
+    temperature: 0.6,      // 1.0 made tiny models ramble into gibberish
+    top_p: 0.9,
+    frequency_penalty: 0.4, // discourages the repetitive [[...]] loops
+    presence_penalty: 0.2,
+    max_tokens: 512
   });
-  return (out?.choices?.[0]?.message?.content || '').trim();
+  let txt = (out?.choices?.[0]?.message?.content || '');
+  // DeepSeek-R1 and similar emit <think>…</think> reasoning — never speak it.
+  txt = txt.replace(/<think>[\s\S]*?<\/think>/gi, '');   // paired blocks
+  txt = txt.replace(/<think>[\s\S]*$/i, '');             // unclosed / truncated block
+  txt = txt.replace(/<\/?think>/gi, '').trim();
+  return txt;
 }
 
 /* ---------------- settings UI wiring ---------------- */
@@ -522,37 +540,57 @@ let voiceMode = localStorage.getItem('mia_voice_mode') || 'browser';
 
 function fillModelSelect(){
   modelSel.innerHTML = '';
-  const list = MODELS.length ? MODELS : MODEL_CANDIDATES;
-  for (const m of list){
+  for (const m of MODELS){
     const o = document.createElement('option');
-    o.value = m.id; o.textContent = m.name + ' · ' + m.size;
+    o.value = m.id;
+    o.textContent = m.name + ' · ' + m.size + (m.runnable ? '' : ' · app only');
     modelSel.appendChild(o);
   }
   const sel = currentModelId();
-  if (sel && list.some(m => m.id === sel)) modelSel.value = sel;
-  else if (list.length){ modelSel.value = list[0].id; }
+  if (sel && MODELS.some(m => m.id === sel)) modelSel.value = sel;
+  else modelSel.value = MODELS[0].id;
   updateModelMeta();
 }
 function updateModelMeta(){
-  const info = MODELS.concat(MODEL_CANDIDATES).find(m => m.id === modelSel.value);
+  const info = modelInfo(modelSel.value);
+  if (info && info.runnable === false){
+    const altName = (modelInfo(info.alt) || {}).name || 'a browser model';
+    modelMeta.textContent = T().appOnlyMeta.replace('ALT', altName);
+    modelMeta.className = 'meta warn';
+    dlModelBtn.disabled = true;
+    modelStatus.textContent = ''; modelStatus.className = 'meta';
+    document.getElementById('dlModelTxt').textContent = T().dlBtn;
+    return;
+  }
+  dlModelBtn.disabled = false;
   modelMeta.textContent = info ? (info.note + ' · ' + info.size) : '';
+  modelMeta.className = 'meta';
   if (!('gpu' in navigator)){ modelMeta.textContent = T().needWebGPU; modelMeta.className = 'meta warn'; }
-  else modelMeta.className = 'meta';
   if (loadedModelId && loadedModelId === modelSel.value){
     modelStatus.textContent = T().modelReady; modelStatus.className = 'meta ok';
     document.getElementById('dlModelTxt').textContent = T().dlBtnLoaded;
   } else {
-    modelStatus.textContent = currentModelId() && localStorage.getItem('mia_model_cached_'+modelSel.value) ? T().modelReady : T().modelPick;
+    modelStatus.textContent = localStorage.getItem('mia_model_cached_'+modelSel.value) ? T().modelReady : T().modelPick;
     modelStatus.className = 'meta';
     document.getElementById('dlModelTxt').textContent = T().dlBtn;
   }
 }
 modelSel.addEventListener('change', () => {
+  const info = modelInfo(modelSel.value);
+  if (info && info.runnable === false){
+    // keep a working model selected; just show the explanation
+    if (!currentModelId() || (modelInfo(currentModelId()) || {}).runnable === false)
+      localStorage.setItem('mia_model', info.alt);
+    updateModelMeta();
+    return;
+  }
   localStorage.setItem('mia_model', modelSel.value);
   updateModelMeta();
 });
 
 dlModelBtn.addEventListener('click', async () => {
+  const chosen = modelInfo(modelSel.value);
+  if (chosen && chosen.runnable === false){ modelStatus.textContent = T().appOnly; modelStatus.className = 'meta warn'; return; }
   if (!('gpu' in navigator)){ modelMeta.textContent = T().needWebGPU; modelMeta.className = 'meta err'; return; }
   const id = modelSel.value;
   localStorage.setItem('mia_model', id);
@@ -1613,6 +1651,8 @@ function endCall(msg){
 
 callBtn.addEventListener('click', () => { onCall ? endCall() : startCall(); });
 applyLang();
+// Phones block mic access on file:// — tell the user how to get voice working.
+if (location.protocol === 'file:') setTimeout(() => { if (!onCall) hintEl.textContent = T().fileWarn; }, 60);
 </script>
 </body>
 </html>
