@@ -40,8 +40,12 @@ weekly-apps/current/
       fills the current row, Enter validates length + against the embedded word list
       (~330 common words) and advances, with a shake + toast on invalid; random answer
       picked and kept for Wed. Physical keyboard also works. Verified, no JS errors.
-- [ ] Wed: guess evaluation — green/amber/slate coloring with correct duplicate-letter
-      handling; keyboard key states; win/lose detection and the answer reveal.
+- [x] Wed: guess evaluation — green/amber/slate coloring with correct two-pass
+      duplicate-letter handling; keyboard key states (green>amber>slate, no downgrade);
+      win detection (all green) + lose/answer reveal at row 6; input locks after.
+      Loosened guess validation to accept any 5 letters (the curated list is small and
+      only supplies answers) so common words like CRANE aren't rejected. Verified vs a
+      reference evaluator, no JS errors.
 - [ ] Thu: **title screen + menu** (PLAY / HOW TO PLAY / STATS) with the FIVES logo,
       stats tracking (games, win %, streak in localStorage), tile flip animation +
       sound/haptics, polish; mobile test.

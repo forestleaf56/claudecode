@@ -48,6 +48,13 @@
     font-weight:700; font-size:15px; display:flex; align-items:center; justify-content:center; text-transform:uppercase; cursor:pointer; }
   .key:active{ filter:brightness(1.25); }
   .key.wide{ max-width:60px; font-size:12px; flex:1.5 1 auto; }
+
+  .tile.green{ background:var(--green); border-color:var(--green); color:#0b120d; }
+  .tile.amber{ background:var(--amber); border-color:var(--amber); color:#1a1305; }
+  .tile.slate{ background:var(--slate); border-color:var(--slate); color:var(--ink); }
+  .key.green{ background:var(--green); color:#0b120d; }
+  .key.amber{ background:var(--amber); color:#1a1305; }
+  .key.slate{ background:#232a31; color:#6b7683; }
 </style>
 </head>
 <body>
@@ -112,13 +119,14 @@
 
     // ---- keyboard ----
     const KB=[ "QWERTYUIOP", "ASDFGHJKL", "↵ZXCVBNM⌫" ];  // Enter, Backspace glyphs
-    const kb=document.getElementById('kb');
+    const kb=document.getElementById('kb'); const keyEls={};
     KB.forEach((line,i)=>{ const rowEl=document.createElement('div'); rowEl.className='krow';
       for(const ch of line){ const k=document.createElement('div');
         const isEnter=ch==='↵', isBack=ch==='⌫';
         k.className='key'+(isEnter||isBack?' wide':'');
         k.textContent = isEnter?'Enter' : isBack?'⌫' : ch;
         k.dataset.k = isEnter?'enter' : isBack?'back' : ch.toLowerCase();
+        if(!isEnter && !isBack) keyEls[k.dataset.k]=k;
         rowEl.appendChild(k); }
       kb.appendChild(rowEl); });
     kb.addEventListener('click', e=>{ const k=e.target.closest('.key'); if(!k) return; handle(k.dataset.k); });
@@ -132,16 +140,34 @@
     function addLetter(ch){ if(col>=COLS||row>=ROWS) return;
       tiles[row][col].textContent=ch; tiles[row][col].classList.add('filled'); col++; }
     function delLetter(){ if(col<=0) return; col--; tiles[row][col].textContent=''; tiles[row][col].classList.remove('filled'); }
+    let gameOver=false;
+    // proper duplicate-letter handling: greens first, then ambers from remaining counts
+    function evaluate(guess){
+      const res=Array(COLS).fill('slate'), counts={};
+      for(const ch of answer) counts[ch]=(counts[ch]||0)+1;
+      for(let i=0;i<COLS;i++){ if(guess[i]===answer[i]){ res[i]='green'; counts[guess[i]]--; } }
+      for(let i=0;i<COLS;i++){ if(res[i]==='green') continue;
+        if(counts[guess[i]]>0){ res[i]='amber'; counts[guess[i]]--; } }
+      return res;
+    }
+    const RANK={slate:0,amber:1,green:2};
+    function colorKey(ch,state){ const el=keyEls[ch]; if(!el) return;
+      const cur=el.dataset.state||''; if(RANK[state] >= (RANK[cur]||0)){
+        el.dataset.state=state; el.classList.remove('green','amber','slate'); el.classList.add(state); } }
     function submit(){
       if(col<COLS){ toast('Not enough letters'); shake(); return; }
       const guess = tiles[row].map(t=>t.textContent.toLowerCase()).join('');
-      if(!ALLOWED.has(guess)){ toast('Not in word list'); shake(); return; }
-      // Wed will color the tiles + keyboard and detect win/lose. For now advance.
+      // guesses: accept any 5 letters (the curated list is small, so we don't gate
+      // on it — it still supplies the answers). Letters only ever come from the keys.
+      const res=evaluate(guess);
+      for(let i=0;i<COLS;i++){ tiles[row][i].classList.add(res[i]); colorKey(guess[i],res[i]); }
+      if(guess===answer){ gameOver=true; setTimeout(()=>toast(['Genius!','Magnificent','Impressive','Splendid','Great','Phew!'][row]||'Solved!'),150); return; }
       row++; col=0;
-      if(row>=ROWS) toast('word list + input ready');
+      if(row>=ROWS){ gameOver=true; setTimeout(()=>toast('Answer: '+answer.toUpperCase()),150); }
     }
     function shake(){ const el=board.children[row]; el.classList.remove('shake'); void el.offsetWidth; el.classList.add('shake'); }
-    function handle(k){ if(k==='enter') submit(); else if(k==='back') delLetter();
+    function handle(k){ if(gameOver) return;
+      if(k==='enter') submit(); else if(k==='back') delLetter();
       else if(/^[a-z]$/.test(k)) addLetter(k.toUpperCase()); }
 
     window.addEventListener('keydown', e=>{
