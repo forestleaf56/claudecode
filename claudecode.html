@@ -1356,10 +1356,6 @@ const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
    continuous session, restart on silence/error while we should be listening. */
 function startListening(){
   if (!onCall) return;
-  // Release the speech-synthesis engine so it stops holding audio focus and
-  // fighting the microphone (online Mia used audio playback, not speechSynthesis,
-  // so it never had this Android conflict).
-  try { if ('speechSynthesis' in window) speechSynthesis.cancel(); } catch(e){}
   setState(S.LISTENING, T().listening);
   try { recog && recog.abort(); } catch(e){}
   recog = new SR();
@@ -1495,19 +1491,33 @@ function inferExpression(text){
 async function speak(text){
   setState(S.SPEAKING, T().speaking);
   const expr = inferExpression(text);
+  let usedSynth = false;
   try {
     if (voiceMode === 'piper'){
       const blob = await piperTTS(text);
       await playBlob(blob, expr);
     } else {
+      usedSynth = true;
       await speakBrowser(text, expr);
     }
   } catch(e){
     // realistic voice failed → fall back to built-in browser voices
     hintEl.textContent = '⚠ ' + T().voiceErr;
+    usedSynth = true;
     await speakBrowser(text, expr);
   }
-  if (onCall) startListening();
+  if (!onCall) return;
+  if (usedSynth){
+    // speechSynthesis and the mic fight over Android's audio session. Fully
+    // release the TTS engine ONCE and let the audio drain before we start
+    // recognition — otherwise the mic stays "listening" but never returns a
+    // result. (The realistic/audio voice doesn't touch speechSynthesis, so it
+    // starts listening immediately, just like online Mia's ElevenLabs audio.)
+    try { speechSynthesis.cancel(); } catch(e){}
+    setTimeout(() => { if (onCall) startListening(); }, 400);
+  } else {
+    startListening();
+  }
 }
 
 function playBlob(blob, expr){
@@ -1770,7 +1780,7 @@ async function handleUserSpeech(text){
     saveHistory();
     hintEl.textContent = '⚠ ' + (e.message || 'Unknown error');
     await speakBrowser(T().glitch, 'speaking');
-    if (onCall) startListening();
+    if (onCall){ try { speechSynthesis.cancel(); } catch(e2){} setTimeout(() => { if (onCall) startListening(); }, 400); }
   }
 }
 
@@ -1800,8 +1810,7 @@ async function startCall(){
   // clean fixed greeting instead: instant and correct in both languages.
   const greeting = T().fallbackGreet;
   logMsg('model', greeting);
-  if (onCall) await speak(greeting);
-  if (onCall && state !== S.LISTENING) startListening();
+  if (onCall) await speak(greeting);   // speak() starts listening with the correct handoff
 }
 
 function endCall(msg){
