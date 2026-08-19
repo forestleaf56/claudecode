@@ -321,11 +321,13 @@
     <label id="suLog">Conversation log</label>
     <div id="logBox"></div>
     <button id="clearLog">Clear log &amp; memory</button>
+    <div class="meta" style="text-align:center;opacity:.55;margin-top:14px">build 2026-08-19 · r2</div>
   </div>
 </div>
 
 <script type="module">
 'use strict';
+console.log('Mia build 2026-08-19 r2');
 /* ============================================================
    MIA — LOCAL, OFFLINE one-button voice call with an animated robot
    STT: Web Speech API (browser)
@@ -333,6 +335,25 @@
    TTS: built-in browser voices, or optional realistic offline Piper voice
    No API keys. No Gemini. No ElevenLabs.
    ============================================================ */
+
+/* Self-heal: earlier versions registered a service worker on http/localhost,
+   which stays installed and can serve a stale, broken page (clearing the
+   browser cache does NOT remove it). We use no service worker anymore, so
+   unregister any leftover one and drop its caches. If one was actually
+   controlling this page, reload once (guarded) so the fresh, SW-free page
+   loads. Harmless on file:// (no service workers there). */
+if ('serviceWorker' in navigator) {
+  const hadController = !!navigator.serviceWorker.controller;
+  navigator.serviceWorker.getRegistrations().then((regs) => {
+    let removed = false;
+    regs.forEach((r) => { removed = true; r.unregister(); });
+    try { if (window.caches && caches.keys) caches.keys().then((ks) => ks.forEach((k) => caches.delete(k))); } catch (e) {}
+    if (removed && hadController && !sessionStorage.getItem('mia_sw_cleaned')) {
+      sessionStorage.setItem('mia_sw_cleaned', '1');
+      location.reload();
+    }
+  }).catch(() => {});
+}
 
 /* System prompt — identical to the online (Gemini) version. Both languages
    share the same English base, and differ only by the final language line
