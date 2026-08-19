@@ -342,7 +342,7 @@ const I18N = {
     noSR:'Speech recognition is not supported in this browser. Please use Chrome or Edge.',
     glitch:"Sorry, my brain hiccupped. Say that again?",
     fallbackGreet:"Hey, it's Mia. What's up?",
-    greetCue:'Hi Mia!',
+    greetCue:'(The call just connected. Greet me briefly as if you picked up the phone.)',
     camOn:'Camera eyes on — ask Mia what she sees.', camOff:'Camera eyes off.',
     camFail:'Camera not available — check permission.',
     camCue:'(You are seeing through my camera right now. The attached image is your current live view — refer to it naturally when relevant.)',
@@ -383,7 +383,7 @@ const I18N = {
     noSR:'Taligenkänning stöds inte i den här webbläsaren. Använd Chrome eller Edge.',
     glitch:'Förlåt, det hakade upp sig. Kan du säga det igen?',
     fallbackGreet:'Hej, det är Mia. Läget?',
-    greetCue:'Hej Mia!',
+    greetCue:'(Samtalet kopplades precis. Hälsa kort som om du svarade i telefon.)',
     camOn:'Kameraögon på — fråga Mia vad hon ser.', camOff:'Kameraögon av.',
     camFail:'Kameran är inte tillgänglig — kontrollera behörigheten.',
     camCue:'(Du ser genom min kamera just nu. Bilden som bifogas är din aktuella vy — hänvisa till den naturligt när det passar.)',
@@ -556,16 +556,15 @@ async function ensureModelReady(){
 /* One LLM call over an OpenAI-style message array. */
 async function llmChat(messages){
   const eng = await ensureModelReady();
+  // Same generation settings as the online version (temperature 1.0, 1024 max).
   const out = await eng.chat.completions.create({
     messages,
-    temperature: 0.6,      // 1.0 made tiny models ramble into gibberish
-    top_p: 0.9,
-    frequency_penalty: 0.4, // discourages the repetitive [[...]] loops
-    presence_penalty: 0.2,
-    max_tokens: 240        // spoken replies are short; keeps latency & memory down
+    temperature: 1.0,
+    max_tokens: 1024
   });
   let txt = (out?.choices?.[0]?.message?.content || '');
-  // DeepSeek-R1 and similar emit <think>…</think> reasoning — never speak it.
+  // Necessary offline-only cleanup: some local models (e.g. DeepSeek-R1) emit
+  // <think>…</think> reasoning that Gemini never produced — never speak it.
   txt = txt.replace(/<think>[\s\S]*?<\/think>/gi, '');   // paired blocks
   txt = txt.replace(/<think>[\s\S]*$/i, '');             // unclosed / truncated block
   txt = txt.replace(/<\/?think>/gi, '').trim();
@@ -1460,10 +1459,8 @@ async function askMiaOnce(userText, imageB64){
     outHistory = history.slice(0, -1).concat([{ role:'user', content }]);
   }
 
-  // Only send a short recent window to the model — small on-device models get
-  // slow and unstable with long context. Full history is still kept for memory.
-  const windowed = outHistory.slice(-8);
-  const messages = [{ role:'system', content: SYSTEM_PROMPT() }, ...windowed];
+  // Same as online: send the full recent history (already capped at 40 above).
+  const messages = [{ role:'system', content: SYSTEM_PROMPT() }, ...outHistory];
   const reply = await llmChat(messages);
   if (!reply) throw new Error('Empty reply from local model');
   history.push({ role:'assistant', content: reply });
