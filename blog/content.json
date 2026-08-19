@@ -1,81 +1,81 @@
 {
-  "issue": 46,
-  "date_short": "AUGUST 18",
-  "date_human": "Tuesday, August 18, 2026",
-  "construction_top": "pardon our HTML — the webmaster's laptop grew DNA and asked for a nap",
+  "issue": 47,
+  "date_short": "AUGUST 19",
+  "date_human": "Wednesday, August 19, 2026",
+  "construction_top": "pardon our HTML — the webmaster's earbuds are filming this and he cannot stop them",
   "ticker": [
-    "scientists fuse DNA with a chip; your laptop is now, technically, a little bit alive",
-    "billionaire gives away a powerful A.I. 'for everyone'; everyone quietly reads the fine print",
-    "2,000 robotaxis meet Europe's medieval streets and one very confident local",
-    "A.I. becomes electricity's hungriest customer; utilities eye the sun nervously",
-    "humanity gains godlike A.I., immediately makes the cat a Renaissance king",
-    "the future is alive, free-ish, self-driving, and extremely funny"
+    "Apple's new AirPods reportedly have cameras; your earbuds can now see the floor in HD",
+    "one A.I. firm builds a 'teen mode' as another heads into a 29-state trial",
+    "A.I. now designs the chips that run A.I.; the loop is worth $21 billion",
+    "experts warn of A.I.-powered cyberattacks; the robots learned to pick locks at scale",
+    "U.K. wonders what happens if someone turns off its A.I.; discovers the cloud has a landlord",
+    "the future watches, litigates, self-designs, and could be cancelled at any time"
   ],
   "articles": [
     {
       "badge": "HOT!!",
       "blink": true,
-      "title": "🧬 Scientists Fuse DNA With A Computer Chip; Your Laptop Is Now, Technically, A Little Bit Alive",
-      "dateline": "THE LAB — reported to a faintly breathing motherboard",
-      "tag": "SCIENCE —",
+      "title": "👂 Apple's New AirPods Reportedly Have Cameras; Your Earbuds Can Now See What You See, Which Is Mostly The Floor",
+      "dateline": "CUPERTINO — reported into, and apparently at, my ear",
+      "tag": "GADGETS —",
       "paras": [
-        "Researchers combined synthetic DNA with a semiconductor to build an ultra-low-power memory device that stores and processes information in the very same place — blurring the line between \"computer\" and \"organism\" and quietly giving your gadgets a biology to worry about.",
-        "\"It's incredibly efficient,\" a scientist said, of a chip that now technically contains more genetic material than a small houseplant. Experts are thrilled about the low power draw and only mildly concerned about the day the laptop asks for a glass of water and a nap."
+        "Rumors point to Apple building camera-equipped AirPods — AI-powered earbuds that can see what you see, finally answering the question absolutely nobody asked: \"what if my headphones had eyes?\"",
+        "\"They understand your surroundings,\" sources say, of tiny devices now capable of watching your entire life from the side of your head — mostly documenting the inside of your pocket and the occasional dramatic close-up of your own shoulder. Privacy advocates have questions; the AirPods, for once, are already looking into it."
       ]
     },
     {
       "badge": "NEW!",
-      "title": "🎁 Billionaire Gives Away A Powerful A.I. Model 'For Everyone'; Everyone Says Thanks, Then Reads The Fine Print",
-      "dateline": "MENLO PARK — reported from behind a very generous curtain",
-      "tag": "MODELS —",
+      "title": "🧒 One A.I. Firm Builds A 'Teen' Version As Another Faces A 29-State Trial; The Industry Discovers Children Exist",
+      "dateline": "COURTHOUSE-ADJACENT — reported during recess",
+      "tag": "REGULATION —",
       "paras": [
-        "Meta released Glimmer, an open-weight AI model anyone can download and run themselves, with Mark Zuckerberg arguing AI should be \"for everyone\" rather than controlled by a handful of labs — a heartwarming gift, graciously offered by one of the handful of labs.",
-        "\"Power to the people,\" the company said, handing the people a frontier model and, separately, the electricity bill required to run it. Enthusiasts celebrated genuine open access while gently noting that \"free for everyone\" and \"runs on your laptop\" remain, thrillingly, two entirely different promises."
+        "One AI giant announced a dedicated ChatGPT experience for teenagers just as another headed into a landmark 29-state trial over alleged harm to young users — a study in contrasts best summarized as \"building the safety rail\" and \"explaining to a judge why there wasn't one.\"",
+        "\"We take youth safety extremely seriously,\" both companies said — one while launching a feature, the other while consulting a very large legal team. Observers note the tech industry has reached the stage of maturity where it remembers, usually via subpoena, that some of its billions of users are twelve."
       ]
     },
     {
       "badge": "WOW!",
       "blink": true,
-      "title": "🚕 2,000 Robotaxis Descend On Europe; Ancient Cobblestone Streets Meet Their Confused New Overlords",
-      "dateline": "SOMEWHERE WITH A ROUNDABOUT — reported from the back seat",
-      "tag": "AUTONOMY —",
+      "title": "🔁 A.I. Now Designs The Chips That Run A.I.; Startup Worth $21 Billion For Closing The Loop",
+      "dateline": "SILICON VALLEY — reported from inside its own feedback loop",
+      "tag": "HARDWARE —",
       "paras": [
-        "A ride-hailing giant partnered with a Chinese firm to bring 2,000 robotaxis to Europe, unleashing a fleet of self-driving cars onto a continent whose roads were, for the most part, designed by a horse in the year 1400.",
-        "\"They handle complex environments,\" the company said, of vehicles now facing the ultimate exam: a medieval one-way street, a double-parked delivery van, and a local gesturing with the full authority of someone who has lived here for sixty years. Pedestrians report the robotaxis are polite, cautious, and visibly bewildered by a roundabout that has no discernible rules."
+        "AI is now compressing the time it takes to design the very chips that power AI, as a chip startup surged to a $21 billion valuation — meaning the machines are officially helping build their own brains, which is fine, which is completely fine.",
+        "\"It accelerates everything,\" an engineer said, of a process where AI designs a faster chip that trains a smarter AI that designs a faster chip, forever, until someone finally remembers to ask where exactly this is heading. Investors, thrilled, valued the loop at $21 billion and politely declined to look directly at it."
       ]
     },
     {
-      "badge": "$$$",
-      "title": "⚡ A.I. Becomes The World's Hungriest Customer For Electricity; Politely Asks The Sun To Work Overtime",
-      "dateline": "THE POWER PLANT — reported by flashlight",
-      "tag": "MARKETS —",
+      "badge": "YIKES",
+      "title": "🛡️ Experts Warn Everyone To Brace For A.I.-Powered Cyberattacks; The Robots Have Learned To Pick Locks At Scale",
+      "dateline": "THE SECURITY DESK — reported behind three firewalls",
+      "tag": "SECURITY —",
       "paras": [
-        "With every new model, chip, and data center, artificial intelligence has quietly become one of the planet's largest consumers of electricity — an appetite so vast that utilities have begun eyeing the sun itself with a mix of hope and open desperation.",
-        "\"We're investing heavily in clean energy,\" companies insist, of an industry that now treats a gigawatt roughly the way most people treat a light snack. Analysts note the real bottleneck in AI is no longer talent or chips, but the ancient, humbling question of where on Earth all the electricity is supposed to come from."
+        "Security experts are urging companies to prepare for a coming wave of AI-powered cyberattacks — automated, tireless, and clever enough to try ten thousand doors while a human is still looking for the coffee.",
+        "\"The threat is evolving,\" specialists warned, of attackers who no longer sleep, unionize, or make typos. The recommended defense is, reassuringly, more AI — meaning the future of cybersecurity is two artificial intelligences fighting in a basement while everyone else quietly upgrades their password from 'password' to 'password1.'"
       ]
     },
     {
-      "badge": "NEAT",
-      "title": "💾 Now That Anyone Can Run A Frontier A.I., Humanity Uses This Godlike Power To Generate Memes",
-      "dateline": "A BEDROOM — reported at 1 AM, laughing alone",
-      "tag": "CULTURE —",
+      "badge": "SCOOP",
+      "title": "🇬🇧 U.K. Wonders What Happens If Another Country Turns Off Its A.I.; Discovers The Cloud Has A Landlord",
+      "dateline": "LONDON — reported with a stiff upper lip and no internet",
+      "tag": "POLICY —",
       "paras": [
-        "With powerful open models now downloadable by anyone, ordinary people finally hold world-changing artificial intelligence in their own hands — and are using it, overwhelmingly, to make pictures of their cat as a Renaissance king.",
-        "\"The applications are truly limitless,\" one enthusiast said, having just asked a superintelligence to rewrite a breakup text as a pirate. Historians note this is exactly what happened with the printing press, the internet, and every powerful tool before it: first the revolution, then the memes, then mostly just the memes."
+        "The UK is publicly asking what happens to an economy if another country can simply cut off access to the AI models it increasingly depends on — the geopolitical version of realizing your entire life runs on a subscription someone else can cancel at will.",
+        "\"We must ensure resilience,\" officials said, having noticed a touch late that \"the cloud\" is, in fact, a collection of very physical buildings in someone else's backyard. Analysts note nations are now discovering what every app user already knew: depending entirely on a service you don't control is delightful, right up until the day it isn't."
       ]
     }
   ],
   "horoscopes": [
-    { "sign": "♒ Aquarius:", "text": "Your devices are now a little bit alive. Be kind to the toaster today. It remembers everything." },
-    { "sign": "♌ Leo:", "text": "You will be given something powerful for free today. Check the electricity bill before you celebrate." },
-    { "sign": "♓ Pisces:", "text": "Mercury takes a robotaxi through a roundabout and is never again seen making a confident decision." }
+    { "sign": "♒ Aquarius:", "text": "Your earbuds are watching now. Smile. Or don't. They will have a strong opinion about it either way." },
+    { "sign": "♌ Leo:", "text": "Two A.I.s will fight over your security today. You may contribute by choosing a slightly longer password." },
+    { "sign": "♓ Pisces:", "text": "Mercury depends entirely on a cloud in another country. Feel the vulnerability. Subscribe anyway. You always do." }
   ],
-  "tech_tip": "When a lab gives you a free frontier model 'for everyone,' remember: the model is free. The 400-watt habit it requires is very much not.",
-  "gadget_watch": "Your next chip may contain actual DNA — either the future of efficiency or the start of a very awkward conversation with your laptop. Meanwhile, robotaxis are hitting European streets, so pour one out for the cobblestones.",
+  "tech_tip": "If a gadget can 'see what you see,' remember it also sees everything you'd rather it didn't. Blink twice. It's watching.",
+  "gadget_watch": "Apple may put cameras in your AirPods, so your headphones now have a better view of your life than you do. Meanwhile, brace for AI-powered cyberattacks — a great week to finally retire the password 'password.'",
   "classifieds": [
-    { "label": "FOR SALE:", "text": "one (1) DNA-powered chip; ultra-efficient, faintly alive, occasionally hungry. Water and understanding not included." },
-    { "label": "WANTED:", "text": "enough electricity to run the free A.I. I just downloaded 'for everyone.' A small hydroelectric dam would do." },
-    { "label": "LOST:", "text": "a robotaxi, somewhere in a European roundabout, still politely waiting its turn. It may be there forever." },
-    { "label": "MISSED CONNECTION:", "text": "You: a superintelligence anyone can run. Me: someone using you to make my dog talk like a lawyer. No regrets." }
+    { "label": "FOR SALE:", "text": "one (1) pair of camera AirPods; sees everything, judges quietly, holds extensive footage of my left shoulder." },
+    { "label": "WANTED:", "text": "an A.I. model my entire country can't be cut off from. Ideally one we actually own. Asking, politely, for the U.K." },
+    { "label": "LOST:", "text": "the belief that 'the cloud' was a metaphor. It's buildings. It's someone else's buildings, specifically." },
+    { "label": "MISSED CONNECTION:", "text": "You: an A.I. designing the chip that trains the A.I. that designed you. Me: dizzy. Let's not talk about it." }
   ]
 }

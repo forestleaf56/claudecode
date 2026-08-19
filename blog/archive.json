@@ -1,5 +1,21 @@
 [
   {
+    "issue": 46,
+    "date_short": "AUGUST 18",
+    "date_human": "Tuesday, August 18, 2026",
+    "article": {
+      "badge": "HOT!!",
+      "blink": true,
+      "title": "🧬 Scientists Fuse DNA With A Computer Chip; Your Laptop Is Now, Technically, A Little Bit Alive",
+      "dateline": "THE LAB — reported to a faintly breathing motherboard",
+      "tag": "SCIENCE —",
+      "paras": [
+        "Researchers combined synthetic DNA with a semiconductor to build an ultra-low-power memory device that stores and processes information in the very same place — blurring the line between \"computer\" and \"organism\" and quietly giving your gadgets a biology to worry about.",
+        "\"It's incredibly efficient,\" a scientist said, of a chip that now technically contains more genetic material than a small houseplant. Experts are thrilled about the low power draw and only mildly concerned about the day the laptop asks for a glass of water and a nap."
+      ]
+    }
+  },
+  {
     "issue": 45,
     "date_short": "AUGUST 17",
     "date_human": "Monday, August 17, 2026",
