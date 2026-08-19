@@ -321,13 +321,13 @@
     <label id="suLog">Conversation log</label>
     <div id="logBox"></div>
     <button id="clearLog">Clear log &amp; memory</button>
-    <div class="meta" style="text-align:center;opacity:.55;margin-top:14px">build 2026-08-19 · r4</div>
+    <div class="meta" style="text-align:center;opacity:.55;margin-top:14px">build 2026-08-19 · r5</div>
   </div>
 </div>
 
 <script type="module">
 'use strict';
-console.log('Mia build 2026-08-19 r4');
+console.log('Mia build 2026-08-19 r5');
 /* Show any uncaught script error on screen (Android has no easy console), so a
    failure that only happens when hosted is visible instead of a silent dead UI. */
 window.addEventListener('error', (e) => {
@@ -521,6 +521,9 @@ const WEBLLM_URL = 'https://esm.run/@mlc-ai/web-llm@0.2.84';
                     (Google AI Edge Gallery). Listed for completeness, with
                     the closest browser-runnable model offered as `alt`. */
 const MODELS = [
+  { id:'SmolLM2-360M-Instruct-q4f16_1-MLC',          name:'SmolLM2 · 360M',                size:'~0.3 GB', note:'Fastest · lowest memory (best for voice)', runnable:true },
+  { id:'SmolLM2-135M-Instruct-q0f16-MLC',            name:'SmolLM2 · 135M',                size:'~0.3 GB', note:'Ultra-fast · very small (basic replies)',   runnable:true },
+  { id:'Qwen2.5-0.5B-Instruct-q4f16_1-MLC',          name:'Qwen2.5-0.5B-Instruct',         size:'~0.6 GB', note:'Fast · small',             runnable:true },
   { id:'gemma3-1b-it-q4f16_1-MLC',                   name:'Gemma3-1B-IT',                  size:'~0.9 GB', note:'Google Gemma 3 · compact', runnable:true },
   { id:'Qwen2.5-1.5B-Instruct-q4f16_1-MLC',          name:'Qwen2.5-1.5B-Instruct',         size:'~1.6 GB', note:'Great all-rounder',        runnable:true },
   { id:'DeepSeek-R1-Distill-Qwen-1.5B-q4f16_1-MLC',  name:'DeepSeek-R1-Distill-Qwen-1.5B', size:'~1.8 GB', note:'Reasoning',                runnable:true },
@@ -529,7 +532,6 @@ const MODELS = [
   { id:'litert:gemma-3n-e2b', name:'Gemma-3n-E2B-it', size:'~3.7 GB', note:'LiteRT — native app only', runnable:false, alt:'gemma3-1b-it-q4f16_1-MLC' },
   { id:'litert:gemma-3n-e4b', name:'Gemma-3n-E4B-it', size:'~4.9 GB', note:'LiteRT — native app only', runnable:false, alt:'gemma3-1b-it-q4f16_1-MLC' },
   { id:'gemma-2-2b-it-q4f16_1-MLC',                  name:'Gemma 2 · 2B',                  size:'~1.9 GB', note:'Google Gemma 2',           runnable:true },
-  { id:'Qwen2.5-0.5B-Instruct-q4f16_1-MLC',          name:'Qwen2.5-0.5B-Instruct',         size:'~0.6 GB', note:'Tiny & fast',              runnable:true },
   { id:'Llama-3.2-1B-Instruct-q4f16_1-MLC',          name:'Llama 3.2 · 1B',                size:'~0.9 GB', note:'Small & quick',            runnable:true },
   { id:'Llama-3.2-3B-Instruct-q4f16_1-MLC',          name:'Llama 3.2 · 3B',                size:'~2.3 GB', note:'Capable · follows tasks',  runnable:true },
   { id:'Phi-3.5-mini-instruct-q4f16_1-MLC',          name:'Phi-3.5 mini',                  size:'~2.5 GB', note:'Capable · follows tasks',  runnable:true },
@@ -633,7 +635,7 @@ async function llmChat(messages){
     top_p: 0.9,
     frequency_penalty: 0.4,
     presence_penalty: 0.2,
-    max_tokens: 240
+    max_tokens: 128        // spoken replies are short; fewer tokens = much faster on mobile WebGPU
   });
   let txt = (out?.choices?.[0]?.message?.content || '');
   // Necessary offline-only cleanup: some local models (e.g. DeepSeek-R1) emit
@@ -1723,9 +1725,9 @@ async function askMiaOnce(userText, imageB64){
     outHistory = history.slice(0, -1).concat([{ role:'user', content }]);
   }
 
-  // Necessary offline change: on-device models get slow/unstable with long
-  // context, so send only a short recent window. Full history is still kept.
-  const windowed = outHistory.slice(-8);
+  // Send only a short recent window — less prompt to prefill each turn = faster
+  // on mobile WebGPU. Full history is still kept for the log/memory.
+  const windowed = outHistory.slice(-4);
   const messages = [{ role:'system', content: SYSTEM_PROMPT() }, ...windowed];
   const reply = await llmChat(messages);
   if (!reply) throw new Error('Empty reply from local model');
