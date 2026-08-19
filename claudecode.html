@@ -321,13 +321,13 @@
     <label id="suLog">Conversation log</label>
     <div id="logBox"></div>
     <button id="clearLog">Clear log &amp; memory</button>
-    <div class="meta" style="text-align:center;opacity:.55;margin-top:14px">build 2026-08-19 · r3</div>
+    <div class="meta" style="text-align:center;opacity:.55;margin-top:14px">build 2026-08-19 · r4</div>
   </div>
 </div>
 
 <script type="module">
 'use strict';
-console.log('Mia build 2026-08-19 r3');
+console.log('Mia build 2026-08-19 r4');
 /* Show any uncaught script error on screen (Android has no easy console), so a
    failure that only happens when hosted is visible instead of a silent dead UI. */
 window.addEventListener('error', (e) => {
@@ -1554,6 +1554,16 @@ async function whisperTranscribe(float32_16k){
   const out = await t(float32_16k, { language: LANG === 'sv' ? 'sv' : 'en', task: 'transcribe' });
   return ((out && out.text) || '').replace(/\s+/g, ' ').trim();
 }
+/* Free the recognizer's memory (its ONNX sessions) after each transcription.
+   Otherwise the LLM (WebGPU) + Whisper + the realistic voice are all resident
+   at once, which exhausts phone RAM and the OS kills apps (the "webserver
+   crash / localhost unreachable" right before Mia answers). It reloads from the
+   browser cache before the next turn — a bit slower, but it doesn't crash. */
+async function disposeWhisper(){
+  const t = transcriber;
+  transcriber = null; whisperLoadPromise = null;
+  try { if (t && t.dispose) await t.dispose(); } catch(e){}
+}
 
 /* mic voice-activity capture: collect audio while the user talks, and when they
    go quiet, transcribe the utterance with Whisper. */
@@ -1626,6 +1636,9 @@ async function finalizeWhisper(samples, rate){
   // whisper emits things like "[BLANK_AUDIO]" / "(silence)" for non-speech
   const clean = text.replace(/\[[^\]]*\]|\([^)]*\)/g, '').trim();
   if (!clean){ startWhisperListening(); return; }   // nothing said → keep listening
+  // Free the recognizer before the LLM + voice run, so the phone isn't holding
+  // all three models at once (that OOM-crashed the device).
+  await disposeWhisper();
   handleUserSpeech(clean);
 }
 function resampleTo16k(samples, rate){
