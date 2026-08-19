@@ -1,59 +1,80 @@
-/* Mia offline service worker.
-   The AI runs on-device, but the LIBRARY code (WebLLM, vits-web) and its WASM
-   are imported from CDNs at runtime — so without this, a page reload while
-   offline can't start the engine and Mia can't answer. This caches that code
-   (cache-first) so Mia works fully offline after one online run.
+/* Mia offline service worker (v2).
+   Mia's AI runs on-device, but the library CODE (WebLLM, vits-web), its WASM,
+   and the model/voice downloads all come from the network on demand. Without
+   caching them, a reload while offline can't start the engine and Mia can't
+   answer. This caches everything it sees so Mia works fully offline after one
+   online run.
 
-   It deliberately does NOT cache the big model-weight downloads: WebLLM caches
-   those itself (Cache API) and vits-web caches its voices in OPFS, so caching
-   them here again would just double the storage. */
-const CACHE = 'mia-offline-v1';
-
-// Hosts that serve library / wasm code we want available offline.
-const CODE_HOSTS = [
-  'esm.run',
-  'cdn.jsdelivr.net',
-  'cdnjs.cloudflare.com',   // onnxruntime-web wasm used by the realistic voice
-  'esm.sh',
-  'unpkg.com',
-  'cdn.skypack.dev'
-];
-
-function shouldCache(url){
-  try {
-    const u = new URL(url);
-    if (u.origin === self.location.origin) return true;      // the app itself
-    return CODE_HOSTS.some(h => u.hostname === h || u.hostname.endsWith('.' + h));
-  } catch(e){ return false; }
-}
+   Strategy:
+   - Same-origin app shell  → network-first (use the local server when up),
+                              fall back to cache when offline.
+   - Everything else (CDN libraries, WASM, HuggingFace model shards, voices)
+                            → cache-first (they're immutable), then network.
+   Big model/voice files are cached here too, so offline never depends on any
+   one library's own cache behaving. */
+const CACHE = 'mia-offline-v2';
 
 self.addEventListener('install', () => self.skipWaiting());
-self.addEventListener('activate', (e) => e.waitUntil(self.clients.claim()));
+self.addEventListener('activate', (e) => e.waitUntil((async () => {
+  // drop old versions
+  const keys = await caches.keys();
+  await Promise.all(keys.filter(k => k !== CACHE).map(k => caches.delete(k)));
+  await self.clients.claim();
+})()));
+
+async function cachePut(req, res){
+  try {
+    if (res && (res.ok || res.type === 'opaque')){
+      const cache = await caches.open(CACHE);
+      await cache.put(req, res.clone());
+    }
+  } catch(e){ /* quota or opaque — ignore */ }
+  return res;
+}
 
 self.addEventListener('fetch', (event) => {
   const req = event.request;
   if (req.method !== 'GET') return;
-  if (!shouldCache(req.url)) return;   // let WebLLM / vits handle their own big files
 
+  let url;
+  try { url = new URL(req.url); } catch(e){ return; }
+  if (!/^https?:$/.test(url.protocol)) return;
+
+  const sameOrigin = url.origin === self.location.origin;
+
+  if (sameOrigin){
+    // network-first: prefer the live app files, fall back to cache offline
+    event.respondWith((async () => {
+      try {
+        const res = await fetch(req);
+        event.waitUntil(cachePut(req, res.clone()));
+        return res;
+      } catch(e){
+        const cached = await caches.match(req);
+        if (cached) return cached;
+        // last resort for navigations: serve the cached shell
+        if (req.mode === 'navigate'){
+          const shell = (await caches.match('index.html')) || (await caches.match('./')) || (await caches.match('/'));
+          if (shell) return shell;
+        }
+        throw e;
+      }
+    })());
+    return;
+  }
+
+  // cross-origin (CDN code, wasm, model shards, voices): cache-first
   event.respondWith((async () => {
-    const cache = await caches.open(CACHE);
-    const cached = await cache.match(req);
+    const cached = await caches.match(req);
     if (cached){
-      // stale-while-revalidate: serve cache now, refresh in the background if online
-      event.waitUntil((async () => {
-        try {
-          const fresh = await fetch(req);
-          if (fresh && (fresh.ok || fresh.type === 'opaque')) await cache.put(req, fresh.clone());
-        } catch(e){ /* offline — keep the cached copy */ }
-      })());
+      event.waitUntil(fetch(req).then(r => cachePut(req, r)).catch(() => {}));
       return cached;
     }
     try {
       const res = await fetch(req);
-      if (res && (res.ok || res.type === 'opaque')) cache.put(req, res.clone()).catch(() => {});
-      return res;
+      return await cachePut(req, res);
     } catch(e){
-      const fallback = await cache.match(req);
+      const fallback = await caches.match(req);
       if (fallback) return fallback;
       throw e;
     }

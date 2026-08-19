@@ -325,11 +325,17 @@
    ============================================================ */
 
 /* Register the offline service worker (needs http/localhost, not file://).
-   It caches the WebLLM / vits-web library code so Mia keeps working after the
-   network drops — the missing piece that made it answer online but not offline. */
+   It caches the WebLLM / vits-web library code, WASM and model downloads so Mia
+   keeps working after the network drops — the missing piece that made it answer
+   online but not offline. When the worker first takes control we reload once, so
+   that load's imports/model fetches actually pass through it and get cached. */
 if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('sw.js').catch(() => {});
+  navigator.serviceWorker.register('sw.js').catch(() => {});
+  let swReloaded = false;
+  navigator.serviceWorker.addEventListener('controllerchange', () => {
+    if (swReloaded) return;
+    swReloaded = true;
+    location.reload();
   });
 }
 
