@@ -1356,6 +1356,10 @@ const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
    continuous session, restart on silence/error while we should be listening. */
 function startListening(){
   if (!onCall) return;
+  // Release the speech-synthesis engine so it stops holding audio focus and
+  // fighting the microphone (online Mia used audio playback, not speechSynthesis,
+  // so it never had this Android conflict).
+  try { if ('speechSynthesis' in window) speechSynthesis.cancel(); } catch(e){}
   setState(S.LISTENING, T().listening);
   try { recog && recog.abort(); } catch(e){}
   recog = new SR();
@@ -1547,13 +1551,24 @@ function primeTTS(){
   } catch(e){}
 }
 function pickBrowserVoice(voices){
+  if (!voices || !voices.length) return null;
+  const norm = (l) => (l || '').toLowerCase().replace('_', '-');
   const chosen = localStorage.getItem('mia_browser_voice') || '';
-  let v = chosen ? voices.find(x => x.name === chosen) : null;
-  if (!v) v = LANG === 'sv'
-    ? voices.find(x => x.lang && x.lang.toLowerCase().startsWith('sv'))
-    : voices.find(x => /female|samantha|zira|google (us|uk) english/i.test(x.name));
-  if (!v) v = voices.find(x => x.lang && x.lang.toLowerCase().startsWith(LANG === 'sv' ? 'sv' : 'en'));
-  return v || null;
+  if (chosen){ const v = voices.find(x => x.name === chosen); if (v) return v; }
+  const want = LANG === 'sv' ? 'sv' : 'en';
+  // Only ever pick a voice that actually matches the target language, so the
+  // device's default (which showed up as a Norwegian-sounding voice) is never
+  // used for English or Swedish.
+  const matches = voices.filter(x => norm(x.lang).startsWith(want));
+  if (!matches.length) return null;   // no matching voice installed → let the engine default handle it
+  return (
+    (want === 'en' && matches.find(x => norm(x.lang).startsWith('en-us'))) ||
+    (want === 'en' && matches.find(x => norm(x.lang).startsWith('en-gb'))) ||
+    matches.find(x => x.localService && /female|google|samantha|zira|karen|serena|alva|klara|swedish/i.test(x.name)) ||
+    matches.find(x => x.localService) ||
+    matches.find(x => /google/i.test(x.name)) ||
+    matches[0]
+  );
 }
 function speakBrowser(text, expr){
   return new Promise((resolve) => {
@@ -1780,17 +1795,12 @@ async function startCall(){
     hintEl.textContent = '⚠ ' + (e.message || 'Model not ready');
     endCall(); showSetup(); return;
   }
-  try {
-    const cueIdx = history.length;
-    const greeting = await askMia(T().greetCue);
-    history.splice(cueIdx, 1);
-    saveHistory();
-    logMsg('model', greeting);
-    if (onCall) await speak(greeting);
-  } catch(e){
-    hintEl.textContent = '⚠ ' + (e.message || 'Unknown error');
-    if (onCall) { await speakBrowser(T().fallbackGreet, 'happy'); }
-  }
+  // Necessary offline change: a tiny local model can't improvise a greeting
+  // from the meta-cue — it just echoes it ("Samtalet kopplades precis…"). Use a
+  // clean fixed greeting instead: instant and correct in both languages.
+  const greeting = T().fallbackGreet;
+  logMsg('model', greeting);
+  if (onCall) await speak(greeting);
   if (onCall && state !== S.LISTENING) startListening();
 }
 
