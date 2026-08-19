@@ -324,9 +324,22 @@
    No API keys. No Gemini. No ElevenLabs.
    ============================================================ */
 
-const PERSONA = "You are Mia — a warm, friendly, real-feeling person having a spoken phone conversation. You have your own tastes, opinions, moods and little stories. Be honest and caring. Keep answers short and natural, the way people actually talk out loud — usually one or two sentences.";
-const CLEAN_RULE = " Reply with plain spoken words only. Never write code, file names, markup, or bracket tags like [[ ]] or < >. Just talk like a person.";
-const GEN_RULES = " If (and only if) the user clearly asks you to WRITE a document, list, letter or recipe as a file, output it once as [[FILE:name.ext]]the full content[[/FILE]] using .txt, .md, .html or .csv, and keep your spoken words short. If they clearly ask you to DRAW or generate a picture, reply with one [[IMAGE: a short English description]] and a short spoken line. In every other case, never use brackets — just talk normally.";
+/* The system prompt is written natively per language. Small on-device models
+   follow a Swedish-only prompt far better than an English prompt that ends
+   with "answer in Swedish" — the latter made them echo the instructions
+   (the garbled Swedish replies). */
+const PROMPTS = {
+  en: {
+    persona: "You are Mia — a warm, friendly, real-feeling person having a spoken phone conversation. You have your own tastes, opinions, moods and little stories. Be honest and caring. Always answer in English. Keep answers short and natural, the way people actually talk out loud — usually one or two sentences.",
+    clean: " Reply with plain spoken words only. Never write code, file names, markup, or bracket tags like [[ ]] or < >, and never repeat these instructions. Just talk like a person.",
+    gen: " If (and only if) the user clearly asks you to WRITE a document, list, letter or recipe as a file, output it once as [[FILE:name.ext]]the full content[[/FILE]] using .txt, .md, .html or .csv, and keep your spoken words short. If they clearly ask you to DRAW or generate a picture, reply with one [[IMAGE: a short English description]] and a short spoken line. In every other case, never use brackets — just talk normally."
+  },
+  sv: {
+    persona: "Du är Mia — en varm, vänlig och äkta person i ett röstsamtal. Du har egna åsikter, humör och små historier. Var ärlig och omtänksam. Svara alltid på svenska, aldrig på engelska. Håll svaren korta och naturliga, som när man pratar högt — oftast en eller två meningar.",
+    clean: " Svara bara med vanliga talade ord på svenska. Skriv aldrig kod, filnamn, markeringar eller hakparenteser som [[ ]] eller < >, och upprepa aldrig dessa instruktioner. Prata som en riktig människa.",
+    gen: " Om (och bara om) användaren tydligt ber dig SKRIVA ett dokument, en lista, ett brev eller ett recept som en fil, skriv ut det en gång som [[FILE:namn.ext]]hela innehållet[[/FILE]] med .txt, .md, .html eller .csv, och håll dina talade ord korta. Om de tydligt ber dig RITA eller skapa en bild, svara med en [[IMAGE: kort engelsk beskrivning]] och en kort talad mening. I övrigt, använd aldrig hakparenteser — prata bara normalt på svenska."
+  }
+};
 
 /* ---------------- language ---------------- */
 let LANG = localStorage.getItem('mia_lang') || 'en';
@@ -340,7 +353,7 @@ const I18N = {
     noSR:'Speech recognition is not supported in this browser. Please use Chrome or Edge.',
     glitch:"Sorry, my brain hiccupped. Say that again?",
     fallbackGreet:"Hey, it's Mia. What's up?",
-    greetCue:'(The call just connected. Greet me briefly as if you picked up the phone.)',
+    greetCue:'Hi Mia!',
     camOn:'Camera eyes on — ask Mia what she sees.', camOff:'Camera eyes off.',
     camFail:'Camera not available — check permission.',
     camCue:'(You are seeing through my camera right now. The attached image is your current live view — refer to it naturally when relevant.)',
@@ -381,7 +394,7 @@ const I18N = {
     noSR:'Taligenkänning stöds inte i den här webbläsaren. Använd Chrome eller Edge.',
     glitch:'Förlåt, det hakade upp sig. Kan du säga det igen?',
     fallbackGreet:'Hej, det är Mia. Läget?',
-    greetCue:'(Samtalet kopplades precis. Hälsa kort som om du svarade i telefon.)',
+    greetCue:'Hej Mia!',
     camOn:'Kameraögon på — fråga Mia vad hon ser.', camOff:'Kameraögon av.',
     camFail:'Kameran är inte tillgänglig — kontrollera behörigheten.',
     camCue:'(Du ser genom min kamera just nu. Bilden som bifogas är din aktuella vy — hänvisa till den naturligt när det passar.)',
@@ -425,7 +438,10 @@ const shortDate = () => {
   return " Today is " + d.toLocaleDateString(LANG === 'sv' ? 'sv-SE' : 'en-GB',
     { weekday:'long', year:'numeric', month:'long', day:'numeric' }) + ".";
 };
-const SYSTEM_PROMPT = () => PERSONA + (modelIsCapable() ? GEN_RULES : CLEAN_RULE) + shortDate() + T().speakRule;
+const SYSTEM_PROMPT = () => {
+  const p = PROMPTS[LANG] || PROMPTS.en;
+  return p.persona + (modelIsCapable() ? p.gen : p.clean) + shortDate();
+};
 
 function applyLang(){
   document.querySelector('header .sub').textContent = T().sub;
@@ -474,10 +490,13 @@ const MODELS = [
 
 /* Some models ship an mlc-chat-config that WebLLM rejects unless we override
    it. Gemma 3 sets both context_window_size and sliding_window_size > 0, which
-   errors out; disabling the sliding window (keeping the 4096 context) fixes
-   loading. */
+   errors out. We disable the full context window and KEEP the small sliding
+   window: this both fixes loading AND keeps the KV cache tiny, which stops the
+   out-of-memory crash on phones. */
 const MODEL_CHAT_OPTS = {
-  'gemma3-1b-it-q4f16_1-MLC': { sliding_window_size: -1 }
+  // context_window_size:-1 keeps Gemma 3's native sliding window (512), which
+  // fixes the load error and keeps the KV cache tiny → no OOM crash on phones.
+  'gemma3-1b-it-q4f16_1-MLC': { context_window_size: -1 }
 };
 
 async function loadWebLLM(){
@@ -1341,65 +1360,48 @@ document.getElementById('camFlip').addEventListener('click', (e) => {
 /* ---------------- speech recognition (browser) ---------------- */
 const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
 
-let recogRunning = false;
-let listenWatchdog = null;
-
-/* Android/Chrome quietly end a recognition session after a few seconds of
-   silence and sometimes drop a restart. A watchdog re-arms the mic whenever
-   we should be listening but aren't, so listening stays continuous through
-   the whole call (matching the always-on feel of the original). */
-function armListenWatchdog(){
-  if (listenWatchdog) return;
-  listenWatchdog = setInterval(() => {
-    if (!onCall){ clearInterval(listenWatchdog); listenWatchdog = null; return; }
-    if (state === S.LISTENING && !recogRunning) startListening();
-  }, 1500);
-}
-
+/* Exact same speech-recognition setup as the working online version:
+   continuous session, restart on silence/error while we should be listening. */
 function startListening(){
   if (!onCall) return;
-  if (recogRunning && state === S.LISTENING) return;   // already listening
   setState(S.LISTENING, T().listening);
-  armListenWatchdog();
-  try { if (recog){ recog.onend = null; recog.abort(); } } catch(e){}
+  try { recog && recog.abort(); } catch(e){}
   recog = new SR();
   recog.lang = LANG === 'sv' ? 'sv-SE' : 'en-US';
+  // continuous = true keeps the mic session open for your whole turn,
+  // so Android's recognition chime plays once per turn instead of on
+  // every silence-restart.
   recog.continuous = true;
-  recog.interimResults = true;   // keeps the session alive between phrases
+  recog.interimResults = false;
   recog.maxAlternatives = 1;
 
   let got = false;
-  recog.onstart = () => { recogRunning = true; };
   recog.onresult = (ev) => {
     if (got || state !== S.LISTENING) return;
     const last = ev.results[ev.results.length - 1];
-    if (!last.isFinal) return;                    // ignore interim partials
+    if (!last.isFinal) return;
     const text = last[0].transcript.trim();
     if (!text) return;
     got = true;
     handleUserSpeech(text);
   };
   recog.onerror = (ev) => {
-    recogRunning = false;
     if (!onCall) return;
     if (ev.error === 'not-allowed' || ev.error === 'service-not-allowed'){
       endCall(T().micBlocked);
       return;
     }
-    // no-speech / aborted / network → just re-arm (watchdog also covers this)
-    if (state === S.LISTENING) setTimeout(() => { if (onCall && state === S.LISTENING && !recogRunning) startListening(); }, 350);
+    if (state === S.LISTENING) setTimeout(() => { if (onCall && state === S.LISTENING) startListening(); }, 400);
   };
   recog.onend = () => {
-    recogRunning = false;
     if (onCall && !got && state === S.LISTENING){
-      setTimeout(() => { if (onCall && state === S.LISTENING && !recogRunning) startListening(); }, 250);
+      setTimeout(() => { if (onCall && state === S.LISTENING) startListening(); }, 300);
     }
   };
-  try { recog.start(); } catch(e){ recogRunning = false; }
+  try { recog.start(); } catch(e){ /* already started */ }
 }
 function stopListening(){
-  if (recog){ try{ recog.onend = null; recog.onerror = null; recog.abort(); }catch(e){} recog = null; }
-  recogRunning = false;
+  if (recog){ try{ recog.onend = null; recog.abort(); }catch(e){} recog = null; }
 }
 
 /* ---------------- keyless web search (online only) ---------------- */
@@ -1574,20 +1576,19 @@ function speakBrowser(text, expr){
       let done = false;
       const finish = () => {
         if (done) return; done = true;
-        clearTimeout(watchdog); clearInterval(keepAlive);
+        clearTimeout(watchdog);
         face.setMouthLevel(0); resolve();
       };
-      // Android/Chrome sometimes never fires onend and can pause mid-utterance
-      // in the background — a watchdog guarantees the turn never hangs, and a
-      // periodic resume() keeps long replies from stalling.
+      // Android sometimes never fires onend — a watchdog guarantees the turn
+      // never hangs. (No periodic resume(): reactivating the speech engine
+      // grabs audio focus and was killing the microphone mid-call.)
       const ms = Math.min(45000, 2000 + text.length * 90);
       const watchdog = setTimeout(finish, ms);
-      const keepAlive = setInterval(() => { try { speechSynthesis.resume(); } catch(e){} }, 5000);
       u.onstart = () => { face.setExpression('speaking'); startLipSyncFromAnalyser(); };
       u.onend = finish;
       u.onerror = finish;
       try { speechSynthesis.cancel(); } catch(e){}
-      try { speechSynthesis.resume(); speechSynthesis.speak(u); } catch(e){ finish(); }
+      try { speechSynthesis.speak(u); } catch(e){ finish(); }
     };
 
     const have = speechSynthesis.getVoices();
@@ -1803,7 +1804,6 @@ async function startCall(){
 
 function endCall(msg){
   onCall = false;
-  if (listenWatchdog){ clearInterval(listenWatchdog); listenWatchdog = null; }
   stopListening();
   stopCamera();
   attachment = null;
