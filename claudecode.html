@@ -321,13 +321,13 @@
     <label id="suLog">Conversation log</label>
     <div id="logBox"></div>
     <button id="clearLog">Clear log &amp; memory</button>
-    <div class="meta" style="text-align:center;opacity:.55;margin-top:14px">build 2026-08-19 · r5</div>
+    <div class="meta" style="text-align:center;opacity:.55;margin-top:14px">build 2026-08-19 · r6</div>
   </div>
 </div>
 
 <script type="module">
 'use strict';
-console.log('Mia build 2026-08-19 r5');
+console.log('Mia build 2026-08-19 r6');
 /* Show any uncaught script error on screen (Android has no easy console), so a
    failure that only happens when hosted is visible instead of a silent dead UI. */
 window.addEventListener('error', (e) => {
@@ -1566,6 +1566,11 @@ async function disposeWhisper(){
   transcriber = null; whisperLoadPromise = null;
   try { if (t && t.dispose) await t.dispose(); } catch(e){}
 }
+/* Small models (SmolLM2) fit in memory alongside the recognizer, so we KEEP the
+   recognizer loaded between turns — no per-turn reload (that added ~5–10 s).
+   Larger models need the recognizer freed each turn to avoid the OOM crash. */
+const KEEP_STT_MODELS = /SmolLM2-(135M|360M)/i;
+function keepWhisperResident(){ return KEEP_STT_MODELS.test(loadedModelId || currentModelId() || ''); }
 
 /* mic voice-activity capture: collect audio while the user talks, and when they
    go quiet, transcribe the utterance with Whisper. */
@@ -1638,9 +1643,10 @@ async function finalizeWhisper(samples, rate){
   // whisper emits things like "[BLANK_AUDIO]" / "(silence)" for non-speech
   const clean = text.replace(/\[[^\]]*\]|\([^)]*\)/g, '').trim();
   if (!clean){ startWhisperListening(); return; }   // nothing said → keep listening
-  // Free the recognizer before the LLM + voice run, so the phone isn't holding
-  // all three models at once (that OOM-crashed the device).
-  await disposeWhisper();
+  // With a larger LLM, free the recognizer before the LLM + voice run so the
+  // phone isn't holding all three at once (that OOM-crashed it). With a small
+  // model there's room, so keep it loaded and skip the slow per-turn reload.
+  if (!keepWhisperResident()) await disposeWhisper();
   handleUserSpeech(clean);
 }
 function resampleTo16k(samples, rate){
