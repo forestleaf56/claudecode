@@ -476,12 +476,47 @@ async function buildModelList(){ try { await loadWebLLM(); } catch(e){} return M
 function currentModelId(){ return localStorage.getItem('mia_model') || null; }
 function modelInfo(id){ return MODELS.find(m => m.id === id) || null; }
 
+/* A module Web Worker built from a Blob, so the app stays a single file.
+   Running WebLLM inside the worker keeps the main thread — and therefore the
+   robot animation and the whole UI — smooth and responsive while the model
+   is decoding. (On the main thread, decoding froze rAF → flicker + jank.) */
+let miaWorker = null;
+function makeWorker(){
+  const src =
+    'import { WebWorkerMLCEngineHandler } from "' + WEBLLM_URL + '";\n' +
+    'const handler = new WebWorkerMLCEngineHandler();\n' +
+    'self.onmessage = (e) => handler.onmessage(e);\n';
+  const url = URL.createObjectURL(new Blob([src], { type: 'text/javascript' }));
+  return new Worker(url, { type: 'module' });
+}
+
 /* Load (downloading + caching if needed) the given model into the engine. */
 async function ensureModel(modelId, onProgress){
   await loadWebLLM();
   if (engine && loadedModelId === modelId) return engine;
-  if (!engine) engine = new webllm.MLCEngine();
-  if (onProgress) engine.setInitProgressCallback(onProgress);
+  if (!engine){
+    // Preferred: off-main-thread worker engine.
+    if (webllm.CreateWebWorkerMLCEngine){
+      try {
+        miaWorker = makeWorker();
+        engine = await webllm.CreateWebWorkerMLCEngine(miaWorker, modelId, { initProgressCallback: onProgress });
+        loadedModelId = modelId;
+        return engine;
+      } catch(e){
+        console.warn('worker engine unavailable, using main thread:', e && e.message);
+        try { miaWorker && miaWorker.terminate(); } catch(_){}
+        miaWorker = null; engine = null;
+      }
+    }
+    // Fallback: main-thread engine.
+    engine = new webllm.MLCEngine();
+    if (onProgress) engine.setInitProgressCallback(onProgress);
+    await engine.reload(modelId);
+    loadedModelId = modelId;
+    return engine;
+  }
+  // Engine exists but a different model was picked → reload it.
+  if (onProgress && engine.setInitProgressCallback) engine.setInitProgressCallback(onProgress);
   await engine.reload(modelId);
   loadedModelId = modelId;
   return engine;
@@ -509,7 +544,7 @@ async function llmChat(messages){
     top_p: 0.9,
     frequency_penalty: 0.4, // discourages the repetitive [[...]] loops
     presence_penalty: 0.2,
-    max_tokens: 512
+    max_tokens: 240        // spoken replies are short; keeps latency & memory down
   });
   let txt = (out?.choices?.[0]?.message?.content || '');
   // DeepSeek-R1 and similar emit <think>…</think> reasoning — never speak it.
@@ -680,17 +715,17 @@ async function piperTTS(text){
 }
 
 /* ---------------- open settings ---------------- */
-async function showSetup(){
+function showSetup(){
   document.getElementById('langSel').value = LANG;
   document.getElementById('setupErr').textContent = '';
   voiceModeSel.value = voiceMode;
   reflectVoiceMode();
   populateBrowserVoices();
   populatePiperVoices();
+  fillModelSelect();          // static list — show it instantly, no waiting
   setupEl.classList.remove('hidden');
   renderLog();
-  await buildModelList();
-  fillModelSelect();
+  buildModelList();           // warm up the WebLLM import in the background
 }
 document.getElementById('gear').addEventListener('click', showSetup);
 document.getElementById('langSel').addEventListener('change', (e) => {
@@ -702,7 +737,7 @@ document.getElementById('saveKeys').addEventListener('click', () => {
   setupEl.classList.add('hidden');
 });
 
-if ('speechSynthesis' in window) speechSynthesis.onvoiceschanged = () => { if (!setupEl.classList.contains('hidden')) populateBrowserVoices(); };
+if ('speechSynthesis' in window) speechSynthesis.addEventListener('voiceschanged', () => { if (!setupEl.classList.contains('hidden')) populateBrowserVoices(); });
 
 /* first run → open setup so the user downloads a model */
 if (!currentModelId()) showSetup();
@@ -1353,7 +1388,10 @@ async function askMiaOnce(userText, imageB64){
     outHistory = history.slice(0, -1).concat([{ role:'user', content }]);
   }
 
-  const messages = [{ role:'system', content: SYSTEM_PROMPT() }, ...outHistory];
+  // Only send a short recent window to the model — small on-device models get
+  // slow and unstable with long context. Full history is still kept for memory.
+  const windowed = outHistory.slice(-8);
+  const messages = [{ role:'system', content: SYSTEM_PROMPT() }, ...windowed];
   const reply = await llmChat(messages);
   if (!reply) throw new Error('Empty reply from local model');
   history.push({ role:'assistant', content: reply });
@@ -1413,25 +1451,69 @@ function playBlob(blob, expr){
   });
 }
 
+/* Android/iOS require a user gesture to unlock speech synthesis. After the
+   model load + inference awaits, the gesture is "used up" and speak() is
+   silently dropped — which looked like "voice doesn't work, only text". So we
+   unlock it with a silent utterance during the call-button tap itself. */
+let ttsPrimed = false;
+function primeTTS(){
+  if (ttsPrimed || !('speechSynthesis' in window)) return;
+  try {
+    const u = new SpeechSynthesisUtterance(' ');
+    u.volume = 0;
+    speechSynthesis.speak(u);
+    speechSynthesis.resume();
+    ttsPrimed = true;
+  } catch(e){}
+}
+function pickBrowserVoice(voices){
+  const chosen = localStorage.getItem('mia_browser_voice') || '';
+  let v = chosen ? voices.find(x => x.name === chosen) : null;
+  if (!v) v = LANG === 'sv'
+    ? voices.find(x => x.lang && x.lang.toLowerCase().startsWith('sv'))
+    : voices.find(x => /female|samantha|zira|google (us|uk) english/i.test(x.name));
+  if (!v) v = voices.find(x => x.lang && x.lang.toLowerCase().startsWith(LANG === 'sv' ? 'sv' : 'en'));
+  return v || null;
+}
 function speakBrowser(text, expr){
   return new Promise((resolve) => {
-    if (!('speechSynthesis' in window)) return resolve();
-    speechSynthesis.cancel();
-    const u = new SpeechSynthesisUtterance(text);
-    u.lang = LANG === 'sv' ? 'sv-SE' : 'en-US';
-    const voices = speechSynthesis.getVoices();
-    const chosen = localStorage.getItem('mia_browser_voice') || '';
-    let v = chosen ? voices.find(x => x.name === chosen) : null;
-    if (!v) v = LANG === 'sv'
-      ? voices.find(x => x.lang && x.lang.toLowerCase().startsWith('sv'))
-      : voices.find(x => /female|samantha|zira|google (us|uk) english/i.test(x.name));
-    if (v) u.voice = v;
-    u.rate = 1.02; u.pitch = 1.1;
-    analyser = null;
-    u.onstart = () => { face.setExpression('speaking'); startLipSyncFromAnalyser(); };
-    u.onend = () => { face.setMouthLevel(0); resolve(); };
-    u.onerror = () => resolve();
-    speechSynthesis.speak(u);
+    if (!('speechSynthesis' in window) || !text){ return resolve(); }
+
+    const go = (voices) => {
+      const u = new SpeechSynthesisUtterance(text);
+      u.lang = LANG === 'sv' ? 'sv-SE' : 'en-US';
+      const v = pickBrowserVoice(voices || []); if (v) u.voice = v;
+      u.rate = 1.02; u.pitch = 1.1;
+      analyser = null;
+      let done = false;
+      const finish = () => {
+        if (done) return; done = true;
+        clearTimeout(watchdog); clearInterval(keepAlive);
+        face.setMouthLevel(0); resolve();
+      };
+      // Android/Chrome sometimes never fires onend and can pause mid-utterance
+      // in the background — a watchdog guarantees the turn never hangs, and a
+      // periodic resume() keeps long replies from stalling.
+      const ms = Math.min(45000, 2000 + text.length * 90);
+      const watchdog = setTimeout(finish, ms);
+      const keepAlive = setInterval(() => { try { speechSynthesis.resume(); } catch(e){} }, 5000);
+      u.onstart = () => { face.setExpression('speaking'); startLipSyncFromAnalyser(); };
+      u.onend = finish;
+      u.onerror = finish;
+      try { speechSynthesis.cancel(); } catch(e){}
+      try { speechSynthesis.resume(); speechSynthesis.speak(u); } catch(e){ finish(); }
+    };
+
+    const have = speechSynthesis.getVoices();
+    if (have && have.length){ go(have); return; }
+    // voices not ready yet — wait briefly for them, then speak regardless
+    let started = false;
+    const t = setTimeout(() => { if (!started){ started = true; go(speechSynthesis.getVoices()); } }, 900);
+    const onVoices = () => {
+      if (!started){ started = true; clearTimeout(t); go(speechSynthesis.getVoices()); }
+      speechSynthesis.removeEventListener('voiceschanged', onVoices);
+    };
+    speechSynthesis.addEventListener('voiceschanged', onVoices);
   });
 }
 
@@ -1649,7 +1731,7 @@ function endCall(msg){
   setTimeout(() => { if (!onCall) statusEl.textContent = ' '; }, 2500);
 }
 
-callBtn.addEventListener('click', () => { onCall ? endCall() : startCall(); });
+callBtn.addEventListener('click', () => { primeTTS(); onCall ? endCall() : startCall(); });
 applyLang();
 // Phones block mic access on file:// — tell the user how to get voice working.
 if (location.protocol === 'file:') setTimeout(() => { if (!onCall) hintEl.textContent = T().fileWarn; }, 60);
