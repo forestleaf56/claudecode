@@ -334,19 +334,13 @@
    No API keys. No Gemini. No ElevenLabs.
    ============================================================ */
 
-/* Register the offline service worker (needs http/localhost, not file://).
-   It caches the WebLLM / vits-web library code, WASM and model downloads so Mia
-   keeps working after the network drops — the missing piece that made it answer
-   online but not offline. When the worker first takes control we reload once, so
-   that load's imports/model fetches actually pass through it and get cached. */
-if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
-  navigator.serviceWorker.register('sw.js').catch(() => {});
-  let swReloaded = false;
-  navigator.serviceWorker.addEventListener('controllerchange', () => {
-    if (swReloaded) return;
-    swReloaded = true;
-    location.reload();
-  });
+/* No service worker: offline works the same way text chat already did — the
+   library code is kept by the browser's normal HTTP cache and the models are
+   cached by WebLLM / transformers.js themselves. Unregister any service worker
+   a previous version installed (it caused the reload that broke the UI). */
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.getRegistrations().then(rs => rs.forEach(r => r.unregister())).catch(() => {});
+  if (window.caches && caches.keys) caches.keys().then(ks => ks.forEach(k => { if (/^mia-offline/.test(k)) caches.delete(k); })).catch(() => {});
 }
 
 /* System prompt — identical to the online (Gemini) version. Both languages
@@ -1033,6 +1027,7 @@ let state = S.OFF;
 let onCall = false;
 let history = loadHistory();  // {role:'user'|'assistant', content:string} — persisted
 let recog = null;
+let whisperMod = null, transcriber = null, whisperLoadPromise = null;   // on-device STT state (declared early to avoid TDZ)
 let audioCtx = null, analyser = null, ampData = null;
 let currentAudio = null;
 let fakeMouthTimer = 0;
@@ -1501,7 +1496,6 @@ function stopWebSpeech(){
 
 /* ---- offline: on-device Whisper via transformers.js ---- */
 const WHISPER_MODEL = 'Xenova/whisper-tiny';   // multilingual, ~40 MB, cached for offline
-let whisperMod = null, transcriber = null, whisperLoadPromise = null;
 async function loadWhisper(onProgress){
   if (transcriber) return transcriber;
   if (whisperLoadPromise) return whisperLoadPromise;
