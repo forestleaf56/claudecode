@@ -918,8 +918,9 @@ document.getElementById('saveKeys').addEventListener('click', () => {
 
 if ('speechSynthesis' in window) speechSynthesis.addEventListener('voiceschanged', () => { if (!setupEl.classList.contains('hidden')) populateBrowserVoices(); });
 
-/* first run → open setup so the user downloads a model */
-if (!currentModelId()) showSetup();
+/* first-run setup is opened at the very END of the script (see bottom), after
+   every variable it touches — convLog, history, idb, the face, the recognizer —
+   has been declared. Opening it here would hit their temporal dead zones. */
 
 /* ---------------- persistence: memory, log, blobs ---------------- */
 const idb = {
@@ -2055,6 +2056,10 @@ callBtn.addEventListener('click', () => { primeTTS(); onCall ? endCall() : start
 applyLang();
 // Phones block mic access on file:// — tell the user how to get voice working.
 if (location.protocol === 'file:') setTimeout(() => { if (!onCall) hintEl.textContent = T().fileWarn; }, 60);
+
+/* First run → open setup so the user downloads a model. Done LAST, so every
+   variable showSetup touches is already initialized (no temporal dead zone). */
+if (!currentModelId()) showSetup();
 </script>
 </body>
 </html>
