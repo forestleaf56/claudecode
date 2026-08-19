@@ -212,10 +212,10 @@
     display:flex;align-items:center;justify-content:center;gap:8px;
   }
   .btn2:disabled{opacity:.5;cursor:default}
-  #progWrap{height:8px;border-radius:6px;background:#120f26;border:1px solid var(--plate-edge);
+  #progWrap, #voiceProgWrap{height:8px;border-radius:6px;background:#120f26;border:1px solid var(--plate-edge);
     margin-top:10px;overflow:hidden;display:none}
-  #progWrap.show{display:block}
-  #progBar{height:100%;width:0;background:linear-gradient(90deg,var(--glow),var(--mint));transition:width .2s}
+  #progWrap.show, #voiceProgWrap.show{display:block}
+  #progBar, #voiceProg{height:100%;width:0;background:linear-gradient(90deg,var(--glow),var(--mint));transition:width .2s}
   #saveKeys{
     margin-top:20px;width:100%;padding:14px;border:none;border-radius:14px;cursor:pointer;
     background:var(--call);color:#06281a;font-size:15px;font-weight:700;
@@ -300,6 +300,8 @@
     <select id="browserVoiceSel"></select>
     <div id="piperRow" class="hide">
       <select id="piperVoiceSel"></select>
+      <button id="dlVoice" class="btn2">⬇ <span id="dlVoiceTxt">Download &amp; use voice</span></button>
+      <div id="voiceProgWrap"><div id="voiceProg"></div></div>
       <div id="voiceStatus" class="meta"></div>
     </div>
 
@@ -364,7 +366,9 @@ const I18N = {
     voiceReady:'✓ Realistic voice ready (offline).', voiceDl:'Downloading voice…',
     voiceErr:'Realistic voice unavailable — using browser voice.',
     voiceBrowserNote:'Uses your device / browser voices. Fully offline.',
-    voicePiperNote:'Downloads a small neural voice (~20–60 MB), then speaks offline.',
+    voicePiperNote:'Tap download to fetch this neural voice (~20–60 MB). Then it speaks offline.',
+    dlVoiceBtn:'Download & use voice', dlVoiceLoaded:'Downloaded — re-download',
+    voiceDlErr:'Voice download failed — will use browser voice. ',
     lYou:'You', lMia:'Mia', lMade:'Mia made: ', lAtt:'You attached: ',
     speakRule:' Always answer in English.'
   },
@@ -403,7 +407,9 @@ const I18N = {
     voiceReady:'✓ Realistisk röst klar (offline).', voiceDl:'Laddar ner röst…',
     voiceErr:'Realistisk röst otillgänglig — använder webbläsarröst.',
     voiceBrowserNote:'Använder enhetens/webbläsarens röster. Helt offline.',
-    voicePiperNote:'Laddar ner en liten neural röst (~20–60 MB), talar sedan offline.',
+    voicePiperNote:'Tryck på ladda ner för denna neurala röst (~20–60 MB). Sedan talar den offline.',
+    dlVoiceBtn:'Ladda ner & använd röst', dlVoiceLoaded:'Nedladdad — ladda ner igen',
+    voiceDlErr:'Nedladdning av röst misslyckades — använder webbläsarröst. ',
     lYou:'Du', lMia:'Mia', lMade:'Mia skapade: ', lAtt:'Du bifogade: ',
     speakRule:' Svara alltid på svenska.'
   }
@@ -466,6 +472,14 @@ const MODELS = [
   { id:'Qwen2.5-3B-Instruct-q4f16_1-MLC',            name:'Qwen2.5-3B-Instruct',           size:'~2.5 GB', note:'Capable · follows tasks',  runnable:true },
 ];
 
+/* Some models ship an mlc-chat-config that WebLLM rejects unless we override
+   it. Gemma 3 sets both context_window_size and sliding_window_size > 0, which
+   errors out; disabling the sliding window (keeping the 4096 context) fixes
+   loading. */
+const MODEL_CHAT_OPTS = {
+  'gemma3-1b-it-q4f16_1-MLC': { sliding_window_size: -1 }
+};
+
 async function loadWebLLM(){
   if (webllm) return webllm;
   webllm = await import(WEBLLM_URL);
@@ -494,12 +508,13 @@ function makeWorker(){
 async function ensureModel(modelId, onProgress){
   await loadWebLLM();
   if (engine && loadedModelId === modelId) return engine;
+  const chatOpts = MODEL_CHAT_OPTS[modelId];
   if (!engine){
     // Preferred: off-main-thread worker engine.
     if (webllm.CreateWebWorkerMLCEngine){
       try {
         miaWorker = makeWorker();
-        engine = await webllm.CreateWebWorkerMLCEngine(miaWorker, modelId, { initProgressCallback: onProgress });
+        engine = await webllm.CreateWebWorkerMLCEngine(miaWorker, modelId, { initProgressCallback: onProgress }, chatOpts);
         loadedModelId = modelId;
         return engine;
       } catch(e){
@@ -511,13 +526,13 @@ async function ensureModel(modelId, onProgress){
     // Fallback: main-thread engine.
     engine = new webllm.MLCEngine();
     if (onProgress) engine.setInitProgressCallback(onProgress);
-    await engine.reload(modelId);
+    await engine.reload(modelId, chatOpts);
     loadedModelId = modelId;
     return engine;
   }
   // Engine exists but a different model was picked → reload it.
   if (onProgress && engine.setInitProgressCallback) engine.setInitProgressCallback(onProgress);
-  await engine.reload(modelId);
+  await engine.reload(modelId, chatOpts);
   loadedModelId = modelId;
   return engine;
 }
@@ -570,6 +585,9 @@ const browserVoiceSel = document.getElementById('browserVoiceSel');
 const piperRow = document.getElementById('piperRow');
 const piperVoiceSel = document.getElementById('piperVoiceSel');
 const voiceStatus = document.getElementById('voiceStatus');
+const dlVoiceBtn = document.getElementById('dlVoice');
+const voiceProgWrap = document.getElementById('voiceProgWrap');
+const voiceProg = document.getElementById('voiceProg');
 
 let voiceMode = localStorage.getItem('mia_voice_mode') || 'browser';
 
@@ -673,6 +691,8 @@ const PIPER_VOICES = [
   { id:'en_US-amy-medium',        name:'Amy · Soft (US English)', lang:'en' },
   { id:'sv_SE-nst-medium',        name:'NST · Svenska', lang:'sv' },
 ];
+function defaultPiperVoice(){ return LANG === 'sv' ? 'sv_SE-nst-medium' : 'en_US-hfc_female-medium'; }
+function currentPiperVoice(){ return localStorage.getItem('mia_piper_voice') || defaultPiperVoice(); }
 function populatePiperVoices(){
   piperVoiceSel.innerHTML = '';
   for (const v of PIPER_VOICES){
@@ -680,18 +700,34 @@ function populatePiperVoices(){
     o.value = v.id; o.textContent = v.name;
     piperVoiceSel.appendChild(o);
   }
-  const saved = localStorage.getItem('mia_piper_voice') || (LANG === 'sv' ? 'sv_SE-nst-medium' : 'en_US-hfc_female-medium');
-  piperVoiceSel.value = saved;
-  voiceStatus.textContent = T().voicePiperNote;
+  piperVoiceSel.value = currentPiperVoice();
+  refreshVoiceStatus();
 }
-piperVoiceSel.addEventListener('change', () => { localStorage.setItem('mia_piper_voice', piperVoiceSel.value); piperReady = false; });
-function currentPiperVoice(){ return localStorage.getItem('mia_piper_voice') || (LANG === 'sv' ? 'sv_SE-nst-medium' : 'en_US-hfc_female-medium'); }
+piperVoiceSel.addEventListener('change', () => {
+  localStorage.setItem('mia_piper_voice', piperVoiceSel.value);
+  refreshVoiceStatus();
+});
+
+async function refreshVoiceStatus(){
+  // reflect whether the selected realistic voice is already downloaded
+  voiceStatus.className = 'meta';
+  voiceStatus.textContent = T().voicePiperNote;
+  document.getElementById('dlVoiceTxt').textContent = T().dlVoiceBtn;
+  try {
+    const mod = await loadVits();
+    const have = await mod.stored();
+    if (have && have.includes(currentPiperVoice())){
+      voiceStatus.textContent = T().voiceReady; voiceStatus.className = 'meta ok';
+      document.getElementById('dlVoiceTxt').textContent = T().dlVoiceLoaded;
+    }
+  } catch(e){ /* library not reachable yet — leave the default note */ }
+}
 
 function reflectVoiceMode(){
   const piper = voiceMode === 'piper';
   browserVoiceSel.classList.toggle('hide', piper);
   piperRow.classList.toggle('hide', !piper);
-  if (!piper) { /* browser note lives implicitly */ }
+  if (piper) refreshVoiceStatus();
 }
 voiceModeSel.addEventListener('change', () => {
   voiceMode = voiceModeSel.value;
@@ -699,19 +735,47 @@ voiceModeSel.addEventListener('change', () => {
   reflectVoiceMode();
 });
 
-/* ---------------- Piper realistic TTS (optional, offline once cached) ---- */
-let piperMod = null, piperReady = false;
-async function loadPiper(){
-  if (piperMod) return piperMod;
-  piperMod = await import('https://esm.run/@mintplex-labs/piper-tts-web');
-  return piperMod;
+dlVoiceBtn.addEventListener('click', async () => {
+  const voiceId = currentPiperVoice();
+  dlVoiceBtn.disabled = true;
+  voiceProgWrap.classList.add('show');
+  voiceProg.style.width = '0%';
+  voiceStatus.className = 'meta'; voiceStatus.textContent = T().voiceDl;
+  try {
+    const mod = await loadVits();
+    await mod.download(voiceId, (p) => {
+      // p: { url, total, loaded } or a 0..1 number depending on version
+      let frac = 0;
+      if (p && typeof p.loaded === 'number' && p.total) frac = p.loaded / p.total;
+      else if (typeof p === 'number') frac = p;
+      voiceProg.style.width = Math.round(Math.min(1, frac) * 100) + '%';
+    });
+    // warm up the wasm/session with a tiny synth so first real use is instant
+    try { await mod.predict({ text: 'Hej.', voiceId }); } catch(e){}
+    voiceProg.style.width = '100%';
+    voiceStatus.textContent = T().voiceReady; voiceStatus.className = 'meta ok';
+    document.getElementById('dlVoiceTxt').textContent = T().dlVoiceLoaded;
+  } catch(e){
+    voiceStatus.textContent = T().voiceDlErr + (e && e.message ? e.message : ''); voiceStatus.className = 'meta err';
+  } finally {
+    dlVoiceBtn.disabled = false;
+    setTimeout(() => voiceProgWrap.classList.remove('show'), 1200);
+  }
+});
+
+/* ---------------- realistic TTS via vits-web (Piper voices, offline once
+   downloaded). Downloads the ONNX voice from HuggingFace and caches it in the
+   browser (OPFS), then runs fully offline. ---------------------------------- */
+let vitsMod = null;
+async function loadVits(){
+  if (vitsMod) return vitsMod;
+  vitsMod = await import('https://esm.run/@diffusionstudio/vits-web');
+  return vitsMod;
 }
 async function piperTTS(text){
-  const mod = await loadPiper();
+  const mod = await loadVits();
   const voiceId = currentPiperVoice();
-  const blob = await mod.predict({ text, voiceId }, () => {});
-  piperReady = true;
-  return blob;   // audio/wav Blob
+  return await mod.predict({ text, voiceId });   // audio/wav Blob
 }
 
 /* ---------------- open settings ---------------- */
@@ -1277,43 +1341,65 @@ document.getElementById('camFlip').addEventListener('click', (e) => {
 /* ---------------- speech recognition (browser) ---------------- */
 const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
 
+let recogRunning = false;
+let listenWatchdog = null;
+
+/* Android/Chrome quietly end a recognition session after a few seconds of
+   silence and sometimes drop a restart. A watchdog re-arms the mic whenever
+   we should be listening but aren't, so listening stays continuous through
+   the whole call (matching the always-on feel of the original). */
+function armListenWatchdog(){
+  if (listenWatchdog) return;
+  listenWatchdog = setInterval(() => {
+    if (!onCall){ clearInterval(listenWatchdog); listenWatchdog = null; return; }
+    if (state === S.LISTENING && !recogRunning) startListening();
+  }, 1500);
+}
+
 function startListening(){
   if (!onCall) return;
+  if (recogRunning && state === S.LISTENING) return;   // already listening
   setState(S.LISTENING, T().listening);
-  try { recog && recog.abort(); } catch(e){}
+  armListenWatchdog();
+  try { if (recog){ recog.onend = null; recog.abort(); } } catch(e){}
   recog = new SR();
   recog.lang = LANG === 'sv' ? 'sv-SE' : 'en-US';
   recog.continuous = true;
-  recog.interimResults = false;
+  recog.interimResults = true;   // keeps the session alive between phrases
   recog.maxAlternatives = 1;
 
   let got = false;
+  recog.onstart = () => { recogRunning = true; };
   recog.onresult = (ev) => {
     if (got || state !== S.LISTENING) return;
     const last = ev.results[ev.results.length - 1];
-    if (!last.isFinal) return;
+    if (!last.isFinal) return;                    // ignore interim partials
     const text = last[0].transcript.trim();
     if (!text) return;
     got = true;
     handleUserSpeech(text);
   };
   recog.onerror = (ev) => {
+    recogRunning = false;
     if (!onCall) return;
     if (ev.error === 'not-allowed' || ev.error === 'service-not-allowed'){
       endCall(T().micBlocked);
       return;
     }
-    if (state === S.LISTENING) setTimeout(() => { if (onCall && state === S.LISTENING) startListening(); }, 400);
+    // no-speech / aborted / network → just re-arm (watchdog also covers this)
+    if (state === S.LISTENING) setTimeout(() => { if (onCall && state === S.LISTENING && !recogRunning) startListening(); }, 350);
   };
   recog.onend = () => {
+    recogRunning = false;
     if (onCall && !got && state === S.LISTENING){
-      setTimeout(() => { if (onCall && state === S.LISTENING) startListening(); }, 300);
+      setTimeout(() => { if (onCall && state === S.LISTENING && !recogRunning) startListening(); }, 250);
     }
   };
-  try { recog.start(); } catch(e){}
+  try { recog.start(); } catch(e){ recogRunning = false; }
 }
 function stopListening(){
-  if (recog){ try{ recog.onend = null; recog.abort(); }catch(e){} recog = null; }
+  if (recog){ try{ recog.onend = null; recog.onerror = null; recog.abort(); }catch(e){} recog = null; }
+  recogRunning = false;
 }
 
 /* ---------------- keyless web search (online only) ---------------- */
@@ -1717,6 +1803,7 @@ async function startCall(){
 
 function endCall(msg){
   onCall = false;
+  if (listenWatchdog){ clearInterval(listenWatchdog); listenWatchdog = null; }
   stopListening();
   stopCamera();
   attachment = null;
