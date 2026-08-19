@@ -342,6 +342,12 @@ window.addEventListener('unhandledrejection', (e) => {
     if (h && e.reason) h.textContent = '⚠ ' + (e.reason.message || e.reason);
   } catch (_) {}
 });
+
+/* On-device speech-recognition state. Declared at the very top so functions
+   that run during first-load setup (showSetup → whisperReady) can read it
+   without hitting a temporal-dead-zone error. This is what broke the UI when
+   hosted (fresh origin → no saved model → showSetup runs at load). */
+let whisperMod = null, transcriber = null, whisperLoadPromise = null;
 /* ============================================================
    MIA — LOCAL, OFFLINE one-button voice call with an animated robot
    STT: Web Speech API (browser)
@@ -1052,7 +1058,6 @@ let state = S.OFF;
 let onCall = false;
 let history = loadHistory();  // {role:'user'|'assistant', content:string} — persisted
 let recog = null;
-let whisperMod = null, transcriber = null, whisperLoadPromise = null;   // on-device STT state (declared early to avoid TDZ)
 let audioCtx = null, analyser = null, ampData = null;
 let currentAudio = null;
 let fakeMouthTimer = 0;
