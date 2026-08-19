@@ -556,11 +556,20 @@ async function ensureModelReady(){
 /* One LLM call over an OpenAI-style message array. */
 async function llmChat(messages){
   const eng = await ensureModelReady();
-  // Same generation settings as the online version (temperature 1.0, 1024 max).
+  // Model is loaded — show "Thinking…" instead of leaving the last load message
+  // ("Finished loading on WebGPU") on screen while the model generates.
+  if (onCall) setState(S.THINKING, T().thinking);
+  // Necessary offline settings: on-device models are slow and, at temperature
+  // 1.0 with a 1024-token budget, ramble without stopping — which left the app
+  // stuck after "Finished loading on WebGPU". Lower temperature + penalties make
+  // them stop, and a smaller budget keeps a spoken reply quick.
   const out = await eng.chat.completions.create({
     messages,
-    temperature: 1.0,
-    max_tokens: 1024
+    temperature: 0.6,
+    top_p: 0.9,
+    frequency_penalty: 0.4,
+    presence_penalty: 0.2,
+    max_tokens: 240
   });
   let txt = (out?.choices?.[0]?.message?.content || '');
   // Necessary offline-only cleanup: some local models (e.g. DeepSeek-R1) emit
@@ -1459,8 +1468,10 @@ async function askMiaOnce(userText, imageB64){
     outHistory = history.slice(0, -1).concat([{ role:'user', content }]);
   }
 
-  // Same as online: send the full recent history (already capped at 40 above).
-  const messages = [{ role:'system', content: SYSTEM_PROMPT() }, ...outHistory];
+  // Necessary offline change: on-device models get slow/unstable with long
+  // context, so send only a short recent window. Full history is still kept.
+  const windowed = outHistory.slice(-8);
+  const messages = [{ role:'system', content: SYSTEM_PROMPT() }, ...windowed];
   const reply = await llmChat(messages);
   if (!reply) throw new Error('Empty reply from local model');
   history.push({ role:'assistant', content: reply });
