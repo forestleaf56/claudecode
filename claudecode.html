@@ -436,6 +436,7 @@ const I18N = {
     sttDl:'Downloading speech recognition…', sttErr:'Speech-recognition download failed: ',
     dlSttBtn:'Download offline speech recognition', dlSttLoaded:'Downloaded — re-download',
     sttNeedDl:'Offline — download on-device speech recognition in settings (⚙) to talk hands-free.',
+    svFemaleHint:'The only offline neural Swedish voice is male. For a female Swedish voice, use “Built-in browser voice” (Google’s Swedish voice is female).',
     lYou:'You', lMia:'Mia', lMade:'Mia made: ', lAtt:'You attached: ',
     speakRule:' Always answer in English.'
   },
@@ -483,6 +484,7 @@ const I18N = {
     sttDl:'Laddar ner taligenkänning…', sttErr:'Nedladdning av taligenkänning misslyckades: ',
     dlSttBtn:'Ladda ner offline-taligenkänning', dlSttLoaded:'Nedladdad — ladda ner igen',
     sttNeedDl:'Offline — ladda ner taligenkänning på enheten i inställningar (⚙) för att prata handsfree.',
+    svFemaleHint:'Den enda offline-neuralrösten på svenska är en man. För en kvinnlig svensk röst, använd ”Inbyggd webbläsarröst” (Googles svenska röst är kvinnlig).',
     lYou:'Du', lMia:'Mia', lMade:'Mia skapade: ', lAtt:'Du bifogade: ',
     speakRule:' Svara alltid på svenska.'
   }
@@ -772,7 +774,7 @@ const PIPER_VOICES = [
   { id:'en_US-hfc_male-medium',   name:'Ryan · Male (US English)', lang:'en' },
   { id:'en_GB-alba-medium',       name:'Alba · Female (UK English)', lang:'en' },
   { id:'en_US-amy-medium',        name:'Amy · Soft (US English)', lang:'en' },
-  { id:'sv_SE-nst-medium',        name:'NST · Svenska', lang:'sv' },
+  { id:'sv_SE-nst-medium',        name:'NST · Svenska (man)', lang:'sv' },
 ];
 function defaultPiperVoice(){ return LANG === 'sv' ? 'sv_SE-nst-medium' : 'en_US-hfc_female-medium'; }
 function currentPiperVoice(){ return localStorage.getItem('mia_piper_voice') || defaultPiperVoice(); }
@@ -804,6 +806,12 @@ async function refreshVoiceStatus(){
       document.getElementById('dlVoiceTxt').textContent = T().dlVoiceLoaded;
     }
   } catch(e){ /* library not reachable yet — leave the default note */ }
+  // The only offline neural Swedish voice (Piper NST) is male. Point users to
+  // the built-in browser Swedish voice, which is female on most devices.
+  if (currentPiperVoice().startsWith('sv_')){
+    voiceStatus.textContent += (voiceStatus.textContent ? '  ' : '') + T().svFemaleHint;
+    if (voiceStatus.className === 'meta') voiceStatus.className = 'meta warn';
+  }
 }
 
 function reflectVoiceMode(){
