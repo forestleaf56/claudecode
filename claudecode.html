@@ -328,6 +328,20 @@
 <script type="module">
 'use strict';
 console.log('Mia build 2026-08-19 r2');
+/* Show any uncaught script error on screen (Android has no easy console), so a
+   failure that only happens when hosted is visible instead of a silent dead UI. */
+window.addEventListener('error', (e) => {
+  try {
+    const h = document.getElementById('hint');
+    if (h) h.textContent = '⚠ ' + (e.message || 'script error') + (e.lineno ? ' (line ' + e.lineno + ')' : '');
+  } catch (_) {}
+});
+window.addEventListener('unhandledrejection', (e) => {
+  try {
+    const h = document.getElementById('hint');
+    if (h && e.reason) h.textContent = '⚠ ' + (e.reason.message || e.reason);
+  } catch (_) {}
+});
 /* ============================================================
    MIA — LOCAL, OFFLINE one-button voice call with an animated robot
    STT: Web Speech API (browser)
