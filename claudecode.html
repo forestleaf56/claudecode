@@ -348,6 +348,14 @@ window.addEventListener('unhandledrejection', (e) => {
    without hitting a temporal-dead-zone error. This is what broke the UI when
    hosted (fresh origin → no saved model → showSetup runs at load). */
 let whisperMod = null, transcriber = null, whisperLoadPromise = null;
+
+/* Ask the browser to keep our storage (the downloaded AI model, voices and
+   recognizer live in the Cache API / IndexedDB). Without this, on a phone the
+   browser evicts them under storage pressure — which is why the AI model kept
+   needing a re-download while the smaller voice/recognizer survived. */
+if (navigator.storage && navigator.storage.persist) {
+  navigator.storage.persisted().then((p) => { if (!p) navigator.storage.persist(); }).catch(() => {});
+}
 /* ============================================================
    MIA — LOCAL, OFFLINE one-button voice call with an animated robot
    STT: Web Speech API (browser)
@@ -1598,18 +1606,29 @@ function stopWhisperCapture(){
   vadRunning = false;
   try { if (vadProc){ vadProc.onaudioprocess = null; vadProc.disconnect(); vadProc = null; } } catch(e){}
   try { if (vadSrc){ vadSrc.disconnect(); vadSrc = null; } } catch(e){}
+  // Fully release the mic + its audio context so it can't fight TTS playback
+  // (mic held open was a likely reason the offline answer wasn't heard). They
+  // are recreated on the next listen.
+  try { if (vadStream){ vadStream.getTracks().forEach(t => t.stop()); vadStream = null; } } catch(e){}
+  try { if (vadCtx){ vadCtx.close(); vadCtx = null; } } catch(e){}
 }
 async function finalizeWhisper(samples, rate){
   stopWhisperCapture();
   setState(S.THINKING, T().thinking);
+  let text = '';
   try {
-    const text = await whisperTranscribe(resampleTo16k(samples, rate));
-    if (!onCall) return;
-    if (!text){ startWhisperListening(); return; }
-    handleUserSpeech(text);
+    text = await whisperTranscribe(resampleTo16k(samples, rate));
   } catch(e){
-    if (onCall) startWhisperListening();
+    if (!onCall) return;
+    hintEl.textContent = '⚠ ' + T().sttErr + (e && e.message ? e.message : e);
+    startWhisperListening();
+    return;
   }
+  if (!onCall) return;
+  // whisper emits things like "[BLANK_AUDIO]" / "(silence)" for non-speech
+  const clean = text.replace(/\[[^\]]*\]|\([^)]*\)/g, '').trim();
+  if (!clean){ startWhisperListening(); return; }   // nothing said → keep listening
+  handleUserSpeech(clean);
 }
 function resampleTo16k(samples, rate){
   const src = samples instanceof Float32Array ? samples : Float32Array.from(samples);
