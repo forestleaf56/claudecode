@@ -334,15 +334,6 @@
    No API keys. No Gemini. No ElevenLabs.
    ============================================================ */
 
-/* No service worker: offline works the same way text chat already did — the
-   library code is kept by the browser's normal HTTP cache and the models are
-   cached by WebLLM / transformers.js themselves. Unregister any service worker
-   a previous version installed (it caused the reload that broke the UI). */
-if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.getRegistrations().then(rs => rs.forEach(r => r.unregister())).catch(() => {});
-  if (window.caches && caches.keys) caches.keys().then(ks => ks.forEach(k => { if (/^mia-offline/.test(k)) caches.delete(k); })).catch(() => {});
-}
-
 /* System prompt — identical to the online (Gemini) version. Both languages
    share the same English base, and differ only by the final language line
    (T().speakRule): " Always answer in English." / " Svara alltid på svenska." */
@@ -833,7 +824,6 @@ dlSttBtn.addEventListener('click', async () => {
       if (p && typeof p.progress === 'number') frac = p.progress / 100;
       else if (p && typeof p.loaded === 'number' && p.total) frac = p.loaded / p.total;
       if (frac) sttProg.style.width = Math.round(Math.min(1, frac) * 100) + '%';
-      if (p && p.status) sttStatus.textContent = T().sttDl + ' ' + (p.file || '');
     });
     sttProg.style.width = '100%';
     sttStatus.textContent = T().sttReady; sttStatus.className = 'meta ok';
@@ -1423,28 +1413,27 @@ document.getElementById('camFlip').addEventListener('click', (e) => {
   if (camStream) startCamera();
 });
 
-/* ================= speech recognition =================
-   ONLINE  : browser Web Speech API — fast, but Android streams the audio to
-             Google's servers, so it does NOT work offline.
-   OFFLINE : on-device Whisper (transformers.js) with a simple voice-activity
-             detector. Fully local once the recognizer is downloaded.
-   The router picks based on the mic setting / connectivity. */
+/* ---------------- speech recognition (browser) ---------------- */
 const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
 
-function sttMode(){ return localStorage.getItem('mia_stt_mode') || 'auto'; }   // auto | online | offline
+/* ONLINE  : browser Web Speech API — fast, but Android streams audio to
+             Google, so it does NOT work offline.
+   OFFLINE : on-device Whisper (transformers.js) with a simple voice-activity
+             detector. Fully local once the recognizer is downloaded (and it is
+             cached by transformers.js just like the AI model). */
+function sttMode(){ return localStorage.getItem('mia_stt_mode') || 'auto'; }
 function whisperReady(){ return !!transcriber || localStorage.getItem('mia_whisper_ready') === '1'; }
 function useOfflineSTT(){
   const m = sttMode();
   if (m === 'offline') return true;
   if (m === 'online') return false;
-  return !navigator.onLine;        // auto: use on-device recognition when offline
+  return !navigator.onLine;               // auto
 }
 
 function startListening(){
   if (!onCall) return;
   if (useOfflineSTT()){
-    if (whisperReady() || !SR) { startWhisperListening(); return; }
-    // offline recognizer not downloaded and Web Speech won't work offline
+    if (whisperReady() || !SR){ startWhisperListening(); return; }
     if (!navigator.onLine){ setState(S.LISTENING, T().listening); hintEl.textContent = T().sttNeedDl; return; }
   }
   startWebSpeechListening();
@@ -1454,7 +1443,7 @@ function stopListening(){
   stopWhisperCapture();
 }
 
-/* ---- online: Web Speech API (same as the working online version) ---- */
+/* ---- online: Web Speech API (unchanged from the working version) ---- */
 function startWebSpeechListening(){
   if (!onCall) return;
   if (!SR){ startWhisperListening(); return; }
@@ -1479,7 +1468,6 @@ function startWebSpeechListening(){
   recog.onerror = (ev) => {
     if (!onCall) return;
     if (ev.error === 'not-allowed' || ev.error === 'service-not-allowed'){ endCall(T().micBlocked); return; }
-    // network error while "auto" → fall back to on-device recognition if we can
     if (ev.error === 'network' && sttMode() === 'auto' && whisperReady()){ startWhisperListening(); return; }
     if (state === S.LISTENING) setTimeout(() => { if (onCall && state === S.LISTENING) startWebSpeechListening(); }, 400);
   };
@@ -1495,7 +1483,7 @@ function stopWebSpeech(){
 }
 
 /* ---- offline: on-device Whisper via transformers.js ---- */
-const WHISPER_MODEL = 'Xenova/whisper-tiny';   // multilingual, ~40 MB, cached for offline
+const WHISPER_MODEL = 'Xenova/whisper-tiny';   // multilingual, ~40 MB, cached in the browser like the AI model
 async function loadWhisper(onProgress){
   if (transcriber) return transcriber;
   if (whisperLoadPromise) return whisperLoadPromise;
@@ -1517,8 +1505,8 @@ async function whisperTranscribe(float32_16k){
   return ((out && out.text) || '').replace(/\s+/g, ' ').trim();
 }
 
-/* mic voice-activity capture: collect samples while the user talks, and when
-   they go quiet, transcribe the utterance with Whisper. */
+/* mic voice-activity capture: collect audio while the user talks, and when they
+   go quiet, transcribe the utterance with Whisper. */
 let vadStream = null, vadCtx = null, vadSrc = null, vadProc = null;
 let vadSamples = [], vadHadSpeech = false, vadSilence = 0, vadRunning = false;
 async function startWhisperListening(){
@@ -1539,10 +1527,10 @@ async function startWhisperListening(){
       let sum = 0; for (let i = 0; i < input.length; i++) sum += input[i] * input[i];
       const rms = Math.sqrt(sum / input.length);
       const dt = input.length / vadCtx.sampleRate;
-      if (rms > 0.014){                     // speaking
+      if (rms > 0.014){                       // speaking
         vadHadSpeech = true; vadSilence = 0;
         for (let i = 0; i < input.length; i++) vadSamples.push(input[i]);
-      } else if (vadHadSpeech){              // trailing silence
+      } else if (vadHadSpeech){                // trailing silence
         vadSilence += dt;
         for (let i = 0; i < input.length; i++) vadSamples.push(input[i]);
         if (vadSilence > 0.9 && vadSamples.length > vadCtx.sampleRate * 0.35){
@@ -1551,15 +1539,14 @@ async function startWhisperListening(){
           finalizeWhisper(captured, rate);
         }
       } else {
-        // cap idle buffer so it doesn't grow forever
-        if (vadSamples.length > vadCtx.sampleRate * 2) vadSamples = [];
+        if (vadSamples.length > vadCtx.sampleRate * 2) vadSamples = [];   // cap idle buffer
       }
     };
     vadSrc.connect(vadProc);
-    vadProc.connect(vadCtx.destination);   // needed for onaudioprocess to fire
+    vadProc.connect(vadCtx.destination);       // needed for onaudioprocess to fire (outputs silence)
   } catch(e){
     vadRunning = false;
-    if (e && (e.name === 'NotAllowedError')) { endCall(T().micBlocked); return; }
+    if (e && e.name === 'NotAllowedError'){ endCall(T().micBlocked); return; }
     hintEl.textContent = '⚠ ' + (e && e.message ? e.message : 'mic error');
   }
 }
@@ -1572,10 +1559,9 @@ async function finalizeWhisper(samples, rate){
   stopWhisperCapture();
   setState(S.THINKING, T().thinking);
   try {
-    const audio = resampleTo16k(samples, rate);
-    const text = await whisperTranscribe(audio);
+    const text = await whisperTranscribe(resampleTo16k(samples, rate));
     if (!onCall) return;
-    if (!text){ startWhisperListening(); return; }   // heard nothing usable → keep listening
+    if (!text){ startWhisperListening(); return; }
     handleUserSpeech(text);
   } catch(e){
     if (onCall) startWhisperListening();
@@ -2011,7 +1997,6 @@ async function startCall(){
 function endCall(msg){
   onCall = false;
   stopListening();
-  // release the on-device recognizer's microphone
   try { if (vadStream){ vadStream.getTracks().forEach(t => t.stop()); vadStream = null; } } catch(e){}
   stopCamera();
   attachment = null;
