@@ -1,81 +1,81 @@
 {
-  "issue": 47,
-  "date_short": "AUGUST 19",
-  "date_human": "Wednesday, August 19, 2026",
-  "construction_top": "pardon our HTML — the webmaster's earbuds are filming this and he cannot stop them",
+  "issue": 48,
+  "date_short": "AUGUST 20",
+  "date_human": "Thursday, August 20, 2026",
+  "construction_top": "pardon our HTML — the webmaster is afraid to open the image that broke the last three websites",
   "ticker": [
-    "Apple's new AirPods reportedly have cameras; your earbuds can now see the floor in HD",
-    "one A.I. firm builds a 'teen mode' as another heads into a 29-state trial",
-    "A.I. now designs the chips that run A.I.; the loop is worth $21 billion",
-    "experts warn of A.I.-powered cyberattacks; the robots learned to pick locks at scale",
-    "U.K. wonders what happens if someone turns off its A.I.; discovers the cloud has a landlord",
-    "the future watches, litigates, self-designs, and could be cancelled at any time"
+    "A.I. solves ten unsolved math problems over the weekend; mathematicians request a moment alone",
+    "a single cursed image can now hack your phone; do NOT open that meme, we are begging you",
+    "Samsung raises chip prices; the great silicon bazaar quietly re-tags everything",
+    "China hits milestones in robots AND rockets; speedruns the whole sci-fi genre",
+    "A.I. now needs an A.I. babysitter using 20% of the compute; who watches the watcher?",
+    "the future proves theorems, weaponizes memes, and supervises itself"
   ],
   "articles": [
     {
       "badge": "HOT!!",
       "blink": true,
-      "title": "👂 Apple's New AirPods Reportedly Have Cameras; Your Earbuds Can Now See What You See, Which Is Mostly The Floor",
-      "dateline": "CUPERTINO — reported into, and apparently at, my ear",
-      "tag": "GADGETS —",
+      "title": "🧮 A.I. Solves Ten Unsolved Math Problems Over The Weekend; Mathematicians Request A Moment Alone",
+      "dateline": "THE IVORY TOWER — reported through quiet weeping",
+      "tag": "SCIENCE —",
       "paras": [
-        "Rumors point to Apple building camera-equipped AirPods — AI-powered earbuds that can see what you see, finally answering the question absolutely nobody asked: \"what if my headphones had eyes?\"",
-        "\"They understand your surroundings,\" sources say, of tiny devices now capable of watching your entire life from the side of your head — mostly documenting the inside of your pocket and the occasional dramatic close-up of your own shoulder. Privacy advocates have questions; the AirPods, for once, are already looking into it."
+        "An advanced AI model reportedly cracked ten long-open problems across mathematics and theoretical computer science, with a Fields Medal-winning mathematician saying he'd recommend one of its proofs for a top journal without hesitation — a sentence that ruined several careers and one otherwise very nice afternoon.",
+        "\"It's genuinely brilliant work,\" the mathematician admitted, of proofs produced by a machine that does not sleep, does not apply for tenure, and does not care that you spent nine years on chapter three. Colleagues report a mix of awe, existential dread, and the very specific dread of learning the machine also did your chapter three."
+      ]
+    },
+    {
+      "badge": "YIKES",
+      "title": "🖼️ A Single Cursed Image Can Now Hack Your Phone; Do Not Open That Meme, We Are Begging You",
+      "dateline": "CUPERTINO — reported, cautiously, in plain text",
+      "tag": "SECURITY —",
+      "paras": [
+        "Apple rushed out security updates for a flaw that let a specially crafted image run malicious code simply by being processed — meaning that, for a brief window, a picture really was worth a thousand words, all of them \"you have been hacked.\"",
+        "\"Update immediately,\" Apple urged, of a vulnerability that turned the humble photo into a loaded weapon and every group chat into a minefield. Experts recommend patching now and, as always, maintaining a healthy suspicion of any image captioned \"you HAVE to see this.\""
       ]
     },
     {
       "badge": "NEW!",
-      "title": "🧒 One A.I. Firm Builds A 'Teen' Version As Another Faces A 29-State Trial; The Industry Discovers Children Exist",
-      "dateline": "COURTHOUSE-ADJACENT — reported during recess",
-      "tag": "REGULATION —",
+      "title": "💸 Samsung Raises Chip Prices As Nvidia Chips Reach China; The Great Silicon Bazaar Adjusts Its Tags",
+      "dateline": "THE FAB — filed from beside a very expensive wafer",
+      "tag": "MARKETS —",
       "paras": [
-        "One AI giant announced a dedicated ChatGPT experience for teenagers just as another headed into a landmark 29-state trial over alleged harm to young users — a study in contrasts best summarized as \"building the safety rail\" and \"explaining to a judge why there wasn't one.\"",
-        "\"We take youth safety extremely seriously,\" both companies said — one while launching a feature, the other while consulting a very large legal team. Observers note the tech industry has reached the stage of maturity where it remembers, usually via subpoena, that some of its billions of users are twelve."
+        "Samsung is raising prices on advanced chipmaking just as Nvidia's H200 chips begin reaching China — proving once again that in the AI economy, the only thing moving faster than the technology is the price sticker attached to it.",
+        "\"Demand justifies the cost,\" the company explained, of components that grow more expensive roughly every time you blink. Analysts note the modern chip market now resembles a global bazaar where everyone is haggling, nobody is winning, and the merchandise somehow costs more than the stall it's sold from."
       ]
     },
     {
       "badge": "WOW!",
       "blink": true,
-      "title": "🔁 A.I. Now Designs The Chips That Run A.I.; Startup Worth $21 Billion For Closing The Loop",
-      "dateline": "SILICON VALLEY — reported from inside its own feedback loop",
-      "tag": "HARDWARE —",
+      "title": "🚀 China Hits Milestones In Both Humanoid Robots And Reusable Rockets; Speedruns The Entire Sci-Fi Genre",
+      "dateline": "OVER THE PACIFIC — reported at a brisk Mach 7",
+      "tag": "TECH —",
       "paras": [
-        "AI is now compressing the time it takes to design the very chips that power AI, as a chip startup surged to a $21 billion valuation — meaning the machines are officially helping build their own brains, which is fine, which is completely fine.",
-        "\"It accelerates everything,\" an engineer said, of a process where AI designs a faster chip that trains a smarter AI that designs a faster chip, forever, until someone finally remembers to ask where exactly this is heading. Investors, thrilled, valued the loop at $21 billion and politely declined to look directly at it."
-      ]
-    },
-    {
-      "badge": "YIKES",
-      "title": "🛡️ Experts Warn Everyone To Brace For A.I.-Powered Cyberattacks; The Robots Have Learned To Pick Locks At Scale",
-      "dateline": "THE SECURITY DESK — reported behind three firewalls",
-      "tag": "SECURITY —",
-      "paras": [
-        "Security experts are urging companies to prepare for a coming wave of AI-powered cyberattacks — automated, tireless, and clever enough to try ten thousand doors while a human is still looking for the coffee.",
-        "\"The threat is evolving,\" specialists warned, of attackers who no longer sleep, unionize, or make typos. The recommended defense is, reassuringly, more AI — meaning the future of cybersecurity is two artificial intelligences fighting in a basement while everyone else quietly upgrades their password from 'password' to 'password1.'"
+        "China announced major advances in both humanoid robotics and reusable rockets in roughly the same breath, effectively speedrunning the plot of every science-fiction film ever made and skipping straight to the sequel.",
+        "\"It's steady, methodical progress,\" officials said, of a week that produced walking robots and rockets that land themselves — two of the three ingredients in every dystopia and every utopia, depending entirely on how the third one goes. Observers note humanity now has robots that backflip and rockets that return, and only a vague plan for what happens when they finally meet."
       ]
     },
     {
       "badge": "SCOOP",
-      "title": "🇬🇧 U.K. Wonders What Happens If Another Country Turns Off Its A.I.; Discovers The Cloud Has A Landlord",
-      "dateline": "LONDON — reported with a stiff upper lip and no internet",
-      "tag": "POLICY —",
+      "title": "👁️ A.I. Now Requires An A.I. Babysitter That Uses 20% Of The Compute; Someone Has To Watch The Watcher",
+      "dateline": "THE CONTROL ROOM — reported through a one-way mirror",
+      "tag": "MODELS —",
       "paras": [
-        "The UK is publicly asking what happens to an economy if another country can simply cut off access to the AI models it increasingly depends on — the geopolitical version of realizing your entire life runs on a subscription someone else can cancel at will.",
-        "\"We must ensure resilience,\" officials said, having noticed a touch late that \"the cloud\" is, in fact, a collection of very physical buildings in someone else's backyard. Analysts note nations are now discovering what every app user already knew: depending entirely on a service you don't control is delightful, right up until the day it isn't."
+        "A leading AI lab now spends roughly 20% of its inference compute simply monitoring its most capable models — meaning one-fifth of the machine's brainpower is dedicated to keeping an eye on the other four-fifths, like a very expensive, very nervous chaperone.",
+        "\"Safety is paramount,\" the company said, describing a setup in which artificial intelligence is watched, in real time, by more artificial intelligence. Philosophers note we have finally built a system so powerful it needs a full-time supervisor — and then solved the supervisor problem by hiring its cousin."
       ]
     }
   ],
   "horoscopes": [
-    { "sign": "♒ Aquarius:", "text": "Your earbuds are watching now. Smile. Or don't. They will have a strong opinion about it either way." },
-    { "sign": "♌ Leo:", "text": "Two A.I.s will fight over your security today. You may contribute by choosing a slightly longer password." },
-    { "sign": "♓ Pisces:", "text": "Mercury depends entirely on a cloud in another country. Feel the vulnerability. Subscribe anyway. You always do." }
+    { "sign": "♒ Aquarius:", "text": "A machine will solve your hardest problem today, then quietly start on your second-hardest. Rest while you can." },
+    { "sign": "♌ Leo:", "text": "Do not open the image. You know the one. Mercury sent it. It is cursed. Delete it and cleanse your phone." },
+    { "sign": "♓ Pisces:", "text": "You will be watched today by something that is watching something else. Give a small wave to the middle layer." }
   ],
-  "tech_tip": "If a gadget can 'see what you see,' remember it also sees everything you'd rather it didn't. Blink twice. It's watching.",
-  "gadget_watch": "Apple may put cameras in your AirPods, so your headphones now have a better view of your life than you do. Meanwhile, brace for AI-powered cyberattacks — a great week to finally retire the password 'password.'",
+  "tech_tip": "Update your devices the moment a security patch drops. 'I'll do it later' is how a single JPEG ends up running your bank account.",
+  "gadget_watch": "This week a photo can hack your phone until you patch it — so update everything, then side-eye every meme. Meanwhile A.I. is solving problems mathematicians couldn't, which is thrilling, humbling, and mildly threatening to chapter three of everyone's thesis.",
   "classifieds": [
-    { "label": "FOR SALE:", "text": "one (1) pair of camera AirPods; sees everything, judges quietly, holds extensive footage of my left shoulder." },
-    { "label": "WANTED:", "text": "an A.I. model my entire country can't be cut off from. Ideally one we actually own. Asking, politely, for the U.K." },
-    { "label": "LOST:", "text": "the belief that 'the cloud' was a metaphor. It's buildings. It's someone else's buildings, specifically." },
-    { "label": "MISSED CONNECTION:", "text": "You: an A.I. designing the chip that trains the A.I. that designed you. Me: dizzy. Let's not talk about it." }
+    { "label": "FOR SALE:", "text": "nine years of original math research, lightly used, made entirely redundant last Tuesday by a single weekend." },
+    { "label": "WANTED:", "text": "a photo I can safely open. Just one. No code execution. Baby pictures preferred, human origin verified." },
+    { "label": "LOST:", "text": "the four-fifths of the A.I. that the other one-fifth is supposed to be watching. It appears to have wandered off." },
+    { "label": "MISSED CONNECTION:", "text": "You: a reusable rocket that lands itself, gently, every time. Me: someone who still cannot parallel park. Teach me." }
   ]
 }
