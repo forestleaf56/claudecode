@@ -46,9 +46,20 @@ weekly-apps/current/
       Loosened guess validation to accept any 5 letters (the curated list is small and
       only supplies answers) so common words like CRANE aren't rejected. Verified vs a
       reference evaluator, no JS errors.
-- [ ] Thu: **title screen + menu** (PLAY / HOW TO PLAY / STATS) with the FIVES logo,
-      stats tracking (games, win %, streak in localStorage), tile flip animation +
-      sound/haptics, polish; mobile test.
+- [x] Thu: **title screen + menu** (PLAY / HOW TO PLAY / STATS) with the FIVES logo,
+      a how-to screen with examples, and a stats screen (played, win %, current & max
+      streak, guess distribution) saved to localStorage. Tile-flip reveal animation,
+      WebAudio sound (key tick / win chime / lose thud) + haptics; header ?/stats
+      buttons. Verified across title→play→win→stats→new game + how-to, no JS errors.
+
+## Friday readme notes
+- Self-contained single index.html, HTML/CSS + a little WebAudio. NO Supabase / NO
+  Gemini API. Therefore NO API keys, NO env vars, and NO api/ folder / Vercel setup.
+  Runs by just opening index.html; host as a static file anywhere.
+- How to play: guess the hidden 5-letter word in six tries; green = right spot,
+  amber = wrong spot, slate = not in word. On-screen or physical keyboard. Stats and
+  streak are saved locally. Answers come from a curated list; any 5-letter guess is
+  accepted.
 
 ## Status notes
 - Mon 2026-08-17: plan + skeleton only, per the small-increment routine.
