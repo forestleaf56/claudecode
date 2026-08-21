@@ -29,28 +29,44 @@ Each app must be:
   uses **Supabase** or the **Gemini free API**, structured for **Vercel**:
   `index.html` plus an `api/` folder containing `app.js`.
 - **Planned before coding** (a `PLAN.md` is written first).
-- **Polished front end** — a **game** gets a nice title screen + menu; an **app**
-  gets a nice logo + menu (with any main navigation/options). This is designed in on
-  Monday (an explicit `PLAN.md` checklist item) and verified in Thursday's polish pass.
+- **Production-ready front end** — a **game** gets an atmospheric title screen + menu;
+  an **app** gets a proper logo + menu. Aim for a published-indie look: real in-code
+  background art (procedural/canvas/SVG/gradient), display typography, a cohesive
+  palette, and styled primary/secondary buttons — **never plain rectangles** — plus a
+  real menu/pause overlay. Designed in on Monday and pushed toward that bar by the
+  Thursday finalize and the daily **14:00 polish passes**.
+- **Good graphics + real content** — better visuals (animation, particles, shadows,
+  transitions, nicer shapes/sprites) and enough depth (more levels/words/modes) that
+  it never feels thin. This is what the 14:00 afternoon passes are for.
 
 ---
 
 ## Schedule (Europe/Stockholm)
 
+Two runs per weekday: a **morning increment** and a **14:00 second pass** in a fresh
+usage window (the ~5-hour window from the morning run has rolled off by 14:00, so the
+afternoon run has budget for production-quality polish).
+
 | Day | Local time | Cron (UTC) | Job |
 |-----|-----------|------------|-----|
-| Monday    | 09:07 | `7 7 * * 1`  | Plan the week's app + scaffold a minimal `index.html` |
-| Tuesday   | 09:11 | `11 7 * * 2` | Build the next single checklist item |
-| Wednesday | 09:09 | `9 7 * * 3`  | Build the next single checklist item |
-| Thursday  | 09:13 | `13 7 * * 4` | Finish one item + polish/bugfix pass |
-| Friday    | 08:00 | `0 6 * * 5`  | Package, publish, archive, and deliver |
+| Monday    | 09:07 | `7 7 * * 1`   | Plan the week's app + scaffold a minimal `index.html` |
+| Monday    | 14:12 | `12 12 * * 1` | Polish/content pass — production-ready title/menu, graphics, content |
+| Tuesday   | 09:11 | `11 7 * * 2`  | Build the next single checklist item |
+| Tuesday   | 14:16 | `16 12 * * 2` | Polish/content pass |
+| Wednesday | 09:09 | `9 7 * * 3`   | Build the next single checklist item |
+| Wednesday | 14:14 | `14 12 * * 3` | Polish/content pass |
+| Thursday  | 09:13 | `13 7 * * 4`  | Finish one item + production-ready front end |
+| Thursday  | 14:18 | `18 12 * * 4` | Final polish/content pass (ship-ready for Friday) |
+| Friday    | 08:00 | `0 6 * * 5`   | Package, publish, archive, and deliver |
+| Friday    | 14:00 | `0 12 * * 5`  | **Delivery second attempt** — finish delivery if the 08:00 run didn't (idempotent: no-op if already delivered) |
 
 _Cron is stored in UTC (currently CEST, UTC+2). When Sweden switches to winter time
 (CET, UTC+1) the local times shift −1h until the crons are bumped +1h._
 
-Each run is deliberately kept **small** (~15–30 min of focused work): do one chunk,
-commit + push, then stop. Small scope keeps every run well under the plan's usage
-window so work reliably lands.
+Each **morning** run is kept **small** (one chunk → commit + push → stop) so it lands
+well within its usage window. The **14:00** run uses a fresh window to invest in
+production quality (title/menu, graphics, content), or — on Friday — to retry the
+delivery if the morning run was cut short.
 
 ---
 
@@ -105,20 +121,29 @@ Delivered to the user:
 
 ## Routine reference (trigger IDs)
 
-| Day | Trigger ID |
-|-----|-----------|
-| Monday    | `trig_01SEpKr5xnNWTFmCNZyzmVgD` |
-| Tuesday   | `trig_015MWD4tQziLCN68BfJVftMS` |
-| Wednesday | `trig_01SyyotuCngCkSfcd2wKTmAP` |
-| Thursday  | `trig_015AGY4ysEX8hvt4r6tb2YZa` |
-| Friday    | `trig_018HpFmzPWKVErNYsrVtvu65` |
+| Day | When | Trigger ID |
+|-----|------|-----------|
+| Monday    | 09:07 | `trig_01SEpKr5xnNWTFmCNZyzmVgD` |
+| Monday    | 14:12 | `trig_01AA4eekByuqrkzJSKKzRTd3` |
+| Tuesday   | 09:11 | `trig_015MWD4tQziLCN68BfJVftMS` |
+| Tuesday   | 14:16 | `trig_01JoVT3LF51UYaMFrQDHtSqM` |
+| Wednesday | 09:09 | `trig_01SyyotuCngCkSfcd2wKTmAP` |
+| Wednesday | 14:14 | `trig_011vxuwyty3v2zU7EgrF6E8Q` |
+| Thursday  | 09:13 | `trig_015AGY4ysEX8hvt4r6tb2YZa` |
+| Thursday  | 14:18 | `trig_013hGiWxR4qwg6Q1S4UkJNFw` |
+| Friday    | 08:00 | `trig_018HpFmzPWKVErNYsrVtvu65` |
+| Friday    | 14:00 | `trig_01TYQ5Qhr7RCjkT43akGS2uU` (delivery retry) |
 
 ---
 
 ## Notes & caveats
 
-- **Plan:** runs on Pro. Keeping each run small is what keeps it within the usage
-  window; if runs ever start getting truncated, a higher tier removes that ceiling.
+- **Plan / usage:** runs on Pro. The morning run is kept small to land within its
+  usage window; the 14:00 run deliberately uses a *fresh* window (~5h later) for
+  heavier polish/content. This roughly doubles weekly usage — the trade for
+  production-quality output. If a run is still truncated, its work is committed
+  incrementally and the next scheduled run continues; a higher tier removes the
+  ceiling entirely.
 - **Model:** scheduled runs use the environment's default model; the model can't be
   set via the routine API (it's locked) — change it from the claude.ai Routines UI /
   environment settings if needed.
