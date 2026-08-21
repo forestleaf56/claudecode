@@ -1,5 +1,21 @@
 [
   {
+    "issue": 48,
+    "date_short": "AUGUST 20",
+    "date_human": "Thursday, August 20, 2026",
+    "article": {
+      "badge": "HOT!!",
+      "blink": true,
+      "title": "🧮 A.I. Solves Ten Unsolved Math Problems Over The Weekend; Mathematicians Request A Moment Alone",
+      "dateline": "THE IVORY TOWER — reported through quiet weeping",
+      "tag": "SCIENCE —",
+      "paras": [
+        "An advanced AI model reportedly cracked ten long-open problems across mathematics and theoretical computer science, with a Fields Medal-winning mathematician saying he'd recommend one of its proofs for a top journal without hesitation — a sentence that ruined several careers and one otherwise very nice afternoon.",
+        "\"It's genuinely brilliant work,\" the mathematician admitted, of proofs produced by a machine that does not sleep, does not apply for tenure, and does not care that you spent nine years on chapter three. Colleagues report a mix of awe, existential dread, and the very specific dread of learning the machine also did your chapter three."
+      ]
+    }
+  },
+  {
     "issue": 47,
     "date_short": "AUGUST 19",
     "date_human": "Wednesday, August 19, 2026",
