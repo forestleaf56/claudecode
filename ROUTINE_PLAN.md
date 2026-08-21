@@ -64,9 +64,11 @@ _Cron is stored in UTC (currently CEST, UTC+2). When Sweden switches to winter t
 (CET, UTC+1) the local times shift −1h until the crons are bumped +1h._
 
 Each **morning** run is kept **small** (one chunk → commit + push → stop) so it lands
-well within its usage window. The **14:00** run uses a fresh window to invest in
-production quality (title/menu, graphics, content), or — on Friday — to retry the
-delivery if the morning run was cut short.
+well within its usage window. The **14:00** run uses a fresh window to (1) **catch up**
+first — if the morning run hit the usage limit and its increment didn't finish, the
+afternoon completes it — then (2) invest the rest of the budget in production quality
+(title/menu, graphics, content). On **Friday** the 14:00 run instead retries the
+delivery if the 08:00 run was cut short (idempotent — no-op if already delivered).
 
 ---
 
