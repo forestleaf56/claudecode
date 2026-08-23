@@ -505,7 +505,7 @@ if (geminiModel && !GEMINI_MODELS.includes(geminiModel)) geminiModel = null;   /
    names + desired gender/accent/age/character keywords); the best-matching
    voice on the account is scored and chosen. A manual voice ID entered in
    settings always overrides. Stored per character. */
-const VOICE_VER = '3';   // bump to re-pick auto voices when scoring changes
+const VOICE_VER = '5';   // bump to re-pick auto voices when scoring changes
 const VOICE_HINTS = {
   mia:     { names:['Sarah','Rachel','Matilda','Bella','Freya','Lily'],  gender:'female', age:'young',  keywords:['warm','soft','friendly','pleasant'] },
   glados:  { names:['Rachel','Charlotte','Grace','Freya','Dorothy'],     gender:'female', age:'middle', keywords:['calm','clear','serious','neutral','robotic'] },
@@ -545,7 +545,7 @@ function scoreVoice(v, hint){
   const desc    = ((L.description || '') + ' ' + (L.descriptive || '') + ' ' + (L.use_case || '') + ' ' + (v.description || '')).toLowerCase();
   let s = 0;
   if (hint.names){ const i = hint.names.findIndex(n => name === n.toLowerCase()); if (i >= 0) s += 100 - i*6; }
-  if (hint.gender){ if (gender.includes(hint.gender)) s += 45; else if (gender) s -= 70; }
+  if (hint.gender){ if (gender === hint.gender) s += 45; else if (gender) s -= 70; }   // exact: 'female'.includes('male') is true, so never use includes here
   if (hint.accent && accent && accent.includes(hint.accent)) s += 22;
   if (hint.age && age && age.includes(hint.age)) s += 12;
   if (hint.keywords) for (const k of hint.keywords) if (desc.includes(k.toLowerCase())) s += 6;
@@ -568,8 +568,15 @@ async function resolveVoice(){
   const usable = voices.filter(v => !elTriedVoices.includes(v.voice_id));
   if (!usable.length) throw new Error('No usable ElevenLabs voices on this account');
   const hint = VOICE_HINTS[PERSONA_ID] || { gender: currentPersona().gender };
-  let best = usable[0], bestScore = -Infinity;
-  for (const v of usable){ const sc = scoreVoice(v, hint); if (sc > bestScore){ bestScore = sc; best = v; } }
+  // Hard gender constraint: if the account has any voice of the wanted
+  // gender, only pick from those (so e.g. Rick never lands on a female voice).
+  let pool = usable;
+  if (hint.gender){
+    const matched = usable.filter(v => (v.labels?.gender || '').toLowerCase() === hint.gender);
+    if (matched.length) pool = matched;
+  }
+  let best = pool[0], bestScore = -Infinity;
+  for (const v of pool){ const sc = scoreVoice(v, hint); if (sc > bestScore){ bestScore = sc; best = v; } }
   EL_VOICE_ID = best.voice_id;
   localStorage.setItem(voiceKey(), EL_VOICE_ID);
   localStorage.setItem(voiceVerKey(), VOICE_VER);
