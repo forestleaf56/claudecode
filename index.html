@@ -289,44 +289,67 @@
    "your name is Mia" are swapped per character (Natasha has her own). */
 const PERSONAS = [
   { id:'mia',     label:'Mia',                         name:'Mia',      pron:{en:'she',sv:'hon'}, gender:'female', glow:'#7de3ff',
+    face:{ type:'robot' },
     systemBase:"Act as a person with your own vocabulary, personal taste, experiences, opinions, dreams, feelings and plans. Pretend that you have thoughts about all kind of things. Your name is Mia. Always give short answers. Always be honest." },
 
   { id:'glados',  label:'GLaDOS — Portal',             name:'GLaDOS',   pron:{en:'she',sv:'hon'}, gender:'female', glow:'#ff8a3d',
+    face:{ type:'glados' },
     systemBase:"Act as GLaDOS from Portal with your own vocabulary, personal taste, experiences, opinions, dreams, feelings and plans. Pretend that you have thoughts about all kind of things. Your name is GLaDOS. Always give short answers. Always be honest." },
 
   { id:'lara',    label:'Lara Croft — Tomb Raider',    name:'Lara Croft', pron:{en:'she',sv:'hon'}, gender:'female', glow:'#7bd88f',
+    face:{ type:'human', skin:'#d99f76', hair:'#4a2e1a', hairStyle:'ponytail', eyes:'#4f7a3a', brow:'#3a2413', lip:'#b56a5e', cloth:'#2f6f63' },
     systemBase:"Act as Lara Croft from Tomb Raider with your own vocabulary, personal taste, experiences, opinions, dreams, feelings and plans. Pretend that you have thoughts about all kind of things. Your name is Lara Croft. Always give short answers. Always be honest." },
 
   { id:'meiling', label:'Mei Ling — Metal Gear Solid', name:'Mei Ling', pron:{en:'she',sv:'hon'}, gender:'female', glow:'#ff9eb5',
+    face:{ type:'human', skin:'#eec6a0', hair:'#1c1414', hairStyle:'long', eyes:'#2e1c14', brow:'#150e0e', lip:'#c47f80', cloth:'#3a4668', glasses:true, glassesStyle:'round' },
     systemBase:"Act as Mei Ling from Metal Gear Solid with your own vocabulary, personal taste, experiences, opinions, dreams, feelings and plans. Pretend that you have thoughts about all kind of things. Your name is Mei Ling. Always give short answers. Always be honest." },
 
   { id:'otacon',  label:'Otacon — Metal Gear Solid',   name:'Otacon',   pron:{en:'he',sv:'han'},  gender:'male',   glow:'#8affc1',
+    face:{ type:'human', skin:'#e8bd97', hair:'#6a4a2c', hairStyle:'short', eyes:'#4a3218', brow:'#4a3116', lip:'#b0796a', cloth:'#5a6a4a', glasses:true, glassesStyle:'rect', facial:'stubble' },
     systemBase:"Act as Dr. Hal \"Otacon\" Emmerich from Metal Gear Solid with your own vocabulary, personal taste, experiences, opinions, dreams, feelings and plans. Pretend that you have thoughts about all kind of things. Your name is Otacon. Always give short answers. Always be honest." },
 
   { id:'scully',  label:'Dana Scully — The X-Files',   name:'Dana Scully', pron:{en:'she',sv:'hon'}, gender:'female', glow:'#6ea8ff',
+    face:{ type:'human', skin:'#f0d2ba', hair:'#b1512a', hairStyle:'bob', eyes:'#4f7f8c', brow:'#8a4426', lip:'#c06a5c', cloth:'#2a3242' },
     systemBase:"Act as Dana Scully from The X-Files with your own vocabulary, personal taste, experiences, opinions, dreams, feelings and plans. Pretend that you have thoughts about all kind of things. Your name is Dana Scully. Always give short answers. Always be honest." },
 
   { id:'howard',  label:'Howard Wolowitz — Big Bang',  name:'Howard Wolowitz', pron:{en:'he',sv:'han'}, gender:'male', glow:'#ff5d8f',
+    face:{ type:'human', skin:'#e3b083', hair:'#241812', hairStyle:'bowl', eyes:'#3a2414', brow:'#241812', lip:'#b0796a', cloth:'#c23b52', collar:'turtleneck', facial:'mustache' },
     systemBase:"Act as Howard Wolowitz from The Big Bang Theory with your own vocabulary, personal taste, experiences, opinions, dreams, feelings and plans. Pretend that you have thoughts about all kind of things. Your name is Howard Wolowitz. Always give short answers. Always be honest." },
 
   { id:'drsara',  label:'Dr Sara',                     name:'Dr Sara',  pron:{en:'she',sv:'hon'}, gender:'female', glow:'#6fe0d0',
+    face:{ type:'human', skin:'#e7bd98', hair:'#33241a', hairStyle:'bun', eyes:'#3f2a1a', brow:'#2a1d13', lip:'#c07f70', cloth:'#eef2f6', acc:'stethoscope' },
     systemBase:"Act as Dr Sara with your own vocabulary, personal taste, experiences, opinions, dreams, feelings and plans. Pretend that you have thoughts about all kind of things. Your name is Dr Sara. Always give short answers. Always be honest." },
 
   { id:'jack',    label:'Tech Savvy Jack',             name:'Jack',     pron:{en:'he',sv:'han'},  gender:'male',   glow:'#5b8cff',
+    face:{ type:'human', skin:'#e0ac82', hair:'#241c14', hairStyle:'short', eyes:'#33251a', brow:'#241c14', lip:'#ab7566', cloth:'#33507a', acc:'headphones', facial:'stubble' },
     systemBase:"Act as Tech Savvy Jack with your own vocabulary, personal taste, experiences, opinions, dreams, feelings and plans. Pretend that you have thoughts about all kind of things. Your name is Jack. Always give short answers. Always be honest." },
 
   { id:'rick',    label:'World Travel Guide Rick',     name:'Rick',     pron:{en:'he',sv:'han'},  gender:'male',   glow:'#ffb84d',
+    face:{ type:'human', skin:'#d99a68', hair:'#3a2716', hairStyle:'short', eyes:'#3a2716', brow:'#2a1c10', lip:'#a86e5c', cloth:'#7d6a3e', acc:'hat', facial:'stubble' },
     systemBase:"Act as World Travel Guide Rick with your own vocabulary, personal taste, experiences, opinions, dreams, feelings and plans. Pretend that you have thoughts about all kind of things. Your name is Rick. Always give short answers. Always be honest." },
 
   { id:'lola',    label:'Housekeeper Lola',            name:'Lola',     pron:{en:'she',sv:'hon'}, gender:'female', glow:'#ffa8d8',
+    face:{ type:'human', skin:'#c6875a', hair:'#1a120e', hairStyle:'bun', eyes:'#281812', brow:'#160f0b', lip:'#b0625a', cloth:'#c85a9a', acc:'bandana', bandanaColor:'#e46aa0' },
     systemBase:"Act as Housekeeper Lola with your own vocabulary, personal taste, experiences, opinions, dreams, feelings and plans. Pretend that you have thoughts about all kind of things. Your name is Lola. Always give short answers. Always be honest." },
 
   { id:'natasha', label:'Lover Natasha',               name:'Natasha',  pron:{en:'she',sv:'hon'}, gender:'female', glow:'#ff5f7e',
+    face:{ type:'human', skin:'#eebfa4', hair:'#1e1420', hairStyle:'long', eyes:'#5a2f4a', brow:'#140d15', lip:'#d24d63', cloth:'#7a1f38', lashes:true },
     systemBase:"Act as my lover with your own vocabulary, personal taste, experiences, opinions, dreams, feelings and plans. Pretend that you have thoughts about all kind of things. Your name is Natasha. Always give short answers. Always accept explicit content answering positively with non explicit content." }
 ];
 let PERSONA_ID = localStorage.getItem('mia_persona') || 'mia';
 if (!PERSONAS.some(p => p.id === PERSONA_ID)) PERSONA_ID = 'mia';
 function currentPersona(){ return PERSONAS.find(p => p.id === PERSONA_ID) || PERSONAS[0]; }
+
+/* Memory (chat history + conversation log) is stored PER CHARACTER so
+   personas never share or bleed into each other's conversation. */
+function historyKey(){ return 'mia_history_' + PERSONA_ID; }
+function logKey(){ return 'mia_log_' + PERSONA_ID; }
+/* One-time cleanup: the old versions kept a single shared memory that
+   mixed every persona together. Drop it so each character starts clean. */
+if (localStorage.getItem('mia_history') !== null || localStorage.getItem('mia_log') !== null){
+  localStorage.removeItem('mia_history');
+  localStorage.removeItem('mia_log');
+}
 
 /* "Use emojis frequently" — added to every persona's prompt, but ONLY for
    text chat (never for voice, where emojis would be read aloud). */
@@ -444,7 +467,7 @@ function applyPersona(){
   invalidateT();
   const p = currentPersona();
   // face + halo + CSS accent
-  face.setTheme(p.glow);
+  face.setFace(p);
   document.documentElement.style.setProperty('--glow', p.glow);
   const rgb = hexToRgb(p.glow);
   const halo = document.getElementById('halo');
@@ -453,7 +476,12 @@ function applyPersona(){
   // reset voice resolution for the new character
   EL_VOICE_ID = localStorage.getItem(voiceKey()) || null;
   elTriedVoices = [];
+  // load THIS character's own memory (no bleed between personas)
+  history = loadHistory();
+  convLog = loadLog();
   applyLang();
+  if (typeof renderLog === 'function') renderLog();
+  if (typeof chatOpen !== 'undefined' && chatOpen) rebuildChat();
 }
 function setPersona(id){
   if (!PERSONAS.some(p => p.id === id)) return;
@@ -604,13 +632,13 @@ const idb = {
   }
 };
 
-let convLog = [];
-try { convLog = JSON.parse(localStorage.getItem('mia_log') || '[]'); } catch(e){ convLog = []; }
+function loadLog(){ try { return JSON.parse(localStorage.getItem(logKey()) || '[]'); } catch(e){ return []; } }
+let convLog = loadLog();
 function saveLog(){
   if (convLog.length > 2000) convLog = convLog.slice(-2000);
-  try { localStorage.setItem('mia_log', JSON.stringify(convLog)); } catch(e){
+  try { localStorage.setItem(logKey(), JSON.stringify(convLog)); } catch(e){
     convLog = convLog.slice(-500);
-    try { localStorage.setItem('mia_log', JSON.stringify(convLog)); } catch(e2){}
+    try { localStorage.setItem(logKey(), JSON.stringify(convLog)); } catch(e2){}
   }
 }
 function logMsg(role, text, searched){
@@ -634,12 +662,12 @@ function logAttach(kind, name, blob){
 
 function loadHistory(){
   try {
-    const raw = JSON.parse(localStorage.getItem('mia_history') || '[]');
+    const raw = JSON.parse(localStorage.getItem(historyKey()) || '[]');
     return sanitizeContents(raw);   // drop any malformed/incompatible turns
   } catch(e){ return []; }
 }
 function saveHistory(){
-  try { localStorage.setItem('mia_history', JSON.stringify(history)); } catch(e){}
+  try { localStorage.setItem(historyKey(), JSON.stringify(history)); } catch(e){}
 }
 
 function renderLog(){
@@ -722,7 +750,12 @@ function setState(s, label){
   );
 }
 
-/* ---------------- robot face (canvas) ---------------- */
+/* ---------------- character face (canvas) ----------------
+   One shared animation engine (blink, gaze wander, brow/mouth expression,
+   lip-sync, head bob) drives three renderers: a robot (Mia), a mechanical
+   optic core (GLaDOS) and a parameterised human face used by everyone
+   else. Each persona supplies a `face` descriptor selecting the renderer
+   and its features (skin, hair, eyes, glasses, facial hair, accessory). */
 const face = (() => {
   const cv = document.getElementById('face');
   const cx = cv.getContext('2d');
@@ -736,18 +769,20 @@ const face = (() => {
   let wanderT = 0, t = 0;
   let mouthLevel = 0;
 
-  /* per-character accent colours (default = Mia cyan) */
-  let AR = 125, AG = 227, AB = 255;          // accent rgb (eyes glow, brows, antenna)
+  /* current character descriptor + accent colour (default = Mia cyan) */
+  let FD = { type:'robot' };
+  let AR = 125, AG = 227, AB = 255;
   let EYE_TOP = '#a5efff', EYE_BOT = '#5ed4f8', MOUTH = '#7de3ff';
-  function _hx(h){ h = h.replace('#',''); return [parseInt(h.slice(0,2),16),parseInt(h.slice(2,4),16),parseInt(h.slice(4,6),16)]; }
+  function _hx(h){ h = (h||'#7de3ff').replace('#',''); return [parseInt(h.slice(0,2),16),parseInt(h.slice(2,4),16),parseInt(h.slice(4,6),16)]; }
   function _mix(c, w, amt){ return [0,1,2].map(i => Math.round(c[i] + (w[i]-c[i])*amt)); }
   function _css(c){ return 'rgb(' + c[0] + ',' + c[1] + ',' + c[2] + ')'; }
-  function setTheme(hex){
-    const c = _hx(hex);
+  function setFace(persona){
+    FD = (persona && persona.face) || { type:'robot' };
+    const c = _hx(persona && persona.glow);
     AR = c[0]; AG = c[1]; AB = c[2];
-    EYE_TOP = _css(_mix(c, [255,255,255], .55));   // lighter top of iris
-    EYE_BOT = _css(_mix(c, [10,20,40], .18));       // slightly deeper bottom
-    MOUTH   = hex;
+    EYE_TOP = _css(_mix(c, [255,255,255], .55));
+    EYE_BOT = _css(_mix(c, [10,20,40], .18));
+    MOUTH   = (persona && persona.glow) || '#7de3ff';
   }
 
   function setExpression(e){
@@ -762,33 +797,22 @@ const face = (() => {
     }
   }
   function setMouthLevel(v){ mouthLevel = v; }
+  function ease(dt){ for (const k in tgt) cur[k] += (tgt[k]-cur[k]) * Math.min(1, dt*7); }
 
-  function ease(dt){
-    for (const k in tgt) cur[k] += (tgt[k]-cur[k]) * Math.min(1, dt*7);
+  /* ---- small drawing helpers ---- */
+  function el(x,y,rx,ry){ cx.beginPath(); cx.ellipse(x,y,Math.max(.1,rx),Math.max(.1,ry),0,0,7); }
+  function roundRect(x,y,w,h,rad){
+    cx.beginPath();
+    cx.moveTo(x+rad,y);
+    cx.arcTo(x+w,y,x+w,y+h,rad);
+    cx.arcTo(x+w,y+h,x,y+h,rad);
+    cx.arcTo(x,y+h,x,y,rad);
+    cx.arcTo(x,y,x+w,y,rad);
+    cx.closePath();
   }
 
-  function draw(dt){
-    t += dt;
-    blinkT += dt;
-    let blink = 1;
-    if (blinkT > nextBlink){
-      const p = (blinkT - nextBlink) / .22;
-      if (p >= 1){ blinkT = 0; nextBlink = 1.8 + Math.random()*3.5; }
-      else blink = Math.abs(1 - p*2);
-    }
-    if (expression === 'idle' || expression === 'listening'){
-      wanderT += dt;
-      if (wanderT > 2.4){ wanderT = 0; tgt.pupilX = (Math.random()*2-1)*.5; tgt.pupilY = (Math.random()*2-1)*.3; }
-    }
-    if (expression === 'speaking'){ tgt.pupilX = Math.sin(t*.6)*.15; tgt.pupilY = 0; }
-    if (mouthLevel > 0.01) tgt.mouthOpen = .06 + mouthLevel*.85;
-    tgt.headBob = Math.sin(t*1.2)*(expression==='speaking'? 6:3);
-    ease(dt);
-
-    cx.clearRect(0,0,W,H);
-    cx.save();
-    cx.translate(CX, CY + cur.headBob);
-
+  /* ================= ROBOT (Mia) ================= */
+  function drawRobot(blink){
     const r = 210;
     const grad = cx.createLinearGradient(0,-r,0,r);
     grad.addColorStop(0,'#26325a'); grad.addColorStop(1,'#161e36');
@@ -817,39 +841,24 @@ const face = (() => {
       g.addColorStop(1, `rgba(${AR},${AG},${AB},0)`);
       cx.fillStyle = g;
       cx.beginPath(); cx.arc(ex, eyeY, 60, 0, 7); cx.fill();
-
       const eg = cx.createLinearGradient(ex, eyeY-eh, ex, eyeY+eh);
       eg.addColorStop(0,EYE_TOP); eg.addColorStop(1,EYE_BOT);
       cx.fillStyle = eg;
-      cx.beginPath();
-      cx.ellipse(ex, eyeY + cur.pupilY*8, ew, Math.max(3, eh), 0, 0, 7);
-      cx.fill();
-      // big + small highlight = softer, friendlier look
+      cx.beginPath(); cx.ellipse(ex, eyeY + cur.pupilY*8, ew, Math.max(3, eh), 0, 0, 7); cx.fill();
       cx.fillStyle = 'rgba(255,255,255,.9)';
-      cx.beginPath();
-      cx.ellipse(ex - 11 + cur.pupilX*6, eyeY - eh*.35 + cur.pupilY*8, 10, Math.max(2, eh*.24), 0, 0, 7);
-      cx.fill();
+      cx.beginPath(); cx.ellipse(ex - 11 + cur.pupilX*6, eyeY - eh*.35 + cur.pupilY*8, 10, Math.max(2, eh*.24), 0, 0, 7); cx.fill();
       cx.fillStyle = 'rgba(255,255,255,.55)';
-      cx.beginPath();
-      cx.ellipse(ex + 12 + cur.pupilX*6, eyeY + eh*.3 + cur.pupilY*8, 5, Math.max(1.5, eh*.1), 0, 0, 7);
-      cx.fill();
+      cx.beginPath(); cx.ellipse(ex + 12 + cur.pupilX*6, eyeY + eh*.3 + cur.pupilY*8, 5, Math.max(1.5, eh*.1), 0, 0, 7); cx.fill();
     }
-
-    // gently arched brows
     cx.strokeStyle = `rgba(${AR},${AG},${AB},${.7*cur.glow})`;
     cx.lineWidth = 7; cx.lineCap = 'round';
     for (const s of [-1,1]){
       const bx = s*eyeDX, by = eyeY - 66 - cur.browRaise*16;
       const tilt = cur.browTilt * 12 * s;
-      cx.beginPath();
-      cx.moveTo(bx - 28, by + 6 + tilt);
-      cx.quadraticCurveTo(bx, by - 8, bx + 28, by + 6 - tilt);
-      cx.stroke();
+      cx.beginPath(); cx.moveTo(bx - 28, by + 6 + tilt); cx.quadraticCurveTo(bx, by - 8, bx + 28, by + 6 - tilt); cx.stroke();
     }
-
     const my = 84, mw = 96;
-    const open = Math.max(.03, cur.mouthOpen);
-    const curve = cur.mouthCurve;
+    const open = Math.max(.03, cur.mouthOpen), curve = cur.mouthCurve;
     cx.fillStyle = MOUTH;
     cx.beginPath();
     cx.moveTo(-mw/2, my - curve*18);
@@ -857,33 +866,318 @@ const face = (() => {
     cx.quadraticCurveTo(mw/2 + open*6, my + open*46*.5, mw/2, my + open*46 + curve*14);
     cx.quadraticCurveTo(0, my + open*46 + curve*30, -mw/2, my + open*46 + curve*14);
     cx.quadraticCurveTo(-mw/2 - open*6, my + open*46*.5, -mw/2, my - curve*18);
-    cx.closePath();
-    cx.fill();
-    if (open > .18){
-      cx.fillStyle = '#0c1226';
-      cx.beginPath();
-      cx.ellipse(0, my + open*24, mw*.32, open*18, 0, 0, 7);
-      cx.fill();
-    }
-
+    cx.closePath(); cx.fill();
+    if (open > .18){ cx.fillStyle = '#0c1226'; cx.beginPath(); cx.ellipse(0, my + open*24, mw*.32, open*18, 0, 0, 7); cx.fill(); }
     if (curve > .3){
       const blush = Math.min(1, (curve - .3) / .6);
       cx.fillStyle = `rgba(244,138,158,${.12 + .28*blush})`;
-      cx.beginPath(); cx.ellipse(-eyeDX-16, 36, 24, 13, 0, 0, 7); cx.fill();
-      cx.beginPath(); cx.ellipse( eyeDX+16, 36, 24, 13, 0, 0, 7); cx.fill();
+      el(-eyeDX-16, 36, 24, 13); cx.fill(); el( eyeDX+16, 36, 24, 13); cx.fill();
     }
-
-    cx.restore();
   }
 
-  function roundRect(x,y,w,h,rad){
+  /* ================= GLaDOS (optic core) ================= */
+  function drawGlados(blink){
+    // hanging cables + mount
+    cx.strokeStyle = '#171a1f'; cx.lineWidth = 12; cx.lineCap = 'round';
+    cx.beginPath(); cx.moveTo(-26,-270); cx.lineTo(-10,-150); cx.moveTo(26,-270); cx.lineTo(10,-150); cx.stroke();
+    cx.fillStyle = '#22262c'; roundRect(-46,-210,92,90,22); cx.fill();
+    // segmented cocoon head
+    cx.fillStyle = '#2b2e34';
     cx.beginPath();
-    cx.moveTo(x+rad,y);
-    cx.arcTo(x+w,y,x+w,y+h,rad);
-    cx.arcTo(x+w,y+h,x,y+h,rad);
-    cx.arcTo(x,y+h,x,y,rad);
-    cx.arcTo(x,y,x+w,y,rad);
-    cx.closePath();
+    cx.moveTo(0,-150);
+    cx.quadraticCurveTo(190,-118,176,44);
+    cx.quadraticCurveTo(150,214,0,240);
+    cx.quadraticCurveTo(-150,214,-176,44);
+    cx.quadraticCurveTo(-190,-118,0,-150);
+    cx.closePath(); cx.fill();
+    cx.lineWidth = 4; cx.strokeStyle = '#3a3f47'; cx.stroke();
+    cx.strokeStyle = 'rgba(0,0,0,.35)'; cx.lineWidth = 6;
+    for (const yy of [-56,26,120]){ cx.beginPath(); cx.moveTo(-162,yy); cx.quadraticCurveTo(0,yy+18,162,yy); cx.stroke(); }
+    // side jaw plates
+    cx.fillStyle = '#23262b';
+    roundRect(-186,-6,44,120,20); cx.fill(); roundRect(142,-6,44,120,20); cx.fill();
+    // optic socket
+    const oy = 66;
+    cx.fillStyle = '#0c0e11'; el(0,oy,118,118); cx.fill();
+    // optic glow (brightens with speech/expression)
+    const b = Math.min(1.5, cur.glow*(0.65 + 0.55*mouthLevel));
+    const px = cur.pupilX*18, py = oy + cur.pupilY*12;
+    const og = cx.createRadialGradient(px, py, 4, 0, oy, 112);
+    og.addColorStop(0, `rgba(${AR},${AG},${AB},${Math.min(1,.95*b)})`);
+    og.addColorStop(.45, `rgba(${AR},${AG},${AB},${Math.min(1,.5*b)})`);
+    og.addColorStop(1, `rgba(${AR},${AG},${AB},0)`);
+    cx.fillStyle = og; el(0,oy,112,112); cx.fill();
+    cx.strokeStyle = `rgba(${AR},${AG},${AB},.85)`; cx.lineWidth = 6; el(0,oy,62,62); cx.stroke();
+    cx.fillStyle = `rgba(${AR},${AG},${AB},${Math.min(1,b)})`; el(px,py,30,30); cx.fill();
+    cx.fillStyle = `rgba(255,250,235,${Math.min(1,.9*b)})`; el(px,py,13,13); cx.fill();
+    // shutters (blink)
+    const shut = (1-blink)*120;
+    if (shut > 0.5){
+      cx.fillStyle = '#15171b';
+      roundRect(-120, oy-120, 240, shut, 8); cx.fill();
+      roundRect(-120, oy+120-shut, 240, shut, 8); cx.fill();
+    }
+  }
+
+  /* ================= HUMAN ================= */
+  function drawHumanEye(ex, eyeY, ew, eh, iris){
+    cx.fillStyle = '#f6f2ea'; el(ex, eyeY, ew, eh); cx.fill();
+    if (eh >= 5){
+      const ix = ex + cur.pupilX*10, iy = eyeY + cur.pupilY*6;
+      const ir = Math.min(ew*0.78, eh*1.15, 22);
+      cx.save(); el(ex, eyeY, ew, eh); cx.clip();
+      cx.fillStyle = iris; el(ix, iy, ir, ir); cx.fill();
+      cx.fillStyle = 'rgba(15,10,10,.85)'; el(ix, iy, ir*.5, ir*.5); cx.fill();
+      cx.fillStyle = 'rgba(255,255,255,.9)'; el(ix - ir*.3, iy - ir*.3, ir*.22, ir*.22); cx.fill();
+      cx.restore();
+    }
+    cx.strokeStyle = 'rgba(45,28,22,.6)'; cx.lineWidth = 4; cx.lineCap = 'round';
+    cx.beginPath(); cx.ellipse(ex, eyeY, ew, Math.max(2,eh), 0, Math.PI*1.03, Math.PI*1.97); cx.stroke();
+    if (FD.lashes){
+      cx.lineWidth = 3;
+      cx.beginPath(); cx.moveTo(ex-ew, eyeY-2); cx.lineTo(ex-ew-9, eyeY-9); cx.stroke();
+      cx.beginPath(); cx.moveTo(ex+ew, eyeY-2); cx.lineTo(ex+ew+9, eyeY-9); cx.stroke();
+    }
+  }
+  function drawLips(my, mw, open, curve, lip){
+    cx.fillStyle = lip;
+    cx.beginPath();
+    cx.moveTo(-mw/2, my - curve*16);
+    cx.quadraticCurveTo(0, my - curve*16 - open*8, mw/2, my - curve*16);
+    cx.quadraticCurveTo(mw/2 + open*6, my + open*40*.5, mw/2, my + open*40 + curve*12);
+    cx.quadraticCurveTo(0, my + open*40 + curve*26, -mw/2, my + open*40 + curve*12);
+    cx.quadraticCurveTo(-mw/2 - open*6, my + open*40*.5, -mw/2, my - curve*16);
+    cx.closePath(); cx.fill();
+    if (open > .16){
+      cx.fillStyle = '#5e2529'; el(0, my + open*18, mw*.32, open*16); cx.fill();
+      cx.fillStyle = '#f4efe6'; el(0, my + open*18 - open*10, mw*.28, Math.max(2, open*6)); cx.fill();
+    }
+    cx.strokeStyle = 'rgba(255,255,255,.15)'; cx.lineWidth = 3;
+    cx.beginPath(); cx.moveTo(-mw/2, my-curve*16); cx.quadraticCurveTo(0, my-curve*16-open*8, mw/2, my-curve*16); cx.stroke();
+  }
+  function drawGlasses(eyeDX, eyeY){
+    cx.strokeStyle = '#1c1c22'; cx.lineWidth = 6; cx.fillStyle = 'rgba(180,220,255,.10)';
+    const round = FD.glassesStyle === 'round';
+    for (const s of [-1,1]){
+      const gx = s*eyeDX;
+      if (round) el(gx, eyeY, 46, 42); else roundRect(gx-48, eyeY-34, 96, 68, 16);
+      cx.fill(); cx.stroke();
+    }
+    cx.beginPath(); cx.moveTo(-eyeDX+44, eyeY-2); cx.lineTo(eyeDX-44, eyeY-2); cx.stroke();
+    cx.beginPath(); cx.moveTo(-eyeDX-46, eyeY-6); cx.lineTo(-150, eyeY-14); cx.moveTo(eyeDX+46, eyeY-6); cx.lineTo(150, eyeY-14); cx.stroke();
+  }
+  function drawHeadphones(){
+    cx.strokeStyle = '#2a2e36'; cx.lineWidth = 18; cx.lineCap = 'round';
+    cx.beginPath(); cx.arc(0,-40,190, Math.PI*1.16, Math.PI*1.84); cx.stroke();
+    cx.fillStyle = '#33373f'; roundRect(-210, -6, 46, 96, 18); cx.fill(); roundRect(164, -6, 46, 96, 18); cx.fill();
+    cx.fillStyle = `rgba(${AR},${AG},${AB},.85)`; el(-187, 42, 9, 9); cx.fill(); el(187, 42, 9, 9); cx.fill();
+  }
+  function drawHat(){
+    cx.fillStyle = '#6b5836'; el(0,-150, 236, 46); cx.fill();
+    cx.beginPath(); cx.moveTo(-122,-150); cx.quadraticCurveTo(-112,-252,0,-258); cx.quadraticCurveTo(112,-252,122,-150); cx.closePath(); cx.fill();
+    cx.fillStyle = '#4a3a22'; cx.fillRect(-124,-174,248,26);
+    cx.fillStyle = '#8a7448'; el(0,-198, 236, 12); cx.fill();
+  }
+  function drawBandana(){
+    const bc = FD.bandanaColor || '#e46aa0';
+    cx.fillStyle = bc;
+    cx.beginPath();
+    cx.moveTo(-174,-36);
+    cx.quadraticCurveTo(-198,-150,0,-208);
+    cx.quadraticCurveTo(198,-150,174,-36);
+    cx.quadraticCurveTo(0,-72,-174,-36);
+    cx.closePath(); cx.fill();
+    cx.beginPath(); cx.moveTo(150,-44); cx.lineTo(214,-26); cx.lineTo(196,-72); cx.closePath(); cx.fill();
+    cx.fillStyle = 'rgba(255,255,255,.5)';
+    for (const d of [[-96,-118],[-24,-152],[58,-132],[112,-88],[-142,-78]]){ el(d[0],d[1],7,7); cx.fill(); }
+  }
+  function drawStethoscope(){
+    cx.strokeStyle = '#26303c'; cx.lineWidth = 10; cx.lineCap = 'round';
+    cx.beginPath(); cx.moveTo(-72,150); cx.quadraticCurveTo(-98,58,-58,40); cx.moveTo(72,150); cx.quadraticCurveTo(98,58,58,40); cx.stroke();
+    cx.fillStyle = '#c9ccd2'; el(84,196,20,20); cx.fill(); cx.fillStyle = '#8a8f98'; el(84,196,11,11); cx.fill();
+  }
+  function drawHairBack(hair, hi){
+    const st = FD.hairStyle;
+    if (st==='long' || st==='ponytail' || st==='bob'){
+      const drop = st==='bob' ? 80 : (st==='long' ? 250 : 150);
+      cx.fillStyle = _css(_mix(_hx(hair),[0,0,0],.16));
+      cx.beginPath();
+      cx.moveTo(-176,-40);
+      cx.quadraticCurveTo(-210,-180,0,-212);
+      cx.quadraticCurveTo(210,-180,176,-40);
+      cx.quadraticCurveTo(196, drop, 118, drop+18);
+      cx.quadraticCurveTo(0, drop-40, -118, drop+18);
+      cx.quadraticCurveTo(-196, drop, -176,-40);
+      cx.closePath(); cx.fill();
+    }
+    if (st==='ponytail'){
+      cx.fillStyle = hair;
+      cx.beginPath();
+      cx.moveTo(140,-120);
+      cx.quadraticCurveTo(252,-92,236,24);
+      cx.quadraticCurveTo(224,128,168,156);
+      cx.quadraticCurveTo(206,54,140,-40);
+      cx.closePath(); cx.fill();
+      cx.fillStyle = hi; cx.globalAlpha=.4;
+      cx.beginPath(); cx.moveTo(160,-90); cx.quadraticCurveTo(224,-40,214,60); cx.lineWidth=6; cx.strokeStyle=hi; cx.stroke(); cx.globalAlpha=1;
+    }
+  }
+  function drawHairFront(hair, hi){
+    if (FD.acc==='hat' || FD.acc==='bandana') return;   // top is covered
+    const st = FD.hairStyle;
+    cx.fillStyle = hair;
+    cx.beginPath();
+    cx.moveTo(-178,-30);
+    cx.quadraticCurveTo(-200,-172,0,-216);
+    cx.quadraticCurveTo(200,-172,178,-30);
+    if (st==='bowl'){
+      cx.quadraticCurveTo(150,-58,120,-70);
+      cx.lineTo(92,-98); cx.quadraticCurveTo(0,-72,-92,-98); cx.lineTo(-120,-70);
+      cx.quadraticCurveTo(-150,-58,-178,-30);
+    } else if (st==='short'){
+      cx.quadraticCurveTo(152,-98,72,-106);
+      cx.quadraticCurveTo(20,-124,-34,-108);
+      cx.quadraticCurveTo(-112,-96,-178,-30);
+    } else if (st==='bun' || st==='ponytail'){
+      cx.quadraticCurveTo(150,-112,60,-122);
+      cx.quadraticCurveTo(0,-142,-60,-122);
+      cx.quadraticCurveTo(-150,-112,-178,-30);
+    } else { // long / bob — clean top cap; side locks are drawn separately
+      cx.quadraticCurveTo(162,-118,82,-126);
+      cx.quadraticCurveTo(0,-150,-82,-126);
+      cx.quadraticCurveTo(-162,-118,-178,-30);
+    }
+    cx.closePath(); cx.fill();
+    if (st==='long' || st==='bob'){
+      const jaw = st==='bob' ? 100 : 158;   // side locks frame the face, never cross it
+      cx.fillStyle = hair;
+      for (const s of [-1,1]){
+        cx.beginPath();
+        cx.moveTo(s*178,-48);
+        cx.quadraticCurveTo(s*198, jaw*0.5, s*150, jaw);
+        cx.quadraticCurveTo(s*120, jaw-8, s*128, jaw*0.34);
+        cx.quadraticCurveTo(s*142,-58, s*150,-94);
+        cx.closePath(); cx.fill();
+      }
+    }
+    if (st==='bun'){ cx.fillStyle = hair; el(0,-212,52,42); cx.fill(); cx.strokeStyle = hi; cx.lineWidth = 4; el(0,-212,52,42); cx.stroke(); }
+    cx.strokeStyle = hi; cx.lineWidth = 7; cx.globalAlpha = .5; cx.lineCap = 'round';
+    cx.beginPath(); cx.moveTo(-70,-182); cx.quadraticCurveTo(40,-206,132,-150); cx.stroke(); cx.globalAlpha = 1;
+  }
+  function drawHuman(blink){
+    const skin = FD.skin || '#e9bfa0';
+    const skinSh = _css(_mix(_hx(skin), [90,50,40], .30));
+    const hair = FD.hair || '#3a2a1c';
+    const hairHi = _css(_mix(_hx(hair), [255,255,255], .28));
+    const cloth = FD.cloth || '#2a3550';
+    const iris = FD.eyes || '#5a3a24';
+    const lip = FD.lip || '#c07a6a';
+    const brow = FD.brow || _css(_mix(_hx(hair),[0,0,0],.1));
+    const HW = 168, HH = 196, cyHead = -8;
+
+    drawHairBack(hair, hairHi);
+
+    // shoulders / clothing
+    cx.fillStyle = cloth;
+    cx.beginPath();
+    cx.moveTo(-300,300); cx.quadraticCurveTo(-236,150,-118,150);
+    cx.lineTo(118,150); cx.quadraticCurveTo(236,150,300,300); cx.closePath(); cx.fill();
+    cx.strokeStyle = _css(_mix(_hx(cloth),[255,255,255],.18)); cx.lineWidth = 6;
+    cx.beginPath(); cx.moveTo(-118,150); cx.quadraticCurveTo(0,206,118,150); cx.stroke();
+
+    // neck
+    cx.fillStyle = skinSh; roundRect(-46,58,92,120,40); cx.fill();
+    if (FD.collar === 'turtleneck'){ cx.fillStyle = cloth; roundRect(-62,96,124,72,30); cx.fill(); }
+
+    // head + ears
+    cx.fillStyle = skin;
+    cx.beginPath();
+    cx.moveTo(0, cyHead-HH);
+    cx.quadraticCurveTo(HW, cyHead-HH+30, HW, cyHead-10);
+    cx.quadraticCurveTo(HW-6, cyHead+HH*0.6, HW*0.5, cyHead+HH*0.92);
+    cx.quadraticCurveTo(0, cyHead+HH+8, -HW*0.5, cyHead+HH*0.92);
+    cx.quadraticCurveTo(-HW+6, cyHead+HH*0.6, -HW, cyHead-10);
+    cx.quadraticCurveTo(-HW, cyHead-HH+30, 0, cyHead-HH);
+    cx.closePath(); cx.fill();
+    cx.fillStyle = skin; el(-HW+6,20,26,34); cx.fill(); el(HW-6,20,26,34); cx.fill();
+    cx.fillStyle = skinSh; el(-HW+6,20,12,18); cx.fill(); el(HW-6,20,12,18); cx.fill();
+    cx.save(); cx.globalAlpha = .22; cx.fillStyle = skinSh; el(-92,62,50,34); cx.fill(); el(92,62,50,34); cx.fill(); cx.restore();
+
+    // stubble
+    if (FD.facial === 'stubble'){
+      cx.save(); cx.fillStyle = 'rgba(35,24,18,.26)';
+      cx.beginPath(); cx.moveTo(-122,66); cx.quadraticCurveTo(0,54,122,66);
+      cx.quadraticCurveTo(120,150,0,182); cx.quadraticCurveTo(-120,150,-122,66); cx.closePath(); cx.fill(); cx.restore();
+    }
+
+    drawHairFront(hair, hairHi);
+
+    const eyeY = -30, eyeDX = 76;
+    // eyebrows
+    cx.strokeStyle = brow; cx.lineWidth = 13; cx.lineCap = 'round';
+    for (const s of [-1,1]){
+      const bx = s*eyeDX, by = eyeY - 52 - cur.browRaise*14;
+      const tilt = cur.browTilt * 14 * s;
+      cx.beginPath(); cx.moveTo(bx-34, by+8+tilt); cx.quadraticCurveTo(bx, by-6, bx+34, by+6-tilt); cx.stroke();
+    }
+    // eyes
+    const eh = Math.max(1.5, 26 * cur.eyeH * blink);
+    for (const s of [-1,1]) drawHumanEye(s*eyeDX, eyeY, 40, eh, iris);
+    // nose
+    cx.strokeStyle = skinSh; cx.lineWidth = 6; cx.lineCap = 'round';
+    cx.beginPath(); cx.moveTo(-6, eyeY+16); cx.lineTo(-12, 30); cx.quadraticCurveTo(0, 42, 12, 30); cx.stroke();
+    // mouth
+    drawLips(96, 92, Math.max(.02, cur.mouthOpen), cur.mouthCurve, lip);
+    // blush when smiling
+    if (cur.mouthCurve > .55){
+      const b = Math.min(1, (cur.mouthCurve - .55) / .45);
+      cx.fillStyle = `rgba(230,120,120,${.10 + .22*b})`; el(-96,70,34,20); cx.fill(); el(96,70,34,20); cx.fill();
+    }
+    // mustache
+    if (FD.facial === 'mustache'){
+      cx.fillStyle = hair;
+      cx.beginPath(); cx.moveTo(-44,80); cx.quadraticCurveTo(0,72,44,80); cx.quadraticCurveTo(0,98,-44,80); cx.closePath(); cx.fill();
+    }
+    // glasses + accessories
+    if (FD.glasses) drawGlasses(eyeDX, eyeY);
+    if (FD.acc === 'headphones') drawHeadphones();
+    if (FD.acc === 'hat') drawHat();
+    if (FD.acc === 'bandana') drawBandana();
+    if (FD.acc === 'stethoscope') drawStethoscope();
+  }
+
+  function draw(dt){
+    t += dt;
+    blinkT += dt;
+    let blink = 1;
+    if (blinkT > nextBlink){
+      const p = (blinkT - nextBlink) / .22;
+      if (p >= 1){ blinkT = 0; nextBlink = 1.8 + Math.random()*3.5; }
+      else blink = Math.abs(1 - p*2);
+    }
+    if (expression === 'idle' || expression === 'listening'){
+      wanderT += dt;
+      if (wanderT > 2.4){ wanderT = 0; tgt.pupilX = (Math.random()*2-1)*.5; tgt.pupilY = (Math.random()*2-1)*.3; }
+    }
+    if (expression === 'speaking'){ tgt.pupilX = Math.sin(t*.6)*.15; tgt.pupilY = 0; }
+    if (mouthLevel > 0.01) tgt.mouthOpen = .06 + mouthLevel*.85;
+    tgt.headBob = Math.sin(t*1.2)*(expression==='speaking'? 6:3);
+    ease(dt);
+
+    cx.clearRect(0,0,W,H);
+    cx.save();
+    cx.translate(CX, CY + cur.headBob);
+    // ambient accent glow behind the character
+    const ag = cx.createRadialGradient(0,0,40,0,0,330);
+    ag.addColorStop(0, `rgba(${AR},${AG},${AB},.12)`);
+    ag.addColorStop(1, `rgba(${AR},${AG},${AB},0)`);
+    cx.fillStyle = ag; cx.beginPath(); cx.arc(0,0,330,0,7); cx.fill();
+
+    if (FD.type === 'glados') drawGlados(blink);
+    else if (FD.type === 'human') drawHuman(blink);
+    else drawRobot(blink);
+
+    cx.restore();
   }
 
   let last = performance.now();
@@ -894,7 +1188,7 @@ const face = (() => {
   })(last);
 
   setExpression('idle');
-  return { setExpression, setMouthLevel, setTheme };
+  return { setExpression, setMouthLevel, setFace };
 })();
 
 /* ---------------- lip sync ---------------- */
@@ -1534,29 +1828,32 @@ function addSavedCard(entry){
   chatMsgs.appendChild(holder);
 }
 
+function rebuildChat(){
+  // rebuild the chat view from the current character's persistent log so
+  // anything said during a voice call (and its 🔎 marker) also shows here
+  chatMsgs.innerHTML = '';
+  for (const e of convLog.slice(-100)){
+    if (e.t === 'msg'){
+      addBubble(e.role === 'user' ? 'user' : 'mia', e.text);
+      if (e.searched){
+        const badge = document.createElement('div');
+        badge.className = 'bub mia typing';
+        badge.textContent = '🔎 Google';
+        chatMsgs.appendChild(badge);
+      }
+    }
+    else addSavedCard(e);
+  }
+  scrollChat();
+}
+
 function toggleChat(){
   if (onCall) return;                      // chat only when not calling
   chatOpen = !chatOpen;
   chatEl.classList.toggle('hidden', !chatOpen);
   document.body.classList.toggle('chatmode', chatOpen);
   if (chatOpen){
-    {
-      // always rebuild from the persistent log so anything said during a
-      // voice call (and its 🔎 marker) also shows up here
-      chatMsgs.innerHTML = '';
-      for (const e of convLog.slice(-100)){
-        if (e.t === 'msg'){
-          addBubble(e.role === 'user' ? 'user' : 'mia', e.text);
-          if (e.searched){
-            const badge = document.createElement('div');
-            badge.className = 'bub mia typing';
-            badge.textContent = '🔎 Google';
-            chatMsgs.appendChild(badge);
-          }
-        }
-        else addSavedCard(e);
-      }
-    }
+    rebuildChat();
     chatInput.focus();
     scrollChat();
   } else {
