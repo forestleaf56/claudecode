@@ -292,7 +292,7 @@ const PERSONAS = [
     face:{ type:'robot' },
     systemBase:"Act as a person with your own vocabulary, personal taste, experiences, opinions, dreams, feelings and plans. Pretend that you have thoughts about all kind of things. Your name is Mia. Always give short answers. Always be honest." },
 
-  { id:'glados',  label:'GLaDOS — Portal',             name:'GLaDOS',   pron:{en:'she',sv:'hon'}, gender:'female', glow:'#ff8a3d',
+  { id:'glados',  label:'GLaDOS — Portal',             name:'GLaDOS',   pron:{en:'she',sv:'hon'}, gender:'female', glow:'#ffbe2e',
     face:{ type:'glados' },
     systemBase:"Act as GLaDOS from Portal with your own vocabulary, personal taste, experiences, opinions, dreams, feelings and plans. Pretend that you have thoughts about all kind of things. Your name is GLaDOS. Always give short answers. Always be honest." },
 
@@ -305,7 +305,7 @@ const PERSONAS = [
     systemBase:"Act as Mei Ling from Metal Gear Solid with your own vocabulary, personal taste, experiences, opinions, dreams, feelings and plans. Pretend that you have thoughts about all kind of things. Your name is Mei Ling. Always give short answers. Always be honest." },
 
   { id:'otacon',  label:'Otacon — Metal Gear Solid',   name:'Otacon',   pron:{en:'he',sv:'han'},  gender:'male',   glow:'#8affc1',
-    face:{ type:'human', skin:'#e8bd97', hair:'#6a4a2c', hairStyle:'short', eyes:'#4a3218', brow:'#4a3116', lip:'#b0796a', cloth:'#5a6a4a', glasses:true, glassesStyle:'rect', facial:'stubble' },
+    face:{ type:'human', skin:'#e8bd97', hair:'#5a4026', hairStyle:'short', eyes:'#4f6f8c', brow:'#3f2c18', lip:'#b0796a', cloth:'#e9e7e0', glasses:true, glassesStyle:'round' },
     systemBase:"Act as Dr. Hal \"Otacon\" Emmerich from Metal Gear Solid with your own vocabulary, personal taste, experiences, opinions, dreams, feelings and plans. Pretend that you have thoughts about all kind of things. Your name is Otacon. Always give short answers. Always be honest." },
 
   { id:'scully',  label:'Dana Scully — The X-Files',   name:'Dana Scully', pron:{en:'she',sv:'hon'}, gender:'female', glow:'#6ea8ff',
@@ -313,7 +313,7 @@ const PERSONAS = [
     systemBase:"Act as Dana Scully from The X-Files with your own vocabulary, personal taste, experiences, opinions, dreams, feelings and plans. Pretend that you have thoughts about all kind of things. Your name is Dana Scully. Always give short answers. Always be honest." },
 
   { id:'howard',  label:'Howard Wolowitz — Big Bang',  name:'Howard Wolowitz', pron:{en:'he',sv:'han'}, gender:'male', glow:'#ff5d8f',
-    face:{ type:'human', skin:'#e3b083', hair:'#241812', hairStyle:'bowl', eyes:'#3a2414', brow:'#241812', lip:'#b0796a', cloth:'#c23b52', collar:'turtleneck', facial:'mustache' },
+    face:{ type:'human', skin:'#e3b083', hair:'#241812', hairStyle:'bowl', eyes:'#3a2414', brow:'#241812', lip:'#b0796a', cloth:'#1f9e8f', collar:'turtleneck' },
     systemBase:"Act as Howard Wolowitz from The Big Bang Theory with your own vocabulary, personal taste, experiences, opinions, dreams, feelings and plans. Pretend that you have thoughts about all kind of things. Your name is Howard Wolowitz. Always give short answers. Always be honest." },
 
   { id:'drsara',  label:'Dr Sara',                     name:'Dr Sara',  pron:{en:'she',sv:'hon'}, gender:'female', glow:'#6fe0d0',
@@ -875,47 +875,71 @@ const face = (() => {
     }
   }
 
-  /* ================= GLaDOS (optic core) ================= */
+  /* ================= GLaDOS (optic core) =================
+     White segmented body, black face plate, single yellow optic that
+     brightens with speech; the eye "blinks" as a lid closing over the
+     round optic (clipped, so no square ever shows). */
   function drawGlados(blink){
-    // hanging cables + mount
-    cx.strokeStyle = '#171a1f'; cx.lineWidth = 12; cx.lineCap = 'round';
-    cx.beginPath(); cx.moveTo(-26,-270); cx.lineTo(-10,-150); cx.moveTo(26,-270); cx.lineTo(10,-150); cx.stroke();
-    cx.fillStyle = '#22262c'; roundRect(-46,-210,92,90,22); cx.fill();
-    // segmented cocoon head
-    cx.fillStyle = '#2b2e34';
+    // hanging cables + ceiling mount
+    cx.strokeStyle = '#3a3d42'; cx.lineWidth = 12; cx.lineCap = 'round';
+    cx.beginPath(); cx.moveTo(-24,-272); cx.lineTo(-8,-150); cx.moveTo(24,-272); cx.lineTo(8,-150); cx.stroke();
+    cx.fillStyle = '#d7dade'; roundRect(-44,-214,88,86,20); cx.fill();
+    cx.fillStyle = '#b7bcc1'; roundRect(-44,-214,88,22,20); cx.fill();
+
+    // white segmented cocoon body
+    cx.fillStyle = '#e7e9ec';
     cx.beginPath();
     cx.moveTo(0,-150);
-    cx.quadraticCurveTo(190,-118,176,44);
-    cx.quadraticCurveTo(150,214,0,240);
-    cx.quadraticCurveTo(-150,214,-176,44);
-    cx.quadraticCurveTo(-190,-118,0,-150);
+    cx.quadraticCurveTo(188,-116,172,52);
+    cx.quadraticCurveTo(150,220,0,244);
+    cx.quadraticCurveTo(-150,220,-172,52);
+    cx.quadraticCurveTo(-188,-116,0,-150);
     cx.closePath(); cx.fill();
-    cx.lineWidth = 4; cx.strokeStyle = '#3a3f47'; cx.stroke();
-    cx.strokeStyle = 'rgba(0,0,0,.35)'; cx.lineWidth = 6;
-    for (const yy of [-56,26,120]){ cx.beginPath(); cx.moveTo(-162,yy); cx.quadraticCurveTo(0,yy+18,162,yy); cx.stroke(); }
-    // side jaw plates
-    cx.fillStyle = '#23262b';
-    roundRect(-186,-6,44,120,20); cx.fill(); roundRect(142,-6,44,120,20); cx.fill();
-    // optic socket
-    const oy = 66;
-    cx.fillStyle = '#0c0e11'; el(0,oy,118,118); cx.fill();
-    // optic glow (brightens with speech/expression)
-    const b = Math.min(1.5, cur.glow*(0.65 + 0.55*mouthLevel));
-    const px = cur.pupilX*18, py = oy + cur.pupilY*12;
-    const og = cx.createRadialGradient(px, py, 4, 0, oy, 112);
-    og.addColorStop(0, `rgba(${AR},${AG},${AB},${Math.min(1,.95*b)})`);
-    og.addColorStop(.45, `rgba(${AR},${AG},${AB},${Math.min(1,.5*b)})`);
+    // soft side shadow for volume
+    cx.save(); cx.globalAlpha = .35; cx.fillStyle = '#aab0b8';
+    cx.beginPath(); cx.moveTo(-172,52); cx.quadraticCurveTo(-150,220,0,244);
+    cx.quadraticCurveTo(-78,150,-104,-16); cx.closePath(); cx.fill(); cx.restore();
+    // segment seams
+    cx.strokeStyle = 'rgba(120,126,134,.5)'; cx.lineWidth = 5;
+    for (const yy of [-42,44,132]){ cx.beginPath(); cx.moveTo(-158,yy); cx.quadraticCurveTo(0,yy+16,158,yy); cx.stroke(); }
+    // side actuator plates
+    cx.fillStyle = '#cfd2d6'; roundRect(-186,-4,42,120,18); cx.fill(); roundRect(144,-4,42,120,18); cx.fill();
+
+    // black face plate housing the optic
+    const oy = 64;
+    cx.fillStyle = '#141518';
+    cx.beginPath();
+    cx.moveTo(0,-66);
+    cx.quadraticCurveTo(128,-42,120,oy);
+    cx.quadraticCurveTo(110,172,0,182);
+    cx.quadraticCurveTo(-110,172,-120,oy);
+    cx.quadraticCurveTo(-128,-42,0,-66);
+    cx.closePath(); cx.fill();
+
+    // optic
+    const b = Math.min(1.5, cur.glow*(0.6 + 0.6*mouthLevel));
+    const px = cur.pupilX*16, py = oy + cur.pupilY*10;
+    const R = 84;
+    cx.fillStyle = '#0a0b0d'; el(0,oy,R,R); cx.fill();                 // socket
+    const og = cx.createRadialGradient(px, py, 3, 0, oy, R+4);
+    og.addColorStop(0, `rgba(255,244,210,${Math.min(1,.95*b)})`);
+    og.addColorStop(.38, `rgba(${AR},${AG},${AB},${Math.min(1,.92*b)})`);
     og.addColorStop(1, `rgba(${AR},${AG},${AB},0)`);
-    cx.fillStyle = og; el(0,oy,112,112); cx.fill();
-    cx.strokeStyle = `rgba(${AR},${AG},${AB},.85)`; cx.lineWidth = 6; el(0,oy,62,62); cx.stroke();
-    cx.fillStyle = `rgba(${AR},${AG},${AB},${Math.min(1,b)})`; el(px,py,30,30); cx.fill();
-    cx.fillStyle = `rgba(255,250,235,${Math.min(1,.9*b)})`; el(px,py,13,13); cx.fill();
-    // shutters (blink)
-    const shut = (1-blink)*120;
-    if (shut > 0.5){
-      cx.fillStyle = '#15171b';
-      roundRect(-120, oy-120, 240, shut, 8); cx.fill();
-      roundRect(-120, oy+120-shut, 240, shut, 8); cx.fill();
+    cx.fillStyle = og; el(0,oy,R+2,R+2); cx.fill();
+    cx.fillStyle = `rgba(${AR},${AG},${AB},${Math.min(1,b)})`; el(px,py,34,34); cx.fill();
+    cx.fillStyle = `rgba(255,250,235,${Math.min(1,.95*b)})`; el(px,py,14,14); cx.fill();
+    cx.strokeStyle = `rgba(${AR},${AG},${AB},.7)`; cx.lineWidth = 5; el(0,oy,R-4,R-4); cx.stroke();
+
+    // eyelid blink — lids close over the ROUND optic only (clipped → no square)
+    const closed = 1 - blink;
+    if (closed > 0.02){
+      cx.save();
+      el(0,oy,R,R); cx.clip();
+      cx.fillStyle = '#141518';
+      const h = closed * (R+6);
+      cx.fillRect(-R-6, oy-R-4, (R+6)*2, h);          // upper lid down
+      cx.fillRect(-R-6, oy+R+4-h, (R+6)*2, h);          // lower lid up
+      cx.restore();
     }
   }
 
@@ -992,9 +1016,15 @@ const face = (() => {
     for (const d of [[-96,-118],[-24,-152],[58,-132],[112,-88],[-142,-78]]){ el(d[0],d[1],7,7); cx.fill(); }
   }
   function drawStethoscope(){
-    cx.strokeStyle = '#26303c'; cx.lineWidth = 10; cx.lineCap = 'round';
-    cx.beginPath(); cx.moveTo(-72,150); cx.quadraticCurveTo(-98,58,-58,40); cx.moveTo(72,150); cx.quadraticCurveTo(98,58,58,40); cx.stroke();
-    cx.fillStyle = '#c9ccd2'; el(84,196,20,20); cx.fill(); cx.fillStyle = '#8a8f98'; el(84,196,11,11); cx.fill();
+    // hangs around the neck and drapes down the coat (kept well below the face)
+    cx.strokeStyle = '#2a333f'; cx.lineWidth = 11; cx.lineCap = 'round';
+    cx.beginPath();
+    cx.moveTo(-46,146); cx.quadraticCurveTo(-100,182,-90,262);
+    cx.moveTo( 46,146); cx.quadraticCurveTo( 100,190, 84,252);
+    cx.stroke();
+    // chestpiece at the end of the right tube
+    cx.fillStyle = '#c9ccd2'; el(84,264,20,20); cx.fill();
+    cx.fillStyle = '#9aa0a8'; el(84,264,11,11); cx.fill();
   }
   function drawHairBack(hair, hi){
     const st = FD.hairStyle;
