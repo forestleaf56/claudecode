@@ -297,7 +297,7 @@ const PERSONAS = [
     systemBase:"Act as GLaDOS from Portal with your own vocabulary, personal taste, experiences, opinions, dreams, feelings and plans. Pretend that you have thoughts about all kind of things. Your name is GLaDOS. Always give short answers. Always be honest." },
 
   { id:'lara',    label:'Lara Croft — Tomb Raider',    name:'Lara Croft', pron:{en:'she',sv:'hon'}, gender:'female', glow:'#7bd88f',
-    face:{ type:'human', skin:'#d99f76', hair:'#4a2e1a', hairStyle:'ponytail', eyes:'#4f7a3a', brow:'#3a2413', lip:'#b56a5e', cloth:'#2f6f63' },
+    face:{ type:'human', skin:'#d99f76', hair:'#4a2e1a', hairStyle:'ponytail', eyes:'#4f7a3a', brow:'#3a2413', lip:'#b56a5e', cloth:'#2f8f83', top:'tank' },
     systemBase:"Act as Lara Croft from Tomb Raider with your own vocabulary, personal taste, experiences, opinions, dreams, feelings and plans. Pretend that you have thoughts about all kind of things. Your name is Lara Croft. Always give short answers. Always be honest." },
 
   { id:'meiling', label:'Mei Ling — Metal Gear Solid', name:'Mei Ling', pron:{en:'she',sv:'hon'}, gender:'female', glow:'#ff9eb5',
@@ -305,11 +305,11 @@ const PERSONAS = [
     systemBase:"Act as Mei Ling from Metal Gear Solid with your own vocabulary, personal taste, experiences, opinions, dreams, feelings and plans. Pretend that you have thoughts about all kind of things. Your name is Mei Ling. Always give short answers. Always be honest." },
 
   { id:'otacon',  label:'Otacon — Metal Gear Solid',   name:'Otacon',   pron:{en:'he',sv:'han'},  gender:'male',   glow:'#8affc1',
-    face:{ type:'human', skin:'#e8bd97', hair:'#5a4026', hairStyle:'short', eyes:'#4f6f8c', brow:'#3f2c18', lip:'#b0796a', cloth:'#e9e7e0', glasses:true, glassesStyle:'round' },
+    face:{ type:'human', skin:'#e8bd97', hair:'#5a4026', hairStyle:'short', eyes:'#4f6f8c', brow:'#3f2c18', lip:'#b0796a', cloth:'#e9e7e0', collar:'coat', glasses:true, glassesStyle:'round' },
     systemBase:"Act as Dr. Hal \"Otacon\" Emmerich from Metal Gear Solid with your own vocabulary, personal taste, experiences, opinions, dreams, feelings and plans. Pretend that you have thoughts about all kind of things. Your name is Otacon. Always give short answers. Always be honest." },
 
   { id:'scully',  label:'Dana Scully — The X-Files',   name:'Dana Scully', pron:{en:'she',sv:'hon'}, gender:'female', glow:'#6ea8ff',
-    face:{ type:'human', skin:'#f0d2ba', hair:'#b1512a', hairStyle:'bob', eyes:'#4f7f8c', brow:'#8a4426', lip:'#c06a5c', cloth:'#2a3242' },
+    face:{ type:'human', skin:'#f0d2ba', hair:'#b1512a', hairStyle:'bob', eyes:'#4f7f8c', brow:'#8a4426', lip:'#c06a5c', cloth:'#2a3242', collar:'suit' },
     systemBase:"Act as Dana Scully from The X-Files with your own vocabulary, personal taste, experiences, opinions, dreams, feelings and plans. Pretend that you have thoughts about all kind of things. Your name is Dana Scully. Always give short answers. Always be honest." },
 
   { id:'howard',  label:'Howard Wolowitz — Big Bang',  name:'Howard Wolowitz', pron:{en:'he',sv:'han'}, gender:'male', glow:'#ff5d8f',
@@ -474,7 +474,7 @@ function applyPersona(){
   if (halo) halo.style.background =
     `radial-gradient(circle, rgba(${rgb[0]},${rgb[1]},${rgb[2]},.10) 0%, rgba(${rgb[0]},${rgb[1]},${rgb[2]},0) 62%)`;
   // reset voice resolution for the new character
-  EL_VOICE_ID = localStorage.getItem(voiceKey()) || null;
+  EL_VOICE_ID = initVoiceId();
   elTriedVoices = [];
   // load THIS character's own memory (no bleed between personas)
   history = loadHistory();
@@ -500,36 +500,79 @@ let geminiModel = localStorage.getItem('mia_gem_model') || null;
 if (geminiModel && !GEMINI_MODELS.includes(geminiModel)) geminiModel = null;   // stale cache from old version
 
 /* ElevenLabs — voice is auto-discovered from the user's own account,
-   because free-tier keys can't use shared library voices via API. */
-/* Voice is stored per-character so each persona keeps its own ElevenLabs
-   voice. A user-entered voice ID (settings) overrides auto-discovery. */
+   because free-tier keys can't use shared library voices via API.
+   Each character has a voice profile (preferred ElevenLabs default-voice
+   names + desired gender/accent/age/character keywords); the best-matching
+   voice on the account is scored and chosen. A manual voice ID entered in
+   settings always overrides. Stored per character. */
+const VOICE_VER = '2';   // bump to re-pick auto voices when scoring changes
+const VOICE_HINTS = {
+  mia:     { names:['Sarah','Rachel','Matilda','Bella','Freya','Lily'],  gender:'female', age:'young',  keywords:['warm','soft','friendly','pleasant'] },
+  glados:  { names:['Rachel','Charlotte','Grace','Freya','Dorothy'],     gender:'female', age:'middle', keywords:['calm','clear','serious','neutral','robotic'] },
+  lara:    { names:['Alice','Charlotte','Dorothy','Lily','Matilda'],     gender:'female', accent:'british', age:'middle', keywords:['confident','british','strong'] },
+  meiling: { names:['Elli','Sarah','Gigi','Freya','Lily'],               gender:'female', age:'young',  keywords:['young','soft','gentle'] },
+  otacon:  { names:['Josh','Antoni','Liam','Sam','Ethan'],               gender:'male',   age:'young',  accent:'american', keywords:['young','soft','nervous'] },
+  scully:  { names:['Rachel','Grace','Freya','Charlotte'],               gender:'female', age:'middle', accent:'american', keywords:['calm','serious','mature','professional'] },
+  howard:  { names:['Josh','Antoni','Sam','Liam'],                       gender:'male',   age:'young',  accent:'american', keywords:['young','excited','casual'] },
+  drsara:  { names:['Sarah','Rachel','Matilda','Grace'],                 gender:'female', age:'middle', keywords:['calm','warm','professional','soft'] },
+  jack:    { names:['Charlie','Josh','Liam','Antoni','Brian'],           gender:'male',   age:'young',  keywords:['casual','friendly','confident'] },
+  rick:    { names:['Arnold','Adam','Clyde','Fin','George','Bill'],      gender:'male',   age:'middle', keywords:['deep','warm','crisp','adventurous'] },
+  lola:    { names:['Matilda','Grace','Lily','Sarah'],                   gender:'female', age:'middle', keywords:['warm','friendly','soft','pleasant'] },
+  natasha: { names:['Charlotte','Nicole','Bella','Matilda','Lily'],      gender:'female', age:'young',  keywords:['seductive','soft','warm','sensual'] }
+};
+/* Voice is stored per-character. A user-entered voice ID (settings)
+   overrides auto-discovery. */
 function voiceKey(){ return 'mia_el_voice_' + PERSONA_ID; }
-let EL_VOICE_ID = localStorage.getItem(voiceKey()) || null;   // manual/auto voice
+function voiceVerKey(){ return 'mia_el_voice_ver_' + PERSONA_ID; }
+function voiceManualKey(){ return 'mia_el_voice_m_' + PERSONA_ID; }
+function initVoiceId(){
+  const manual = localStorage.getItem(voiceManualKey());
+  if (manual) return manual;
+  const cached = localStorage.getItem(voiceKey());
+  if (cached && localStorage.getItem(voiceVerKey()) === VOICE_VER) return cached;
+  return null;   // force a fresh scored pick
+}
+let EL_VOICE_ID = initVoiceId();
 const EL_MODEL  = 'eleven_flash_v2_5';   // ~75ms latency
 let elTriedVoices = [];
 
+function scoreVoice(v, hint){
+  const L = v.labels || {};
+  const name    = (v.name || '').toLowerCase();
+  const gender  = (L.gender || '').toLowerCase();
+  const age     = (L.age || '').toLowerCase();
+  const accent  = (L.accent || '').toLowerCase();
+  const desc    = ((L.description || '') + ' ' + (L.descriptive || '') + ' ' + (L.use_case || '') + ' ' + (v.description || '')).toLowerCase();
+  let s = 0;
+  if (hint.names){ const i = hint.names.findIndex(n => name === n.toLowerCase()); if (i >= 0) s += 100 - i*6; }
+  if (hint.gender){ if (gender.includes(hint.gender)) s += 45; else if (gender) s -= 70; }
+  if (hint.accent && accent && accent.includes(hint.accent)) s += 22;
+  if (hint.age && age && age.includes(hint.age)) s += 12;
+  if (hint.keywords) for (const k of hint.keywords) if (desc.includes(k.toLowerCase())) s += 6;
+  if (v.category === 'premade') s += 8;   // broadly available/allowed
+  return s;
+}
+
 async function resolveVoice(){
   if (EL_VOICE_ID && !elTriedVoices.includes(EL_VOICE_ID)) return EL_VOICE_ID;
-  const res = await fetch('https://api.elevenlabs.io/v1/voices', {
-    headers:{ 'xi-api-key': EL_KEY }
-  });
+  // manual override always wins
+  const manual = localStorage.getItem(voiceManualKey());
+  if (manual && !elTriedVoices.includes(manual)){ EL_VOICE_ID = manual; return manual; }
+  // valid cached auto-pick (matching current scoring version)
+  const cached = localStorage.getItem(voiceKey());
+  if (cached && localStorage.getItem(voiceVerKey()) === VOICE_VER && !elTriedVoices.includes(cached)){ EL_VOICE_ID = cached; return cached; }
+  // otherwise fetch the account's voices and score them for this character
+  const res = await fetch('https://api.elevenlabs.io/v1/voices', { headers:{ 'xi-api-key': EL_KEY } });
   if (!res.ok) throw new Error('ElevenLabs voices ' + res.status);
   const voices = (await res.json())?.voices || [];
   const usable = voices.filter(v => !elTriedVoices.includes(v.voice_id));
   if (!usable.length) throw new Error('No usable ElevenLabs voices on this account');
-  // Prefer a premade voice matching this character's gender; otherwise take
-  // whatever is available on the account.
-  const want = currentPersona().gender;   // 'female' | 'male'
-  const other = want === 'female' ? 'male' : 'female';
-  const isG = (v, g) => new RegExp(g, 'i').test(v.labels?.gender || '');
-  const pick =
-    usable.find(v => v.category === 'premade' && isG(v, want)) ||
-    usable.find(v => isG(v, want)) ||
-    usable.find(v => v.category === 'premade' && !isG(v, other)) ||
-    usable.find(v => v.category === 'premade') ||
-    usable[0];
-  EL_VOICE_ID = pick.voice_id;
+  const hint = VOICE_HINTS[PERSONA_ID] || { gender: currentPersona().gender };
+  let best = usable[0], bestScore = -Infinity;
+  for (const v of usable){ const sc = scoreVoice(v, hint); if (sc > bestScore){ bestScore = sc; best = v; } }
+  EL_VOICE_ID = best.voice_id;
   localStorage.setItem(voiceKey(), EL_VOICE_ID);
+  localStorage.setItem(voiceVerKey(), VOICE_VER);
   return EL_VOICE_ID;
 }
 
@@ -560,7 +603,7 @@ function showSetup(){
   gemInput.value = GEMINI_KEY; elInput.value = EL_KEY;
   document.getElementById('langSel').value = LANG;
   personaSel.value = PERSONA_ID;
-  voiceInput.value = localStorage.getItem(voiceKey()) || '';
+  voiceInput.value = localStorage.getItem(voiceManualKey()) || '';
   document.getElementById('setupErr').textContent = '';
   setupEl.classList.remove('hidden');   // must be visible before scrolling works
   renderLog();
@@ -569,7 +612,7 @@ document.getElementById('gear').addEventListener('click', showSetup);
 personaSel.addEventListener('change', (e) => {
   if (onCall) endCall();
   setPersona(e.target.value);
-  voiceInput.value = localStorage.getItem(voiceKey()) || '';
+  voiceInput.value = localStorage.getItem(voiceManualKey()) || '';
 });
 document.getElementById('langSel').addEventListener('change', (e) => {
   LANG = e.target.value; localStorage.setItem('mia_lang', LANG);
@@ -581,10 +624,19 @@ document.getElementById('saveKeys').addEventListener('click', () => {
   GEMINI_KEY = g; EL_KEY = e;
   localStorage.setItem('mia_gemini_key', g);
   localStorage.setItem('mia_el_key', e);
-  // per-character voice override
+  // per-character manual voice override (empty = auto-pick best match)
   const vid = voiceInput.value.trim();
-  if (vid){ localStorage.setItem(voiceKey(), vid); EL_VOICE_ID = vid; }
-  else { localStorage.removeItem(voiceKey()); EL_VOICE_ID = null; }
+  if (vid){
+    localStorage.setItem(voiceManualKey(), vid);
+    localStorage.setItem(voiceKey(), vid);
+    localStorage.setItem(voiceVerKey(), VOICE_VER);
+    EL_VOICE_ID = vid;
+  } else {
+    localStorage.removeItem(voiceManualKey());
+    localStorage.removeItem(voiceKey());
+    localStorage.removeItem(voiceVerKey());
+    EL_VOICE_ID = null;
+  }
   elTriedVoices = [];
   const newLang = document.getElementById('langSel').value;
   if (newLang !== LANG){ LANG = newLang; localStorage.setItem('mia_lang', LANG); applyLang(); }
@@ -1016,15 +1068,17 @@ const face = (() => {
     for (const d of [[-96,-118],[-24,-152],[58,-132],[112,-88],[-142,-78]]){ el(d[0],d[1],7,7); cx.fill(); }
   }
   function drawStethoscope(){
-    // hangs around the neck and drapes down the coat (kept well below the face)
-    cx.strokeStyle = '#2a333f'; cx.lineWidth = 11; cx.lineCap = 'round';
+    // rests around the neck (wide apart on the collar) and drapes down the coat
+    cx.strokeStyle = '#2a333f'; cx.lineWidth = 12; cx.lineCap = 'round';
     cx.beginPath();
-    cx.moveTo(-46,146); cx.quadraticCurveTo(-100,182,-90,262);
-    cx.moveTo( 46,146); cx.quadraticCurveTo( 100,190, 84,252);
+    cx.moveTo(-84,182); cx.quadraticCurveTo(-118,235,-104,300);
+    cx.moveTo( 84,182); cx.quadraticCurveTo( 118,238,  98,294);
     cx.stroke();
+    // earpiece tips resting on the collar (well below the chin, wide apart)
+    cx.fillStyle = '#2a333f'; el(-84,181,8,8); cx.fill(); el(84,181,8,8); cx.fill();
     // chestpiece at the end of the right tube
-    cx.fillStyle = '#c9ccd2'; el(84,264,20,20); cx.fill();
-    cx.fillStyle = '#9aa0a8'; el(84,264,11,11); cx.fill();
+    cx.fillStyle = '#c9ccd2'; el(98,300,21,21); cx.fill();
+    cx.fillStyle = '#9aa0a8'; el(98,300,12,12); cx.fill();
   }
   function drawHairBack(hair, hi){
     const st = FD.hairStyle;
@@ -1108,12 +1162,44 @@ const face = (() => {
     drawHairBack(hair, hairHi);
 
     // shoulders / clothing
-    cx.fillStyle = cloth;
-    cx.beginPath();
-    cx.moveTo(-300,300); cx.quadraticCurveTo(-236,150,-118,150);
-    cx.lineTo(118,150); cx.quadraticCurveTo(236,150,300,300); cx.closePath(); cx.fill();
-    cx.strokeStyle = _css(_mix(_hx(cloth),[255,255,255],.18)); cx.lineWidth = 6;
-    cx.beginPath(); cx.moveTo(-118,150); cx.quadraticCurveTo(0,206,118,150); cx.stroke();
+    if (FD.top === 'tank'){
+      // bare shoulders (skin) + a sleeveless tank top with straps
+      cx.fillStyle = skin;
+      cx.beginPath();
+      cx.moveTo(-300,300); cx.quadraticCurveTo(-236,150,-118,150);
+      cx.lineTo(118,150); cx.quadraticCurveTo(236,150,300,300); cx.closePath(); cx.fill();
+      cx.fillStyle = cloth;
+      cx.beginPath();
+      cx.moveTo(-150,300); cx.quadraticCurveTo(-150,206,-74,182);
+      cx.quadraticCurveTo(0,214,74,182); cx.quadraticCurveTo(150,206,150,300);
+      cx.closePath(); cx.fill();
+      cx.strokeStyle = cloth; cx.lineWidth = 20; cx.lineCap = 'round';
+      cx.beginPath(); cx.moveTo(-74,184); cx.lineTo(-104,150); cx.moveTo(74,184); cx.lineTo(104,150); cx.stroke();
+    } else {
+      cx.fillStyle = cloth;
+      cx.beginPath();
+      cx.moveTo(-300,300); cx.quadraticCurveTo(-236,150,-118,150);
+      cx.lineTo(118,150); cx.quadraticCurveTo(236,150,300,300); cx.closePath(); cx.fill();
+      cx.strokeStyle = _css(_mix(_hx(cloth),[255,255,255],.18)); cx.lineWidth = 6;
+      cx.beginPath(); cx.moveTo(-118,150); cx.quadraticCurveTo(0,206,118,150); cx.stroke();
+    }
+    // suit jacket (dark lapels + white shirt V) or open lab coat
+    if (FD.collar === 'suit'){
+      const lap = _css(_mix(_hx(cloth),[0,0,0],.25));
+      cx.fillStyle = '#eef1f5';
+      cx.beginPath(); cx.moveTo(-48,158); cx.lineTo(0,300); cx.lineTo(48,158); cx.closePath(); cx.fill();
+      cx.fillStyle = lap;
+      cx.beginPath(); cx.moveTo(-120,150); cx.lineTo(-40,168); cx.lineTo(-34,300); cx.lineTo(-152,300); cx.closePath(); cx.fill();
+      cx.beginPath(); cx.moveTo(120,150); cx.lineTo(40,168); cx.lineTo(34,300); cx.lineTo(152,300); cx.closePath(); cx.fill();
+    } else if (FD.collar === 'coat'){
+      cx.fillStyle = '#93a7b8';
+      cx.beginPath(); cx.moveTo(-38,158); cx.lineTo(0,268); cx.lineTo(38,158); cx.closePath(); cx.fill();
+      cx.fillStyle = _css(_mix(_hx(cloth),[255,255,255],.05));
+      cx.beginPath(); cx.moveTo(-120,150); cx.lineTo(-36,166); cx.lineTo(-74,300); cx.lineTo(-154,300); cx.closePath(); cx.fill();
+      cx.beginPath(); cx.moveTo(120,150); cx.lineTo(36,166); cx.lineTo(74,300); cx.lineTo(154,300); cx.closePath(); cx.fill();
+      cx.strokeStyle = 'rgba(140,150,160,.45)'; cx.lineWidth = 3;
+      cx.beginPath(); cx.moveTo(-36,166); cx.lineTo(-74,300); cx.moveTo(36,166); cx.lineTo(74,300); cx.stroke();
+    }
 
     // neck
     cx.fillStyle = skinSh; roundRect(-46,58,92,120,40); cx.fill();
@@ -1747,7 +1833,7 @@ async function speak(text){
       // invalid/stale. In all cases blacklist it and auto-pick another.
       if ([400, 402, 403, 404, 422].includes(e.status)){
         if (e.voice) elTriedVoices.push(e.voice);
-        localStorage.removeItem(voiceKey()); EL_VOICE_ID = null;
+        localStorage.removeItem(voiceKey()); localStorage.removeItem(voiceVerKey()); EL_VOICE_ID = null;
         blob = await elTTS(text);            // second attempt with a fresh voice
       } else throw e;
     }
