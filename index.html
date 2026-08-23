@@ -505,17 +505,17 @@ if (geminiModel && !GEMINI_MODELS.includes(geminiModel)) geminiModel = null;   /
    names + desired gender/accent/age/character keywords); the best-matching
    voice on the account is scored and chosen. A manual voice ID entered in
    settings always overrides. Stored per character. */
-const VOICE_VER = '2';   // bump to re-pick auto voices when scoring changes
+const VOICE_VER = '3';   // bump to re-pick auto voices when scoring changes
 const VOICE_HINTS = {
   mia:     { names:['Sarah','Rachel','Matilda','Bella','Freya','Lily'],  gender:'female', age:'young',  keywords:['warm','soft','friendly','pleasant'] },
   glados:  { names:['Rachel','Charlotte','Grace','Freya','Dorothy'],     gender:'female', age:'middle', keywords:['calm','clear','serious','neutral','robotic'] },
   lara:    { names:['Alice','Charlotte','Dorothy','Lily','Matilda'],     gender:'female', accent:'british', age:'middle', keywords:['confident','british','strong'] },
   meiling: { names:['Elli','Sarah','Gigi','Freya','Lily'],               gender:'female', age:'young',  keywords:['young','soft','gentle'] },
-  otacon:  { names:['Josh','Antoni','Liam','Sam','Ethan'],               gender:'male',   age:'young',  accent:'american', keywords:['young','soft','nervous'] },
+  otacon:  { names:['Harry','Antoni','Daniel','Thomas','Adam'],          gender:'male',   age:'middle', accent:'american', keywords:['anxious','nervous','tense','worried','shy','soft'] },
   scully:  { names:['Rachel','Grace','Freya','Charlotte'],               gender:'female', age:'middle', accent:'american', keywords:['calm','serious','mature','professional'] },
-  howard:  { names:['Josh','Antoni','Sam','Liam'],                       gender:'male',   age:'young',  accent:'american', keywords:['young','excited','casual'] },
+  howard:  { names:['Antoni','Adam','Sam','Daniel'],                     gender:'male',   age:'middle', accent:'american', keywords:['excited','casual','expressive','confident'] },
   drsara:  { names:['Sarah','Rachel','Matilda','Grace'],                 gender:'female', age:'middle', keywords:['calm','warm','professional','soft'] },
-  jack:    { names:['Charlie','Josh','Liam','Antoni','Brian'],           gender:'male',   age:'young',  keywords:['casual','friendly','confident'] },
+  jack:    { names:['Antoni','Daniel','Brian','Callum','Liam'],          gender:'male',   age:'middle', keywords:['casual','friendly','confident','articulate'] },
   rick:    { names:['Arnold','Adam','Clyde','Fin','George','Bill'],      gender:'male',   age:'middle', keywords:['deep','warm','crisp','adventurous'] },
   lola:    { names:['Matilda','Grace','Lily','Sarah'],                   gender:'female', age:'middle', keywords:['warm','friendly','soft','pleasant'] },
   natasha: { names:['Charlotte','Nicole','Bella','Matilda','Lily'],      gender:'female', age:'young',  keywords:['seductive','soft','warm','sensual'] }
