@@ -633,7 +633,10 @@ function logAttach(kind, name, blob){
 }
 
 function loadHistory(){
-  try { return JSON.parse(localStorage.getItem('mia_history') || '[]'); } catch(e){ return []; }
+  try {
+    const raw = JSON.parse(localStorage.getItem('mia_history') || '[]');
+    return sanitizeContents(raw);   // drop any malformed/incompatible turns
+  } catch(e){ return []; }
 }
 function saveHistory(){
   try { localStorage.setItem('mia_history', JSON.stringify(history)); } catch(e){}
@@ -1192,12 +1195,41 @@ function stopListening(){
 }
 
 /* ---------------- LLM: Gemini ---------------- */
+/* Coerce a conversation array into exactly the shape Gemini's REST API
+   accepts: every turn is { role:'user'|'model', parts:[…] }, malformed or
+   empty turns are dropped, and the array must START with a user turn (a
+   leftover model greeting at the front makes Gemini reject the whole
+   request with "Unknown name 'content'/'contents'"). This makes the app
+   resilient to history persisted by older versions or other pages sharing
+   the same origin. */
+function sanitizeContents(contents){
+  const arr = Array.isArray(contents) ? contents : [];
+  const out = [];
+  for (const e of arr){
+    if (!e || typeof e !== 'object') continue;
+    const role = e.role === 'model' ? 'model' : 'user';
+    let parts = null;
+    if (Array.isArray(e.parts)){
+      parts = e.parts.filter(p => p && (typeof p.text === 'string' || p.inline_data || p.inlineData));
+    } else if (typeof e.content === 'string'){
+      parts = [{ text: e.content }];
+    } else if (typeof e.text === 'string'){
+      parts = [{ text: e.text }];
+    }
+    if (!parts || !parts.length) continue;
+    out.push({ role, parts });
+  }
+  // Gemini requires the first turn to be from the user.
+  while (out.length && out[0].role !== 'user') out.shift();
+  return out;
+}
+
 async function geminiRequest(model, contents, disableThinking, useSearch){
   const generationConfig = { temperature: 1.0, maxOutputTokens: 1024 };
   if (disableThinking) generationConfig.thinkingConfig = { thinkingBudget: 0 };
   const payload = {
     system_instruction: { parts: [{ text: SYSTEM_PROMPT() }] },
-    contents,
+    contents: sanitizeContents(contents),
     generationConfig
   };
   if (useSearch) payload.tools = [{ google_search: {} }];
@@ -1387,9 +1419,10 @@ async function speak(text){
       blob = await elTTS(text);
     } catch(e){
       if (e.status === 401){ badKeyStop('elevenlabs'); return; }
-      if (e.status === 402 || e.status === 403){
-        // this voice isn't allowed on this plan — blacklist it and try another
-        elTriedVoices.push(e.voice);
+      // 402/403 = voice not allowed on this plan; 400/404/422 = voice id
+      // invalid/stale. In all cases blacklist it and auto-pick another.
+      if ([400, 402, 403, 404, 422].includes(e.status)){
+        if (e.voice) elTriedVoices.push(e.voice);
         localStorage.removeItem(voiceKey()); EL_VOICE_ID = null;
         blob = await elTTS(text);            // second attempt with a fresh voice
       } else throw e;
