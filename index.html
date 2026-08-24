@@ -1339,15 +1339,15 @@ const face = (() => {
     }
   }
   function drawHairFront(hair, hi){
-    if (FD.acc==='hat' || FD.acc==='bandana' || FD.acc==='chefhat' || FD.acc==='mariocap') return;   // top is covered
+    if (FD.acc==='hat' || FD.acc==='bandana' || FD.acc==='chefhat') return;   // top is covered
     const st = FD.hairStyle;
     if (st==='bald'){ return; }                          // shaved head — bare scalp
-    if (st==='wisps'){                                    // sparse old-master wisps (Yoda)
-      cx.strokeStyle = hair; cx.lineWidth = 6; cx.lineCap = 'round'; cx.globalAlpha = .8;
+    if (st==='wisps'){                                    // sparse old-master wisps that hug the scalp (Yoda)
+      cx.strokeStyle = hair; cx.lineWidth = 5; cx.lineCap = 'round'; cx.globalAlpha = .85;
       for (const s of [-1,1]){
-        cx.beginPath(); cx.moveTo(s*60,-206); cx.quadraticCurveTo(s*90,-236, s*70,-256); cx.stroke();
-        cx.beginPath(); cx.moveTo(s*20,-210); cx.quadraticCurveTo(s*30,-244, s*8,-258); cx.stroke();
-        cx.beginPath(); cx.moveTo(s*150,-70); cx.quadraticCurveTo(s*176,-120, s*150,-160); cx.stroke();
+        cx.beginPath(); cx.moveTo(s*38,-200); cx.quadraticCurveTo(s*66,-208, s*96,-190); cx.stroke();
+        cx.beginPath(); cx.moveTo(s*12,-206); cx.quadraticCurveTo(s*30,-212, s*56,-200); cx.stroke();
+        cx.beginPath(); cx.moveTo(s*132,-78); cx.quadraticCurveTo(s*162,-52, s*140,-8); cx.stroke();
       }
       cx.globalAlpha = 1; return;
     }
@@ -1563,12 +1563,12 @@ const face = (() => {
       cx.quadraticCurveTo(60,74,0,72); cx.quadraticCurveTo(-60,74,-124,54);
       cx.closePath(); cx.fill(); cx.restore();
     }
-    if (FD.facial === 'mustache'){
+    if (FD.facial === 'mustache'){          // bushy, sits just under the nose (above the mouth)
       cx.fillStyle = hair;
       cx.beginPath();
-      cx.moveTo(-6,74); cx.quadraticCurveTo(-40,66,-66,80);
-      cx.quadraticCurveTo(-50,106,-16,96); cx.quadraticCurveTo(0,92,16,96);
-      cx.quadraticCurveTo(50,106,66,80); cx.quadraticCurveTo(40,66,6,74);
+      cx.moveTo(-6,48); cx.quadraticCurveTo(-40,40,-66,54);
+      cx.quadraticCurveTo(-50,80,-16,70); cx.quadraticCurveTo(0,66,16,70);
+      cx.quadraticCurveTo(50,80,66,54); cx.quadraticCurveTo(40,40,6,48);
       cx.closePath(); cx.fill();
     }
     // mouth — always on top of any beard/mustache
@@ -1596,20 +1596,33 @@ const face = (() => {
   /* ---- extra human accessories ---- */
   function drawChefHat(){
     cx.fillStyle = '#f4f5f7';
-    cx.fillRect(-92,-150,184,44);
-    cx.beginPath();
-    cx.moveTo(-96,-150); cx.quadraticCurveTo(-150,-158,-120,-220);
-    cx.quadraticCurveTo(-140,-272,-58,-262); cx.quadraticCurveTo(-40,-300,0,-288);
-    cx.quadraticCurveTo(40,-300,58,-262); cx.quadraticCurveTo(140,-272,120,-220);
-    cx.quadraticCurveTo(150,-158,96,-150); cx.closePath(); cx.fill();
-    cx.strokeStyle = 'rgba(0,0,0,.06)'; cx.lineWidth = 3; cx.beginPath(); cx.moveTo(-92,-128); cx.lineTo(92,-128); cx.stroke();
+    roundRect(-124,-150,248,48,8); cx.fill();                 // wider band
+    cx.beginPath();                                            // taller, wider puff
+    cx.moveTo(-124,-146); cx.quadraticCurveTo(-192,-162,-158,-238);
+    cx.quadraticCurveTo(-182,-306,-78,-290); cx.quadraticCurveTo(-54,-334,0,-314);
+    cx.quadraticCurveTo(54,-334,78,-290); cx.quadraticCurveTo(182,-306,158,-238);
+    cx.quadraticCurveTo(192,-162,124,-146); cx.closePath(); cx.fill();
+    cx.strokeStyle = 'rgba(0,0,0,.06)'; cx.lineWidth = 3; cx.beginPath(); cx.moveTo(-118,-126); cx.lineTo(118,-126); cx.stroke();
   }
   function drawMarioCap(){
     cx.fillStyle = '#e5322a';
-    cx.beginPath(); cx.moveTo(-150,-118); cx.quadraticCurveTo(-160,-238,0,-244); cx.quadraticCurveTo(160,-238,150,-118); cx.quadraticCurveTo(0,-150,-150,-118); cx.closePath(); cx.fill();
-    cx.beginPath(); cx.moveTo(-150,-116); cx.quadraticCurveTo(-40,-92,16,-104); cx.quadraticCurveTo(-30,-134,-150,-134); cx.closePath(); cx.fill();
-    cx.fillStyle = '#fff'; el(0,-186,32,32); cx.fill();
-    cx.fillStyle = '#e5322a'; cx.font = 'bold 38px system-ui'; cx.textAlign = 'center'; cx.textBaseline = 'middle'; cx.fillText('M',0,-184);
+    // crown covering the whole top of the head
+    cx.beginPath();
+    cx.moveTo(-166,-92);
+    cx.quadraticCurveTo(-180,-214,-30,-238);
+    cx.quadraticCurveTo(80,-250,152,-192);
+    cx.quadraticCurveTo(176,-150,168,-100);
+    cx.quadraticCurveTo(0,-140,-166,-92);
+    cx.closePath(); cx.fill();
+    // curved brim over the forehead
+    cx.beginPath();
+    cx.moveTo(-170,-96);
+    cx.quadraticCurveTo(-40,-64,54,-92);
+    cx.quadraticCurveTo(-30,-128,-170,-116);
+    cx.closePath(); cx.fill();
+    // white emblem circle + M
+    cx.fillStyle = '#fff'; el(2,-182,33,33); cx.fill();
+    cx.fillStyle = '#e5322a'; cx.font = 'bold 40px system-ui'; cx.textAlign = 'center'; cx.textBaseline = 'middle'; cx.fillText('M',2,-180);
   }
   function drawAntennae(){
     cx.strokeStyle = FD.hair || '#2a4a6a'; cx.lineWidth = 7; cx.lineCap = 'round';
@@ -1666,14 +1679,28 @@ const face = (() => {
     cx.fillStyle = fur; el(-150,42,60,52); cx.fill(); el(150,42,60,52); cx.fill();
     cx.strokeStyle = str; cx.lineWidth = 12; cx.lineCap = 'round';
     for (const dx of [-42,0,42]){ cx.beginPath(); cx.moveTo(dx,-150); cx.quadraticCurveTo(dx*1.3,-112,dx,-86); cx.stroke(); }
-    const ew=52, eh=Math.max(3,44*cur.eyeH*blink);
+    const ew=52, eh=Math.max(2,44*cur.eyeH*blink);
+    const lidFur = _css(_mix(_hx(fur),[80,40,10],.22));
     for (const s of [-1,1]){
       const ex=s*52;
       cx.fillStyle = FD.eyes||'#eae2c0'; el(ex,-46,ew,eh); cx.fill();
-      cx.fillStyle = '#231a12'; el(ex+cur.pupilX*10,-46+cur.pupilY*8,12,Math.max(3,eh*0.9)); cx.fill();
-      cx.fillStyle = fur; cx.beginPath(); cx.moveTo(ex-ew-2,-46); cx.quadraticCurveTo(ex,-46-eh-16-cur.browRaise*10, ex+ew+2,-46); cx.lineTo(ex+ew+2,-46-eh-4); cx.lineTo(ex-ew-2,-46-eh-4); cx.closePath(); cx.fill();
+      if (eh > 4){
+        cx.save(); el(ex,-46,ew,eh); cx.clip();
+        cx.fillStyle = '#231a12'; el(ex+cur.pupilX*10,-46+cur.pupilY*8,13,eh*1.15); cx.fill();
+        cx.fillStyle = 'rgba(255,255,255,.9)'; el(ex-6+cur.pupilX*8,-46-eh*0.4,4,4); cx.fill();
+        cx.restore();
+      }
+      // heavy droopy upper lid — a crescent that tracks the blink (never a square)
+      cx.fillStyle = fur;
+      cx.beginPath();
+      cx.moveTo(ex-ew-3,-46-eh*0.15);
+      cx.quadraticCurveTo(ex,-46-eh-16-cur.browRaise*10, ex+ew+3,-46-eh*0.15);
+      cx.quadraticCurveTo(ex,-46-eh*0.45, ex-ew-3,-46-eh*0.15);
+      cx.closePath(); cx.fill();
+      cx.strokeStyle = lidFur; cx.lineWidth = 3; cx.lineCap = 'round';
+      cx.beginPath(); cx.moveTo(ex-ew,-46+eh*0.85); cx.quadraticCurveTo(ex,-46+eh+2,ex+ew,-46+eh*0.85); cx.stroke();
     }
-    cx.fillStyle = fur; el(0,-46,10,eh+6); cx.fill();
+    cx.fillStyle = fur; el(0,-46,9,eh+6); cx.fill();
     cx.fillStyle = '#d98a94'; cx.beginPath(); cx.moveTo(-16,26); cx.lineTo(16,26); cx.lineTo(0,42); cx.closePath(); cx.fill();
     const open = Math.max(0,cur.mouthOpen);
     cx.strokeStyle = '#7a4a2a'; cx.lineWidth = 6; cx.lineCap = 'round';
