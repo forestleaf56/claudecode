@@ -886,13 +886,21 @@ const face = (() => {
     thoughtful:{ eyeH:.9,  browTilt:.32, browRaise:.16,mouthOpen:.03, mouthCurve:.36, glow:.76},
     skeptical: { eyeH:.92, browTilt:.05, browRaise:.72,mouthOpen:.03, mouthCurve:.42, glow:.8 },
     soft:      { eyeH:.96, browTilt:-.06,browRaise:.16,mouthOpen:.05, mouthCurve:.64, glow:.82},
-    curious:   { eyeH:1.05,browTilt:-.05,browRaise:.55,mouthOpen:.08, mouthCurve:.58, glow:.9 }
+    curious:   { eyeH:1.05,browTilt:-.05,browRaise:.55,mouthOpen:.08, mouthCurve:.58, glow:.9 },
+    laugh:     { eyeH:.42, browTilt:-.3, browRaise:.7, mouthOpen:.42, mouthCurve:1,   glow:1.2 },
+    excited:   { eyeH:1.2, browTilt:-.15,browRaise:.85,mouthOpen:.28, mouthCurve:.9,  glow:1.2 },
+    love:      { eyeH:.6,  browTilt:-.2, browRaise:.4, mouthOpen:.06, mouthCurve:.95, glow:1.1 },
+    sad:       { eyeH:.8,  browTilt:-.4, browRaise:.5, mouthOpen:.05, mouthCurve:-.5, glow:.65},
+    angry:     { eyeH:.85, browTilt:.6,  browRaise:-.3,mouthOpen:.08, mouthCurve:-.35,glow:.8 },
+    wink:      { eyeH:.9,  browTilt:-.1, browRaise:.3, mouthOpen:.04, mouthCurve:.78, glow:.95},
+    cheeky:    { eyeH:.9,  browTilt:.2,  browRaise:.5, mouthOpen:.05, mouthCurve:.68, glow:.9 }
   };
-  const IDLE_POOL = ['idle','warm','smirk','thoughtful','skeptical','soft','curious','idle'];
+  const IDLE_POOL  = ['idle','warm','smirk','thoughtful','skeptical','soft','curious','idle'];
+  const REACT_POOL = ['speaking','warm','happy','curious','smirk','surprised','excited','soft','cheeky','thoughtful'];
   let base = Object.assign({}, EXPR.idle);
-  let gTiltT = 0, nextGesture = 1.5 + Math.random()*2.5;   // idle gesture timer
-  let microT = 0, nextMicro = 3 + Math.random()*3;          // idle expression rotation
-  const gd = { tilt:0, shift:0, brow:0, curve:0, open:0, eyeH:0, look:0 };  // decaying deltas
+  let gTiltT = 0, nextGesture = 1.5 + Math.random()*2.5;   // gesture timer
+  let microT = 0, nextMicro = 3 + Math.random()*3;          // expression rotation
+  const gd = { tilt:0, brow:0, curve:0, open:0, eyeH:0, look:0, nod:0 };  // decaying deltas
 
   /* current character descriptor + accent colour (default = Mia cyan) */
   let FD = { type:'robot' };
@@ -1381,6 +1389,9 @@ const face = (() => {
       cx.beginPath(); cx.moveTo(-120,150); cx.quadraticCurveTo(-72,168,-6,214); cx.moveTo(120,150); cx.quadraticCurveTo(72,168,6,214); cx.stroke();
     }
 
+    // ===== head group (tilts/nods; body above stays still) =====
+    cx.save(); headTransform();
+
     // neck
     cx.fillStyle = skinSh; roundRect(-46,58,92,120,40); cx.fill();
     if (FD.collar === 'turtleneck'){ cx.fillStyle = FD.collarColor || cloth; roundRect(-62,96,124,72,30); cx.fill(); }
@@ -1454,6 +1465,8 @@ const face = (() => {
     if (FD.acc === 'hat') drawHat();
     if (FD.acc === 'bandana') drawBandana();
     if (FD.acc === 'stethoscope') drawStethoscope();
+
+    cx.restore();   // end head group
   }
 
   function draw(dt){
@@ -1466,39 +1479,40 @@ const face = (() => {
       else blink = Math.abs(1 - p*2);
     }
     const calm = (expression === 'idle' || expression === 'listening');
+    const speaking = (expression === 'speaking');
     // decay gesture deltas back toward rest
     const decay = Math.max(0, 1 - dt*1.6);
     for (const k in gd) gd[k] *= decay;
 
-    if (calm){
-      // slow natural gaze wandering
+    if (calm || speaking){
+      // gaze wandering (livelier while speaking)
       wanderT += dt;
-      if (wanderT > 2.2){ wanderT = 0; tgt.pupilX = (Math.random()*2-1)*.5 + gd.look; tgt.pupilY = (Math.random()*2-1)*.28; }
-      // occasional idle gesture: a head turn/tilt, a brow flick or a small lip move
+      if (wanderT > (speaking ? 1.2 : 2.2)){ wanderT = 0; tgt.pupilX = (Math.random()*2-1)*(speaking?.3:.5) + gd.look; tgt.pupilY = (Math.random()*2-1)*.28; }
+      // gestures: head tilt/turn, brow flicks, nods, lip moves, squints
       gTiltT += dt;
       if (gTiltT > nextGesture){
-        gTiltT = 0; nextGesture = 1.6 + Math.random()*3;
+        gTiltT = 0; nextGesture = (speaking ? 0.7 : 1.6) + Math.random()*(speaking?1.4:3);
         const r = Math.random();
-        if (r < .34){ gd.tilt = (Math.random()*2-1)*.05; gd.shift = (Math.random()*2-1)*14; gd.look = (Math.random()*2-1)*.35; }
-        else if (r < .6){ gd.brow = .3 + Math.random()*.5; }            // brow flick
-        else if (r < .82){ gd.open = .12 + Math.random()*.14; gd.curve = .1; } // small lip movement / breath
-        else { gd.eyeH = -.12; }                                        // soft squint
+        if (r < .3){ gd.tilt = (Math.random()*2-1)*(speaking?.06:.05); gd.look = (Math.random()*2-1)*.35; }
+        else if (r < .5){ gd.brow = .35 + Math.random()*.55; }               // brow flick / emphasis
+        else if (r < .68){ gd.nod = speaking ? 7 : 4; }                       // head nod
+        else if (r < .84){ gd.open = .12 + Math.random()*.14; gd.curve = .12; } // lip move / breath
+        else { gd.eyeH = -.14; }                                             // soft squint
       }
-      // rotate the resting micro-expression for variety
-      if (expression === 'idle'){
-        microT += dt;
-        if (microT > nextMicro){
-          microT = 0; nextMicro = 2.8 + Math.random()*3.5;
-          base = Object.assign({}, EXPR[IDLE_POOL[(Math.random()*IDLE_POOL.length)|0]]);
-        }
+      // rotate the resting / reacting micro-expression for lots of variety
+      microT += dt;
+      if (microT > nextMicro){
+        microT = 0; nextMicro = (speaking ? 1.1 : 2.8) + Math.random()*(speaking?1.6:3.5);
+        const pool = speaking ? REACT_POOL : IDLE_POOL;
+        base = Object.assign({}, EXPR[pool[(Math.random()*pool.length)|0]] || base);
       }
     }
-    if (expression === 'speaking'){ tgt.pupilX = Math.sin(t*.6)*.15; tgt.pupilY = 0; }
+    if (speaking){ tgt.pupilX = Math.sin(t*.6)*.12 + tgt.pupilX*0; }
 
-    // gentle continuous body sway (all states, subtle)
-    const swayTilt = Math.sin(t*0.5)*0.035 + Math.sin(t*0.21)*0.02;
-    const swayX    = Math.sin(t*0.34)*8 + Math.sin(t*0.17)*4;
-    const breath   = (Math.sin(t*0.9)*0.5 + 0.5) * 0.03;   // slow breathing on the mouth
+    // gentle continuous sway (kept for the HEAD only on humans; whole-body on robot/glados)
+    const swayTilt = Math.sin(t*0.5)*0.03 + Math.sin(t*0.21)*0.018;
+    const swayX    = Math.sin(t*0.34)*7 + Math.sin(t*0.17)*4;
+    const breath   = (Math.sin(t*0.9)*0.5 + 0.5) * 0.03;
 
     // compose targets from base pose + deltas + live signals
     tgt.eyeH      = base.eyeH + gd.eyeH;
@@ -1506,28 +1520,40 @@ const face = (() => {
     tgt.browRaise = base.browRaise + gd.brow;
     tgt.mouthCurve = base.mouthCurve + gd.curve;
     tgt.glow      = base.glow;
-    if (mouthLevel > 0.01) tgt.mouthOpen = .06 + mouthLevel*.85;
-    else tgt.mouthOpen = base.mouthOpen + gd.open + (calm ? breath : 0);
+    if (mouthLevel > 0.01) tgt.mouthOpen = .06 + mouthLevel*.85 + gd.open*.3;
+    else tgt.mouthOpen = base.mouthOpen + gd.open + ((calm||speaking) ? breath : 0);
     tgt.headTilt = swayTilt + gd.tilt;
-    tgt.headX    = swayX + gd.shift;
-    tgt.headBob  = Math.sin(t*1.2)*(expression==='speaking'? 6:3) + Math.sin(t*0.6)*2;
+    tgt.headX    = swayX;
+    tgt.headBob  = Math.sin(t*1.2)*(speaking? 5:3) + Math.sin(t*0.6)*2 + gd.nod;
     ease(dt);
 
     cx.clearRect(0,0,W,H);
     cx.save();
-    cx.translate(CX + cur.headX, CY + cur.headBob);
-    cx.rotate(cur.headTilt);
-    // ambient accent glow behind the character
+    cx.translate(CX, CY);
+    // ambient accent glow behind the character (still)
     const ag = cx.createRadialGradient(0,0,40,0,0,330);
     ag.addColorStop(0, `rgba(${AR},${AG},${AB},.12)`);
     ag.addColorStop(1, `rgba(${AR},${AG},${AB},0)`);
     cx.fillStyle = ag; cx.beginPath(); cx.arc(0,0,330,0,7); cx.fill();
 
-    if (FD.type === 'glados') drawGlados(blink);
-    else if (FD.type === 'human') drawHuman(blink);
-    else drawRobot(blink);
+    if (FD.type === 'human'){
+      // body stays still; only the head/neck tilt+nod (handled inside drawHuman)
+      drawHuman(blink);
+    } else {
+      // robot / mechanical core: sway + tilt the whole unit
+      cx.save();
+      cx.translate(cur.headX, cur.headBob); cx.rotate(cur.headTilt);
+      if (FD.type === 'glados') drawGlados(blink); else drawRobot(blink);
+      cx.restore();
+    }
 
     cx.restore();
+  }
+  // transform for the human head group (pivot at the shoulder line) so the
+  // body stays still and only the head tilts / nods
+  function headTransform(){
+    cx.translate(0, 152); cx.rotate(cur.headTilt); cx.translate(0, -152);
+    cx.translate(cur.headX*0.35, cur.headBob*0.6);
   }
 
   let last = performance.now();
@@ -2023,11 +2049,21 @@ async function askMiaOnce(userText, imageB64){
   throw lastErr || new Error('Gemini failed');
 }
 
+/* Pick a reaction expression for a reply from its words AND emojis (this is
+   called on the original text, before emojis are stripped for the voice). */
 function inferExpression(text){
-  const t = text.toLowerCase();
-  if (/\bhaha|\blol|😄|😂|great|love|awesome|amazing/.test(t)) return 'happy';
-  if (/\bwow|really\?|no way|seriously\?|what\?!/.test(t)) return 'surprised';
-  if (text.includes('!')) return 'happy';
+  const t = (text || '').toLowerCase();
+  if (/😂|🤣|😆|\bhaha|\bhehe|\blol|\blmao|hilarious/.test(t)) return 'laugh';
+  if (/❤️|😍|🥰|😘|💕|💋|\blove you|\bmiss you|\bdarling|\bsweetheart/.test(t)) return 'love';
+  if (/🎉|🥳|🚀|🔥|✨|\bawesome|\bamazing|\bincredible|\bcan'?t wait|\bwoo+\b|\byes+!/.test(t)) return 'excited';
+  if (/😮|😲|😱|🤯|\bwow\b|\bwhoa\b|no way|seriously\?|really\?!|what\?!|unbelievable/.test(t)) return 'surprised';
+  if (/😢|😭|😞|😔|💔|\bsorry\b|\bsad\b|\bunfortunately\b|\bmiss\b|\bshame\b/.test(t)) return 'sad';
+  if (/😠|😡|🤬|\bannoying\b|\bridiculous\b|\bhow dare\b|\bstupid\b/.test(t)) return 'angry';
+  if (/😉|😏|😜|\bwink|\bjust kidding|\bkidding\b|\bbetween us\b/.test(t)) return 'cheeky';
+  if (/🤔|🧐|\bhmm+\b|\bi think\b|\bperhaps\b|\bmaybe\b|\bactually\b|\bconsider\b/.test(t)) return 'thoughtful';
+  if (/😊|😄|😁|🙂|\bglad\b|\bhappy\b|\bgreat\b|\bnice\b|\blovely\b|\bwonderful\b/.test(t)) return 'happy';
+  if (/\?\s*$/.test(t.trim()) || /\bcurious\b|\btell me\b|\bwhat about you\b/.test(t)) return 'curious';
+  if (text.includes('!')) return 'warm';
   return 'speaking';
 }
 
@@ -2078,9 +2114,9 @@ function cleanForSpeech(text){
 }
 
 async function speak(text){
-  text = cleanForSpeech(text);
+  const expr = inferExpression(text);   // from the original text (incl. emojis)
+  text = cleanForSpeech(text);          // then strip emojis for the voice
   setState(S.SPEAKING, T().speaking);
-  const expr = inferExpression(text);
   try {
     let blob;
     try {
