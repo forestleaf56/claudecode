@@ -1178,8 +1178,9 @@ const face = (() => {
   }
   function drawHeadphones(){
     cx.strokeStyle = '#2a2e36'; cx.lineWidth = 18; cx.lineCap = 'round';
-    cx.beginPath(); cx.arc(0,-64,196, Math.PI*1.18, Math.PI*1.82); cx.stroke();   // band higher over the crown
-    cx.fillStyle = '#33373f'; roundRect(-210, -36, 46, 92, 18); cx.fill(); roundRect(164, -36, 46, 92, 18); cx.fill();  // cups aligned to the ears
+    // band arcs from cup-top to cup-top and rests ON the crown of the head
+    cx.beginPath(); cx.arc(0,-17,188, Math.PI*1.03, Math.PI*1.97); cx.stroke();
+    cx.fillStyle = '#33373f'; roundRect(-210, -36, 46, 92, 18); cx.fill(); roundRect(164, -36, 46, 92, 18); cx.fill();  // cups unchanged (at the ears)
     cx.fillStyle = `rgba(${AR},${AG},${AB},.85)`; el(-187, 10, 9, 9); cx.fill(); el(187, 10, 9, 9); cx.fill();
   }
   function drawHat(){
