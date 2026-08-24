@@ -1605,17 +1605,21 @@ const face = (() => {
     cx.strokeStyle = 'rgba(0,0,0,.06)'; cx.lineWidth = 3; cx.beginPath(); cx.moveTo(-118,-126); cx.lineTo(118,-126); cx.stroke();
   }
   function drawMarioCap(){
-    // sideburns: strips down the head edge, starting right under the cap
+    // hair filling the whole area under the cap: forehead fringe + sideburns down
+    // the head edges, leaving no skin showing under the cap or at the edges
     cx.fillStyle = FD.hair || '#2a1810';
-    for (const s of [-1,1]){
-      cx.beginPath();
-      cx.moveTo(s*120,-106);
-      cx.quadraticCurveTo(s*158,-102, s*164,-40);
-      cx.quadraticCurveTo(s*168,8, s*158,24);
-      cx.quadraticCurveTo(s*142,30, s*132,8);
-      cx.quadraticCurveTo(s*126,-52, s*120,-106);
-      cx.closePath(); cx.fill();
-    }
+    cx.beginPath();
+    cx.moveTo(-150,-116);                          // left, under the cap corner
+    cx.quadraticCurveTo(-171,-62,-164,-6);         // down the left head edge
+    cx.quadraticCurveTo(-158,28,-134,26);          // left sideburn bottom, tuck in
+    cx.quadraticCurveTo(-150,-30,-118,-58);        // up the inner temple
+    cx.quadraticCurveTo(-70,-84,0,-78);            // forehead fringe (left half)
+    cx.quadraticCurveTo(70,-84,118,-58);           // forehead fringe (right half)
+    cx.quadraticCurveTo(150,-30,134,26);           // down the inner temple
+    cx.quadraticCurveTo(158,28,164,-6);            // right sideburn bottom
+    cx.quadraticCurveTo(171,-62,150,-116);         // up the right head edge
+    cx.quadraticCurveTo(0,-150,-150,-116);         // top edge, tucked under the cap
+    cx.closePath(); cx.fill();
     // crown
     cx.fillStyle = '#e5322a';
     cx.beginPath(); cx.moveTo(-150,-118); cx.quadraticCurveTo(-160,-238,0,-244); cx.quadraticCurveTo(160,-238,150,-118); cx.quadraticCurveTo(0,-150,-150,-118); cx.closePath(); cx.fill();
@@ -1681,28 +1685,16 @@ const face = (() => {
     cx.fillStyle = fur; el(-150,42,60,52); cx.fill(); el(150,42,60,52); cx.fill();
     cx.strokeStyle = str; cx.lineWidth = 12; cx.lineCap = 'round';
     for (const dx of [-42,0,42]){ cx.beginPath(); cx.moveTo(dx,-150); cx.quadraticCurveTo(dx*1.3,-112,dx,-86); cx.stroke(); }
-    const ew=52, eh=Math.max(2,44*cur.eyeH*blink);
-    const lidFur = _css(_mix(_hx(fur),[80,40,10],.22));
+    const ew=52, eh=Math.max(3,44*cur.eyeH*blink);
     for (const s of [-1,1]){
       const ex=s*52;
       cx.fillStyle = FD.eyes||'#eae2c0'; el(ex,-46,ew,eh); cx.fill();
-      if (eh > 4){
-        cx.save(); el(ex,-46,ew,eh); cx.clip();
-        cx.fillStyle = '#231a12'; el(ex+cur.pupilX*10,-46+cur.pupilY*8,13,eh*1.15); cx.fill();
-        cx.fillStyle = 'rgba(255,255,255,.9)'; el(ex-6+cur.pupilX*8,-46-eh*0.4,4,4); cx.fill();
-        cx.restore();
-      }
-      // heavy droopy upper lid — a crescent that tracks the blink (never a square)
-      cx.fillStyle = fur;
-      cx.beginPath();
-      cx.moveTo(ex-ew-3,-46-eh*0.15);
-      cx.quadraticCurveTo(ex,-46-eh-16-cur.browRaise*10, ex+ew+3,-46-eh*0.15);
-      cx.quadraticCurveTo(ex,-46-eh*0.45, ex-ew-3,-46-eh*0.15);
-      cx.closePath(); cx.fill();
-      cx.strokeStyle = lidFur; cx.lineWidth = 3; cx.lineCap = 'round';
-      cx.beginPath(); cx.moveTo(ex-ew,-46+eh*0.85); cx.quadraticCurveTo(ex,-46+eh+2,ex+ew,-46+eh*0.85); cx.stroke();
+      cx.save(); el(ex,-46,ew,eh); cx.clip();                        // pupil stays inside the eye → clean blink, no square
+      cx.fillStyle = '#231a12'; el(ex+cur.pupilX*10,-46+cur.pupilY*8,12,Math.max(3,eh*0.9)); cx.fill();
+      cx.restore();
+      cx.fillStyle = fur; cx.beginPath(); cx.moveTo(ex-ew-2,-46); cx.quadraticCurveTo(ex,-46-eh-16-cur.browRaise*10, ex+ew+2,-46); cx.lineTo(ex+ew+2,-46-eh-4); cx.lineTo(ex-ew-2,-46-eh-4); cx.closePath(); cx.fill();
     }
-    cx.fillStyle = fur; el(0,-46,9,eh+6); cx.fill();
+    cx.fillStyle = fur; el(0,-46,10,eh+6); cx.fill();
     cx.fillStyle = '#d98a94'; cx.beginPath(); cx.moveTo(-16,26); cx.lineTo(16,26); cx.lineTo(0,42); cx.closePath(); cx.fill();
     const open = Math.max(0,cur.mouthOpen);
     cx.strokeStyle = '#7a4a2a'; cx.lineWidth = 6; cx.lineCap = 'round';
