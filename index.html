@@ -1605,8 +1605,23 @@ const face = (() => {
     cx.strokeStyle = 'rgba(0,0,0,.06)'; cx.lineWidth = 3; cx.beginPath(); cx.moveTo(-118,-126); cx.lineTo(118,-126); cx.stroke();
   }
   function drawMarioCap(){
+    // sideburns: thin strips at the face edge, in front of the ears
+    cx.fillStyle = FD.hair || '#2a1810';
+    for (const s of [-1,1]){
+      cx.beginPath();
+      cx.moveTo(s*142,-52);
+      cx.quadraticCurveTo(s*164,-28, s*162,14);
+      cx.quadraticCurveTo(s*158,36, s*142,32);
+      cx.quadraticCurveTo(s*136,-14, s*142,-52);
+      cx.closePath(); cx.fill();
+    }
+    // crown
     cx.fillStyle = '#e5322a';
     cx.beginPath(); cx.moveTo(-150,-118); cx.quadraticCurveTo(-160,-238,0,-244); cx.quadraticCurveTo(160,-238,150,-118); cx.quadraticCurveTo(0,-150,-150,-118); cx.closePath(); cx.fill();
+    // brim spanning left to right, right under the cap
+    cx.fillStyle = '#cf2820';
+    cx.beginPath(); cx.moveTo(-150,-116); cx.quadraticCurveTo(0,-150,150,-116); cx.quadraticCurveTo(0,-84,-150,-116); cx.closePath(); cx.fill();
+    // white emblem circle + M
     cx.fillStyle = '#fff'; el(0,-186,32,32); cx.fill();
     cx.fillStyle = '#e5322a'; cx.font = 'bold 38px system-ui'; cx.textAlign = 'center'; cx.textBaseline = 'middle'; cx.fillText('M',0,-184);
   }
