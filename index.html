@@ -1596,13 +1596,21 @@ const face = (() => {
   /* ---- extra human accessories ---- */
   function drawChefHat(){
     cx.fillStyle = '#f4f5f7';
-    roundRect(-124,-150,248,48,8); cx.fill();                 // wider band
-    cx.beginPath();                                            // taller, wider puff
-    cx.moveTo(-124,-146); cx.quadraticCurveTo(-192,-162,-158,-238);
-    cx.quadraticCurveTo(-182,-306,-78,-290); cx.quadraticCurveTo(-54,-334,0,-314);
-    cx.quadraticCurveTo(54,-334,78,-290); cx.quadraticCurveTo(182,-306,158,-238);
-    cx.quadraticCurveTo(192,-162,124,-146); cx.closePath(); cx.fill();
-    cx.strokeStyle = 'rgba(0,0,0,.06)'; cx.lineWidth = 3; cx.beginPath(); cx.moveTo(-118,-126); cx.lineTo(118,-126); cx.stroke();
+    // band hugging the head down to its side edges (like Mario's cap footprint)
+    cx.beginPath();
+    cx.moveTo(-150,-104);
+    cx.quadraticCurveTo(-152,-150,-118,-152);
+    cx.lineTo(118,-152);
+    cx.quadraticCurveTo(152,-150,150,-104);
+    cx.quadraticCurveTo(0,-120,-150,-104);
+    cx.closePath(); cx.fill();
+    // puff — wide and billowy but lower above the head
+    cx.beginPath();
+    cx.moveTo(-118,-150); cx.quadraticCurveTo(-178,-168,-150,-214);
+    cx.quadraticCurveTo(-170,-252,-68,-240); cx.quadraticCurveTo(-44,-268,0,-254);
+    cx.quadraticCurveTo(44,-268,68,-240); cx.quadraticCurveTo(170,-252,150,-214);
+    cx.quadraticCurveTo(178,-168,118,-150); cx.closePath(); cx.fill();
+    cx.strokeStyle = 'rgba(0,0,0,.06)'; cx.lineWidth = 3; cx.beginPath(); cx.moveTo(-132,-128); cx.lineTo(132,-128); cx.stroke();
   }
   function drawMarioCap(){
     // hair filling the whole area under the cap: forehead fringe + sideburns down
@@ -1612,10 +1620,10 @@ const face = (() => {
     cx.moveTo(-150,-116);                          // left, under the cap corner
     cx.quadraticCurveTo(-171,-62,-164,-6);         // down the left head edge
     cx.quadraticCurveTo(-158,28,-134,26);          // left sideburn bottom, tuck in
-    cx.quadraticCurveTo(-150,-30,-118,-58);        // up the inner temple
-    cx.quadraticCurveTo(-70,-84,0,-78);            // forehead fringe (left half)
-    cx.quadraticCurveTo(70,-84,118,-58);           // forehead fringe (right half)
-    cx.quadraticCurveTo(150,-30,134,26);           // down the inner temple
+    cx.quadraticCurveTo(-150,-38,-122,-92);        // up the inner temple, staying high
+    cx.quadraticCurveTo(-64,-122,0,-124);          // across under the cap (no dip over the brows)
+    cx.quadraticCurveTo(64,-122,122,-92);          // right half, under the cap
+    cx.quadraticCurveTo(150,-38,134,26);           // down the inner temple
     cx.quadraticCurveTo(158,28,164,-6);            // right sideburn bottom
     cx.quadraticCurveTo(171,-62,150,-116);         // up the right head edge
     cx.quadraticCurveTo(0,-150,-150,-116);         // top edge, tucked under the cap
