@@ -1921,7 +1921,21 @@ async function elTTS(text){
   return await res.blob();
 }
 
+/* Guard against degenerate model output — e.g. "aaaaaaaaah…" or a word
+   repeated hundreds of times — which TTS would otherwise drone on for a
+   very long time and never stop. Collapses long runs and caps length. */
+function cleanForSpeech(text){
+  if (!text) return text;
+  let t = String(text);
+  t = t.replace(/(\S)\1{4,}/g, '$1$1$1');                     // long single-char runs (aaaaa → aaa)
+  t = t.replace(/(\S{2,8}?)\1{4,}/g, '$1$1');                 // long short-chunk runs (hahaha…)
+  t = t.replace(/\b(\w{1,20})(?:\s+\1\b){2,}/gi, '$1 $1');    // a word repeated many times
+  if (t.length > 600) t = t.slice(0, 600).trim();
+  return t.trim();
+}
+
 async function speak(text){
+  text = cleanForSpeech(text);
   setState(S.SPEAKING, T().speaking);
   const expr = inferExpression(text);
   try {
