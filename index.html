@@ -1605,14 +1605,15 @@ const face = (() => {
     cx.strokeStyle = 'rgba(0,0,0,.06)'; cx.lineWidth = 3; cx.beginPath(); cx.moveTo(-118,-126); cx.lineTo(118,-126); cx.stroke();
   }
   function drawMarioCap(){
-    // sideburns: thin strips at the face edge, in front of the ears
+    // sideburns: strips down the head edge, starting right under the cap
     cx.fillStyle = FD.hair || '#2a1810';
     for (const s of [-1,1]){
       cx.beginPath();
-      cx.moveTo(s*142,-52);
-      cx.quadraticCurveTo(s*164,-28, s*162,14);
-      cx.quadraticCurveTo(s*158,36, s*142,32);
-      cx.quadraticCurveTo(s*136,-14, s*142,-52);
+      cx.moveTo(s*120,-106);
+      cx.quadraticCurveTo(s*158,-102, s*164,-40);
+      cx.quadraticCurveTo(s*168,8, s*158,24);
+      cx.quadraticCurveTo(s*142,30, s*132,8);
+      cx.quadraticCurveTo(s*126,-52, s*120,-106);
       cx.closePath(); cx.fill();
     }
     // crown
