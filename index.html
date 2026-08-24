@@ -11,6 +11,7 @@
     --glow:#7de3ff;
     --ink:#c9d4ee; --ink-dim:#7d89ab;
     --call:#34d07c; --end:#f0564f;
+    --field:#0c1226; --userbub:#1d4d63;
   }
   *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
   html,body{height:100%}
@@ -47,7 +48,7 @@
   #chat.hidden{display:none}
   #chatMsgs{flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:10px;padding:6px 2px}
   .bub{max-width:82%;padding:10px 14px;border-radius:16px;font-size:15px;line-height:1.45;white-space:pre-wrap;word-break:break-word}
-  .bub.user{align-self:flex-end;background:#1d4d63;color:#e8f7ff;border-bottom-right-radius:5px}
+  .bub.user{align-self:flex-end;background:var(--userbub);color:#eaf6ff;border-bottom-right-radius:5px}
   .bub.mia{align-self:flex-start;background:var(--plate);border:1px solid var(--plate-edge);border-bottom-left-radius:5px}
   .bub.typing{color:var(--ink-dim);font-style:italic}
   .bubcards{align-self:flex-start;display:flex;gap:8px;flex-wrap:wrap}
@@ -62,14 +63,14 @@
   #chatRow button svg{width:20px;height:20px;fill:var(--ink-dim)}
   #chatInput{
     flex:1;padding:12px 14px;border-radius:22px;border:1px solid var(--plate-edge);
-    background:#0c1226;color:var(--ink);font-size:15px;outline:none;min-width:0;
+    background:var(--field);color:var(--ink);font-size:15px;outline:none;min-width:0;
   }
   #chatInput:focus{border-color:var(--glow)}
   body.chatmode #btnRow, body.chatmode #attachArea, body.chatmode #hint, body.chatmode #status{display:none}
 
   /* ---- settings log ---- */
   #logBox{
-    max-height:200px;overflow-y:auto;background:#0c1226;border:1px solid var(--plate-edge);
+    max-height:200px;overflow-y:auto;background:var(--field);border:1px solid var(--plate-edge);
     border-radius:12px;padding:10px;font-size:12px;line-height:1.5;margin-top:6px;
   }
   #logBox .lrole{color:var(--glow);font-weight:700}
@@ -189,7 +190,7 @@
   .card label{display:block;font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-dim);margin:14px 0 6px}
   .card input, .card select{
     width:100%;padding:12px 14px;border-radius:12px;border:1px solid var(--plate-edge);
-    background:#0c1226;color:var(--ink);font-size:14px;outline:none;
+    background:var(--field);color:var(--ink);font-size:14px;outline:none;
   }
   .card input:focus, .card select:focus{border-color:var(--glow)}
   #saveKeys{
@@ -466,13 +467,10 @@ function applyLang(){
 function applyPersona(){
   invalidateT();
   const p = currentPersona();
-  // face + halo + CSS accent
+  // face
   face.setFace(p);
-  document.documentElement.style.setProperty('--glow', p.glow);
-  const rgb = hexToRgb(p.glow);
-  const halo = document.getElementById('halo');
-  if (halo) halo.style.background =
-    `radial-gradient(circle, rgba(${rgb[0]},${rgb[1]},${rgb[2]},.10) 0%, rgba(${rgb[0]},${rgb[1]},${rgb[2]},0) 62%)`;
+  // full app theme tinted to this character (layout unchanged, only colours)
+  applyTheme(p);
   // reset voice resolution for the new character
   EL_VOICE_ID = initVoiceId();
   elTriedVoices = [];
@@ -483,6 +481,37 @@ function applyPersona(){
   if (typeof renderLog === 'function') renderLog();
   if (typeof chatOpen !== 'undefined' && chatOpen) rebuildChat();
 }
+/* Derive a cohesive dark theme from the character's accent colour so the
+   whole app recolours to match. A persona may override any token via a
+   `theme` object. Nothing about layout changes — only CSS colour tokens. */
+function applyTheme(p){
+  const [h, s] = hexToHsl(p.glow);
+  const bgSat  = Math.min(s, 45);          // keep backgrounds tasteful, not neon
+  const th = Object.assign({
+    bg0:       `hsl(${h}, ${bgSat}%, 6%)`,
+    bg1:       `hsl(${h}, ${bgSat}%, 13%)`,
+    plate:     `hsl(${h}, ${Math.min(s,36)}%, 16%)`,
+    plateEdge: `hsl(${h}, ${Math.min(s,34)}%, 28%)`,
+    ink:       `hsl(${h}, 30%, 89%)`,
+    inkDim:    `hsl(${h}, 18%, 62%)`,
+    field:     `hsl(${h}, ${bgSat}%, 9%)`,
+    userbub:   `hsl(${h}, 44%, 26%)`
+  }, p.theme || {});
+  const root = document.documentElement.style;
+  root.setProperty('--glow', p.glow);
+  root.setProperty('--bg0', th.bg0);
+  root.setProperty('--bg1', th.bg1);
+  root.setProperty('--plate', th.plate);
+  root.setProperty('--plate-edge', th.plateEdge);
+  root.setProperty('--ink', th.ink);
+  root.setProperty('--ink-dim', th.inkDim);
+  root.setProperty('--field', th.field);
+  root.setProperty('--userbub', th.userbub);
+  const rgb = hexToRgb(p.glow);
+  const halo = document.getElementById('halo');
+  if (halo) halo.style.background =
+    `radial-gradient(circle, rgba(${rgb[0]},${rgb[1]},${rgb[2]},.10) 0%, rgba(${rgb[0]},${rgb[1]},${rgb[2]},0) 62%)`;
+}
 function setPersona(id){
   if (!PERSONAS.some(p => p.id === id)) return;
   PERSONA_ID = id;
@@ -492,6 +521,20 @@ function setPersona(id){
 function hexToRgb(hex){
   const h = hex.replace('#','');
   return [parseInt(h.slice(0,2),16), parseInt(h.slice(2,4),16), parseInt(h.slice(4,6),16)];
+}
+function hexToHsl(hex){
+  let [r,g,b] = hexToRgb(hex).map(v => v/255);
+  const max = Math.max(r,g,b), min = Math.min(r,g,b), d = max - min;
+  let h = 0;
+  if (d){
+    if (max === r) h = ((g-b)/d) % 6;
+    else if (max === g) h = (b-r)/d + 2;
+    else h = (r-g)/d + 4;
+    h *= 60; if (h < 0) h += 360;
+  }
+  const l = (max + min) / 2;
+  const s = d ? d / (1 - Math.abs(2*l - 1)) : 0;
+  return [Math.round(h), Math.round(s*100), Math.round(l*100)];
 }
 
 /* Gemini models tried in order. "-latest" aliases always point to a live model. */
