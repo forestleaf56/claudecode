@@ -352,10 +352,12 @@ if (localStorage.getItem('mia_history') !== null || localStorage.getItem('mia_lo
   localStorage.removeItem('mia_log');
 }
 
-/* "Use emojis frequently" — added to every persona's prompt, but ONLY for
-   text chat (never for voice, where emojis would be read aloud). */
+/* "Use emojis frequently" — added to every persona's prompt. The emojis
+   stay in the written reply (so the text chat shows them, including for
+   answers given during a voice call), and are stripped from the text sent
+   to the voice engine so they are never read aloud (see cleanForSpeech). */
 const EMOJI_RULE = " Use emojis frequently.";
-let isChatContext = false;   // true while a text-chat request is in flight
+let isChatContext = false;   // retained for compatibility; emojis now always allowed in text
 
 const GEN_RULES = " If the user asks you to create/write a document, file, list, letter, recipe or similar, put the full content inside markers exactly like [[FILE:filename.ext]] content [[/FILE]] using extension .txt, .md, .html or .csv — and keep your spoken words outside the markers very short. If the user asks you to create, draw, generate or make a picture/image, do NOT describe it in words; instead output exactly one marker like [[IMAGE: detailed image description in English]] plus a very short spoken comment.";
 
@@ -442,7 +444,7 @@ const dateLine = () => {
   return " The current date and time right now is " + d.toLocaleString('en-GB', { weekday:'long', year:'numeric', month:'long', day:'numeric', hour:'2-digit', minute:'2-digit' }) +
          ". Your training data is older than this, so treat anything after your training as unknown unless you search. Trust this date over your own assumptions.";
 };
-const SYSTEM_PROMPT = () => currentPersona().systemBase + GEN_RULES + SEARCH_RULE + dateLine() + T().speakRule + (isChatContext ? EMOJI_RULE : '');
+const SYSTEM_PROMPT = () => currentPersona().systemBase + GEN_RULES + SEARCH_RULE + dateLine() + T().speakRule + EMOJI_RULE;
 function applyLang(){
   invalidateT();
   const p = currentPersona();
@@ -2058,6 +2060,16 @@ async function elTTS(text){
 function cleanForSpeech(text){
   if (!text) return text;
   let t = String(text);
+  // strip emojis / pictographs so the voice never reads them aloud
+  // (the written reply keeps them for the text chat)
+  try {
+    t = t.replace(/\p{Extended_Pictographic}/gu, '')
+         .replace(/[\u{1F3FB}-\u{1F3FF}\u{1F1E6}-\u{1F1FF}️‍⃣]/gu, '');
+  } catch(e){
+    t = t.replace(/[←-⇿⌀-➿⬀-⯿️‍]/g, '')
+         .replace(/[\uD800-\uDBFF][\uDC00-\uDFFF]/g, '');   // surrogate-pair emoji fallback
+  }
+  t = t.replace(/\s{2,}/g, ' ');
   t = t.replace(/(\S)\1{4,}/g, '$1$1$1');                     // long single-char runs (aaaaa → aaa)
   t = t.replace(/(\S{2,8}?)\1{4,}/g, '$1$1');                 // long short-chunk runs (hahaha…)
   t = t.replace(/\b(\w{1,20})(?:\s+\1\b){2,}/gi, '$1 $1');    // a word repeated many times
