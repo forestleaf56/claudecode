@@ -1339,15 +1339,15 @@ const face = (() => {
     }
   }
   function drawHairFront(hair, hi){
-    if (FD.acc==='hat' || FD.acc==='bandana' || FD.acc==='chefhat') return;   // top is covered
+    if (FD.acc==='hat' || FD.acc==='bandana' || FD.acc==='chefhat' || FD.acc==='mariocap') return;   // top is covered
     const st = FD.hairStyle;
     if (st==='bald'){ return; }                          // shaved head — bare scalp
-    if (st==='wisps'){                                    // sparse old-master wisps that hug the scalp (Yoda)
-      cx.strokeStyle = hair; cx.lineWidth = 5; cx.lineCap = 'round'; cx.globalAlpha = .85;
+    if (st==='wisps'){                                    // sparse old-master wisps (Yoda)
+      cx.strokeStyle = hair; cx.lineWidth = 6; cx.lineCap = 'round'; cx.globalAlpha = .8;
       for (const s of [-1,1]){
-        cx.beginPath(); cx.moveTo(s*38,-200); cx.quadraticCurveTo(s*66,-208, s*96,-190); cx.stroke();
-        cx.beginPath(); cx.moveTo(s*12,-206); cx.quadraticCurveTo(s*30,-212, s*56,-200); cx.stroke();
-        cx.beginPath(); cx.moveTo(s*132,-78); cx.quadraticCurveTo(s*162,-52, s*140,-8); cx.stroke();
+        cx.beginPath(); cx.moveTo(s*60,-206); cx.quadraticCurveTo(s*90,-236, s*70,-256); cx.stroke();
+        cx.beginPath(); cx.moveTo(s*20,-210); cx.quadraticCurveTo(s*30,-244, s*8,-258); cx.stroke();
+        cx.beginPath(); cx.moveTo(s*150,-70); cx.quadraticCurveTo(s*176,-120, s*150,-160); cx.stroke();
       }
       cx.globalAlpha = 1; return;
     }
@@ -1606,23 +1606,9 @@ const face = (() => {
   }
   function drawMarioCap(){
     cx.fillStyle = '#e5322a';
-    // crown covering the whole top of the head
-    cx.beginPath();
-    cx.moveTo(-166,-92);
-    cx.quadraticCurveTo(-180,-214,-30,-238);
-    cx.quadraticCurveTo(80,-250,152,-192);
-    cx.quadraticCurveTo(176,-150,168,-100);
-    cx.quadraticCurveTo(0,-140,-166,-92);
-    cx.closePath(); cx.fill();
-    // curved brim over the forehead
-    cx.beginPath();
-    cx.moveTo(-170,-96);
-    cx.quadraticCurveTo(-40,-64,54,-92);
-    cx.quadraticCurveTo(-30,-128,-170,-116);
-    cx.closePath(); cx.fill();
-    // white emblem circle + M
-    cx.fillStyle = '#fff'; el(2,-182,33,33); cx.fill();
-    cx.fillStyle = '#e5322a'; cx.font = 'bold 40px system-ui'; cx.textAlign = 'center'; cx.textBaseline = 'middle'; cx.fillText('M',2,-180);
+    cx.beginPath(); cx.moveTo(-150,-118); cx.quadraticCurveTo(-160,-238,0,-244); cx.quadraticCurveTo(160,-238,150,-118); cx.quadraticCurveTo(0,-150,-150,-118); cx.closePath(); cx.fill();
+    cx.fillStyle = '#fff'; el(0,-186,32,32); cx.fill();
+    cx.fillStyle = '#e5322a'; cx.font = 'bold 38px system-ui'; cx.textAlign = 'center'; cx.textBaseline = 'middle'; cx.fillText('M',0,-184);
   }
   function drawAntennae(){
     cx.strokeStyle = FD.hair || '#2a4a6a'; cx.lineWidth = 7; cx.lineCap = 'round';
@@ -1637,10 +1623,10 @@ const face = (() => {
     const es = _css(_mix(_hx(base),[60,40,30],.32));
     for (const s of [-1,1]){
       cx.fillStyle = base;
-      cx.beginPath(); cx.moveTo(s*150,-30); cx.quadraticCurveTo(s*300,-72, s*300,-4);
-      cx.quadraticCurveTo(s*258,42, s*150,52); cx.closePath(); cx.fill();
+      cx.beginPath(); cx.moveTo(s*140,-44); cx.quadraticCurveTo(s*252,-70, s*330,-108);
+      cx.quadraticCurveTo(s*250,-6, s*148,50); cx.closePath(); cx.fill();
       cx.fillStyle = es; cx.globalAlpha = .4;
-      cx.beginPath(); cx.moveTo(s*182,-6); cx.quadraticCurveTo(s*252,-30, s*272,-4); cx.quadraticCurveTo(s*240,20, s*182,22); cx.closePath(); cx.fill();
+      cx.beginPath(); cx.moveTo(s*170,-38); cx.quadraticCurveTo(s*246,-58, s*292,-92); cx.quadraticCurveTo(s*230,-16, s*170,20); cx.closePath(); cx.fill();
       cx.globalAlpha = 1;
     }
   }
