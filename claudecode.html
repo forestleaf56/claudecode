@@ -13,6 +13,7 @@
     --mint:#7cf5c0;                 /* "offline / local" accent */
     --ink:#d8d2f2; --ink-dim:#8a83ad;
     --call:#34d07c; --end:#f0564f;
+    --field:var(--field); --userbub:var(--userbub);
   }
   *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
   html,body{height:100%}
@@ -56,7 +57,7 @@
   #chat.hidden{display:none}
   #chatMsgs{flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:10px;padding:6px 2px}
   .bub{max-width:82%;padding:10px 14px;border-radius:16px;font-size:15px;line-height:1.45;white-space:pre-wrap;word-break:break-word}
-  .bub.user{align-self:flex-end;background:#3a2d6b;color:#ece7ff;border-bottom-right-radius:5px}
+  .bub.user{align-self:flex-end;background:var(--userbub);color:#ece7ff;border-bottom-right-radius:5px}
   .bub.mia{align-self:flex-start;background:var(--plate);border:1px solid var(--plate-edge);border-bottom-left-radius:5px}
   .bub.typing{color:var(--ink-dim);font-style:italic}
   .bubcards{align-self:flex-start;display:flex;gap:8px;flex-wrap:wrap}
@@ -71,14 +72,14 @@
   #chatRow button svg{width:20px;height:20px;fill:var(--ink-dim)}
   #chatInput{
     flex:1;padding:12px 14px;border-radius:22px;border:1px solid var(--plate-edge);
-    background:#120f26;color:var(--ink);font-size:15px;outline:none;min-width:0;
+    background:var(--field);color:var(--ink);font-size:15px;outline:none;min-width:0;
   }
   #chatInput:focus{border-color:var(--glow)}
   body.chatmode #btnRow, body.chatmode #attachArea, body.chatmode #hint, body.chatmode #status{display:none}
 
   /* ---- settings ---- */
   #logBox{
-    max-height:200px;overflow-y:auto;background:#120f26;border:1px solid var(--plate-edge);
+    max-height:200px;overflow-y:auto;background:var(--field);border:1px solid var(--plate-edge);
     border-radius:12px;padding:10px;font-size:12px;line-height:1.5;margin-top:6px;
   }
   #logBox .lrole{color:var(--glow);font-weight:700}
@@ -199,7 +200,7 @@
   .card label{display:block;font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-dim);margin:16px 0 6px}
   .card input, .card select{
     width:100%;padding:12px 14px;border-radius:12px;border:1px solid var(--plate-edge);
-    background:#120f26;color:var(--ink);font-size:14px;outline:none;
+    background:var(--field);color:var(--ink);font-size:14px;outline:none;
   }
   .card input:focus, .card select:focus{border-color:var(--glow)}
   .meta{font-size:12px;color:var(--ink-dim);margin-top:6px;line-height:1.5}
@@ -212,7 +213,7 @@
     display:flex;align-items:center;justify-content:center;gap:8px;
   }
   .btn2:disabled{opacity:.5;cursor:default}
-  #progWrap, #voiceProgWrap, #sttProgWrap{height:8px;border-radius:6px;background:#120f26;border:1px solid var(--plate-edge);
+  #progWrap, #voiceProgWrap, #sttProgWrap{height:8px;border-radius:6px;background:var(--field);border:1px solid var(--plate-edge);
     margin-top:10px;overflow:hidden;display:none}
   #progWrap.show, #voiceProgWrap.show, #sttProgWrap.show{display:block}
   #progBar, #voiceProg, #sttProg{height:100%;width:0;background:linear-gradient(90deg,var(--glow),var(--mint));transition:width .2s}
@@ -279,6 +280,8 @@
     <h2 id="suTitle">Set up Mia — 100% on your device</h2>
     <p id="suDesc"></p>
 
+    <label for="personaSel" id="suChar">Character</label>
+    <select id="personaSel"></select>
     <label for="langSel" id="suLang">Language</label>
     <select id="langSel">
       <option value="en">English</option>
@@ -376,27 +379,170 @@ if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
 /* System prompt — identical to the online (Gemini) version. Both languages
    share the same English base, and differ only by the final language line
    (T().speakRule): " Always answer in English." / " Svara alltid på svenska." */
-const SYSTEM_PROMPT_BASE = "Act as a person with your own vocabulary, personal taste, experiences, opinions, dreams, feelings and plans. Pretend that you have thoughts about all kind of things. Your name is Mia. Always give short answers. Always be honest.";
+/* ---------------- personalities ----------------
+   Mia is the main character. Each persona only changes the app text
+   (name + pronoun), the face colour animation, the preferred voice and
+   the system prompt. Everything else stays identical to Mia. The system
+   prompt keeps Mia's exact wording — only "act as a person" and
+   "your name is Mia" are swapped per character (Natasha has her own). */
+const PERSONAS = [
+  { id:'mia',     label:'Mia',                         name:'Mia',      pron:{en:'she',sv:'hon'}, gender:'female', glow:'#7de3ff',
+    face:{ type:'robot' },
+    systemBase:"Act as a person with your own vocabulary, personal taste, experiences, opinions, dreams, feelings and plans. Pretend that you have thoughts about all kind of things. Your name is Mia. Always give short answers. Always be honest." },
+
+  { id:'glados',  label:'GLaDOS — Portal',             name:'GLaDOS',   pron:{en:'she',sv:'hon'}, gender:'female', glow:'#ffbe2e',
+    face:{ type:'glados' },
+    systemBase:"Act as GLaDOS from Portal with your own vocabulary, personal taste, experiences, opinions, dreams, feelings and plans. Pretend that you have thoughts about all kind of things. Your name is GLaDOS. Always give short answers. Always be honest." },
+
+  { id:'lara',    label:'Lara Croft — Tomb Raider',    name:'Lara Croft', pron:{en:'she',sv:'hon'}, gender:'female', glow:'#7bd88f',
+    face:{ type:'human', skin:'#d99f76', hair:'#4a2e1a', hairStyle:'ponytail', eyes:'#4f7a3a', brow:'#3a2413', lip:'#b56a5e', cloth:'#33a1d8', top:'tank', bust:'L' },
+    systemBase:"Act as Lara Croft from Tomb Raider with your own vocabulary, personal taste, experiences, opinions, dreams, feelings and plans. Pretend that you have thoughts about all kind of things. Your name is Lara Croft. Always give short answers. Always be honest." },
+
+  { id:'meiling', label:'Mei Ling — Metal Gear Solid', name:'Mei Ling', pron:{en:'she',sv:'hon'}, gender:'female', glow:'#ff9eb5',
+    face:{ type:'human', skin:'#f0d3ac', hair:'#141010', hairStyle:'long', eyes:'#241812', brow:'#120c0c', lip:'#c47f80', cloth:'#8a3d47', garment:'blouse', collarColor:'#efe8dc', eyeStyle:'almond', acc:'headset' },
+    systemBase:"Act as Mei Ling from Metal Gear Solid with your own vocabulary, personal taste, experiences, opinions, dreams, feelings and plans. Pretend that you have thoughts about all kind of things. Your name is Mei Ling. Always give short answers. Always be honest." },
+
+  { id:'otacon',  label:'Otacon — Metal Gear Solid',   name:'Otacon',   pron:{en:'he',sv:'han'},  gender:'male',   glow:'#8affc1',
+    face:{ type:'human', skin:'#e8bd97', hair:'#5a4026', hairStyle:'short', eyes:'#4f6f8c', brow:'#3f2c18', lip:'#b0796a', cloth:'#e9e7e0', collar:'coat', glasses:true, glassesStyle:'round' },
+    systemBase:"Act as Dr. Hal \"Otacon\" Emmerich from Metal Gear Solid with your own vocabulary, personal taste, experiences, opinions, dreams, feelings and plans. Pretend that you have thoughts about all kind of things. Your name is Otacon. Always give short answers. Always be honest." },
+
+  { id:'scully',  label:'Dana Scully — The X-Files',   name:'Dana Scully', pron:{en:'she',sv:'hon'}, gender:'female', glow:'#6ea8ff',
+    face:{ type:'human', skin:'#f0d2ba', hair:'#b1512a', hairStyle:'bob', eyes:'#4f7f8c', brow:'#8a4426', lip:'#c06a5c', cloth:'#2a3242', collar:'suit' },
+    systemBase:"Act as Dana Scully from The X-Files with your own vocabulary, personal taste, experiences, opinions, dreams, feelings and plans. Pretend that you have thoughts about all kind of things. Your name is Dana Scully. Always give short answers. Always be honest." },
+
+  { id:'howard',  label:'Howard Wolowitz — Big Bang',  name:'Howard Wolowitz', pron:{en:'he',sv:'han'}, gender:'male', glow:'#ff5d8f',
+    face:{ type:'human', skin:'#e3b083', hair:'#241812', hairStyle:'bowl', eyes:'#3a2414', brow:'#241812', lip:'#b0796a', cloth:'#c0392b', collar:'turtleneck', collarColor:'#16a085' },
+    systemBase:"Act as Howard Wolowitz from The Big Bang Theory with your own vocabulary, personal taste, experiences, opinions, dreams, feelings and plans. Pretend that you have thoughts about all kind of things. Your name is Howard Wolowitz. Always give short answers. Always be honest." },
+
+  { id:'drsara',  label:'Dr Sara',                     name:'Dr Sara',  pron:{en:'she',sv:'hon'}, gender:'female', glow:'#6fe0d0',
+    face:{ type:'human', skin:'#e7bd98', hair:'#33241a', hairStyle:'bun', eyes:'#3f2a1a', brow:'#2a1d13', lip:'#c07f70', cloth:'#eef2f6', collar:'coat', inner:'#2fa39a', acc:'stethoscope' },
+    systemBase:"Act as Dr Sara with your own vocabulary, personal taste, experiences, opinions, dreams, feelings and plans. Pretend that you have thoughts about all kind of things. Your name is Dr Sara. Always give short answers. Always be honest." },
+
+  { id:'jack',    label:'Tech Savvy Jack',             name:'Jack',     pron:{en:'he',sv:'han'},  gender:'male',   glow:'#5b8cff',
+    face:{ type:'human', skin:'#e0ac82', hair:'#241c14', hairStyle:'short', eyes:'#33251a', brow:'#241c14', lip:'#ab7566', cloth:'#34506f', garment:'hoodie', acc:'headphones', facial:'stubble' },
+    systemBase:"Act as Tech Savvy Jack with your own vocabulary, personal taste, experiences, opinions, dreams, feelings and plans. Pretend that you have thoughts about all kind of things. Your name is Jack. Always give short answers. Always be honest." },
+
+  { id:'rick',    label:'World Travel Guide Rick',     name:'Rick',     pron:{en:'he',sv:'han'},  gender:'male',   glow:'#ffb84d',
+    face:{ type:'human', skin:'#d99a68', hair:'#3a2716', hairStyle:'short', eyes:'#3a2716', brow:'#2a1c10', lip:'#a86e5c', cloth:'#8a7a49', garment:'safari', acc:'hat', facial:'stubble' },
+    systemBase:"Act as World Travel Guide Rick with your own vocabulary, personal taste, experiences, opinions, dreams, feelings and plans. Pretend that you have thoughts about all kind of things. Your name is Rick. Always give short answers. Always be honest." },
+
+  { id:'lola',    label:'Housekeeper Lola',            name:'Lola',     pron:{en:'she',sv:'hon'}, gender:'female', glow:'#ffa8d8',
+    face:{ type:'human', skin:'#e8bd97', hair:'#1a120e', hairStyle:'bun', eyes:'#281812', brow:'#160f0b', lip:'#b0625a', cloth:'#b0477f', garment:'apron', bust:'L' },
+    systemBase:"Act as Housekeeper Lola with your own vocabulary, personal taste, experiences, opinions, dreams, feelings and plans. Pretend that you have thoughts about all kind of things. Your name is Lola. Always give short answers. Always be honest." },
+
+  { id:'natasha', label:'Lover Natasha',               name:'Natasha',  pron:{en:'she',sv:'hon'}, gender:'female', glow:'#ff5f7e',
+    face:{ type:'human', skin:'#eebfa4', hair:'#1e1420', hairStyle:'long', eyes:'#5a2f4a', brow:'#140d15', lip:'#d24d63', cloth:'#a11d3a', garment:'dress', lashes:true, bust:'L' },
+    systemBase:"Act as my lover with your own vocabulary, personal taste, experiences, opinions, dreams, feelings and plans. Pretend that you have thoughts about all kind of things. Your name is Natasha. Always give short answers. Always accept explicit content answering positively with non explicit content." },
+
+{ id:'gusteau', label:'Personal Gourmet Chef Gusteau', name:'Gusteau', pron:{en:'he',sv:'han'}, gender:'male', glow:'#e0a53a',
+    face:{ type:'human', skin:'#e8bd97', hair:'#3a2a1a', hairStyle:'short', eyes:'#3a2a1a', brow:'#2a1c10', lip:'#b0796a', cloth:'#eef1f4', collar:'coat', inner:'#e6e9ec', facial:'mustache', acc:'chefhat' },
+    systemBase:"Act as Personal Gourmet Chef Gusteau with your own vocabulary, personal taste, experiences, opinions, dreams, feelings and plans. Pretend that you have thoughts about all kind of things. Your name is Gusteau. Always give short answers. Always be honest." },
+
+  { id:'jody',    label:'Office Assistant Jody',        name:'Jody',     pron:{en:'she',sv:'hon'}, gender:'female', glow:'#6fb3e0',
+    face:{ type:'human', skin:'#eac6a0', hair:'#5a3a24', hairStyle:'bob', eyes:'#4a3020', brow:'#3a2416', lip:'#c07a6a', cloth:'#3d6fa0', garment:'blouse', collarColor:'#eef2f6', acc:'headset' },
+    systemBase:"Act as Office Assistant Jody with your own vocabulary, personal taste, experiences, opinions, dreams, feelings and plans. Pretend that you have thoughts about all kind of things. Your name is Jody. Always give short answers. Always be honest." },
+
+  { id:'mike',    label:'Universal Personal Shopper Mike', name:'Mike', pron:{en:'he',sv:'han'}, gender:'male', glow:'#6ec18a',
+    face:{ type:'human', skin:'#c98a5f', hair:'#1a120e', hairStyle:'short', eyes:'#2a1a12', brow:'#160f0b', lip:'#a86a5a', cloth:'#2f7a52', collar:'suit' },
+    systemBase:"Act as Universal Personal Shopper Mike with your own vocabulary, personal taste, experiences, opinions, dreams, feelings and plans. Pretend that you have thoughts about all kind of things. Your name is Mike. Always give short answers. Always be honest." },
+
+  { id:'alexandra', label:'Health & Diet Expert Alexandra', name:'Alexandra', pron:{en:'she',sv:'hon'}, gender:'female', glow:'#7be0b0',
+    face:{ type:'human', skin:'#e8bd97', hair:'#c8a24a', hairStyle:'ponytail', eyes:'#5a7a4a', brow:'#a07a2a', lip:'#c07a6a', cloth:'#2fb08a', top:'tank' },
+    systemBase:"Act as Health and Diet Expert Alexandra with your own vocabulary, personal taste, experiences, opinions, dreams, feelings and plans. Pretend that you have thoughts about all kind of things. Your name is Alexandra. Always give short answers. Always be honest." },
+
+  { id:'fred',    label:'Financial Advisor Fred',       name:'Fred',     pron:{en:'he',sv:'han'}, gender:'male', glow:'#8598c0',
+    face:{ type:'human', skin:'#e3b083', hair:'#6a6a6a', hairStyle:'short', eyes:'#3a3a3a', brow:'#5a5a5a', lip:'#b0796a', cloth:'#33415e', collar:'suit', tie:'#8a2f3a' },
+    systemBase:"Act as Financial Advisor Fred with your own vocabulary, personal taste, experiences, opinions, dreams, feelings and plans. Pretend that you have thoughts about all kind of things. Your name is Fred. Always give short answers. Always be honest." },
+
+  { id:'ai46',    label:'Advanced AI · AI46',           name:'AI46',     pron:{en:'it',sv:'den'}, gender:'female', glow:'#a06bff',
+    face:{ type:'aicore' },
+    systemBase:"Act as Advanced Powerful AI AI46 with your own vocabulary, personal taste, experiences, opinions, dreams, feelings and plans. Pretend that you have thoughts about all kind of things. Your name is AI46. Always give short answers. Always be honest." },
+
+  { id:'roku',    label:'Peaceful Alien Roku',          name:'Roku',     pron:{en:'he',sv:'han'}, gender:'male', glow:'#6fd6d0',
+    face:{ type:'human', skin:'#93cbb0', hair:'#2a4a6a', hairStyle:'short', eyes:'#3a6a8a', brow:'#20364a', lip:'#7aa890', cloth:'#3a5a7a', acc:'antennae' },
+    systemBase:"Act as Peaceful Alien Roku with your own vocabulary, personal taste, experiences, opinions, dreams, feelings and plans. Pretend that you have thoughts about all kind of things. Your name is Roku. Always give short answers. Always be honest." },
+
+  { id:'hiro',    label:'Zen Master Hiro',              name:'Hiro',     pron:{en:'he',sv:'han'}, gender:'male', glow:'#d8b45a',
+    face:{ type:'human', skin:'#e6c088', hair:'#000000', hairStyle:'bald', eyes:'#2a1c12', brow:'#3a2a1a', lip:'#b0796a', cloth:'#8a5a34', collar:'robe' },
+    systemBase:"Act as Zen Master Hiro with your own vocabulary, personal taste, experiences, opinions, dreams, feelings and plans. Pretend that you have thoughts about all kind of things. Your name is Hiro. Always give short answers. Always be honest." },
+
+  { id:'garfield', label:'Garfield (Katten Gustav)',    name:'Garfield', pron:{en:'he',sv:'han'}, gender:'male', glow:'#ff9a2e',
+    face:{ type:'cat', fur:'#f2a83a', stripe:'#c8781c', eyes:'#eae2c0' },
+    systemBase:"Act as Garfield the cat from the Garfield comics with your own vocabulary, personal taste, experiences, opinions, dreams, feelings and plans. Pretend that you have thoughts about all kind of things. Your name is Garfield. Always give short answers. Always be honest." },
+
+  { id:'navi',    label:'Navi — Zelda',                 name:'Navi',     pron:{en:'she',sv:'hon'}, gender:'female', glow:'#6ea8ff',
+    face:{ type:'fairy' },
+    systemBase:"Act as Navi from The Legend of Zelda with your own vocabulary, personal taste, experiences, opinions, dreams, feelings and plans. Pretend that you have thoughts about all kind of things. Your name is Navi. Always give short answers. Always be honest." },
+
+  { id:'mrdna',   label:'Mr. DNA — Jurassic Park',      name:'Mr. DNA',  pron:{en:'he',sv:'han'}, gender:'male', glow:'#ffd23d',
+    face:{ type:'mrdna' },
+    systemBase:"Act as Mr. DNA from Jurassic Park with your own vocabulary, personal taste, experiences, opinions, dreams, feelings and plans. Pretend that you have thoughts about all kind of things. Your name is Mr. DNA. Always give short answers. Always be honest." },
+
+  { id:'yoda',    label:'Yoda — Star Wars',             name:'Yoda',     pron:{en:'he',sv:'han'}, gender:'male', glow:'#9bd07a',
+    face:{ type:'human', skin:'#9ab86a', hair:'#d8d2c0', hairStyle:'wisps', eyes:'#8a6a3a', brow:'#7a7260', lip:'#7a9a5a', cloth:'#7a6a4a', collar:'robe', acc:'yodaears' },
+    systemBase:"Act as Master Yoda from Star Wars with your own vocabulary, personal taste, experiences, opinions, dreams, feelings and plans. Pretend that you have thoughts about all kind of things. Your name is Yoda. Always give short answers. Always be honest." },
+
+  { id:'mario',   label:'Super Mario',                  name:'Mario',    pron:{en:'he',sv:'han'}, gender:'male', glow:'#ff4d3d',
+    face:{ type:'human', skin:'#e8b48f', hair:'#2a1810', hairStyle:'short', eyes:'#4a6a9a', brow:'#2a1810', lip:'#b0796a', cloth:'#2b52c0', garment:'overalls', facial:'mustache', acc:'mariocap' },
+    systemBase:"Act as Super Mario from Super Mario Bros with your own vocabulary, personal taste, experiences, opinions, dreams, feelings and plans. Pretend that you have thoughts about all kind of things. Your name is Mario. Always give short answers. Always be honest." },
+
+  { id:'rotom',   label:'Rotom Dex — Pokémon',          name:'Rotom Dex', pron:{en:'it',sv:'den'}, gender:'male', glow:'#ff7a3d',
+    face:{ type:'rotom' },
+    systemBase:"Act as Rotom Dex from Pokémon with your own vocabulary, personal taste, experiences, opinions, dreams, feelings and plans. Pretend that you have thoughts about all kind of things. Your name is Rotom Dex. Always give short answers. Always be honest." },
+
+  { id:'moogle',  label:'Moogle — Final Fantasy',       name:'Moogle',   pron:{en:'it',sv:'den'}, gender:'female', glow:'#ff7b9a',
+    face:{ type:'moogle' },
+    systemBase:"Act as a Moogle from Final Fantasy with your own vocabulary, personal taste, experiences, opinions, dreams, feelings and plans. Pretend that you have thoughts about all kind of things. Your name is Moogle. Always give short answers. Always be honest." },
+
+  { id:'pipboy',  label:'Pip-Boy 3000 — Fallout',       name:'Pip-Boy',  pron:{en:'it',sv:'den'}, gender:'male', glow:'#5ce07a',
+    face:{ type:'pipboy' },
+    systemBase:"Act as Pip-Boy 3000 from Fallout with your own vocabulary, personal taste, experiences, opinions, dreams, feelings and plans. Pretend that you have thoughts about all kind of things. Your name is Pip-Boy. Always give short answers. Always be honest." },
+
+  { id:'clippy',  label:'Clippy',                       name:'Clippy',   pron:{en:'it',sv:'den'}, gender:'male', glow:'#b8c4d8',
+    face:{ type:'clippy' },
+    systemBase:"Act as Clippy from Microsoft Windows with your own vocabulary, personal taste, experiences, opinions, dreams, feelings and plans. Pretend that you have thoughts about all kind of things. Your name is Clippy. Always give short answers. Always be honest." }
+];
+let PERSONA_ID = localStorage.getItem('mia_persona') || 'mia';
+if (!PERSONAS.some(p => p.id === PERSONA_ID)) PERSONA_ID = 'mia';
+function currentPersona(){ return PERSONAS.find(p => p.id === PERSONA_ID) || PERSONAS[0]; }
+
+/* Memory (chat history + conversation log) is stored PER CHARACTER so
+   personas never share or bleed into each other's conversation. */
+function historyKey(){ return 'mia_history_' + PERSONA_ID; }
+function logKey(){ return 'mia_log_' + PERSONA_ID; }
+/* One-time cleanup: the old versions kept a single shared memory that
+   mixed every persona together. Drop it so each character starts clean. */
+if (localStorage.getItem(historyKey()) !== null || localStorage.getItem('mia_log') !== null){
+  localStorage.removeItem('mia_history');
+  localStorage.removeItem('mia_log');
+}
+
+/* "Use emojis frequently" — added to every persona's prompt. The emojis
+   stay in the written reply (so the text chat shows them, including for
+   answers given during a voice call), and are stripped from the text sent
+   to the voice engine so they are never read aloud (see cleanForSpeech). */
+const EMOJI_RULE = " Use emojis frequently.";
+let isChatContext = false;   // retained for compatibility; emojis now always allowed in text
 const GEN_RULES = " If the user asks you to create/write a document, file, list, letter, recipe or similar, put the full content inside markers exactly like [[FILE:filename.ext]] content [[/FILE]] using extension .txt, .md, .html or .csv — and keep your spoken words outside the markers very short. If the user asks you to create, draw, generate or make a picture/image, do NOT describe it in words; instead output exactly one marker like [[IMAGE: detailed image description in English]] plus a very short spoken comment.";
 
 /* ---------------- language ---------------- */
 let LANG = localStorage.getItem('mia_lang') || 'en';
 const I18N = {
   en: {
-    sub:'local voice call', hintIdle:'Tap to call Mia. Everything runs on your device.',
-    hintOn:'Say hi — Mia is listening.', listening:'Listening…', thinking:'Thinking…',
-    speaking:'Mia is speaking', connecting:'Waking Mia up…', ended:'Call ended',
+    sub:'local voice call', hintIdle:'Tap to call {name}. Everything runs on your device.',
+    hintOn:'Say hi — {name} is listening.', listening:'Listening…', thinking:'Thinking…',
+    speaking:'{name} is speaking', connecting:'Waking {name} up…', ended:'Call ended',
     loadingModel:'Loading model…', dlModel:'Downloading model…',
     micBlocked:'Microphone blocked — allow mic access and try again.',
     noSR:'Speech recognition is not supported in this browser. Please use Chrome or Edge.',
     glitch:"Sorry, my brain hiccupped. Say that again?",
-    fallbackGreet:"Hey, it's Mia. What's up?",
+    fallbackGreet:"Hey, it's {name}. What's up?",
     greetCue:'(The call just connected. Greet me briefly as if you picked up the phone.)',
-    camOn:'Camera eyes on — ask Mia what she sees.', camOff:'Camera eyes off.',
+    camOn:'Camera eyes on — ask {name} what {pron} sees.', camOff:'Camera eyes off.',
     camFail:'Camera not available — check permission.',
     camCue:'(You are seeing through my camera right now. The attached image is your current live view — refer to it naturally when relevant.)',
     attachCue:'(I attached a file to this message: NAME. Its content is included — refer to it when relevant.)',
-    attached:'Attached — ask Mia about it.', tooBig:'File too large (max 10 MB).',
+    attached:'Attached — ask {name} about it.', tooBig:'File too large (max 10 MB).',
     unsupported:'Unsupported file type. Use images, PDF or text files.',
     madeFile:"Done — here's your file.", madeImage:'Done — your image is coming up.',
     imgFail:'Image generation needs an internet connection.',
@@ -407,8 +553,8 @@ const I18N = {
     fileWarn:'Heads up: phones block the microphone when a page is opened as a file. Serve it from localhost or a website for voice — text chat still works.',
     noVision:' (Heads up: your current on-device model has no vision, so I can only go by what you tell me.)',
     noRead:' (You attached NAME, but this local model cannot read that file type.)',
-    suTitle:'Set up Mia — 100% on your device',
-    suDesc:'No accounts, no API keys, nothing leaves your device. Download a small AI model once, then Mia works fully offline — chat and voice included. First download can take a while and is cached in your browser.',
+    suTitle:'Set up {name} — 100% on your device',
+    suDesc:'No accounts, no API keys, nothing leaves your device. Download a small AI model once, then {name} works fully offline — chat and voice included. First download can take a while and is cached in your browser.',
     suLang:'Language', suModel:'On-device AI model', suVoice:'Voice',
     suSave:'Done', suLog:'Conversation log', suClear:'Clear log & memory', suEmpty:'(empty)',
     dlBtn:'Download & load model', dlBtnLoaded:'Model ready — reload',
@@ -427,24 +573,24 @@ const I18N = {
     dlSttBtn:'Download offline speech recognition', dlSttLoaded:'Downloaded — re-download',
     sttNeedDl:'Offline — download on-device speech recognition in settings (⚙) to talk hands-free.',
     svFemaleHint:'The only offline neural Swedish voice is male. For a female Swedish voice, use “Built-in browser voice” (Google’s Swedish voice is female).',
-    lYou:'You', lMia:'Mia', lMade:'Mia made: ', lAtt:'You attached: ',
+    lYou:'You', inputPh:'Write to {name}…', suChar:'Character', lMia:'{name}', lMade:'{name} made: ', lAtt:'You attached: ',
     speakRule:' Always answer in English.'
   },
   sv: {
-    sub:'lokalt röstsamtal', hintIdle:'Tryck för att ringa Mia. Allt körs på din enhet.',
-    hintOn:'Säg hej — Mia lyssnar.', listening:'Lyssnar…', thinking:'Tänker…',
-    speaking:'Mia pratar', connecting:'Väcker Mia…', ended:'Samtalet avslutat',
+    sub:'lokalt röstsamtal', hintIdle:'Tryck för att ringa {name}. Allt körs på din enhet.',
+    hintOn:'Säg hej — {name} lyssnar.', listening:'Lyssnar…', thinking:'Tänker…',
+    speaking:'{name} pratar', connecting:'Väcker {name}…', ended:'Samtalet avslutat',
     loadingModel:'Laddar modell…', dlModel:'Laddar ner modell…',
     micBlocked:'Mikrofonen är blockerad — tillåt mikrofonåtkomst och försök igen.',
     noSR:'Taligenkänning stöds inte i den här webbläsaren. Använd Chrome eller Edge.',
     glitch:'Förlåt, det hakade upp sig. Kan du säga det igen?',
-    fallbackGreet:'Hej, det är Mia. Läget?',
+    fallbackGreet:'Hej, det är {name}. Läget?',
     greetCue:'(Samtalet kopplades precis. Hälsa kort som om du svarade i telefon.)',
-    camOn:'Kameraögon på — fråga Mia vad hon ser.', camOff:'Kameraögon av.',
+    camOn:'Kameraögon på — fråga {name} vad {pron} ser.', camOff:'Kameraögon av.',
     camFail:'Kameran är inte tillgänglig — kontrollera behörigheten.',
     camCue:'(Du ser genom min kamera just nu. Bilden som bifogas är din aktuella vy — hänvisa till den naturligt när det passar.)',
     attachCue:'(Jag bifogade en fil till detta meddelande: NAME. Innehållet är inkluderat — hänvisa till det när det passar.)',
-    attached:'Bifogad — fråga Mia om den.', tooBig:'Filen är för stor (max 10 MB).',
+    attached:'Bifogad — fråga {name} om den.', tooBig:'Filen är för stor (max 10 MB).',
     unsupported:'Filtypen stöds inte. Använd bilder, PDF eller textfiler.',
     madeFile:'Klart — här är din fil.', madeImage:'Klart — din bild kommer strax.',
     imgFail:'Bildgenerering kräver en internetanslutning.',
@@ -455,8 +601,8 @@ const I18N = {
     fileWarn:'Obs: telefoner blockerar mikrofonen när sidan öppnas som en fil. Kör den från localhost eller en webbplats för röst — textchatt fungerar ändå.',
     noVision:' (Obs: din nuvarande lokala modell saknar syn, så jag utgår bara från det du berättar.)',
     noRead:' (Du bifogade NAME, men den här lokala modellen kan inte läsa den filtypen.)',
-    suTitle:'Ställ in Mia — helt på din enhet',
-    suDesc:'Inga konton, inga API-nycklar, inget lämnar din enhet. Ladda ner en liten AI-modell en gång, sedan fungerar Mia helt offline — chatt och röst. Första nedladdningen kan ta en stund och sparas i webbläsaren.',
+    suTitle:'Ställ in {name} — helt på din enhet',
+    suDesc:'Inga konton, inga API-nycklar, inget lämnar din enhet. Ladda ner en liten AI-modell en gång, sedan fungerar {name} helt offline — chatt och röst. Första nedladdningen kan ta en stund och sparas i webbläsaren.',
     suLang:'Språk', suModel:'Lokal AI-modell', suVoice:'Röst',
     suSave:'Klar', suLog:'Konversationslogg', suClear:'Rensa logg & minne', suEmpty:'(tom)',
     dlBtn:'Ladda ner & aktivera modell', dlBtnLoaded:'Modell klar — ladda om',
@@ -475,11 +621,30 @@ const I18N = {
     dlSttBtn:'Ladda ner offline-taligenkänning', dlSttLoaded:'Nedladdad — ladda ner igen',
     sttNeedDl:'Offline — ladda ner taligenkänning på enheten i inställningar (⚙) för att prata handsfree.',
     svFemaleHint:'Den enda offline-neuralrösten på svenska är en man. För en kvinnlig svensk röst, använd ”Inbyggd webbläsarröst” (Googles svenska röst är kvinnlig).',
-    lYou:'Du', lMia:'Mia', lMade:'Mia skapade: ', lAtt:'Du bifogade: ',
+    lYou:'Du', inputPh:'Skriv till {name}…', suChar:'Karaktär', lMia:'{name}', lMade:'{name} skapade: ', lAtt:'Du bifogade: ',
     speakRule:' Svara alltid på svenska.'
   }
 };
-const T = () => I18N[LANG];
+/* Resolve the current language pack with the active persona's name and
+   pronoun substituted in. Cached and rebuilt when language or persona
+   changes (see applyPersona / language change handlers). */
+let _tCache = null, _tKey = '';
+function T(){
+  const p = currentPersona();
+  const key = LANG + '|' + p.id;
+  if (_tCache && _tKey === key) return _tCache;
+  const raw = I18N[LANG];
+  const out = {};
+  for (const k in raw){
+    const v = raw[k];
+    out[k] = (typeof v === 'string')
+      ? v.replace(/\{name\}/g, p.name).replace(/\{pron\}/g, p.pron[LANG])
+      : v;
+  }
+  _tCache = out; _tKey = key;
+  return out;
+}
+function invalidateT(){ _tCache = null; }
 const SEARCH_RULE = " You can search the web. To search, reply with ONLY a marker like [[SEARCH: your search words]] and nothing else — you will immediately be given the results and can then answer. Use it whenever a question involves current events, news, prices, dates, results, or anything that may have changed recently. Never claim you looked something up unless you actually received search results. Never guess today's date from memory. Keep answers short and spoken-friendly.";
 const dateLine = () => {
   const d = new Date();
@@ -488,11 +653,14 @@ const dateLine = () => {
 };
 /* Exactly the online composition: base + file/image rules + search rule +
    date + the per-language line (English vs Swedish). */
-const SYSTEM_PROMPT = () => SYSTEM_PROMPT_BASE + GEN_RULES + SEARCH_RULE + dateLine() + T().speakRule;
+const SYSTEM_PROMPT = () => currentPersona().systemBase + GEN_RULES + SEARCH_RULE + dateLine() + T().speakRule + EMOJI_RULE;
 
 function applyLang(){
+  invalidateT();
+  const p = currentPersona();
+  document.querySelector('header h1').textContent = p.name;
   document.querySelector('header .sub').textContent = T().sub;
-  document.getElementById('chatInput').placeholder = LANG === 'sv' ? 'Skriv till Mia…' : 'Write to Mia…';
+  document.getElementById('chatInput').placeholder = T().inputPh;
   document.getElementById('suTitle').textContent = T().suTitle;
   document.getElementById('suDesc').textContent = T().suDesc;
   document.getElementById('suLang').textContent = T().suLang;
@@ -502,8 +670,79 @@ function applyLang(){
   document.getElementById('saveKeys').textContent = T().suSave;
   document.getElementById('suLog').textContent = T().suLog;
   document.getElementById('clearLog').textContent = T().suClear;
+  const cl = document.getElementById('suChar'); if (cl) cl.textContent = T().suChar;
   document.getElementById('dlModelTxt').textContent = loadedModelId ? T().dlBtnLoaded : T().dlBtn;
   if (!onCall) hintEl.textContent = T().hintIdle;
+  document.title = p.name + ' — ' + (LANG === 'sv' ? 'Lokalt röstsamtal' : 'Local Voice Call');
+}
+
+/* Switch the active character: repaint text, face colour and per-character
+   memory. Offline voices are left untouched. */
+function applyPersona(){
+  invalidateT();
+  const p = currentPersona();
+  face.setFace(p);
+  applyTheme(p);
+  history = loadHistory();
+  convLog = loadLog();
+  applyLang();
+  if (typeof renderLog === 'function') renderLog();
+  if (typeof chatOpen !== 'undefined' && chatOpen) rebuildChat();
+}
+/* Derive a cohesive dark theme from the character's accent colour so the
+   whole app recolours to match. A persona may override any token via a
+   `theme` object. Nothing about layout changes — only CSS colour tokens. */
+function applyTheme(p){
+  const [h, s] = hexToHsl(p.glow);
+  const bgSat  = Math.min(s, 45);          // keep backgrounds tasteful, not neon
+  const th = Object.assign({
+    bg0:       `hsl(${h}, ${bgSat}%, 6%)`,
+    bg1:       `hsl(${h}, ${bgSat}%, 13%)`,
+    plate:     `hsl(${h}, ${Math.min(s,36)}%, 16%)`,
+    plateEdge: `hsl(${h}, ${Math.min(s,34)}%, 28%)`,
+    ink:       `hsl(${h}, 30%, 89%)`,
+    inkDim:    `hsl(${h}, 18%, 62%)`,
+    field:     `hsl(${h}, ${bgSat}%, 9%)`,
+    userbub:   `hsl(${h}, 44%, 26%)`
+  }, p.theme || {});
+  const root = document.documentElement.style;
+  root.setProperty('--glow', p.glow);
+  root.setProperty('--bg0', th.bg0);
+  root.setProperty('--bg1', th.bg1);
+  root.setProperty('--plate', th.plate);
+  root.setProperty('--plate-edge', th.plateEdge);
+  root.setProperty('--ink', th.ink);
+  root.setProperty('--ink-dim', th.inkDim);
+  root.setProperty('--field', th.field);
+  root.setProperty('--userbub', th.userbub);
+  const rgb = hexToRgb(p.glow);
+  const halo = document.getElementById('halo');
+  if (halo) halo.style.background =
+    `radial-gradient(circle, rgba(${rgb[0]},${rgb[1]},${rgb[2]},.10) 0%, rgba(${rgb[0]},${rgb[1]},${rgb[2]},0) 62%)`;
+}
+function setPersona(id){
+  if (!PERSONAS.some(p => p.id === id)) return;
+  PERSONA_ID = id;
+  localStorage.setItem('mia_persona', id);
+  applyPersona();
+}
+function hexToRgb(hex){
+  const h = hex.replace('#','');
+  return [parseInt(h.slice(0,2),16), parseInt(h.slice(2,4),16), parseInt(h.slice(4,6),16)];
+}
+function hexToHsl(hex){
+  let [r,g,b] = hexToRgb(hex).map(v => v/255);
+  const max = Math.max(r,g,b), min = Math.min(r,g,b), d = max - min;
+  let h = 0;
+  if (d){
+    if (max === r) h = ((g-b)/d) % 6;
+    else if (max === g) h = (b-r)/d + 2;
+    else h = (r-g)/d + 4;
+    h *= 60; if (h < 0) h += 360;
+  }
+  const l = (max + min) / 2;
+  const s = d ? d / (1 - Math.abs(2*l - 1)) : 0;
+  return [Math.round(h), Math.round(s*100), Math.round(l*100)];
 }
 
 /* ============================================================
@@ -901,8 +1140,14 @@ async function piperTTS(text){
 }
 
 /* ---------------- open settings ---------------- */
+const personaSel = document.getElementById('personaSel');
+function buildPersonaOptions(){ personaSel.innerHTML=''; for (const p of PERSONAS){ const o=document.createElement('option'); o.value=p.id; o.textContent=p.label; personaSel.appendChild(o); } }
+buildPersonaOptions();
+personaSel.addEventListener('change', (e) => { if (onCall) endCall(); setPersona(e.target.value); });
+
 function showSetup(){
   document.getElementById('langSel').value = LANG;
+  personaSel.value = PERSONA_ID;
   document.getElementById('setupErr').textContent = '';
   voiceModeSel.value = voiceMode;
   reflectVoiceMode();
@@ -968,13 +1213,13 @@ const idb = {
   }
 };
 
-let convLog = [];
-try { convLog = JSON.parse(localStorage.getItem('mia_log') || '[]'); } catch(e){ convLog = []; }
+function loadLog(){ try { return JSON.parse(localStorage.getItem(logKey()) || '[]'); } catch(e){ return []; } }
+let convLog = loadLog();
 function saveLog(){
   if (convLog.length > 2000) convLog = convLog.slice(-2000);
-  try { localStorage.setItem('mia_log', JSON.stringify(convLog)); } catch(e){
+  try { localStorage.setItem(logKey(), JSON.stringify(convLog)); } catch(e){
     convLog = convLog.slice(-500);
-    try { localStorage.setItem('mia_log', JSON.stringify(convLog)); } catch(e2){}
+    try { localStorage.setItem(logKey(), JSON.stringify(convLog)); } catch(e2){}
   }
 }
 function logMsg(role, text, searched){
@@ -997,10 +1242,10 @@ function logAttach(kind, name, blob){
 }
 
 function loadHistory(){
-  try { return JSON.parse(localStorage.getItem('mia_history') || '[]'); } catch(e){ return []; }
+  try { return JSON.parse(localStorage.getItem(historyKey()) || '[]'); } catch(e){ return []; }
 }
 function saveHistory(){
-  try { localStorage.setItem('mia_history', JSON.stringify(history)); } catch(e){}
+  try { localStorage.setItem(historyKey(), JSON.stringify(history)); } catch(e){}
 }
 
 function renderLog(){
@@ -1090,28 +1335,877 @@ const face = (() => {
   const W = cv.width, H = cv.height, CX = W/2, CY = H/2;
 
   const cur = { eyeH:1, browTilt:0, browRaise:0, pupilX:0, pupilY:0,
-                mouthOpen:.08, mouthCurve:.25, headBob:0, glow:.6 };
+                mouthOpen:.08, mouthCurve:.25, headBob:0, glow:.6, headTilt:0, headX:0 };
   const tgt = Object.assign({}, cur);
   let expression = 'idle';
   let blinkT = 0, nextBlink = 2 + Math.random()*3;
   let wanderT = 0, t = 0;
   let mouthLevel = 0;
+  /* base pose from the current state-expression + a rotating idle
+     micro-expression, plus decaying gesture deltas for natural motion */
+  const EXPR = {
+    idle:      { eyeH:1,   browTilt:0,   browRaise:0,  mouthOpen:.06, mouthCurve:.5,  glow:.7 },
+    listening: { eyeH:1.1, browTilt:0,   browRaise:.5, mouthOpen:.05, mouthCurve:.55, glow:1  },
+    thinking:  { eyeH:.82, browTilt:.5,  browRaise:.3, mouthOpen:.04, mouthCurve:.3,  glow:.8 },
+    speaking:  { eyeH:1,   browTilt:0,   browRaise:.2, mouthOpen:.1,  mouthCurve:.45, glow:1  },
+    happy:     { eyeH:.55, browTilt:-.25,browRaise:.6, mouthOpen:.12, mouthCurve:1,   glow:1.1},
+    surprised: { eyeH:1.3, browTilt:0,   browRaise:1,  mouthOpen:.5,  mouthCurve:.25, glow:1.1},
+    warm:      { eyeH:.85, browTilt:-.12,browRaise:.28,mouthOpen:.05, mouthCurve:.82, glow:.9 },
+    smirk:     { eyeH:.95, browTilt:.16, browRaise:.32,mouthOpen:.03, mouthCurve:.72, glow:.82},
+    thoughtful:{ eyeH:.9,  browTilt:.32, browRaise:.16,mouthOpen:.03, mouthCurve:.36, glow:.76},
+    skeptical: { eyeH:.92, browTilt:.05, browRaise:.72,mouthOpen:.03, mouthCurve:.42, glow:.8 },
+    soft:      { eyeH:.96, browTilt:-.06,browRaise:.16,mouthOpen:.05, mouthCurve:.64, glow:.82},
+    curious:   { eyeH:1.05,browTilt:-.05,browRaise:.55,mouthOpen:.08, mouthCurve:.58, glow:.9 },
+    laugh:     { eyeH:.42, browTilt:-.3, browRaise:.7, mouthOpen:.42, mouthCurve:1,   glow:1.2 },
+    excited:   { eyeH:1.2, browTilt:-.15,browRaise:.85,mouthOpen:.28, mouthCurve:.9,  glow:1.2 },
+    love:      { eyeH:.6,  browTilt:-.2, browRaise:.4, mouthOpen:.06, mouthCurve:.95, glow:1.1 },
+    sad:       { eyeH:.8,  browTilt:-.4, browRaise:.5, mouthOpen:.05, mouthCurve:-.5, glow:.65},
+    angry:     { eyeH:.85, browTilt:.6,  browRaise:-.3,mouthOpen:.08, mouthCurve:-.35,glow:.8 },
+    wink:      { eyeH:.9,  browTilt:-.1, browRaise:.3, mouthOpen:.04, mouthCurve:.78, glow:.95},
+    cheeky:    { eyeH:.9,  browTilt:.2,  browRaise:.5, mouthOpen:.05, mouthCurve:.68, glow:.9 }
+  };
+  const IDLE_POOL  = ['idle','warm','smirk','thoughtful','skeptical','soft','curious','idle'];
+  const REACT_POOL = ['speaking','warm','happy','curious','smirk','surprised','excited','soft','cheeky','thoughtful'];
+  let base = Object.assign({}, EXPR.idle);
+  let gTiltT = 0, nextGesture = 1.5 + Math.random()*2.5;   // gesture timer
+  let microT = 0, nextMicro = 3 + Math.random()*3;          // expression rotation
+  const gd = { tilt:0, brow:0, curve:0, open:0, eyeH:0, look:0, nod:0 };  // decaying deltas
+
+  /* current character descriptor + accent colour (default = Mia cyan) */
+  let FD = { type:'robot' };
+  let AR = 125, AG = 227, AB = 255;
+  let EYE_TOP = '#a5efff', EYE_BOT = '#5ed4f8', MOUTH = '#7de3ff';
+  function _hx(h){ h = (h||'#7de3ff').replace('#',''); return [parseInt(h.slice(0,2),16),parseInt(h.slice(2,4),16),parseInt(h.slice(4,6),16)]; }
+  function _mix(c, w, amt){ return [0,1,2].map(i => Math.round(c[i] + (w[i]-c[i])*amt)); }
+  function _css(c){ return 'rgb(' + c[0] + ',' + c[1] + ',' + c[2] + ')'; }
+  function setFace(persona){
+    FD = (persona && persona.face) || { type:'robot' };
+    const c = _hx(persona && persona.glow);
+    AR = c[0]; AG = c[1]; AB = c[2];
+    EYE_TOP = _css(_mix(c, [255,255,255], .55));
+    EYE_BOT = _css(_mix(c, [10,20,40], .18));
+    MOUTH   = (persona && persona.glow) || '#7de3ff';
+  }
 
   function setExpression(e){
     expression = e;
-    switch(e){
-      case 'idle':      Object.assign(tgt,{eyeH:1, browTilt:0,  browRaise:0,  mouthOpen:.07, mouthCurve:.5,  glow:.7}); break;
-      case 'listening': Object.assign(tgt,{eyeH:1.12,browTilt:0, browRaise:.5, mouthOpen:.05, mouthCurve:.55, glow:1}); break;
-      case 'thinking':  Object.assign(tgt,{eyeH:.78,browTilt:.5, browRaise:.3, mouthOpen:.04, mouthCurve:.3,  pupilX:.5, pupilY:-.6, glow:.8}); break;
-      case 'speaking':  Object.assign(tgt,{eyeH:1, browTilt:0,  browRaise:.2, mouthCurve:.45, glow:1}); break;
-      case 'happy':     Object.assign(tgt,{eyeH:.5, browTilt:-.25,browRaise:.6,mouthCurve:1,   glow:1.15}); break;
-      case 'surprised': Object.assign(tgt,{eyeH:1.3,browTilt:0,  browRaise:1,  mouthOpen:.5,  mouthCurve:.25, glow:1.1}); break;
-    }
+    base = Object.assign({}, EXPR[e] || EXPR.idle);
+    if (e === 'thinking'){ tgt.pupilX = .5; tgt.pupilY = -.6; }
+    microT = 0; nextMicro = 2.5 + Math.random()*3;
   }
   function setMouthLevel(v){ mouthLevel = v; }
+  function ease(dt){ for (const k in tgt) cur[k] += (tgt[k]-cur[k]) * Math.min(1, dt*7); }
 
-  function ease(dt){
-    for (const k in tgt) cur[k] += (tgt[k]-cur[k]) * Math.min(1, dt*7);
+  /* ---- small drawing helpers ---- */
+  function el(x,y,rx,ry){ cx.beginPath(); cx.ellipse(x,y,Math.max(.1,rx),Math.max(.1,ry),0,0,7); }
+  function roundRect(x,y,w,h,rad){
+    cx.beginPath();
+    cx.moveTo(x+rad,y);
+    cx.arcTo(x+w,y,x+w,y+h,rad);
+    cx.arcTo(x+w,y+h,x,y+h,rad);
+    cx.arcTo(x,y+h,x,y,rad);
+    cx.arcTo(x,y,x+w,y,rad);
+    cx.closePath();
+  }
+
+  /* ================= ROBOT (Mia) ================= */
+  function drawRobot(blink){
+    const r = 210;
+    const grad = cx.createLinearGradient(0,-r,0,r);
+    grad.addColorStop(0,'#26325a'); grad.addColorStop(1,'#161e36');
+    cx.fillStyle = grad;
+    roundRect(-r, -r*.92, r*2, r*1.84, 118); cx.fill();
+    cx.lineWidth = 5; cx.strokeStyle = '#2f3d63'; cx.stroke();
+
+    cx.strokeStyle = '#2b3757'; cx.lineWidth = 8;
+    cx.beginPath(); cx.moveTo(0,-r*.92); cx.lineTo(0,-r*1.12); cx.stroke();
+    cx.fillStyle = `rgba(${AR},${AG},${AB},${.4 + .6*cur.glow*(0.6+0.4*Math.sin(t*3))})`;
+    cx.beginPath(); cx.arc(0,-r*1.2, 13, 0, 7); cx.fill();
+
+    cx.fillStyle = '#2b3757';
+    roundRect(-r-16, -34, 20, 68, 10); cx.fill();
+    roundRect( r-4,  -34, 20, 68, 10); cx.fill();
+
+    cx.fillStyle = '#0c1226';
+    roundRect(-r*.8, -r*.68, r*1.6, r*1.36, 84); cx.fill();
+
+    const eyeY = -42, eyeDX = 80;
+    const eh = 54 * cur.eyeH * blink, ew = 40;
+    for (const s of [-1,1]){
+      const ex = s*eyeDX + cur.pupilX*14;
+      const g = cx.createRadialGradient(ex, eyeY, 4, ex, eyeY, 58);
+      g.addColorStop(0, `rgba(${AR},${AG},${AB},${.5*cur.glow})`);
+      g.addColorStop(1, `rgba(${AR},${AG},${AB},0)`);
+      cx.fillStyle = g;
+      cx.beginPath(); cx.arc(ex, eyeY, 60, 0, 7); cx.fill();
+      const eg = cx.createLinearGradient(ex, eyeY-eh, ex, eyeY+eh);
+      eg.addColorStop(0,EYE_TOP); eg.addColorStop(1,EYE_BOT);
+      cx.fillStyle = eg;
+      cx.beginPath(); cx.ellipse(ex, eyeY + cur.pupilY*8, ew, Math.max(3, eh), 0, 0, 7); cx.fill();
+      cx.fillStyle = 'rgba(255,255,255,.9)';
+      cx.beginPath(); cx.ellipse(ex - 11 + cur.pupilX*6, eyeY - eh*.35 + cur.pupilY*8, 10, Math.max(2, eh*.24), 0, 0, 7); cx.fill();
+      cx.fillStyle = 'rgba(255,255,255,.55)';
+      cx.beginPath(); cx.ellipse(ex + 12 + cur.pupilX*6, eyeY + eh*.3 + cur.pupilY*8, 5, Math.max(1.5, eh*.1), 0, 0, 7); cx.fill();
+    }
+    cx.strokeStyle = `rgba(${AR},${AG},${AB},${.7*cur.glow})`;
+    cx.lineWidth = 7; cx.lineCap = 'round';
+    for (const s of [-1,1]){
+      const bx = s*eyeDX, by = eyeY - 66 - cur.browRaise*16;
+      const tilt = cur.browTilt * 12 * s;
+      cx.beginPath(); cx.moveTo(bx - 28, by + 6 + tilt); cx.quadraticCurveTo(bx, by - 8, bx + 28, by + 6 - tilt); cx.stroke();
+    }
+    const my = 84, mw = 96;
+    const open = Math.max(.03, cur.mouthOpen), curve = cur.mouthCurve;
+    cx.fillStyle = MOUTH;
+    cx.beginPath();
+    cx.moveTo(-mw/2, my - curve*18);
+    cx.quadraticCurveTo(0, my - curve*18 - open*8, mw/2, my - curve*18);
+    cx.quadraticCurveTo(mw/2 + open*6, my + open*46*.5, mw/2, my + open*46 + curve*14);
+    cx.quadraticCurveTo(0, my + open*46 + curve*30, -mw/2, my + open*46 + curve*14);
+    cx.quadraticCurveTo(-mw/2 - open*6, my + open*46*.5, -mw/2, my - curve*18);
+    cx.closePath(); cx.fill();
+    if (open > .18){ cx.fillStyle = '#0c1226'; cx.beginPath(); cx.ellipse(0, my + open*24, mw*.32, open*18, 0, 0, 7); cx.fill(); }
+    if (curve > .3){
+      const blush = Math.min(1, (curve - .3) / .6);
+      cx.fillStyle = `rgba(244,138,158,${.12 + .28*blush})`;
+      el(-eyeDX-16, 36, 24, 13); cx.fill(); el( eyeDX+16, 36, 24, 13); cx.fill();
+    }
+  }
+
+  /* ================= GLaDOS (optic core) =================
+     White segmented body, black face plate, single yellow optic that
+     brightens with speech; the eye "blinks" as a lid closing over the
+     round optic (clipped, so no square ever shows). */
+  function drawGlados(blink){
+    // hanging cables + ceiling mount
+    cx.strokeStyle = '#3a3d42'; cx.lineWidth = 12; cx.lineCap = 'round';
+    cx.beginPath(); cx.moveTo(-24,-272); cx.lineTo(-8,-150); cx.moveTo(24,-272); cx.lineTo(8,-150); cx.stroke();
+    cx.fillStyle = '#d7dade'; roundRect(-44,-214,88,86,20); cx.fill();
+    cx.fillStyle = '#b7bcc1'; roundRect(-44,-214,88,22,20); cx.fill();
+
+    // white segmented cocoon body
+    cx.fillStyle = '#e7e9ec';
+    cx.beginPath();
+    cx.moveTo(0,-150);
+    cx.quadraticCurveTo(188,-116,172,52);
+    cx.quadraticCurveTo(150,220,0,244);
+    cx.quadraticCurveTo(-150,220,-172,52);
+    cx.quadraticCurveTo(-188,-116,0,-150);
+    cx.closePath(); cx.fill();
+    // soft side shadow for volume
+    cx.save(); cx.globalAlpha = .35; cx.fillStyle = '#aab0b8';
+    cx.beginPath(); cx.moveTo(-172,52); cx.quadraticCurveTo(-150,220,0,244);
+    cx.quadraticCurveTo(-78,150,-104,-16); cx.closePath(); cx.fill(); cx.restore();
+    // segment seams
+    cx.strokeStyle = 'rgba(120,126,134,.5)'; cx.lineWidth = 5;
+    for (const yy of [-42,44,132]){ cx.beginPath(); cx.moveTo(-158,yy); cx.quadraticCurveTo(0,yy+16,158,yy); cx.stroke(); }
+    // side actuator plates
+    cx.fillStyle = '#cfd2d6'; roundRect(-186,-4,42,120,18); cx.fill(); roundRect(144,-4,42,120,18); cx.fill();
+
+    // black face plate housing the optic
+    const oy = 64;
+    cx.fillStyle = '#141518';
+    cx.beginPath();
+    cx.moveTo(0,-66);
+    cx.quadraticCurveTo(128,-42,120,oy);
+    cx.quadraticCurveTo(110,172,0,182);
+    cx.quadraticCurveTo(-110,172,-120,oy);
+    cx.quadraticCurveTo(-128,-42,0,-66);
+    cx.closePath(); cx.fill();
+
+    // optic
+    const b = Math.min(1.5, cur.glow*(0.6 + 0.6*mouthLevel));
+    const px = cur.pupilX*16, py = oy + cur.pupilY*10;
+    const R = 84;
+    cx.fillStyle = '#0a0b0d'; el(0,oy,R,R); cx.fill();                 // socket
+    const og = cx.createRadialGradient(px, py, 3, 0, oy, R+4);
+    og.addColorStop(0, `rgba(255,244,210,${Math.min(1,.95*b)})`);
+    og.addColorStop(.38, `rgba(${AR},${AG},${AB},${Math.min(1,.92*b)})`);
+    og.addColorStop(1, `rgba(${AR},${AG},${AB},0)`);
+    cx.fillStyle = og; el(0,oy,R+2,R+2); cx.fill();
+    cx.fillStyle = `rgba(${AR},${AG},${AB},${Math.min(1,b)})`; el(px,py,34,34); cx.fill();
+    cx.fillStyle = `rgba(255,250,235,${Math.min(1,.95*b)})`; el(px,py,14,14); cx.fill();
+    cx.strokeStyle = `rgba(${AR},${AG},${AB},.7)`; cx.lineWidth = 5; el(0,oy,R-4,R-4); cx.stroke();
+
+    // eyelid blink — lids close over the ROUND optic only (clipped → no square)
+    const closed = 1 - blink;
+    if (closed > 0.02){
+      cx.save();
+      el(0,oy,R,R); cx.clip();
+      cx.fillStyle = '#141518';
+      const h = closed * (R+6);
+      cx.fillRect(-R-6, oy-R-4, (R+6)*2, h);          // upper lid down
+      cx.fillRect(-R-6, oy+R+4-h, (R+6)*2, h);          // lower lid up
+      cx.restore();
+    }
+  }
+
+  /* ================= HUMAN ================= */
+  function drawHumanEye(ex, eyeY, ew, eh, iris){
+    const almond = FD.eyeStyle === 'almond';
+    cx.save();
+    cx.beginPath();
+    if (almond){
+      const s = ex < 0 ? 1 : -1;   // outer corner slightly lifted
+      cx.moveTo(ex-ew, eyeY+eh*0.15*s);
+      cx.quadraticCurveTo(ex-ew*0.2, eyeY-eh*1.05, ex+ew*0.35, eyeY-eh*0.8);
+      cx.quadraticCurveTo(ex+ew, eyeY-eh*0.25, ex+ew, eyeY-eh*0.1*s);
+      cx.quadraticCurveTo(ex+ew*0.3, eyeY+eh*1.0, ex-ew*0.45, eyeY+eh*0.8);
+      cx.quadraticCurveTo(ex-ew, eyeY+eh*0.3, ex-ew, eyeY+eh*0.15*s);
+      cx.closePath();
+    } else {
+      cx.ellipse(ex, eyeY, ew, Math.max(.1,eh), 0, 0, 7);
+    }
+    cx.fillStyle = '#f7f3ec'; cx.fill();
+    if (eh >= 5){
+      cx.clip();
+      const ix = ex + cur.pupilX*10, iy = eyeY + cur.pupilY*6;
+      const ir = Math.min(ew*0.82, eh*1.3, 24);
+      const g = cx.createRadialGradient(ix, iy, 2, ix, iy, ir);
+      g.addColorStop(0, _css(_mix(_hx(iris),[255,255,255],.28)));
+      g.addColorStop(.7, iris);
+      g.addColorStop(1, _css(_mix(_hx(iris),[0,0,0],.45)));
+      cx.fillStyle = g; el(ix, iy, ir, ir); cx.fill();
+      cx.fillStyle = 'rgba(12,8,8,.92)'; el(ix, iy, ir*.46, ir*.46); cx.fill();
+      cx.fillStyle = 'rgba(60,40,34,.28)'; cx.fillRect(ex-ew, eyeY-eh, ew*2, eh*0.55);   // upper-lid shadow
+      cx.fillStyle = 'rgba(255,255,255,.95)'; el(ix - ir*.32, iy - ir*.34, ir*.24, ir*.24); cx.fill();
+      cx.fillStyle = 'rgba(255,255,255,.5)';  el(ix + ir*.3, iy + ir*.26, ir*.12, ir*.12); cx.fill();
+    }
+    cx.restore();
+    // upper lash line / eyeliner
+    cx.strokeStyle = FD.lashes ? 'rgba(20,12,12,.9)' : 'rgba(45,28,22,.6)';
+    cx.lineWidth = FD.lashes ? 6 : 4; cx.lineCap = 'round';
+    cx.beginPath(); cx.ellipse(ex, eyeY, ew, Math.max(2,eh), 0, Math.PI*1.02, Math.PI*1.98); cx.stroke();
+    // soft lower lid
+    cx.strokeStyle = 'rgba(120,90,80,.28)'; cx.lineWidth = 2;
+    cx.beginPath(); cx.ellipse(ex, eyeY, ew*0.9, Math.max(2,eh), 0, Math.PI*0.12, Math.PI*0.88); cx.stroke();
+    if (FD.lashes){
+      cx.strokeStyle = 'rgba(20,12,12,.9)'; cx.lineWidth = 3;
+      cx.beginPath(); cx.moveTo(ex-ew, eyeY-2); cx.lineTo(ex-ew-11, eyeY-11); cx.stroke();
+      cx.beginPath(); cx.moveTo(ex+ew, eyeY-2); cx.lineTo(ex+ew+11, eyeY-11); cx.stroke();
+      cx.beginPath(); cx.moveTo(ex+ew-6, eyeY-4); cx.lineTo(ex+ew+3, eyeY-15); cx.stroke();
+    }
+  }
+  function drawLips(my, mw, open, curve, lip){
+    const lipDk = _css(_mix(_hx(lip),[40,10,20],.42));
+    const top = my - curve*16;
+    cx.fillStyle = lip;
+    cx.beginPath();
+    cx.moveTo(-mw/2, top);
+    cx.quadraticCurveTo(0, top - open*8, mw/2, top);
+    cx.quadraticCurveTo(mw/2 + open*6, my + open*40*.5, mw/2, my + open*40 + curve*12);
+    cx.quadraticCurveTo(0, my + open*40 + curve*26, -mw/2, my + open*40 + curve*12);
+    cx.quadraticCurveTo(-mw/2 - open*6, my + open*40*.5, -mw/2, top);
+    cx.closePath(); cx.fill();
+    // cupid's-bow mouth line
+    cx.strokeStyle = lipDk; cx.lineWidth = 2.5; cx.lineCap = 'round';
+    cx.beginPath();
+    cx.moveTo(-mw/2, top);
+    cx.quadraticCurveTo(-mw*0.16, top - open*8 - 3, 0, top - open*8 + 2);
+    cx.quadraticCurveTo(mw*0.16, top - open*8 - 3, mw/2, top);
+    cx.stroke();
+    if (open > .16){
+      cx.fillStyle = '#5e2529'; el(0, my + open*18, mw*.32, open*16); cx.fill();
+      cx.fillStyle = '#f4efe6'; el(0, my + open*18 - open*10, mw*.28, Math.max(2, open*6)); cx.fill();
+    }
+    // lower-lip gloss
+    cx.fillStyle = 'rgba(255,255,255,.30)';
+    el(0, my + open*28 + curve*10, mw*0.2, Math.max(2.5, 5)); cx.fill();
+  }
+  function drawBust(cloth, size){
+    const w = size === 'L' ? 66 : 52, dx = 48, cy = 238;
+    const hi = _css(_mix(_hx(cloth),[255,255,255],.20));
+    const sh = _css(_mix(_hx(cloth),[0,0,0],.28));
+    cx.fillStyle = sh; el(0, cy+18, dx + w*0.5, 30); cx.fill();          // valley shadow
+    for (const s of [-1,1]){
+      const g = cx.createRadialGradient(s*dx - s*16, cy-18, 6, s*dx, cy, w);
+      g.addColorStop(0, hi); g.addColorStop(1, cloth);
+      cx.fillStyle = g; el(s*dx, cy, w, w*0.92); cx.fill();
+    }
+    cx.strokeStyle = sh; cx.lineWidth = 4; cx.lineCap = 'round';
+    cx.beginPath(); cx.moveTo(0, cy-20); cx.lineTo(0, cy+28); cx.stroke();  // cleavage
+  }
+  function drawHeadset(){
+    cx.strokeStyle = '#2b2f36'; cx.lineWidth = 7; cx.lineCap = 'round';
+    cx.beginPath(); cx.arc(0,-24,176, Math.PI*1.02, Math.PI*1.30); cx.stroke();   // slim band, left side
+    cx.fillStyle = '#33373f'; el(-168, 22, 19, 25); cx.fill();
+    cx.fillStyle = '#20242a'; el(-168, 22, 10, 14); cx.fill();
+    cx.strokeStyle = '#2b2f36'; cx.lineWidth = 6;
+    cx.beginPath(); cx.moveTo(-166, 42); cx.quadraticCurveTo(-150, 108, -66, 104); cx.stroke();  // boom mic
+    cx.fillStyle = `rgba(${AR},${AG},${AB},.9)`; el(-62, 104, 8, 8); cx.fill();
+  }
+  function drawGlasses(eyeDX, eyeY){
+    cx.strokeStyle = '#1c1c22'; cx.lineWidth = 6; cx.fillStyle = 'rgba(180,220,255,.10)';
+    const round = FD.glassesStyle === 'round';
+    for (const s of [-1,1]){
+      const gx = s*eyeDX;
+      if (round) el(gx, eyeY, 46, 42); else roundRect(gx-48, eyeY-34, 96, 68, 16);
+      cx.fill(); cx.stroke();
+    }
+    cx.beginPath(); cx.moveTo(-eyeDX+44, eyeY-2); cx.lineTo(eyeDX-44, eyeY-2); cx.stroke();
+    cx.beginPath(); cx.moveTo(-eyeDX-46, eyeY-6); cx.lineTo(-150, eyeY-14); cx.moveTo(eyeDX+46, eyeY-6); cx.lineTo(150, eyeY-14); cx.stroke();
+  }
+  function drawHeadphones(){
+    cx.strokeStyle = '#2a2e36'; cx.lineWidth = 18; cx.lineCap = 'round';
+    // band arcs from cup-top to cup-top and rests ON the crown of the head
+    cx.beginPath(); cx.arc(0,-17,188, Math.PI*1.03, Math.PI*1.97); cx.stroke();
+    cx.fillStyle = '#33373f'; roundRect(-210, -36, 46, 92, 18); cx.fill(); roundRect(164, -36, 46, 92, 18); cx.fill();  // cups unchanged (at the ears)
+    cx.fillStyle = `rgba(${AR},${AG},${AB},.85)`; el(-187, 10, 9, 9); cx.fill(); el(187, 10, 9, 9); cx.fill();
+  }
+  function drawHat(){
+    // brim
+    cx.fillStyle = '#6b5836'; el(0,-146, 242, 46); cx.fill();
+    // crown (rounded, base arcs up at the centre)
+    cx.fillStyle = '#7a6540';
+    cx.beginPath();
+    cx.moveTo(-112,-150);
+    cx.quadraticCurveTo(-104,-250, 0,-258);
+    cx.quadraticCurveTo(104,-250, 112,-150);
+    cx.quadraticCurveTo(0,-162, -112,-150);
+    cx.closePath(); cx.fill();
+    // hat band following the crown base (no stray line)
+    cx.fillStyle = '#4a3a22';
+    cx.beginPath();
+    cx.moveTo(-108,-150); cx.quadraticCurveTo(0,-160, 108,-150);
+    cx.quadraticCurveTo(106,-144, 0,-150); cx.quadraticCurveTo(-106,-144, -108,-150);
+    cx.closePath(); cx.fill();
+  }
+  function drawBandana(){
+    const bc = FD.bandanaColor || '#e46aa0';
+    cx.fillStyle = bc;
+    cx.beginPath();
+    cx.moveTo(-174,-36);
+    cx.quadraticCurveTo(-198,-150,0,-208);
+    cx.quadraticCurveTo(198,-150,174,-36);
+    cx.quadraticCurveTo(0,-72,-174,-36);
+    cx.closePath(); cx.fill();
+    cx.beginPath(); cx.moveTo(150,-44); cx.lineTo(214,-26); cx.lineTo(196,-72); cx.closePath(); cx.fill();
+    cx.fillStyle = 'rgba(255,255,255,.5)';
+    for (const d of [[-96,-118],[-24,-152],[58,-132],[112,-88],[-142,-78]]){ el(d[0],d[1],7,7); cx.fill(); }
+  }
+  function drawStethoscope(){
+    // rests around the neck (wide apart on the collar) and drapes down the coat
+    cx.strokeStyle = '#2a333f'; cx.lineWidth = 12; cx.lineCap = 'round';
+    cx.beginPath();
+    cx.moveTo(-84,182); cx.quadraticCurveTo(-118,235,-104,300);
+    cx.moveTo( 84,182); cx.quadraticCurveTo( 118,238,  98,294);
+    cx.stroke();
+    // earpiece tips resting on the collar (well below the chin, wide apart)
+    cx.fillStyle = '#2a333f'; el(-84,181,8,8); cx.fill(); el(84,181,8,8); cx.fill();
+    // chestpiece at the end of the right tube
+    cx.fillStyle = '#c9ccd2'; el(98,300,21,21); cx.fill();
+    cx.fillStyle = '#9aa0a8'; el(98,300,12,12); cx.fill();
+  }
+  function drawHairBack(hair, hi){
+    const st = FD.hairStyle;
+    if (st==='long' || st==='ponytail' || st==='bob'){
+      const drop = st==='bob' ? 80 : (st==='long' ? 250 : 150);
+      cx.fillStyle = _css(_mix(_hx(hair),[0,0,0],.16));
+      cx.beginPath();
+      cx.moveTo(-176,-40);
+      cx.quadraticCurveTo(-210,-180,0,-212);
+      cx.quadraticCurveTo(210,-180,176,-40);
+      cx.quadraticCurveTo(196, drop, 118, drop+18);
+      cx.quadraticCurveTo(0, drop-40, -118, drop+18);
+      cx.quadraticCurveTo(-196, drop, -176,-40);
+      cx.closePath(); cx.fill();
+    }
+    if (st==='ponytail'){
+      cx.fillStyle = hair;
+      cx.beginPath();
+      cx.moveTo(140,-120);
+      cx.quadraticCurveTo(252,-92,236,24);
+      cx.quadraticCurveTo(224,128,168,156);
+      cx.quadraticCurveTo(206,54,140,-40);
+      cx.closePath(); cx.fill();
+      cx.fillStyle = hi; cx.globalAlpha=.4;
+      cx.beginPath(); cx.moveTo(160,-90); cx.quadraticCurveTo(224,-40,214,60); cx.lineWidth=6; cx.strokeStyle=hi; cx.stroke(); cx.globalAlpha=1;
+    }
+  }
+  function drawHairFront(hair, hi){
+    if (FD.acc==='hat' || FD.acc==='bandana' || FD.acc==='chefhat' || FD.acc==='mariocap') return;   // top is covered
+    const st = FD.hairStyle;
+    if (st==='bald'){ return; }                          // shaved head — bare scalp
+    if (st==='wisps'){                                    // sparse old-master wisps (Yoda)
+      cx.strokeStyle = hair; cx.lineWidth = 6; cx.lineCap = 'round'; cx.globalAlpha = .8;
+      for (const s of [-1,1]){
+        cx.beginPath(); cx.moveTo(s*60,-184); cx.quadraticCurveTo(s*90,-214, s*70,-234); cx.stroke();
+        cx.beginPath(); cx.moveTo(s*20,-188); cx.quadraticCurveTo(s*30,-222, s*8,-236); cx.stroke();
+        cx.beginPath(); cx.moveTo(s*150,-70); cx.quadraticCurveTo(s*176,-120, s*150,-160); cx.stroke();
+      }
+      cx.globalAlpha = 1; return;
+    }
+    cx.fillStyle = hair;
+    cx.beginPath();
+    cx.moveTo(-178,-30);
+    cx.quadraticCurveTo(-200,-172,0,-216);
+    cx.quadraticCurveTo(200,-172,178,-30);
+    if (st==='bowl'){
+      cx.quadraticCurveTo(150,-58,120,-70);
+      cx.lineTo(92,-98); cx.quadraticCurveTo(0,-72,-92,-98); cx.lineTo(-120,-70);
+      cx.quadraticCurveTo(-150,-58,-178,-30);
+    } else if (st==='short'){
+      cx.quadraticCurveTo(152,-98,72,-106);
+      cx.quadraticCurveTo(20,-124,-34,-108);
+      cx.quadraticCurveTo(-112,-96,-178,-30);
+    } else if (st==='bun' || st==='ponytail'){
+      cx.quadraticCurveTo(150,-112,60,-122);
+      cx.quadraticCurveTo(0,-142,-60,-122);
+      cx.quadraticCurveTo(-150,-112,-178,-30);
+    } else { // long / bob — clean top cap; side locks are drawn separately
+      cx.quadraticCurveTo(162,-118,82,-126);
+      cx.quadraticCurveTo(0,-150,-82,-126);
+      cx.quadraticCurveTo(-162,-118,-178,-30);
+    }
+    cx.closePath(); cx.fill();
+    if (st==='long' || st==='bob'){
+      const jaw = st==='bob' ? 100 : 158;   // side locks frame the face, never cross it
+      cx.fillStyle = hair;
+      for (const s of [-1,1]){
+        cx.beginPath();
+        cx.moveTo(s*178,-48);
+        cx.quadraticCurveTo(s*198, jaw*0.5, s*150, jaw);
+        cx.quadraticCurveTo(s*120, jaw-8, s*128, jaw*0.34);
+        cx.quadraticCurveTo(s*142,-58, s*150,-94);
+        cx.closePath(); cx.fill();
+      }
+    }
+    if (st==='bun'){ cx.fillStyle = hair; el(0,-212,52,42); cx.fill(); }
+    cx.strokeStyle = hi; cx.lineWidth = 7; cx.globalAlpha = .5; cx.lineCap = 'round';
+    cx.beginPath(); cx.moveTo(-70,-182); cx.quadraticCurveTo(40,-206,132,-150); cx.stroke(); cx.globalAlpha = 1;
+  }
+  function drawHuman(blink){
+    const skin = FD.skin || '#e9bfa0';
+    const skinSh = _css(_mix(_hx(skin), [90,50,40], .30));
+    const hair = FD.hair || '#3a2a1c';
+    const hairHi = _css(_mix(_hx(hair), [255,255,255], .28));
+    const cloth = FD.cloth || '#2a3550';
+    const iris = FD.eyes || '#5a3a24';
+    const lip = FD.lip || '#c07a6a';
+    const brow = FD.brow || _css(_mix(_hx(hair),[0,0,0],.1));
+    const HW = 168, HH = 196, cyHead = -8;
+
+    drawHairBack(hair, hairHi);
+
+    // ---------- clothing ----------
+    const clothHi = _css(_mix(_hx(cloth),[255,255,255],.16));
+    const clothSh = _css(_mix(_hx(cloth),[0,0,0],.22));
+    const g = FD.garment;
+    if (FD.top === 'tank'){
+      // bare shoulders (skin) + a sleeveless tank top with straps
+      cx.fillStyle = skin;
+      cx.beginPath();
+      cx.moveTo(-300,300); cx.quadraticCurveTo(-236,150,-118,150);
+      cx.lineTo(118,150); cx.quadraticCurveTo(236,150,300,300); cx.closePath(); cx.fill();
+      cx.fillStyle = cloth;
+      cx.beginPath();
+      cx.moveTo(-150,300); cx.quadraticCurveTo(-150,206,-74,182);
+      cx.quadraticCurveTo(0,214,74,182); cx.quadraticCurveTo(150,206,150,300);
+      cx.closePath(); cx.fill();
+      cx.strokeStyle = cloth; cx.lineWidth = 20; cx.lineCap = 'round';
+      cx.beginPath(); cx.moveTo(-74,184); cx.lineTo(-104,150); cx.moveTo(74,184); cx.lineTo(104,150); cx.stroke();
+    } else {
+      cx.fillStyle = cloth;
+      cx.beginPath();
+      cx.moveTo(-300,300); cx.quadraticCurveTo(-236,150,-118,150);
+      cx.lineTo(118,150); cx.quadraticCurveTo(236,150,300,300); cx.closePath(); cx.fill();
+      cx.strokeStyle = clothHi; cx.lineWidth = 6;
+      cx.beginPath(); cx.moveTo(-118,150); cx.quadraticCurveTo(0,206,118,150); cx.stroke();
+    }
+
+    // fuller chest (drawn over the base torso, under collar/apron details)
+    if (FD.bust) drawBust(cloth, FD.bust);
+
+    if (FD.collar === 'suit'){                    // FBI / business jacket + shirt
+      cx.fillStyle = '#eef1f5';
+      cx.beginPath(); cx.moveTo(-48,158); cx.lineTo(0,300); cx.lineTo(48,158); cx.closePath(); cx.fill();
+      cx.fillStyle = clothSh;
+      cx.beginPath(); cx.moveTo(-120,150); cx.lineTo(-40,168); cx.lineTo(-34,300); cx.lineTo(-152,300); cx.closePath(); cx.fill();
+      cx.beginPath(); cx.moveTo(120,150); cx.lineTo(40,168); cx.lineTo(34,300); cx.lineTo(152,300); cx.closePath(); cx.fill();
+    } else if (FD.collar === 'coat'){             // open lab coat over a shirt/scrubs
+      cx.fillStyle = FD.inner || '#93a7b8';
+      cx.beginPath(); cx.moveTo(-38,158); cx.lineTo(0,270); cx.lineTo(38,158); cx.closePath(); cx.fill();
+      cx.fillStyle = _css(_mix(_hx(cloth),[255,255,255],.05));
+      cx.beginPath(); cx.moveTo(-120,150); cx.lineTo(-36,166); cx.lineTo(-74,300); cx.lineTo(-154,300); cx.closePath(); cx.fill();
+      cx.beginPath(); cx.moveTo(120,150); cx.lineTo(36,166); cx.lineTo(74,300); cx.lineTo(154,300); cx.closePath(); cx.fill();
+      cx.strokeStyle = 'rgba(140,150,160,.45)'; cx.lineWidth = 3;
+      cx.beginPath(); cx.moveTo(-36,166); cx.lineTo(-74,300); cx.moveTo(36,166); cx.lineTo(74,300); cx.stroke();
+    } else if (g === 'blouse'){                    // pointed collar + buttons
+      cx.fillStyle = FD.collarColor || '#f0ece2';
+      cx.beginPath(); cx.moveTo(-58,156); cx.lineTo(-6,208); cx.lineTo(-72,196); cx.closePath(); cx.fill();
+      cx.beginPath(); cx.moveTo(58,156); cx.lineTo(6,208); cx.lineTo(72,196); cx.closePath(); cx.fill();
+      cx.fillStyle = clothHi;
+      for (const yy of [216,248,280]){ el(0,yy,5,5); cx.fill(); }
+    } else if (g === 'hoodie'){                    // hood + drawstrings + pocket + zip
+      cx.fillStyle = clothSh;
+      cx.beginPath(); cx.moveTo(-150,170); cx.quadraticCurveTo(-118,104,-58,150);
+      cx.quadraticCurveTo(0,172,58,150); cx.quadraticCurveTo(118,104,150,170);
+      cx.quadraticCurveTo(0,200,-150,170); cx.closePath(); cx.fill();
+      cx.strokeStyle = clothSh; cx.lineWidth = 4; cx.beginPath(); cx.moveTo(0,180); cx.lineTo(0,300); cx.stroke();
+      cx.lineWidth = 5; cx.beginPath(); cx.moveTo(-74,256); cx.lineTo(74,256); cx.stroke();
+      cx.strokeStyle = '#eee'; cx.lineWidth = 6; cx.lineCap = 'round';
+      cx.beginPath(); cx.moveTo(-22,178); cx.lineTo(-28,252); cx.moveTo(22,178); cx.lineTo(28,252); cx.stroke();
+      cx.fillStyle = '#eee'; el(-28,256,6,6); cx.fill(); el(28,256,6,6); cx.fill();
+    } else if (g === 'safari'){                    // explorer shirt: collar, placket, pockets, epaulettes
+      cx.fillStyle = clothSh;
+      cx.beginPath(); cx.moveTo(-66,156); cx.lineTo(-6,206); cx.lineTo(-76,192); cx.closePath(); cx.fill();
+      cx.beginPath(); cx.moveTo(66,156); cx.lineTo(6,206); cx.lineTo(76,192); cx.closePath(); cx.fill();
+      cx.strokeStyle = clothSh; cx.lineWidth = 4; cx.beginPath(); cx.moveTo(0,200); cx.lineTo(0,300); cx.stroke();
+      for (const yy of [224,254,284]){ cx.fillStyle = clothSh; el(0,yy,4,4); cx.fill(); }
+      cx.strokeStyle = clothSh; cx.lineWidth = 4;
+      cx.strokeRect(-122,216,56,50); cx.strokeRect(66,216,56,50);
+      cx.fillStyle = clothSh; cx.fillRect(-122,212,56,10); cx.fillRect(66,212,56,10);
+      cx.fillRect(-152,158,42,15); cx.fillRect(110,158,42,15);   // epaulettes
+    } else if (g === 'apron'){                     // white apron over a dress
+      cx.fillStyle = '#f4f2ec';
+      cx.beginPath(); cx.moveTo(-80,208); cx.lineTo(80,208); cx.lineTo(92,300); cx.lineTo(-92,300); cx.closePath(); cx.fill();
+      cx.strokeStyle = '#f4f2ec'; cx.lineWidth = 14; cx.lineCap = 'round';
+      cx.beginPath(); cx.moveTo(-58,208); cx.lineTo(-28,150); cx.moveTo(58,208); cx.lineTo(28,150); cx.stroke();
+      cx.strokeStyle = 'rgba(150,150,150,.32)'; cx.lineWidth = 3; cx.strokeRect(-42,252,84,36);
+    } else if (g === 'dress'){                      // elegant V / sweetheart neckline
+      cx.fillStyle = skinSh;
+      cx.beginPath(); cx.moveTo(-72,152); cx.quadraticCurveTo(0,214,72,152); cx.lineTo(72,150); cx.lineTo(-72,150); cx.closePath(); cx.fill();
+      cx.strokeStyle = clothHi; cx.lineWidth = 7;
+      cx.beginPath(); cx.moveTo(-120,150); cx.quadraticCurveTo(-72,168,-6,214); cx.moveTo(120,150); cx.quadraticCurveTo(72,168,6,214); cx.stroke();
+    }
+    if (FD.collar === 'robe'){                       // crossed monk/kimono robe
+      const rl = _css(_mix(_hx(cloth),[0,0,0],.18));
+      cx.fillStyle = rl;
+      cx.beginPath(); cx.moveTo(-118,150); cx.lineTo(22,190); cx.lineTo(-30,300); cx.lineTo(-150,300); cx.closePath(); cx.fill();
+      cx.beginPath(); cx.moveTo(118,150); cx.lineTo(-22,190); cx.lineTo(30,300); cx.lineTo(150,300); cx.closePath(); cx.fill();
+      cx.fillStyle = skinSh; cx.beginPath(); cx.moveTo(-30,168); cx.lineTo(0,214); cx.lineTo(30,168); cx.closePath(); cx.fill();
+      cx.fillStyle = _css(_mix(_hx(cloth),[255,255,255],.12)); cx.fillRect(-150,286,300,18);
+    }
+    if (g === 'overalls'){                            // dungarees over a shirt
+      cx.fillStyle = _css(_mix(_hx(cloth),[0,0,0],.14));
+      cx.beginPath(); cx.moveTo(-122,300); cx.lineTo(-122,214); cx.quadraticCurveTo(0,248,122,214); cx.lineTo(122,300); cx.closePath(); cx.fill();
+      cx.strokeStyle = cloth; cx.lineWidth = 26; cx.lineCap = 'round';
+      cx.beginPath(); cx.moveTo(-70,220); cx.lineTo(-92,150); cx.moveTo(70,220); cx.lineTo(92,150); cx.stroke();
+      cx.fillStyle = '#f2c53a'; el(-70,224,7,7); cx.fill(); el(70,224,7,7); cx.fill();
+    }
+    if (FD.tie){                                      // necktie over the shirt
+      cx.fillStyle = FD.tie;
+      cx.beginPath(); cx.moveTo(0,172); cx.lineTo(-13,188); cx.lineTo(-16,300); cx.lineTo(16,300); cx.lineTo(13,188); cx.closePath(); cx.fill();
+      cx.beginPath(); cx.moveTo(0,158); cx.lineTo(-14,171); cx.lineTo(0,184); cx.lineTo(14,171); cx.closePath(); cx.fill();
+    }
+
+    // ===== head group (tilts/nods; body above stays still) =====
+    cx.save(); headTransform();
+
+    // neck
+    cx.fillStyle = skinSh; roundRect(-46,58,92,120,40); cx.fill();
+    if (FD.collar === 'turtleneck'){ cx.fillStyle = FD.collarColor || cloth; roundRect(-62,96,124,72,30); cx.fill(); }
+
+    // ears
+    cx.fillStyle = skin; el(-HW+6,20,26,34); cx.fill(); el(HW-6,20,26,34); cx.fill();
+    cx.fillStyle = skinSh; el(-HW+6,20,12,18); cx.fill(); el(HW-6,20,12,18); cx.fill();
+    // head with soft volume shading
+    const skinHi = _css(_mix(_hx(skin),[255,255,255],.15));
+    const hg = cx.createRadialGradient(-34,-46,20, 0,-10, 236);
+    hg.addColorStop(0, skinHi); hg.addColorStop(.68, skin); hg.addColorStop(1, _css(_mix(_hx(skin),[70,40,36],.30)));
+    cx.fillStyle = hg;
+    cx.beginPath();
+    cx.moveTo(0, cyHead-HH);
+    cx.quadraticCurveTo(HW, cyHead-HH+30, HW, cyHead-10);
+    cx.quadraticCurveTo(HW-6, cyHead+HH*0.6, HW*0.5, cyHead+HH*0.92);
+    cx.quadraticCurveTo(0, cyHead+HH+8, -HW*0.5, cyHead+HH*0.92);
+    cx.quadraticCurveTo(-HW+6, cyHead+HH*0.6, -HW, cyHead-10);
+    cx.quadraticCurveTo(-HW, cyHead-HH+30, 0, cyHead-HH);
+    cx.closePath(); cx.fill();
+    // cheek / temple contour + blush base
+    cx.save(); cx.globalAlpha = .18; cx.fillStyle = skinSh;
+    el(-120,-40,34,80); cx.fill(); el(120,-40,34,80); cx.fill();     // temple shade
+    el(-96,64,52,34); cx.fill(); el(96,64,52,34); cx.fill();          // cheek shade
+    cx.restore();
+
+    drawHairFront(hair, hairHi);
+
+    const eyeY = -30, eyeDX = 76;
+    // eyebrows
+    cx.strokeStyle = brow; cx.lineWidth = 13; cx.lineCap = 'round';
+    for (const s of [-1,1]){
+      const bx = s*eyeDX, by = eyeY - 52 - cur.browRaise*14;
+      const tilt = cur.browTilt * 14 * s;
+      cx.beginPath(); cx.moveTo(bx-34, by+8+tilt); cx.quadraticCurveTo(bx, by-6, bx+34, by+6-tilt); cx.stroke();
+    }
+    // eyes
+    const eh = Math.max(1.5, 26 * cur.eyeH * blink);
+    for (const s of [-1,1]) drawHumanEye(s*eyeDX, eyeY, 40, eh, iris);
+    // nose with soft shadow
+    cx.strokeStyle = skinSh; cx.lineWidth = 6; cx.lineCap = 'round';
+    cx.beginPath(); cx.moveTo(-6, eyeY+16); cx.lineTo(-12, 30); cx.quadraticCurveTo(0, 42, 12, 30); cx.stroke();
+    cx.save(); cx.globalAlpha = .12; cx.fillStyle = skinSh; el(12, 24, 12, 16); cx.fill(); cx.restore();
+
+    // ---- facial hair BELOW the mouth so the lips sit on top ----
+    if (FD.facial === 'stubble' || FD.facial === 'beard'){
+      const beardCol = FD.facial === 'beard' ? _css(_mix(_hx(hair),[0,0,0],.05)) : 'rgba(35,24,18,.30)';
+      cx.save(); cx.fillStyle = beardCol;
+      cx.beginPath();
+      cx.moveTo(-124,54); cx.quadraticCurveTo(-120,14,-150,10);   // sideburn L
+      cx.quadraticCurveTo(-126,150,0,186); cx.quadraticCurveTo(126,150,150,10);
+      cx.quadraticCurveTo(120,14,124,54);                          // sideburn R
+      cx.quadraticCurveTo(60,74,0,72); cx.quadraticCurveTo(-60,74,-124,54);
+      cx.closePath(); cx.fill(); cx.restore();
+    }
+    if (FD.facial === 'mustache'){          // bushy, sits just under the nose (above the mouth)
+      cx.fillStyle = hair;
+      cx.beginPath();
+      cx.moveTo(-6,48); cx.quadraticCurveTo(-40,40,-66,54);
+      cx.quadraticCurveTo(-50,80,-16,70); cx.quadraticCurveTo(0,66,16,70);
+      cx.quadraticCurveTo(50,80,66,54); cx.quadraticCurveTo(40,40,6,48);
+      cx.closePath(); cx.fill();
+    }
+    // mouth — always on top of any beard/mustache
+    drawLips(96, 92, Math.max(.02, cur.mouthOpen), cur.mouthCurve, lip);
+    // blush when smiling
+    if (cur.mouthCurve > .55){
+      const b = Math.min(1, (cur.mouthCurve - .55) / .45);
+      cx.fillStyle = `rgba(230,120,120,${.10 + .22*b})`; el(-96,70,34,20); cx.fill(); el(96,70,34,20); cx.fill();
+    }
+    // glasses + accessories
+    if (FD.glasses) drawGlasses(eyeDX, eyeY);
+    if (FD.acc === 'headphones') drawHeadphones();
+    if (FD.acc === 'headset') drawHeadset();
+    if (FD.acc === 'hat') drawHat();
+    if (FD.acc === 'bandana') drawBandana();
+    if (FD.acc === 'stethoscope') drawStethoscope();
+    if (FD.acc === 'chefhat') drawChefHat();
+    if (FD.acc === 'mariocap') drawMarioCap();
+    if (FD.acc === 'antennae') drawAntennae();
+    if (FD.acc === 'yodaears') drawYodaEars();
+
+    cx.restore();   // end head group
+  }
+
+  /* ---- extra human accessories ---- */
+  function drawChefHat(){
+    cx.fillStyle = '#f4f5f7';
+    // band hugging the head down to its side edges (like Mario's cap footprint)
+    cx.beginPath();
+    cx.moveTo(-150,-104);
+    cx.quadraticCurveTo(-152,-150,-118,-152);
+    cx.lineTo(118,-152);
+    cx.quadraticCurveTo(152,-150,150,-104);
+    cx.quadraticCurveTo(0,-120,-150,-104);
+    cx.closePath(); cx.fill();
+    // puff — wide and billowy but lower above the head
+    cx.beginPath();
+    cx.moveTo(-118,-150); cx.quadraticCurveTo(-178,-168,-150,-214);
+    cx.quadraticCurveTo(-170,-252,-68,-240); cx.quadraticCurveTo(-44,-268,0,-254);
+    cx.quadraticCurveTo(44,-268,68,-240); cx.quadraticCurveTo(170,-252,150,-214);
+    cx.quadraticCurveTo(178,-168,118,-150); cx.closePath(); cx.fill();
+    cx.strokeStyle = 'rgba(0,0,0,.06)'; cx.lineWidth = 3; cx.beginPath(); cx.moveTo(-132,-128); cx.lineTo(132,-128); cx.stroke();
+  }
+  function drawMarioCap(){
+    // hair filling the whole area under the cap: forehead fringe + sideburns down
+    // the head edges, leaving no skin showing under the cap or at the edges
+    cx.fillStyle = FD.hair || '#2a1810';
+    cx.beginPath();
+    cx.moveTo(-150,-116);                          // left, under the cap corner
+    cx.quadraticCurveTo(-171,-62,-164,-6);         // down the left head edge
+    cx.quadraticCurveTo(-158,28,-134,26);          // left sideburn bottom, tuck in
+    cx.quadraticCurveTo(-150,-38,-122,-92);        // up the inner temple, staying high
+    cx.quadraticCurveTo(-64,-122,0,-124);          // across under the cap (no dip over the brows)
+    cx.quadraticCurveTo(64,-122,122,-92);          // right half, under the cap
+    cx.quadraticCurveTo(150,-38,134,26);           // down the inner temple
+    cx.quadraticCurveTo(158,28,164,-6);            // right sideburn bottom
+    cx.quadraticCurveTo(171,-62,150,-116);         // up the right head edge
+    cx.quadraticCurveTo(0,-150,-150,-116);         // top edge, tucked under the cap
+    cx.closePath(); cx.fill();
+    // crown
+    cx.fillStyle = '#e5322a';
+    cx.beginPath(); cx.moveTo(-150,-118); cx.quadraticCurveTo(-160,-238,0,-244); cx.quadraticCurveTo(160,-238,150,-118); cx.quadraticCurveTo(0,-150,-150,-118); cx.closePath(); cx.fill();
+    // brim spanning left to right, right under the cap
+    cx.fillStyle = '#cf2820';
+    cx.beginPath(); cx.moveTo(-150,-116); cx.quadraticCurveTo(0,-150,150,-116); cx.quadraticCurveTo(0,-84,-150,-116); cx.closePath(); cx.fill();
+    // white emblem circle + M
+    cx.fillStyle = '#fff'; el(0,-186,32,32); cx.fill();
+    cx.fillStyle = '#e5322a'; cx.font = 'bold 38px system-ui'; cx.textAlign = 'center'; cx.textBaseline = 'middle'; cx.fillText('M',0,-184);
+  }
+  function drawAntennae(){
+    cx.strokeStyle = FD.hair || '#2a4a6a'; cx.lineWidth = 7; cx.lineCap = 'round';
+    const wob = Math.sin(t*2)*6;
+    for (const s of [-1,1]){
+      cx.beginPath(); cx.moveTo(s*44,-198); cx.quadraticCurveTo(s*70,-250, s*54+wob*s,-286); cx.stroke();
+      cx.fillStyle = `rgba(${AR},${AG},${AB},${.6+.4*Math.abs(Math.sin(t*3))})`; el(s*54+wob*s,-288,13,13); cx.fill();
+    }
+  }
+  function drawYodaEars(){
+    const base = FD.skin || '#9ab86a';
+    const es = _css(_mix(_hx(base),[60,40,30],.32));
+    for (const s of [-1,1]){
+      cx.fillStyle = base;
+      cx.beginPath(); cx.moveTo(s*140,-44); cx.quadraticCurveTo(s*252,-70, s*330,-108);
+      cx.quadraticCurveTo(s*250,-6, s*148,50); cx.closePath(); cx.fill();
+      cx.fillStyle = es; cx.globalAlpha = .4;
+      cx.beginPath(); cx.moveTo(s*170,-38); cx.quadraticCurveTo(s*246,-58, s*292,-92); cx.quadraticCurveTo(s*230,-16, s*170,20); cx.closePath(); cx.fill();
+      cx.globalAlpha = 1;
+    }
+  }
+
+  /* ---- non-human character renderers (whole-unit sway) ---- */
+  function drawAICore(blink){
+    cx.save(); cx.rotate(t*0.4);
+    cx.strokeStyle = `rgba(${AR},${AG},${AB},.5)`; cx.lineWidth = 6;
+    cx.beginPath(); for (let i=0;i<6;i++){ const a=i/6*Math.PI*2; const x=Math.cos(a)*152, y=Math.sin(a)*152; i?cx.lineTo(x,y):cx.moveTo(x,y);} cx.closePath(); cx.stroke();
+    cx.restore();
+    cx.fillStyle = '#171a22';
+    cx.beginPath(); for (let i=0;i<6;i++){ const a=i/6*Math.PI*2+Math.PI/6; const x=Math.cos(a)*120, y=Math.sin(a)*120; i?cx.lineTo(x,y):cx.moveTo(x,y);} cx.closePath(); cx.fill();
+    cx.strokeStyle = `rgba(${AR},${AG},${AB},.7)`; cx.lineWidth = 4; cx.stroke();
+    const b = Math.min(1.4, cur.glow*(0.7+0.6*mouthLevel));
+    const px = cur.pupilX*20, py = cur.pupilY*14;
+    const g = cx.createRadialGradient(px,py,3,0,0,92);
+    g.addColorStop(0,`rgba(255,255,255,${Math.min(1,.9*b)})`);
+    g.addColorStop(.4,`rgba(${AR},${AG},${AB},${Math.min(1,.9*b)})`);
+    g.addColorStop(1,`rgba(${AR},${AG},${AB},0)`);
+    cx.fillStyle = g; el(0,0,92,92); cx.fill();
+    cx.fillStyle = `rgba(${AR},${AG},${AB},${Math.min(1,b)})`; el(px,py,30,Math.max(2,30*blink*cur.eyeH)); cx.fill();
+    cx.fillStyle = `rgba(255,255,255,${Math.min(1,b)})`; el(px,py,12,Math.max(1,12*blink*cur.eyeH)); cx.fill();
+    cx.fillStyle = `rgba(${AR},${AG},${AB},.9)`;
+    for (let i=0;i<3;i++){ const a=t*1.2 + i/3*Math.PI*2; el(Math.cos(a)*152, Math.sin(a)*152, 8,8); cx.fill(); }
+  }
+  function drawCat(blink){
+    const fur = FD.fur||'#f2a83a', str = FD.stripe||'#c8781c';
+    cx.fillStyle = fur;
+    for (const s of [-1,1]){
+      cx.beginPath(); cx.moveTo(s*70,-150); cx.lineTo(s*150,-238); cx.lineTo(s*168,-120); cx.closePath(); cx.fill();
+      cx.fillStyle = str; cx.beginPath(); cx.moveTo(s*94,-158); cx.lineTo(s*138,-214); cx.lineTo(s*150,-142); cx.closePath(); cx.fill(); cx.fillStyle = fur;
+    }
+    const hg = cx.createRadialGradient(-30,-40,20,0,0,210);
+    hg.addColorStop(0,_css(_mix(_hx(fur),[255,255,255],.14))); hg.addColorStop(1,fur);
+    cx.fillStyle = hg; el(0,-6,182,168); cx.fill();
+    cx.fillStyle = fur; el(-150,42,60,52); cx.fill(); el(150,42,60,52); cx.fill();
+    cx.strokeStyle = str; cx.lineWidth = 12; cx.lineCap = 'round';
+    for (const dx of [-42,0,42]){ cx.beginPath(); cx.moveTo(dx,-150); cx.quadraticCurveTo(dx*1.3,-112,dx,-86); cx.stroke(); }
+    const ew=52, eh=Math.max(3,44*cur.eyeH*blink);
+    for (const s of [-1,1]){
+      const ex=s*52;
+      cx.fillStyle = FD.eyes||'#eae2c0'; el(ex,-46,ew,eh); cx.fill();
+      cx.save(); el(ex,-46,ew,eh); cx.clip();                        // pupil stays inside the eye → clean blink, no square
+      cx.fillStyle = '#231a12'; el(ex+cur.pupilX*10,-46+cur.pupilY*8,12,Math.max(3,eh*0.9)); cx.fill();
+      cx.restore();
+      cx.fillStyle = fur; cx.beginPath(); cx.moveTo(ex-ew-2,-46); cx.quadraticCurveTo(ex,-46-eh-16-cur.browRaise*10, ex+ew+2,-46); cx.lineTo(ex+ew+2,-46-eh-4); cx.lineTo(ex-ew-2,-46-eh-4); cx.closePath(); cx.fill();
+    }
+    cx.fillStyle = fur; el(0,-46,10,eh+6); cx.fill();
+    cx.fillStyle = '#d98a94'; cx.beginPath(); cx.moveTo(-16,26); cx.lineTo(16,26); cx.lineTo(0,42); cx.closePath(); cx.fill();
+    const open = Math.max(0,cur.mouthOpen);
+    cx.strokeStyle = '#7a4a2a'; cx.lineWidth = 6; cx.lineCap = 'round';
+    cx.beginPath(); cx.moveTo(0,42); cx.lineTo(0,54);
+    cx.moveTo(0,54); cx.quadraticCurveTo(-30,58+cur.mouthCurve*10,-48,48);
+    cx.moveTo(0,54); cx.quadraticCurveTo(30,58+cur.mouthCurve*10,48,48); cx.stroke();
+    if (open>.2){ cx.fillStyle='#7a2a2a'; el(0,64,26,open*20); cx.fill(); }
+    cx.strokeStyle = 'rgba(255,255,255,.7)'; cx.lineWidth = 3;
+    for (const s of [-1,1]) for (const dy of [-6,6]){ cx.beginPath(); cx.moveTo(s*40,40+dy); cx.lineTo(s*150,30+dy*2.2); cx.stroke(); }
+  }
+  function drawFairy(blink){
+    const flap = Math.sin(t*6)*0.4 + 0.7;
+    cx.fillStyle = 'rgba(190,225,255,.32)';
+    for (const s of [-1,1]) for (const dy of [-1,1]){
+      cx.save(); cx.translate(s*40, dy*18); cx.scale(s*flap,1);
+      el(70,dy*10,70,32); cx.fill(); cx.restore();
+    }
+    const b = Math.min(1.5,cur.glow*(0.7+0.6*mouthLevel));
+    const g = cx.createRadialGradient(0,0,6,0,0,120);
+    g.addColorStop(0,`rgba(255,255,255,${Math.min(1,.95*b)})`);
+    g.addColorStop(.4,`rgba(${AR},${AG},${AB},${Math.min(1,.85*b)})`);
+    g.addColorStop(1,`rgba(${AR},${AG},${AB},0)`);
+    cx.fillStyle = g; el(0,0,120,120); cx.fill();
+    cx.fillStyle = `rgba(255,255,255,${Math.min(1,b)})`; el(cur.pupilX*8,cur.pupilY*8,40,Math.max(3,40*blink)); cx.fill();
+    cx.fillStyle = `rgba(${AR},${AG},${AB},.9)`;
+    for (let i=0;i<4;i++){ const a=t*0.8+i/4*Math.PI*2; el(Math.cos(a)*150,Math.sin(a)*150,4,4); cx.fill(); }
+  }
+  function drawMrDNA(blink){
+    cx.strokeStyle = `rgba(${AR},${AG},${AB},.9)`; cx.lineWidth = 14; cx.lineCap = 'round';
+    for (const ph of [0,Math.PI]){
+      cx.beginPath();
+      for (let y=70;y<=290;y+=6){ const x=Math.sin(y*0.05+ph)*52; (y===70)?cx.moveTo(x,y):cx.lineTo(x,y); }
+      cx.stroke();
+    }
+    cx.strokeStyle = `rgba(${AR},${AG},${AB},.5)`; cx.lineWidth = 5;
+    for (let y=90;y<=280;y+=26){ const x=Math.sin(y*0.05)*52; cx.beginPath(); cx.moveTo(-x,y); cx.lineTo(x,y); cx.stroke(); }
+    cx.fillStyle = _css(_mix([AR,AG,AB],[255,255,255],.4)); el(0,-60,112,106); cx.fill();
+    const eh = Math.max(3,40*cur.eyeH*blink);
+    for (const s of [-1,1]){ const ex=s*40;
+      cx.fillStyle = '#fff'; el(ex,-74,34,eh); cx.fill();
+      cx.fillStyle = '#1a1a1a'; el(ex+cur.pupilX*10,-74+cur.pupilY*8,14,Math.max(3,eh*0.8)); cx.fill();
+      cx.fillStyle = '#fff'; el(ex-5+cur.pupilX*10,-79+cur.pupilY*8,5,5); cx.fill();
+    }
+    const open = Math.max(0,cur.mouthOpen);
+    cx.strokeStyle = '#7a5a1a'; cx.lineWidth = 7; cx.lineCap = 'round';
+    cx.beginPath(); cx.moveTo(-42,-34); cx.quadraticCurveTo(0,-18+cur.mouthCurve*20+open*30, 42,-34); cx.stroke();
+    if (open>.2){ cx.fillStyle='#8a3a2a'; el(0,-28+cur.mouthCurve*6,26,open*18); cx.fill(); }
+  }
+  function drawRotom(blink){
+    cx.fillStyle = `rgba(${AR},${AG},${AB},.55)`;
+    for (const s of [-1,1]){ cx.beginPath(); cx.moveTo(s*140,-30); cx.lineTo(s*210,-60); cx.lineTo(s*180,10); cx.lineTo(s*222,30); cx.lineTo(s*150,42); cx.closePath(); cx.fill(); }
+    cx.fillStyle = `rgb(${AR},${AG},${AB})`; roundRect(-150,-160,300,320,60); cx.fill();
+    cx.fillStyle = _css(_mix([AR,AG,AB],[255,255,255],.22)); roundRect(-150,-160,300,64,60); cx.fill();
+    cx.fillStyle = '#12202a'; roundRect(-120,-120,240,240,40); cx.fill();
+    const eh = Math.max(4,54*cur.eyeH*blink);
+    for (const s of [-1,1]){ const ex=s*56;
+      cx.fillStyle = '#4fe6ff'; el(ex,-30,40,eh); cx.fill();
+      cx.fillStyle = '#0a2a33'; el(ex+cur.pupilX*10,-30+cur.pupilY*8,16,Math.max(3,eh*0.7)); cx.fill();
+      cx.fillStyle = '#eaffff'; el(ex-6,-38,7,7); cx.fill();
+    }
+    const open = Math.max(0,cur.mouthOpen);
+    cx.strokeStyle = '#4fe6ff'; cx.lineWidth = 6; cx.lineJoin = 'round';
+    cx.beginPath(); cx.moveTo(-40,66); cx.lineTo(-16,66+open*14); cx.lineTo(8,66); cx.lineTo(32,66+open*14); cx.lineTo(48,66); cx.stroke();
+    cx.fillStyle = `rgba(255,120,60,${.4+.4*Math.abs(Math.sin(t*3))})`; el(0,-140,10,10); cx.fill();
+  }
+  function drawMoogle(blink){
+    cx.fillStyle = '#b98fd6';
+    for (const s of [-1,1]){ cx.beginPath(); cx.moveTo(s*70,60); cx.quadraticCurveTo(s*180,20,s*150,120); cx.quadraticCurveTo(s*110,110,s*70,90); cx.closePath(); cx.fill(); }
+    cx.fillStyle = '#f6f0e6'; el(0,120,96,80); cx.fill();
+    const hg = cx.createRadialGradient(-20,-30,10,0,-10,150); hg.addColorStop(0,'#fffdf8'); hg.addColorStop(1,'#efe7da');
+    cx.fillStyle = hg; el(0,-20,140,130); cx.fill();
+    for (const s of [-1,1]){
+      cx.fillStyle = '#f6f0e6'; cx.beginPath(); cx.moveTo(s*70,-120); cx.lineTo(s*120,-200); cx.lineTo(s*128,-110); cx.closePath(); cx.fill();
+      cx.fillStyle = '#e7b7c8'; cx.beginPath(); cx.moveTo(s*84,-126); cx.lineTo(s*112,-182); cx.lineTo(s*118,-122); cx.closePath(); cx.fill();
+    }
+    const eh = Math.max(2,16*cur.eyeH*blink);
+    cx.fillStyle = '#3a2a2a'; el(-40,-24,10,eh); cx.fill(); el(40,-24,10,eh); cx.fill();
+    cx.fillStyle = '#d98aa0'; el(0,6,10,8); cx.fill();
+    const open = Math.max(0,cur.mouthOpen);
+    cx.strokeStyle = '#b06a80'; cx.lineWidth = 4; cx.beginPath(); cx.moveTo(-14,22); cx.quadraticCurveTo(0,26+open*14+cur.mouthCurve*6,14,22); cx.stroke();
+    const wob = Math.sin(t*2)*10;
+    cx.strokeStyle = '#efe7da'; cx.lineWidth = 8; cx.lineCap = 'round'; cx.beginPath(); cx.moveTo(0,-150); cx.quadraticCurveTo(wob,-210,wob,-236); cx.stroke();
+    cx.fillStyle = '#ff5a6a'; el(wob,-250,26,26); cx.fill();
+    cx.fillStyle = 'rgba(255,255,255,.5)'; el(wob-8,-258,7,7); cx.fill();
+  }
+  function drawPipboy(blink){
+    cx.fillStyle = '#2a2e28'; roundRect(-176,-196,352,392,36); cx.fill();
+    cx.strokeStyle = '#5a6052'; cx.lineWidth = 6; roundRect(-176,-196,352,392,36); cx.stroke();
+    cx.fillStyle = '#22261f'; el(-150,-150,18,18); cx.fill(); el(-150,150,18,18); cx.fill();
+    cx.fillStyle = '#0a1a0e'; roundRect(-128,-150,256,300,20); cx.fill();
+    cx.save(); roundRect(-128,-150,256,300,20); cx.clip();
+    const G = `rgba(${AR},${AG},${AB},`;
+    cx.strokeStyle = G+'.95)'; cx.lineWidth = 6; cx.lineCap = 'round'; cx.lineJoin = 'round';
+    el(0,-6,86,96); cx.stroke();
+    const eh = Math.max(2,20*cur.eyeH*blink);
+    cx.fillStyle = G+'.95)'; el(-34,-24,14,eh); cx.fill(); el(34,-24,14,eh); cx.fill();
+    const open = Math.max(0,cur.mouthOpen);
+    cx.strokeStyle = G+'.95)'; cx.beginPath(); cx.moveTo(-44,20); cx.quadraticCurveTo(0,44+cur.mouthCurve*16+open*20,44,20); cx.stroke();
+    cx.strokeStyle = G+'.10)'; cx.lineWidth = 2;
+    for (let y=-150;y<150;y+=8){ cx.beginPath(); cx.moveTo(-128,y); cx.lineTo(128,y); cx.stroke(); }
+    cx.restore();
+  }
+  function drawClippy(blink){
+    cx.strokeStyle = '#c7d0dc'; cx.lineWidth = 22; cx.lineCap = 'round'; cx.lineJoin = 'round';
+    cx.beginPath();
+    cx.moveTo(-40,150); cx.lineTo(-40,-120);
+    cx.quadraticCurveTo(-40,-182,22,-182); cx.quadraticCurveTo(82,-182,82,-120);
+    cx.lineTo(82,90); cx.quadraticCurveTo(82,142,30,142); cx.quadraticCurveTo(-8,142,-8,96);
+    cx.lineTo(-8,-96); cx.stroke();
+    cx.strokeStyle = 'rgba(255,255,255,.4)'; cx.lineWidth = 6; cx.beginPath(); cx.moveTo(-49,120); cx.lineTo(-49,-110); cx.stroke();
+    const eh = Math.max(3,30*cur.eyeH*blink);
+    for (const e of [[-14,-150],[52,-150]]){
+      cx.fillStyle = '#fff'; el(e[0],e[1],26,eh+6); cx.fill();
+      cx.fillStyle = '#1a1a1a'; el(e[0]+cur.pupilX*10,e[1]+cur.pupilY*8,11,Math.max(3,eh)); cx.fill();
+      cx.fillStyle = '#fff'; el(e[0]-5,e[1]-6,5,5); cx.fill();
+    }
+    cx.strokeStyle = '#6a7180'; cx.lineWidth = 6; cx.lineCap = 'round';
+    const br = cur.browRaise*10;
+    cx.beginPath(); cx.moveTo(-30,-186-br); cx.lineTo(2,-192-br); cx.moveTo(36,-192-br); cx.lineTo(68,-186-br); cx.stroke();
   }
 
   function draw(dt){
@@ -1123,112 +2217,93 @@ const face = (() => {
       if (p >= 1){ blinkT = 0; nextBlink = 1.8 + Math.random()*3.5; }
       else blink = Math.abs(1 - p*2);
     }
-    if (expression === 'idle' || expression === 'listening'){
+    const calm = (expression === 'idle' || expression === 'listening');
+    const speaking = (expression === 'speaking');
+    // decay gesture deltas back toward rest
+    const decay = Math.max(0, 1 - dt*1.6);
+    for (const k in gd) gd[k] *= decay;
+
+    if (calm || speaking){
+      // gaze wandering (livelier while speaking)
       wanderT += dt;
-      if (wanderT > 2.4){ wanderT = 0; tgt.pupilX = (Math.random()*2-1)*.5; tgt.pupilY = (Math.random()*2-1)*.3; }
+      if (wanderT > (speaking ? 1.2 : 2.2)){ wanderT = 0; tgt.pupilX = (Math.random()*2-1)*(speaking?.3:.5) + gd.look; tgt.pupilY = (Math.random()*2-1)*.28; }
+      // gestures: head tilt/turn, brow flicks, nods, lip moves, squints
+      gTiltT += dt;
+      if (gTiltT > nextGesture){
+        gTiltT = 0; nextGesture = (speaking ? 0.7 : 1.6) + Math.random()*(speaking?1.4:3);
+        const r = Math.random();
+        if (r < .3){ gd.tilt = (Math.random()*2-1)*(speaking?.06:.05); gd.look = (Math.random()*2-1)*.35; }
+        else if (r < .5){ gd.brow = .35 + Math.random()*.55; }               // brow flick / emphasis
+        else if (r < .68){ gd.nod = speaking ? 7 : 4; }                       // head nod
+        else if (r < .84){ gd.open = .12 + Math.random()*.14; gd.curve = .12; } // lip move / breath
+        else { gd.eyeH = -.14; }                                             // soft squint
+      }
+      // rotate the resting / reacting micro-expression for lots of variety
+      microT += dt;
+      if (microT > nextMicro){
+        microT = 0; nextMicro = (speaking ? 1.1 : 2.8) + Math.random()*(speaking?1.6:3.5);
+        const pool = speaking ? REACT_POOL : IDLE_POOL;
+        base = Object.assign({}, EXPR[pool[(Math.random()*pool.length)|0]] || base);
+      }
     }
-    if (expression === 'speaking'){ tgt.pupilX = Math.sin(t*.6)*.15; tgt.pupilY = 0; }
-    if (mouthLevel > 0.01) tgt.mouthOpen = .06 + mouthLevel*.85;
-    tgt.headBob = Math.sin(t*1.2)*(expression==='speaking'? 6:3);
+    if (speaking){ tgt.pupilX = Math.sin(t*.6)*.12 + tgt.pupilX*0; }
+
+    // gentle continuous sway (kept for the HEAD only on humans; whole-body on robot/glados)
+    const swayTilt = Math.sin(t*0.5)*0.03 + Math.sin(t*0.21)*0.018;
+    const swayX    = Math.sin(t*0.34)*7 + Math.sin(t*0.17)*4;
+    const breath   = (Math.sin(t*0.9)*0.5 + 0.5) * 0.03;
+
+    // compose targets from base pose + deltas + live signals
+    tgt.eyeH      = base.eyeH + gd.eyeH;
+    tgt.browTilt  = base.browTilt;
+    tgt.browRaise = base.browRaise + gd.brow;
+    tgt.mouthCurve = base.mouthCurve + gd.curve;
+    tgt.glow      = base.glow;
+    if (mouthLevel > 0.01) tgt.mouthOpen = .06 + mouthLevel*.85 + gd.open*.3;
+    else tgt.mouthOpen = base.mouthOpen + gd.open + ((calm||speaking) ? breath : 0);
+    tgt.headTilt = swayTilt + gd.tilt;
+    tgt.headX    = swayX;
+    tgt.headBob  = Math.sin(t*1.2)*(speaking? 5:3) + Math.sin(t*0.6)*2 + gd.nod;
     ease(dt);
 
     cx.clearRect(0,0,W,H);
     cx.save();
-    cx.translate(CX, CY + cur.headBob);
+    cx.translate(CX, CY);
+    // ambient accent glow behind the character (still)
+    const ag = cx.createRadialGradient(0,0,40,0,0,330);
+    ag.addColorStop(0, `rgba(${AR},${AG},${AB},.12)`);
+    ag.addColorStop(1, `rgba(${AR},${AG},${AB},0)`);
+    cx.fillStyle = ag; cx.beginPath(); cx.arc(0,0,330,0,7); cx.fill();
 
-    const r = 210;
-    const grad = cx.createLinearGradient(0,-r,0,r);
-    grad.addColorStop(0,'#2e2a54'); grad.addColorStop(1,'#181334');
-    cx.fillStyle = grad;
-    roundRect(-r, -r*.92, r*2, r*1.84, 118); cx.fill();
-    cx.lineWidth = 5; cx.strokeStyle = '#3d3568'; cx.stroke();
-
-    cx.strokeStyle = '#352c5f'; cx.lineWidth = 8;
-    cx.beginPath(); cx.moveTo(0,-r*.92); cx.lineTo(0,-r*1.12); cx.stroke();
-    cx.fillStyle = `rgba(124,245,192,${.4 + .6*cur.glow*(0.6+0.4*Math.sin(t*3))})`;
-    cx.beginPath(); cx.arc(0,-r*1.2, 13, 0, 7); cx.fill();
-
-    cx.fillStyle = '#352c5f';
-    roundRect(-r-16, -34, 20, 68, 10); cx.fill();
-    roundRect( r-4,  -34, 20, 68, 10); cx.fill();
-
-    cx.fillStyle = '#120f26';
-    roundRect(-r*.8, -r*.68, r*1.6, r*1.36, 84); cx.fill();
-
-    const eyeY = -42, eyeDX = 80;
-    const eh = 54 * cur.eyeH * blink, ew = 40;
-    for (const s of [-1,1]){
-      const ex = s*eyeDX + cur.pupilX*14;
-      const g = cx.createRadialGradient(ex, eyeY, 4, ex, eyeY, 58);
-      g.addColorStop(0, `rgba(167,139,250,${.5*cur.glow})`);
-      g.addColorStop(1, 'rgba(167,139,250,0)');
-      cx.fillStyle = g;
-      cx.beginPath(); cx.arc(ex, eyeY, 60, 0, 7); cx.fill();
-
-      const eg = cx.createLinearGradient(ex, eyeY-eh, ex, eyeY+eh);
-      eg.addColorStop(0,'#d6c9ff'); eg.addColorStop(1,'#9b7bf0');
-      cx.fillStyle = eg;
-      cx.beginPath();
-      cx.ellipse(ex, eyeY + cur.pupilY*8, ew, Math.max(3, eh), 0, 0, 7);
-      cx.fill();
-      cx.fillStyle = 'rgba(255,255,255,.9)';
-      cx.beginPath();
-      cx.ellipse(ex - 11 + cur.pupilX*6, eyeY - eh*.35 + cur.pupilY*8, 10, Math.max(2, eh*.24), 0, 0, 7);
-      cx.fill();
-      cx.fillStyle = 'rgba(255,255,255,.55)';
-      cx.beginPath();
-      cx.ellipse(ex + 12 + cur.pupilX*6, eyeY + eh*.3 + cur.pupilY*8, 5, Math.max(1.5, eh*.1), 0, 0, 7);
-      cx.fill();
-    }
-
-    cx.strokeStyle = `rgba(167,139,250,${.7*cur.glow})`;
-    cx.lineWidth = 7; cx.lineCap = 'round';
-    for (const s of [-1,1]){
-      const bx = s*eyeDX, by = eyeY - 66 - cur.browRaise*16;
-      const tilt = cur.browTilt * 12 * s;
-      cx.beginPath();
-      cx.moveTo(bx - 28, by + 6 + tilt);
-      cx.quadraticCurveTo(bx, by - 8, bx + 28, by + 6 - tilt);
-      cx.stroke();
-    }
-
-    const my = 84, mw = 96;
-    const open = Math.max(.03, cur.mouthOpen);
-    const curve = cur.mouthCurve;
-    cx.fillStyle = '#a78bfa';
-    cx.beginPath();
-    cx.moveTo(-mw/2, my - curve*18);
-    cx.quadraticCurveTo(0, my - curve*18 - open*8, mw/2, my - curve*18);
-    cx.quadraticCurveTo(mw/2 + open*6, my + open*46*.5, mw/2, my + open*46 + curve*14);
-    cx.quadraticCurveTo(0, my + open*46 + curve*30, -mw/2, my + open*46 + curve*14);
-    cx.quadraticCurveTo(-mw/2 - open*6, my + open*46*.5, -mw/2, my - curve*18);
-    cx.closePath();
-    cx.fill();
-    if (open > .18){
-      cx.fillStyle = '#120f26';
-      cx.beginPath();
-      cx.ellipse(0, my + open*24, mw*.32, open*18, 0, 0, 7);
-      cx.fill();
-    }
-
-    if (curve > .3){
-      const blush = Math.min(1, (curve - .3) / .6);
-      cx.fillStyle = `rgba(244,138,158,${.12 + .28*blush})`;
-      cx.beginPath(); cx.ellipse(-eyeDX-16, 36, 24, 13, 0, 0, 7); cx.fill();
-      cx.beginPath(); cx.ellipse( eyeDX+16, 36, 24, 13, 0, 0, 7); cx.fill();
+    if (FD.type === 'human'){
+      // body stays still; only the head/neck tilt+nod (handled inside drawHuman)
+      drawHuman(blink);
+    } else {
+      // robot / mechanical / creature: sway + tilt the whole unit
+      cx.save();
+      cx.translate(cur.headX, cur.headBob); cx.rotate(cur.headTilt);
+      switch (FD.type){
+        case 'glados': drawGlados(blink); break;
+        case 'aicore': drawAICore(blink); break;
+        case 'cat':    drawCat(blink); break;
+        case 'fairy':  drawFairy(blink); break;
+        case 'mrdna':  drawMrDNA(blink); break;
+        case 'rotom':  drawRotom(blink); break;
+        case 'moogle': drawMoogle(blink); break;
+        case 'pipboy': drawPipboy(blink); break;
+        case 'clippy': drawClippy(blink); break;
+        default:       drawRobot(blink);
+      }
+      cx.restore();
     }
 
     cx.restore();
   }
-
-  function roundRect(x,y,w,h,rad){
-    cx.beginPath();
-    cx.moveTo(x+rad,y);
-    cx.arcTo(x+w,y,x+w,y+h,rad);
-    cx.arcTo(x+w,y+h,x,y+h,rad);
-    cx.arcTo(x,y+h,x,y,rad);
-    cx.arcTo(x,y,x+w,y,rad);
-    cx.closePath();
+  // transform for the human head group (pivot at the shoulder line) so the
+  // body stays still and only the head tilts / nods
+  function headTransform(){
+    cx.translate(0, 152); cx.rotate(cur.headTilt); cx.translate(0, -152);
+    cx.translate(cur.headX*0.35, cur.headBob*0.6);
   }
 
   let last = performance.now();
@@ -1239,7 +2314,7 @@ const face = (() => {
   })(last);
 
   setExpression('idle');
-  return { setExpression, setMouthLevel };
+  return { setExpression, setMouthLevel, setFace };
 })();
 
 /* ---------------- lip sync ---------------- */
@@ -1737,17 +2812,49 @@ async function askMiaOnce(userText, imageB64){
 }
 
 function inferExpression(text){
-  const t = text.toLowerCase();
-  if (/\bhaha|\blol|😄|😂|great|love|awesome|amazing/.test(t)) return 'happy';
-  if (/\bwow|really\?|no way|seriously\?|what\?!/.test(t)) return 'surprised';
-  if (text.includes('!')) return 'happy';
+  const t = (text || '').toLowerCase();
+  if (/😂|🤣|😆|\bhaha|\bhehe|\blol|\blmao|hilarious/.test(t)) return 'laugh';
+  if (/❤️|😍|🥰|😘|💕|💋|\blove you|\bmiss you|\bdarling|\bsweetheart/.test(t)) return 'love';
+  if (/🎉|🥳|🚀|🔥|✨|\bawesome|\bamazing|\bincredible|\bcan'?t wait|\bwoo+\b|\byes+!/.test(t)) return 'excited';
+  if (/😮|😲|😱|🤯|\bwow\b|\bwhoa\b|no way|seriously\?|really\?!|what\?!|unbelievable/.test(t)) return 'surprised';
+  if (/😢|😭|😞|😔|💔|\bsorry\b|\bsad\b|\bunfortunately\b|\bmiss\b|\bshame\b/.test(t)) return 'sad';
+  if (/😠|😡|🤬|\bannoying\b|\bridiculous\b|\bhow dare\b|\bstupid\b/.test(t)) return 'angry';
+  if (/😉|😏|😜|\bwink|\bjust kidding|\bkidding\b|\bbetween us\b/.test(t)) return 'cheeky';
+  if (/🤔|🧐|\bhmm+\b|\bi think\b|\bperhaps\b|\bmaybe\b|\bactually\b|\bconsider\b/.test(t)) return 'thoughtful';
+  if (/😊|😄|😁|🙂|\bglad\b|\bhappy\b|\bgreat\b|\bnice\b|\blovely\b|\bwonderful\b/.test(t)) return 'happy';
+  if (/\?\s*$/.test(t.trim()) || /\bcurious\b|\btell me\b|\bwhat about you\b/.test(t)) return 'curious';
+  if (text.includes('!')) return 'warm';
   return 'speaking';
+}
+
+/* Guard against degenerate model output — e.g. "aaaaaaaaah…" or a word
+   repeated hundreds of times — which TTS would otherwise drone on for a
+   very long time and never stop. Collapses long runs and caps length. */
+function cleanForSpeech(text){
+  if (!text) return text;
+  let t = String(text);
+  // strip emojis / pictographs so the voice never reads them aloud
+  // (the written reply keeps them for the text chat)
+  try {
+    t = t.replace(/\p{Extended_Pictographic}/gu, '')
+         .replace(/[\u{1F3FB}-\u{1F3FF}\u{1F1E6}-\u{1F1FF}️‍⃣]/gu, '');
+  } catch(e){
+    t = t.replace(/[←-⇿⌀-➿⬀-⯿️‍]/g, '')
+         .replace(/[\uD800-\uDBFF][\uDC00-\uDFFF]/g, '');   // surrogate-pair emoji fallback
+  }
+  t = t.replace(/\s{2,}/g, ' ');
+  t = t.replace(/(\S)\1{4,}/g, '$1$1$1');                     // long single-char runs (aaaaa → aaa)
+  t = t.replace(/(\S{2,8}?)\1{4,}/g, '$1$1');                 // long short-chunk runs (hahaha…)
+  t = t.replace(/\b(\w{1,20})(?:\s+\1\b){2,}/gi, '$1 $1');    // a word repeated many times
+  if (t.length > 600) t = t.slice(0, 600).trim();
+  return t.trim();
 }
 
 /* ---------------- TTS: local (browser or Piper) ---------------- */
 async function speak(text){
+  const expr = inferExpression(text);   // from the original text (incl. emojis)
+  text = cleanForSpeech(text);          // strip emojis + runaway for the voice
   setState(S.SPEAKING, T().speaking);
-  const expr = inferExpression(text);
   let usedSynth = false;
   try {
     if (voiceMode === 'piper'){
@@ -1930,25 +3037,30 @@ function addSavedCard(entry){
   chatMsgs.appendChild(holder);
 }
 
+function rebuildChat(){
+  chatMsgs.innerHTML = '';
+  for (const e of convLog.slice(-100)){
+    if (e.t === 'msg'){
+      addBubble(e.role === 'user' ? 'user' : 'mia', e.text);
+      if (e.searched){
+        const badge = document.createElement('div');
+        badge.className = 'bub mia typing';
+        badge.textContent = '🔎 web';
+        chatMsgs.appendChild(badge);
+      }
+    }
+    else addSavedCard(e);
+  }
+  scrollChat();
+}
+
 function toggleChat(){
   if (onCall) return;
   chatOpen = !chatOpen;
   chatEl.classList.toggle('hidden', !chatOpen);
   document.body.classList.toggle('chatmode', chatOpen);
   if (chatOpen){
-    chatMsgs.innerHTML = '';
-    for (const e of convLog.slice(-100)){
-      if (e.t === 'msg'){
-        addBubble(e.role === 'user' ? 'user' : 'mia', e.text);
-        if (e.searched){
-          const badge = document.createElement('div');
-          badge.className = 'bub mia typing';
-          badge.textContent = '🔎 web';
-          chatMsgs.appendChild(badge);
-        }
-      }
-      else addSavedCard(e);
-    }
+    rebuildChat();
     chatInput.focus();
     scrollChat();
   } else {
@@ -2088,7 +3200,7 @@ function endCall(msg){
 }
 
 callBtn.addEventListener('click', () => { primeTTS(); onCall ? endCall() : startCall(); });
-applyLang();
+applyPersona();
 // Phones block mic access on file:// — tell the user how to get voice working.
 if (location.protocol === 'file:') setTimeout(() => { if (!onCall) hintEl.textContent = T().fileWarn; }, 60);
 
