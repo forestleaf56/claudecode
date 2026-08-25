@@ -102,19 +102,23 @@
     const rand=(a,b)=>a+Math.random()*(b-a);
 
     let state='title';
-    let bubbles=[], rays=[], fish=[], tank=[];
+    let bubbles=[], rays=[], fish=[], tank=[], motes=[];
     const SPECIES=[
       { key:'neon',  name:'Neon Tetra',  body:'#4fd0d6', fin:'#bfeff2', size:12, glow:true  },
       { key:'ember', name:'Ember Molly', body:'#ff8a5c', fin:'#ffd7b0', size:17, glow:false },
       { key:'sunny', name:'Sunfish',     body:'#f2c66d', fin:'#fff0c4', size:20, glow:false },
+      { key:'angel', name:'Angelfish',   body:'#c9d6e6', fin:'#eef4ff', size:22, glow:false },
+      { key:'lumen', name:'Lanternfish', body:'#b06cff', fin:'#e2c7ff', size:14, glow:true  },
     ];
     function seed(){
       bubbles=[]; for(let i=0;i<38;i++) bubbles.push(mkBubble(true));
       rays=[]; for(let i=0;i<5;i++) rays.push({ x:rand(0,W), w:rand(60,150), a:rand(0.04,0.10), ph:rand(0,6.28), sp:rand(0.15,0.35) });
       fish=[]; for(let i=0;i<7;i++) fish.push(mkFish());
+      motes=[]; for(let i=0;i<34;i++) motes.push(mkMote());
       seedTank();
     }
-    function seedTank(){ tank=[]; for(const si of [0,0,1,2]) tank.push(mkPet(SPECIES[si])); }
+    function mkMote(){ return { x:rand(0,W), y:rand(0,H), vx:rand(-4,4), vy:rand(4,14), r:rand(0.5,1.8), a:rand(0.04,0.14) }; }
+    function seedTank(){ tank=[]; for(const si of [0,0,0,1,2]) tank.push(mkPet(SPECIES[si])); }
     function mkPet(sp){ return { spec:sp, size:sp.size, x:rand(60,Math.max(80,W-60)),
       y:rand(120,Math.max(160,H-90)), ang:rand(0,6.28), spd:rand(24,44), tail:rand(0,6.28) }; }
     function mkBubble(any){ return { x:rand(0,W), y:any?rand(0,H):H+10, r:rand(1.5,4.5), sp:rand(18,46), wob:rand(0,6.28), ws:rand(0.6,1.6) }; }
@@ -144,6 +148,7 @@
         ctx.moveTo(x,0); ctx.lineTo(x+r.w,0); ctx.lineTo(x+r.w*0.5+40,H); ctx.lineTo(x-40,H); ctx.closePath(); ctx.fill(); }
 
       if(state==='tank'){
+        drawCaustics();
         drawSubstrate();
         for(const f of tank){ updatePet(f,dt); drawPet(f); }
       } else {
@@ -160,6 +165,24 @@
         ctx.beginPath(); ctx.arc(x,b.y,b.r,0,7);
         ctx.strokeStyle='rgba(180,230,240,0.35)'; ctx.lineWidth=1; ctx.stroke();
         ctx.fillStyle='rgba(180,230,240,0.08)'; ctx.fill(); }
+
+      // drifting marine snow (atmosphere)
+      for(const m of motes){ m.x+=m.vx*dt; m.y+=m.vy*dt;
+        if(m.y>H+4){ m.y=-4; m.x=rand(0,W); } if(m.x<-4)m.x=W+4; if(m.x>W+4)m.x=-4;
+        ctx.fillStyle='rgba(205,232,242,'+m.a+')'; ctx.beginPath(); ctx.arc(m.x,m.y,m.r,0,7); ctx.fill(); }
+
+      // vignette for depth
+      const v=ctx.createRadialGradient(W/2,H*0.42,H*0.26,W/2,H*0.5,H*0.82);
+      v.addColorStop(0,'rgba(0,0,0,0)'); v.addColorStop(1,'rgba(0,0,0,0.42)');
+      ctx.fillStyle=v; ctx.fillRect(0,0,W,H);
+    }
+    function drawCaustics(){
+      ctx.save(); ctx.globalCompositeOperation='screen';
+      for(let i=0;i<3;i++){ const y=H*0.48+i*H*0.15;
+        ctx.strokeStyle='rgba(130,225,235,0.05)'; ctx.lineWidth=12; ctx.beginPath();
+        for(let x=0;x<=W;x+=16){ const yy=y+Math.sin(x*0.028+t*0.8+i*1.3)*10; x===0?ctx.moveTo(x,yy):ctx.lineTo(x,yy); }
+        ctx.stroke(); }
+      ctx.restore();
     }
     function drawFish(f){
       const a=0.10+f.depth*0.16, len=f.len, dir=f.dir;
@@ -173,8 +196,16 @@
 
     // ---- tank (foreground pets) ----
     function updatePet(f,dt){
-      f.ang += rand(-1,1)*1.6*dt;                       // gentle wander
+      f.ang += rand(-1,1)*1.3*dt;                       // gentle wander
       let dx=Math.cos(f.ang), dy=Math.sin(f.ang)*0.6;   // flatten vertical for natural swim
+      // light schooling among the same species (cohesion + alignment + separation)
+      let cx=0,cy=0,ax=0,ay=0,sx=0,sy=0,n=0;
+      for(const o of tank){ if(o===f) continue; const ox=o.x-f.x, oy=o.y-f.y, d=Math.hypot(ox,oy);
+        if(d<92 && o.spec===f.spec){ cx+=o.x; cy+=o.y; ax+=Math.cos(o.ang); ay+=Math.sin(o.ang); n++;
+          if(d<32){ sx-=ox/(d||1); sy-=oy/(d||1); } } }
+      if(n>0){ const clx=cx/n-f.x, cly=cy/n-f.y, cl=Math.hypot(clx,cly)||1;
+        dx += (clx/cl)*0.45 + (ax/n)*0.55 + sx*1.1;
+        dy += (cly/cl)*0.45 + (ay/n)*0.55 + sy*1.1; }
       const pad=54, topPad=96, botPad=56;               // steer away from edges
       if(f.x<pad) dx+=(pad-f.x)/pad;
       if(f.x>W-pad) dx-=(f.x-(W-pad))/pad;
