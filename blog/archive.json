@@ -1,5 +1,21 @@
 [
   {
+    "issue": 50,
+    "date_short": "AUGUST 24",
+    "date_human": "Monday, August 24, 2026",
+    "article": {
+      "badge": "HOT!!",
+      "blink": true,
+      "title": "🤖 Car Company's Robot Division Raises $900 Million; Nobody's Sure If They Make Cars Or Androids Anymore",
+      "dateline": "GUANGZHOU — reported from a factory that also, apparently, walks",
+      "tag": "ROBOTS —",
+      "paras": [
+        "An electric-vehicle maker's robotics arm raised more than $900 million in its first outside funding round, valuing the walking-robot business at over $6.3 billion — proving that in 2026 the fastest way to raise money is to take whatever you already make and bolt legs onto it.",
+        "\"We see enormous synergy,\" investors said, of a company that started with cars and pivoted to humanoids, presumably because the cars kept asking for it. Analysts note the humanoid-robot gold rush has officially reached the stage where a business can be worth billions before a single one of its products has folded a single towel."
+      ]
+    }
+  },
+  {
     "issue": 49,
     "date_short": "AUGUST 21",
     "date_human": "Friday, August 21, 2026",

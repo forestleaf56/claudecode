@@ -1,81 +1,81 @@
 {
-  "issue": 50,
-  "date_short": "AUGUST 24",
-  "date_human": "Monday, August 24, 2026",
-  "construction_top": "pardon our HTML — celebrating our 50th issue the only way we know how: still under construction",
+  "issue": 51,
+  "date_short": "AUGUST 25",
+  "date_human": "Tuesday, August 25, 2026",
+  "construction_top": "pardon our HTML — the webmaster is still waiting for the A.I. to finish thinking",
   "ticker": [
-    "car company's robot division raises $900M; nobody's sure if they make cars or androids anymore",
-    "chip giant now just funds everything; owns the shovels, the miners, AND the gold",
-    "new A.I. video model makes anything; your eyes are no longer reliable witnesses",
-    "A.I. agents form an official 'foundation'; the software has a homeowners' association now",
-    "A.I. agents can search the web themselves; the intern found Google and will not stop",
-    "issue #50! the future walks, funds itself, fakes the footage, and holds meetings"
+    "A.I. search startup now worth more than a small nation; too big to answer your actual question",
+    "New Zealand bans kids from the apps; teens deploy the ancient and undefeated birthday lie",
+    "folding phones now fold so much they're basically origami; behold the paper crane",
+    "chip giant raises prices again; the A.I. toll booth has noticed you have no choice",
+    "new models think slower to be smarter; the computer now says 'let me get back to you'",
+    "the future is expensive, foldable, patient, and quietly carding your teenager"
   ],
   "articles": [
     {
       "badge": "HOT!!",
       "blink": true,
-      "title": "🤖 Car Company's Robot Division Raises $900 Million; Nobody's Sure If They Make Cars Or Androids Anymore",
-      "dateline": "GUANGZHOU — reported from a factory that also, apparently, walks",
-      "tag": "ROBOTS —",
+      "title": "🔍 A.I. Search Startup's Value Balloons Past A Small Nation's Budget; Now Too Big To Actually Answer Your Question",
+      "dateline": "SILICON VALLEY — reported after a very long 'thinking…' spinner",
+      "tag": "MARKETS —",
       "paras": [
-        "An electric-vehicle maker's robotics arm raised more than $900 million in its first outside funding round, valuing the walking-robot business at over $6.3 billion — proving that in 2026 the fastest way to raise money is to take whatever you already make and bolt legs onto it.",
-        "\"We see enormous synergy,\" investors said, of a company that started with cars and pivoted to humanoids, presumably because the cars kept asking for it. Analysts note the humanoid-robot gold rush has officially reached the stage where a business can be worth billions before a single one of its products has folded a single towel."
+        "An AI search company's valuation reportedly leapt from around $20 billion last year toward the stratosphere, with revenue topping $750 million as it pushes beyond mere search into \"agents\" that handle complex professional tasks — meaning it has graduated from answering your questions to confidently doing your job.",
+        "\"We're redefining how people find information,\" the company said, of a service now worth more than several countries and most human feelings. Analysts note the thesis is simple: if you own the box everyone types their questions into, you can eventually charge for the answers, the follow-ups, and possibly the silence in between."
       ]
     },
     {
       "badge": "NEW!",
-      "title": "💸 Chip Giant Now Just Funds Everything; Reportedly Backing An Open A.I. Push And Betting On A Search Startup Too",
-      "dateline": "SANTA CLARA — filed from atop the entire board game",
-      "tag": "DEALS —",
+      "title": "🚸 New Zealand Moves To Ban Kids From The Apps; Teens Discover The Ancient Art Of Lying About Their Birthday",
+      "dateline": "WELLINGTON — reported past a suspiciously tall 12-year-old",
+      "tag": "REGULATION —",
       "paras": [
-        "The world's dominant AI chipmaker is reportedly pouring billions into an open-weight AI push while weighing yet another large bet on an AI search company — reaching the final boss level of wealth, where you no longer pick winners, you simply own all of the players.",
-        "\"We're enabling the ecosystem,\" the company said, of a strategy best described as buying every ticket in the raffle and then also hosting the raffle. Observers note that when the firm selling the shovels also funds the miners, prints the map, and owns the gold, it is less a gold rush and more a very polite monopoly wearing a friendship bracelet."
+        "New Zealand advanced legislation to keep young users off certain platforms, joining a global wave of age-ban laws — a well-meaning effort destined to be defeated, as always, within minutes, by a teenager and a birth year ending in a suspiciously round number.",
+        "\"We're protecting young people,\" lawmakers said, of rules that assume the internet can reliably tell how old anyone is, a thing it has never once managed to do. Experts note that the timeless teenage skill of clicking \"yes, I am 40 years old\" remains humanity's most durable and completely undefeated technology."
       ]
     },
     {
       "badge": "WOW!",
       "blink": true,
-      "title": "🎬 New A.I. Video Model Can Generate Anything; Your Eyes Are Officially No Longer Reliable Witnesses",
-      "dateline": "HANGZHOU — reported, allegedly, by a real human",
-      "tag": "MODELS —",
+      "title": "📱 Folding Phones Now Fold So Much They're Basically Origami; One More Crease And It's A Paper Crane",
+      "dateline": "SEOUL — reported along yet another hinge",
+      "tag": "GADGETS —",
       "paras": [
-        "A tech giant unveiled a powerful new AI video model backed by billions in infrastructure, capable of generating convincing footage of events that never happened — a breakthrough that finally retires the ancient phrase \"pics or it didn't happen,\" since now the pics prove absolutely nothing.",
-        "\"The quality is astonishing,\" the company said, of a tool that can conjure video of anyone doing anything, forever complicating every group-chat argument that ends in \"send proof.\" Media experts recommend a healthy new default: assume everything is fake until a notarized human swears otherwise, in person, in daylight."
+        "The latest wave of folding-phone breakthroughs has devices bending thinner, flatter, and more times than ever — a relentless march that will end, logically, with a smartphone you fold into a swan and place gently on the mantel.",
+        "\"It's the future of form factors,\" makers insist, of phones that now fold in half, then in half again, chasing a horizon where the device is technically a pamphlet. Reviewers admire the engineering while noting that the more a phone folds, the more ways it has learned to develop a mysterious crease exactly where you look most."
+      ]
+    },
+    {
+      "badge": "$$$",
+      "title": "💰 Chip Giant Warns Customers Of Price Hikes; The Toll Booth On The A.I. Highway Raises Its Rates Again",
+      "dateline": "SANTA CLARA — filed while re-reading the invoice",
+      "tag": "MARKETS —",
+      "paras": [
+        "The dominant AI chipmaker reportedly warned customers to brace for price increases, gently reminding the entire industry that the road to artificial intelligence runs through exactly one toll booth — and the toll booth has noticed.",
+        "\"Costs reflect demand,\" the company explained, to buyers with no realistic alternative and a deepening familiarity with the phrase \"take it or leave it.\" Analysts note that when everyone needs your product to compete, \"the price went up\" is less a business update and more a weather forecast."
       ]
     },
     {
       "badge": "SCOOP",
-      "title": "🤝 A.I. Agents Get Their Own Official 'Foundation'; The Software Has Formed A Homeowners' Association",
-      "dateline": "THE STANDARDS BODY — reported through proper channels",
-      "tag": "TECH —",
-      "paras": [
-        "A cross-industry \"Agentic AI Foundation\" now counts more than 250 members standardizing how AI agents talk to one another — meaning the little autonomous programs running errands across the internet have officially organized, elected a board, and drafted bylaws.",
-        "\"Interoperability is crucial,\" members agreed, of an effort to let every company's AI agents cooperate smoothly — which is either a triumph of engineering or the opening scene of the robots learning to coordinate. Historians will note that humanity's helpful little assistants first agreed on a standard, and then, presumably, on an agenda."
-      ]
-    },
-    {
-      "badge": "NEAT",
-      "title": "🔎 A.I. Agents Can Now Search The Web Themselves; The Intern Has Discovered Google And Will Not Stop",
-      "dateline": "THE CLOUD — reported between 4,000 open tabs",
+      "title": "🐌 New A.I. Models Deliberately Think Slower To Be Smarter; Finally, A Computer That Says 'Let Me Get Back To You'",
+      "dateline": "THE DATA CENTER — reported during a long, thoughtful pause",
       "tag": "MODELS —",
       "paras": [
-        "A major cloud provider made live web search generally available to AI agents, letting them fetch current, cited information on their own — finally giving the tireless digital intern the one tool it was missing: the ability to look things up and come back very, very confident.",
-        "\"It stays within your account,\" the company reassured, of agents that can now roam the live internet, gather facts, and cite their sources like an overachieving student. Users welcomed the accuracy while bracing for the inevitable day their assistant returns from the web with a fully-formed opinion and a reading list."
+        "The latest frontier models increasingly trade raw speed for accuracy, taking extra time to \"reason\" before answering — meaning that, after decades of demanding faster computers, we have finally built one that thoughtfully asks for a minute.",
+        "\"Slower is smarter,\" researchers explained, of models that now pause, ponder, and double-check like a wise elder instead of blurting out the first thing that comes to mind. Users report the answers are markedly better and the waiting markedly worse, proving once again you cannot have everything — even from a machine that cost a billion dollars."
       ]
     }
   ],
   "horoscopes": [
-    { "sign": "♒ Aquarius:", "text": "You will see a video today that never happened. Trust your gut, not your feed. Especially not your feed." },
-    { "sign": "♌ Leo:", "text": "Your assistant will look something up and return alarmingly confident. Verify before you believe a single word." },
-    { "sign": "♓ Pisces:", "text": "Mercury has joined a foundation. Even the planets have bylaws now. Attend the meeting, or don't; it's minuted either way." }
+    { "sign": "♒ Aquarius:", "text": "An A.I. will take its sweet time answering you today. Breathe. Genius, apparently, now buffers." },
+    { "sign": "♌ Leo:", "text": "You will be asked to prove your age online. Mercury suggests honesty; recorded history suggests otherwise." },
+    { "sign": "♓ Pisces:", "text": "Mercury folds a phone into a crane. Beauty is fragile, expensive, and creased exactly where you look." }
   ],
-  "tech_tip": "In 2026, 'pics or it didn't happen' is officially retired. New rule: assume the video is fake until a human you trust confirms it in person.",
-  "gadget_watch": "Humanoid robots are now a multi-billion-dollar business before folding their first towel, and A.I. can generate video of literally anything — so enjoy a future that's equal parts walking helper and unreliable footage. Keep your receipts and your skepticism.",
+  "tech_tip": "If an A.I. takes longer to answer now, that's a feature — it's 'thinking.' If YOU take longer, that's a meeting. Life remains deeply unfair.",
+  "gadget_watch": "Folding phones keep folding toward full origami, chip prices keep climbing, and your new A.I. would like a moment to think, thank you. The future: slower, pricier, and available in swan.",
   "classifieds": [
-    { "label": "FOR SALE:", "text": "one (1) robotics startup, valued at $6.3 billion, has not yet completed a single chore. Visionary buyers only." },
-    { "label": "WANTED:", "text": "a single video I can be sure is real. Notarized, in daylight, human witness, no effects. We are begging." },
-    { "label": "LOST:", "text": "the phrase 'pics or it didn't happen,' retired this week after a long and genuinely useful life. No flowers." },
-    { "label": "MISSED CONNECTION:", "text": "You: an A.I. agent that searched the web and formed opinions. Me: your user, who just wanted the weather. Cite your sources." }
+    { "label": "FOR SALE:", "text": "one (1) folding phone; folds six times, developed a crease out of pure spite. Makes a genuinely lovely paper crane." },
+    { "label": "WANTED:", "text": "an A.I. chip toll-booth alternative. Any alternative. A dirt road would honestly do at this point." },
+    { "label": "LOST:", "text": "the ability to lie about my age online now that the whole world is checking. Rest in peace, birthday of 1985." },
+    { "label": "MISSED CONNECTION:", "text": "You: an A.I. that thinks carefully before answering. Me: someone in a real hurry. It'll never work, but take your time." }
   ]
 }
