@@ -85,14 +85,6 @@
     <div class="pearls">◍ 0 <span>pearls</span></div>
     <button class="iconbtn" id="backBtn">☰</button>
   </div>
-  <div class="screen hidden" id="tankScreen">
-    <div class="tanknote">
-      <h2>Your tank awaits</h2>
-      <p>Fish, feeding, an idle pearl economy and a shop fill this tank across the
-         week. For now, enjoy the water.</p>
-    </div>
-  </div>
-
   <!-- info modal -->
   <div class="modal hidden" id="modal">
     <div class="panel">
@@ -109,12 +101,22 @@
     let W=0,H=0,dpr=1;
     const rand=(a,b)=>a+Math.random()*(b-a);
 
-    let bubbles=[], rays=[], fish=[];
+    let state='title';
+    let bubbles=[], rays=[], fish=[], tank=[];
+    const SPECIES=[
+      { key:'neon',  name:'Neon Tetra',  body:'#4fd0d6', fin:'#bfeff2', size:12, glow:true  },
+      { key:'ember', name:'Ember Molly', body:'#ff8a5c', fin:'#ffd7b0', size:17, glow:false },
+      { key:'sunny', name:'Sunfish',     body:'#f2c66d', fin:'#fff0c4', size:20, glow:false },
+    ];
     function seed(){
       bubbles=[]; for(let i=0;i<38;i++) bubbles.push(mkBubble(true));
       rays=[]; for(let i=0;i<5;i++) rays.push({ x:rand(0,W), w:rand(60,150), a:rand(0.04,0.10), ph:rand(0,6.28), sp:rand(0.15,0.35) });
       fish=[]; for(let i=0;i<7;i++) fish.push(mkFish());
+      seedTank();
     }
+    function seedTank(){ tank=[]; for(const si of [0,0,1,2]) tank.push(mkPet(SPECIES[si])); }
+    function mkPet(sp){ return { spec:sp, size:sp.size, x:rand(60,Math.max(80,W-60)),
+      y:rand(120,Math.max(160,H-90)), ang:rand(0,6.28), spd:rand(24,44), tail:rand(0,6.28) }; }
     function mkBubble(any){ return { x:rand(0,W), y:any?rand(0,H):H+10, r:rand(1.5,4.5), sp:rand(18,46), wob:rand(0,6.28), ws:rand(0.6,1.6) }; }
     function mkFish(){ const dir=Math.random()<0.5?1:-1;
       return { x:rand(0,W), y:rand(H*0.2,H*0.9), len:rand(16,42), dir, sp:rand(10,26)*dir,
@@ -141,11 +143,16 @@
         ctx.fillStyle=grd; ctx.beginPath();
         ctx.moveTo(x,0); ctx.lineTo(x+r.w,0); ctx.lineTo(x+r.w*0.5+40,H); ctx.lineTo(x-40,H); ctx.closePath(); ctx.fill(); }
 
-      // silhouette fish drifting
-      for(const f of fish){ f.x+=f.sp*dt; f.tail+=dt*6;
-        if(f.dir>0 && f.x>W+60) { f.x=-60; f.y=rand(H*0.2,H*0.9); }
-        if(f.dir<0 && f.x<-60) { f.x=W+60; f.y=rand(H*0.2,H*0.9); }
-        drawFish(f); }
+      if(state==='tank'){
+        drawSubstrate();
+        for(const f of tank){ updatePet(f,dt); drawPet(f); }
+      } else {
+        // silhouette fish drifting (title atmosphere)
+        for(const f of fish){ f.x+=f.sp*dt; f.tail+=dt*6;
+          if(f.dir>0 && f.x>W+60) { f.x=-60; f.y=rand(H*0.2,H*0.9); }
+          if(f.dir<0 && f.x<-60) { f.x=W+60; f.y=rand(H*0.2,H*0.9); }
+          drawFish(f); }
+      }
 
       // rising bubbles
       for(const b of bubbles){ b.y-=b.sp*dt; b.wob+=dt*b.ws; const x=b.x+Math.sin(b.wob)*6;
@@ -164,12 +171,55 @@
       ctx.restore();
     }
 
+    // ---- tank (foreground pets) ----
+    function updatePet(f,dt){
+      f.ang += rand(-1,1)*1.6*dt;                       // gentle wander
+      let dx=Math.cos(f.ang), dy=Math.sin(f.ang)*0.6;   // flatten vertical for natural swim
+      const pad=54, topPad=96, botPad=56;               // steer away from edges
+      if(f.x<pad) dx+=(pad-f.x)/pad;
+      if(f.x>W-pad) dx-=(f.x-(W-pad))/pad;
+      if(f.y<topPad) dy+=(topPad-f.y)/topPad;
+      if(f.y>H-botPad) dy-=(f.y-(H-botPad))/botPad;
+      const L=Math.hypot(dx,dy)||1; dx/=L; dy/=L;
+      f.ang=Math.atan2(dy,dx);
+      f.x+=dx*f.spd*dt; f.y+=dy*f.spd*dt; f.tail+=dt*9;
+    }
+    function drawPet(f){
+      const dir=Math.cos(f.ang)>=0?1:-1, s=f.size, sp=f.spec;
+      ctx.save(); ctx.translate(f.x,f.y); ctx.scale(dir,1);
+      if(sp.glow){ ctx.shadowColor=sp.body; ctx.shadowBlur=14; }
+      const tw=Math.sin(f.tail)*s*0.55;
+      ctx.fillStyle=sp.fin;
+      ctx.beginPath(); ctx.moveTo(-s*0.75,0); ctx.lineTo(-s*1.5,-s*0.5+tw); ctx.lineTo(-s*1.5,s*0.5+tw); ctx.closePath(); ctx.fill();
+      ctx.fillStyle=sp.body; ctx.beginPath(); ctx.ellipse(0,0,s,s*0.56,0,0,7); ctx.fill();
+      ctx.fillStyle=sp.fin; ctx.beginPath(); ctx.moveTo(-s*0.1,-s*0.5); ctx.lineTo(s*0.5,-s*0.95); ctx.lineTo(s*0.35,-s*0.35); ctx.closePath(); ctx.fill();
+      ctx.shadowBlur=0;
+      ctx.fillStyle='#fff'; ctx.beginPath(); ctx.arc(s*0.55,-s*0.1,s*0.16,0,7); ctx.fill();
+      ctx.fillStyle='#04121f'; ctx.beginPath(); ctx.arc(s*0.6,-s*0.1,s*0.08,0,7); ctx.fill();
+      ctx.restore();
+    }
+    function drawSubstrate(){
+      ctx.fillStyle='#b3894e';                           // sand mound
+      ctx.beginPath(); ctx.moveTo(0,H);
+      for(let x=0;x<=W;x+=24) ctx.lineTo(x, H-26 - Math.sin(x*0.02+1)*7);
+      ctx.lineTo(W,H); ctx.closePath(); ctx.fill();
+      ctx.fillStyle='rgba(255,240,200,0.10)';            // top sheen
+      ctx.beginPath(); ctx.moveTo(0,H-26);
+      for(let x=0;x<=W;x+=24) ctx.lineTo(x, H-26 - Math.sin(x*0.02+1)*7);
+      ctx.lineTo(W,H-26); ctx.closePath(); ctx.fill();
+      drawWeed(W*0.16,'#2f7d5b'); drawWeed(W*0.84,'#3a8f66');
+    }
+    function drawWeed(x,col){ ctx.strokeStyle=col; ctx.lineWidth=6; ctx.lineCap='round';
+      for(let k=-1;k<=1;k++){ const bx=x+k*10; ctx.beginPath(); ctx.moveTo(bx,H-24);
+        for(let i=1;i<=5;i++){ const yy=H-24-i*16, sway=Math.sin(t*1.2+i*0.6+k)*8; ctx.lineTo(bx+sway,yy); }
+        ctx.stroke(); } }
+
     // ---- screens ----
-    const titleScreen=document.getElementById('titleScreen'), tankScreen=document.getElementById('tankScreen'),
+    const titleScreen=document.getElementById('titleScreen'),
           topbar=document.getElementById('topbar'), modal=document.getElementById('modal');
     function show(el,on){ el.classList.toggle('hidden', !on); }
-    document.getElementById('playBtn').addEventListener('click', ()=>{ show(titleScreen,false); show(tankScreen,true); show(topbar,true); });
-    document.getElementById('backBtn').addEventListener('click', ()=>{ show(tankScreen,false); show(topbar,false); show(titleScreen,true); });
+    document.getElementById('playBtn').addEventListener('click', ()=>{ state='tank'; show(titleScreen,false); show(topbar,true); });
+    document.getElementById('backBtn').addEventListener('click', ()=>{ state='title'; show(topbar,false); show(titleScreen,true); });
     const mTitle=document.getElementById('mTitle'), mBody=document.getElementById('mBody');
     function openModal(title,html){ mTitle.textContent=title; mBody.innerHTML=html; show(modal,true); }
     document.getElementById('howBtn').addEventListener('click', ()=>openModal('How to Play',

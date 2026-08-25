@@ -44,9 +44,11 @@ weekly-apps/current/
       underwater canvas (depth gradient, drifting god-rays, rising bubbles,
       silhouette fish), serif FATHOM wordmark, styled gold/teal buttons, How-to +
       Collection modals, and Dive-In → tank placeholder. Verified in browser, no JS errors.
-- [ ] Tue: the living tank — procedural fish that swim with flocking/wander,
-      animated water background (depth gradient, caustics, rising bubbles), a
-      couple of starter species.
+- [x] Tue: the living tank — procedural fish (3 starter species incl. a glowing
+      neon tetra) that swim with gentle wander + edge-avoidance and face their
+      heading; sandy substrate with swaying weeds; reuses the animated water
+      (gradient, god-rays, bubbles). Dive In → live tank + pearls top bar.
+      Verified in browser, no JS errors.
 - [ ] Wed: interaction + economy — tap to feed (food particles, fish seek them),
       pearls accrue over time & from feeding, a SHOP to buy species/décor,
       persistence (localStorage).
