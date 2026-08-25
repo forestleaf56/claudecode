@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#04121f">
+<title>Fathom</title>
+<style>
+  :root{
+    --ink:#eaf6ff; --muted:#8fb2c6; --gold:#f2c66d; --gold-2:#e3a94a;
+    --teal:#4fd0d6; --deep:#04121f;
+  }
+  *{ margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  html,body{ height:100%; }
+  body{ background:var(--deep); color:var(--ink); overflow:hidden;
+    font-family:Georgia,"Times New Roman",serif; user-select:none; -webkit-user-select:none; touch-action:none; }
+  #bg{ position:fixed; inset:0; display:block; z-index:0; }
+
+  .screen{ position:fixed; inset:0; z-index:1; display:flex; flex-direction:column;
+    align-items:center; justify-content:center; text-align:center; padding:28px;
+    padding-top:calc(28px + env(safe-area-inset-top)); }
+  .screen.hidden{ display:none; }
+
+  /* title */
+  .kicker{ font-size:12px; letter-spacing:6px; text-transform:uppercase; color:var(--teal);
+    opacity:.85; margin-bottom:10px; font-family:-apple-system,Segoe UI,Roboto,sans-serif; }
+  .logo{ font-size:clamp(48px,15vw,104px); font-weight:700; letter-spacing:9px; padding-left:9px;
+    line-height:.9; color:#dff6ff; text-shadow:0 2px 30px rgba(79,208,214,.45), 0 1px 0 rgba(0,0,0,.4); }
+  .tagline{ font-style:italic; font-size:clamp(15px,4.5vw,20px); color:var(--muted); margin-top:14px; letter-spacing:1px; }
+  .menu{ margin-top:44px; display:flex; flex-direction:column; gap:14px; width:min(78vw,300px); }
+  .btn{ padding:16px 22px; border-radius:14px; font-size:17px; font-weight:700; letter-spacing:2px;
+    text-transform:uppercase; cursor:pointer; font-family:-apple-system,Segoe UI,Roboto,sans-serif;
+    border:1px solid rgba(120,200,215,.35); color:var(--ink); background:rgba(11,40,58,.55);
+    backdrop-filter:blur(3px); transition:transform .08s, filter .15s; }
+  .btn:active{ transform:scale(.97); }
+  .btn.primary{ border:none; color:#20160a;
+    background:linear-gradient(160deg,#ffdc8a,var(--gold-2));
+    box-shadow:0 8px 26px rgba(226,169,74,.4), inset 0 1px 0 rgba(255,255,255,.5); }
+
+  /* tank (placeholder for now) */
+  .topbar{ position:fixed; top:0; left:0; right:0; z-index:2;
+    display:flex; align-items:center; justify-content:space-between;
+    padding:calc(14px + env(safe-area-inset-top)) 18px 12px;
+    font-family:-apple-system,Segoe UI,Roboto,sans-serif; }
+  .topbar.hidden{ display:none; }
+  .pearls{ font-weight:800; letter-spacing:1px; color:var(--gold); font-size:16px; }
+  .pearls span{ color:var(--muted); font-weight:600; margin-left:4px; }
+  .iconbtn{ width:40px; height:40px; border-radius:12px; border:1px solid rgba(120,200,215,.35);
+    background:rgba(11,40,58,.55); color:var(--ink); font-size:18px; cursor:pointer;
+    display:flex; align-items:center; justify-content:center; }
+  .tanknote{ background:rgba(6,22,34,.72); border:1px solid rgba(120,200,215,.3); border-radius:16px;
+    padding:22px 24px; max-width:300px; backdrop-filter:blur(3px); }
+  .tanknote h2{ font-size:20px; margin-bottom:8px; color:#dff6ff; letter-spacing:1px; }
+  .tanknote p{ font-size:14px; color:var(--muted); line-height:1.6; font-family:-apple-system,Segoe UI,Roboto,sans-serif; }
+
+  /* modal */
+  .modal{ position:fixed; inset:0; z-index:5; display:flex; align-items:center; justify-content:center;
+    padding:26px; background:rgba(3,12,20,.72); backdrop-filter:blur(4px); }
+  .modal.hidden{ display:none; }
+  .panel{ background:linear-gradient(180deg,#0c2836,#08202e); border:1px solid rgba(120,200,215,.3);
+    border-radius:18px; padding:26px; max-width:340px; width:100%; }
+  .panel h3{ font-size:22px; letter-spacing:2px; color:var(--gold); margin-bottom:12px; }
+  .panel p{ font-size:14.5px; line-height:1.65; color:#cfe6f2; margin-bottom:10px;
+    font-family:-apple-system,Segoe UI,Roboto,sans-serif; }
+  .panel .btn{ margin-top:12px; width:100%; }
+</style>
+</head>
+<body>
+  <canvas id="bg"></canvas>
+
+  <!-- title screen -->
+  <div class="screen" id="titleScreen">
+    <div class="kicker">a pocket ocean</div>
+    <div class="logo">FATHOM</div>
+    <div class="tagline">keep a living tank in your pocket</div>
+    <div class="menu">
+      <button class="btn primary" id="playBtn">Dive In</button>
+      <button class="btn" id="howBtn">How to Play</button>
+      <button class="btn" id="colBtn">Collection</button>
+    </div>
+  </div>
+
+  <!-- tank (placeholder until Tue) -->
+  <div class="topbar hidden" id="topbar">
+    <div class="pearls">◍ 0 <span>pearls</span></div>
+    <button class="iconbtn" id="backBtn">☰</button>
+  </div>
+  <div class="screen hidden" id="tankScreen">
+    <div class="tanknote">
+      <h2>Your tank awaits</h2>
+      <p>Fish, feeding, an idle pearl economy and a shop fill this tank across the
+         week. For now, enjoy the water.</p>
+    </div>
+  </div>
+
+  <!-- info modal -->
+  <div class="modal hidden" id="modal">
+    <div class="panel">
+      <h3 id="mTitle">How to Play</h3>
+      <div id="mBody"></div>
+      <button class="btn primary" id="mClose">Close</button>
+    </div>
+  </div>
+
+  <script>
+  "use strict";
+  (function(){
+    const cv=document.getElementById('bg'), ctx=cv.getContext('2d');
+    let W=0,H=0,dpr=1;
+    const rand=(a,b)=>a+Math.random()*(b-a);
+
+    let bubbles=[], rays=[], fish=[];
+    function seed(){
+      bubbles=[]; for(let i=0;i<38;i++) bubbles.push(mkBubble(true));
+      rays=[]; for(let i=0;i<5;i++) rays.push({ x:rand(0,W), w:rand(60,150), a:rand(0.04,0.10), ph:rand(0,6.28), sp:rand(0.15,0.35) });
+      fish=[]; for(let i=0;i<7;i++) fish.push(mkFish());
+    }
+    function mkBubble(any){ return { x:rand(0,W), y:any?rand(0,H):H+10, r:rand(1.5,4.5), sp:rand(18,46), wob:rand(0,6.28), ws:rand(0.6,1.6) }; }
+    function mkFish(){ const dir=Math.random()<0.5?1:-1;
+      return { x:rand(0,W), y:rand(H*0.2,H*0.9), len:rand(16,42), dir, sp:rand(10,26)*dir,
+               tail:rand(0,6.28), depth:rand(0.25,0.7) }; }
+
+    function resize(){ dpr=Math.min(window.devicePixelRatio||1,2.5); W=window.innerWidth; H=window.innerHeight;
+      cv.width=Math.floor(W*dpr); cv.height=Math.floor(H*dpr); cv.style.width=W+'px'; cv.style.height=H+'px';
+      ctx.setTransform(dpr,0,0,dpr,0,0); seed(); }
+    window.addEventListener('resize', resize);
+
+    let last=performance.now(), t=0;
+    function frame(now){ const dt=Math.min((now-last)/1000,0.05); last=now; t+=dt; draw(dt); requestAnimationFrame(frame); }
+
+    function draw(dt){
+      // depth gradient (surface light -> deep)
+      const g=ctx.createLinearGradient(0,0,0,H);
+      g.addColorStop(0,'#0e3f57'); g.addColorStop(0.35,'#0a2c40'); g.addColorStop(1,'#04121f');
+      ctx.fillStyle=g; ctx.fillRect(0,0,W,H);
+
+      // god rays from the surface
+      for(const r of rays){ r.ph+=dt*r.sp; const x=r.x + Math.sin(r.ph)*30;
+        const grd=ctx.createLinearGradient(x,0,x+r.w*0.4,H);
+        grd.addColorStop(0,'rgba(120,220,230,'+r.a+')'); grd.addColorStop(1,'rgba(120,220,230,0)');
+        ctx.fillStyle=grd; ctx.beginPath();
+        ctx.moveTo(x,0); ctx.lineTo(x+r.w,0); ctx.lineTo(x+r.w*0.5+40,H); ctx.lineTo(x-40,H); ctx.closePath(); ctx.fill(); }
+
+      // silhouette fish drifting
+      for(const f of fish){ f.x+=f.sp*dt; f.tail+=dt*6;
+        if(f.dir>0 && f.x>W+60) { f.x=-60; f.y=rand(H*0.2,H*0.9); }
+        if(f.dir<0 && f.x<-60) { f.x=W+60; f.y=rand(H*0.2,H*0.9); }
+        drawFish(f); }
+
+      // rising bubbles
+      for(const b of bubbles){ b.y-=b.sp*dt; b.wob+=dt*b.ws; const x=b.x+Math.sin(b.wob)*6;
+        if(b.y<-10){ Object.assign(b, mkBubble(false)); }
+        ctx.beginPath(); ctx.arc(x,b.y,b.r,0,7);
+        ctx.strokeStyle='rgba(180,230,240,0.35)'; ctx.lineWidth=1; ctx.stroke();
+        ctx.fillStyle='rgba(180,230,240,0.08)'; ctx.fill(); }
+    }
+    function drawFish(f){
+      const a=0.10+f.depth*0.16, len=f.len, dir=f.dir;
+      ctx.save(); ctx.translate(f.x,f.y); ctx.scale(dir,1);
+      ctx.fillStyle='rgba(3,14,22,'+a+')';
+      ctx.beginPath(); ctx.ellipse(0,0,len,len*0.42,0,0,7); ctx.fill();
+      const tw=Math.sin(f.tail)*len*0.18;
+      ctx.beginPath(); ctx.moveTo(-len*0.9,0); ctx.lineTo(-len*1.5,-len*0.35+tw); ctx.lineTo(-len*1.5,len*0.35+tw); ctx.closePath(); ctx.fill();
+      ctx.restore();
+    }
+
+    // ---- screens ----
+    const titleScreen=document.getElementById('titleScreen'), tankScreen=document.getElementById('tankScreen'),
+          topbar=document.getElementById('topbar'), modal=document.getElementById('modal');
+    function show(el,on){ el.classList.toggle('hidden', !on); }
+    document.getElementById('playBtn').addEventListener('click', ()=>{ show(titleScreen,false); show(tankScreen,true); show(topbar,true); });
+    document.getElementById('backBtn').addEventListener('click', ()=>{ show(tankScreen,false); show(topbar,false); show(titleScreen,true); });
+    const mTitle=document.getElementById('mTitle'), mBody=document.getElementById('mBody');
+    function openModal(title,html){ mTitle.textContent=title; mBody.innerHTML=html; show(modal,true); }
+    document.getElementById('howBtn').addEventListener('click', ()=>openModal('How to Play',
+      '<p>Fathom is a calm pocket aquarium. Tap the water to sprinkle food — your fish will dart over to eat.</p>'+
+      '<p>Fish and idle time earn <b>pearls</b>; spend them in the shop to unlock new species and décor. A day–night cycle brings out glowing fish after dark.</p>'+
+      '<p>Full feeding, economy and shop arrive across this week.</p>'));
+    document.getElementById('colBtn').addEventListener('click', ()=>openModal('Collection',
+      '<p>Every species you unlock will live here, with its name and rarity.</p><p>Start diving to fill your first tank — the collection opens up as you play.</p>'));
+    document.getElementById('mClose').addEventListener('click', ()=>show(modal,false));
+
+    resize(); requestAnimationFrame(frame);
+  })();
+  </script>
+</body>
+</html>
