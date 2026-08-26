@@ -134,10 +134,16 @@
     const rand=(a,b)=>a+Math.random()*(b-a);
 
     let state='title';
-    let bubbles=[], rays=[], fish=[], tank=[], motes=[], food=[];
+    let bubbles=[], rays=[], fish=[], tank=[], motes=[], food=[], decor=[], pops=[];
     let pearls=20, ownedFish=[], saveT=0;
     const byKey = k => SPECIES.find(s=>s.key===k);
     const PRICE = { neon:8, ember:14, sunny:18, angel:40, lumen:60 };
+    const DECOR = [
+      { key:'kelp',  name:'Kelp',      price:12 },
+      { key:'rock',  name:'Boulders',  price:16 },
+      { key:'coral', name:'Coral',     price:24 },
+      { key:'wreck', name:'Shipwreck', price:48 },
+    ];
     const SPECIES=[
       { key:'neon',  name:'Neon Tetra',  body:'#4fd0d6', fin:'#bfeff2', size:12, glow:true  },
       { key:'ember', name:'Ember Molly', body:'#ff8a5c', fin:'#ffd7b0', size:17, glow:false },
@@ -155,9 +161,10 @@
     function mkMote(){ return { x:rand(0,W), y:rand(0,H), vx:rand(-4,4), vy:rand(4,14), r:rand(0.5,1.8), a:rand(0.04,0.14) }; }
     function seedTank(){ tank=[]; for(const k of ownedFish){ const sp=byKey(k); if(sp) tank.push(mkPet(sp)); } }
     function load(){ try{ const s=JSON.parse(localStorage.getItem('fathom_save'));
-        if(s && Array.isArray(s.fish) && s.fish.length){ pearls=+s.pearls||0; ownedFish=s.fish.filter(byKey); return; } }catch(e){}
-      pearls=20; ownedFish=['neon','neon','neon','ember','sunny']; }
-    function save(){ try{ localStorage.setItem('fathom_save', JSON.stringify({v:1, pearls:Math.floor(pearls), fish:ownedFish})); }catch(e){} }
+        if(s && Array.isArray(s.fish) && s.fish.length){ pearls=+s.pearls||0; ownedFish=s.fish.filter(byKey);
+          decor = Array.isArray(s.decor) ? s.decor.filter(d=>d && DECOR.find(x=>x.key===d.key)) : []; return; } }catch(e){}
+      pearls=20; ownedFish=['neon','neon','neon','ember','sunny']; decor=[]; }
+    function save(){ try{ localStorage.setItem('fathom_save', JSON.stringify({v:2, pearls:Math.floor(pearls), fish:ownedFish, decor})); }catch(e){} }
     function mkPet(sp){ return { spec:sp, size:sp.size, x:rand(60,Math.max(80,W-60)),
       y:rand(120,Math.max(160,H-90)), ang:rand(0,6.28), spd:rand(24,44), tail:rand(0,6.28) }; }
     function mkBubble(any){ return { x:rand(0,W), y:any?rand(0,H):H+10, r:rand(1.5,4.5), sp:rand(18,46), wob:rand(0,6.28), ws:rand(0.6,1.6) }; }
@@ -189,7 +196,12 @@
       if(state==='tank'){
         drawCaustics();
         drawSubstrate();
+        drawDecor();
         for(const f of tank){ updatePet(f,dt); drawPet(f); }
+        // eating sparkles
+        for(const q of pops){ q.x+=q.vx*dt; q.y+=q.vy*dt; q.vy+=70*dt; q.life-=dt*1.8;
+          ctx.globalAlpha=Math.max(0,q.life); ctx.fillStyle='#ffe9a8'; ctx.beginPath(); ctx.arc(q.x,q.y,2,0,7); ctx.fill(); }
+        ctx.globalAlpha=1; pops=pops.filter(q=>q.life>0);
         // food pellets sink; fish eat them (see updatePet)
         for(const p of food){ if(p.y<H-30) p.y+=p.vy*dt; else p.rest=(p.rest||0)+dt;
           ctx.fillStyle='#ffd98a'; ctx.shadowColor='#ffcf6b'; ctx.shadowBlur=6;
@@ -251,7 +263,8 @@
       if(fed && fd < 150*150){ const d=Math.sqrt(fd)||1;
         dx += (fed.x-f.x)/d*2.4; dy += (fed.y-f.y)/d*2.4;
         if(d<12){ fed.eaten=true; pearls+=2; f.spd=Math.min(f.spd+1.5,58);
-          for(let i=0;i<4;i++) bubbles.push(Object.assign(mkBubble(false),{x:fed.x+rand(-4,4),y:fed.y})); } }
+          for(let i=0;i<4;i++) bubbles.push(Object.assign(mkBubble(false),{x:fed.x+rand(-4,4),y:fed.y}));
+          for(let i=0;i<5;i++) pops.push({ x:fed.x, y:fed.y, vx:rand(-40,40), vy:rand(-52,-12), life:1 }); } }
       // light schooling among the same species (cohesion + alignment + separation)
       let cx=0,cy=0,ax=0,ay=0,sx=0,sy=0,n=0;
       for(const o of tank){ if(o===f) continue; const ox=o.x-f.x, oy=o.y-f.y, d=Math.hypot(ox,oy);
@@ -299,6 +312,32 @@
         for(let i=1;i<=5;i++){ const yy=H-24-i*16, sway=Math.sin(t*1.2+i*0.6+k)*8; ctx.lineTo(bx+sway,yy); }
         ctx.stroke(); } }
 
+    // ---- décor (bought in the shop) ----
+    function drawDecor(){ const base=H-22; for(const d of decor){
+      if(d.key==='kelp') drawKelp(d.x,base);
+      else if(d.key==='rock') drawRock(d.x,base);
+      else if(d.key==='coral') drawCoral(d.x,base);
+      else if(d.key==='wreck') drawWreck(d.x,base); } }
+    function drawKelp(x,base){ ctx.strokeStyle='#2f8f60'; ctx.lineWidth=8; ctx.lineCap='round';
+      for(let k=-1;k<=1;k++){ const bx=x+k*12; ctx.beginPath(); ctx.moveTo(bx,base);
+        for(let i=1;i<=8;i++){ const yy=base-i*18, sway=Math.sin(t*1.1+i*0.5+k)*11; ctx.lineTo(bx+sway,yy); } ctx.stroke(); } }
+    function drawRock(x,base){ ctx.fillStyle='#57616b';
+      ctx.beginPath(); ctx.ellipse(x,base-4,27,16,0,Math.PI,0); ctx.fill();
+      ctx.fillStyle='#69737d'; ctx.beginPath(); ctx.ellipse(x-22,base-2,12,8,0,Math.PI,0); ctx.fill();
+      ctx.beginPath(); ctx.ellipse(x+21,base-2,10,7,0,Math.PI,0); ctx.fill(); }
+    function drawCoral(x,base){ ctx.strokeStyle='#e5749a'; ctx.lineCap='round';
+      const branch=(bx,by,ang,len,w)=>{ if(len<8) return; ctx.lineWidth=w; ctx.beginPath(); ctx.moveTo(bx,by);
+        const ex=bx+Math.cos(ang)*len, ey=by+Math.sin(ang)*len; ctx.lineTo(ex,ey); ctx.stroke();
+        branch(ex,ey,ang-0.5,len*0.7,w*0.7); branch(ex,ey,ang+0.5,len*0.7,w*0.7); };
+      branch(x,base,-Math.PI/2,32,9); }
+    function drawWreck(x,base){ ctx.save(); ctx.translate(x,base); ctx.rotate(-0.12);
+      ctx.fillStyle='#5a4632'; ctx.beginPath(); ctx.moveTo(-42,0); ctx.quadraticCurveTo(-48,-22,-20,-24);
+      ctx.lineTo(30,-24); ctx.quadraticCurveTo(48,-22,42,0); ctx.closePath(); ctx.fill();
+      ctx.fillStyle='#4a3a28'; ctx.fillRect(-4,-52,6,30);
+      ctx.strokeStyle='#3a2e20'; ctx.lineWidth=2;
+      for(let i=-30;i<=30;i+=12){ ctx.beginPath(); ctx.moveTo(i,-22); ctx.lineTo(i,-2); ctx.stroke(); }
+      ctx.restore(); }
+
     // ---- screens / UI ----
     const titleScreen=document.getElementById('titleScreen'), topbar=document.getElementById('topbar'),
           modal=document.getElementById('modal'), menu=document.getElementById('menu'), shop=document.getElementById('shop'),
@@ -325,17 +364,28 @@
 
     // shop
     const shopList=document.getElementById('shopList'), shopPearls=document.getElementById('shopPearls');
+    const DSWATCH={ kelp:'#2f8f60', rock:'#69737d', coral:'#e5749a', wreck:'#5a4632' };
+    function shopRow(sw,name,sub,price,onbuy){ const can=Math.floor(pearls)>=price;
+      const row=document.createElement('div'); row.className='shoprow';
+      row.innerHTML='<div class="swatch" style="background:'+sw+'"></div>'+
+        '<div class="sinfo"><div class="sname">'+name+'</div><div class="sprice">◍ '+price+' · '+sub+'</div></div>';
+      const b=document.createElement('button'); b.className='buy'; b.textContent='Buy'; b.disabled=!can;
+      b.addEventListener('click', onbuy); row.appendChild(b); shopList.appendChild(row); }
+    function subhead(txt){ const h=document.createElement('div');
+      h.style.cssText='margin:14px 0 2px;color:#8fb2c6;letter-spacing:1px;font-size:12px;text-transform:uppercase;font-family:-apple-system,Segoe UI,Roboto,sans-serif;font-weight:700';
+      h.textContent=txt; shopList.appendChild(h); }
     function renderShop(){ shopPearls.textContent=Math.floor(pearls); shopList.innerHTML='';
-      for(const sp of SPECIES){ const price=PRICE[sp.key], can=Math.floor(pearls)>=price;
-        const row=document.createElement('div'); row.className='shoprow';
-        row.innerHTML='<div class="swatch" style="background:'+sp.body+'"></div>'+
-          '<div class="sinfo"><div class="sname">'+sp.name+'</div><div class="sprice">◍ '+price+
-          ' · own '+ownedFish.filter(k=>k===sp.key).length+'</div></div>';
-        const b=document.createElement('button'); b.className='buy'; b.textContent='Buy'; b.disabled=!can;
-        b.addEventListener('click', ()=>buy(sp.key)); row.appendChild(b); shopList.appendChild(row); } }
-    function buy(key){ const price=PRICE[key]; if(Math.floor(pearls)<price) return;
+      subhead('Fish');
+      for(const sp of SPECIES) shopRow(sp.body, sp.name, 'own '+ownedFish.filter(k=>k===sp.key).length, PRICE[sp.key], ()=>buyFish(sp.key));
+      subhead('Décor');
+      for(const dc of DECOR) shopRow(DSWATCH[dc.key], dc.name, 'own '+decor.filter(d=>d.key===dc.key).length, dc.price, ()=>buyDecor(dc.key));
+    }
+    function buyFish(key){ const price=PRICE[key]; if(Math.floor(pearls)<price) return;
       pearls-=price; ownedFish.push(key); const sp=byKey(key); const p=mkPet(sp);
       p.x=rand(60,Math.max(80,W-60)); p.y=rand(120,Math.max(160,H-90)); tank.push(p);
+      save(); pearlN.textContent=Math.floor(pearls); renderShop(); }
+    function buyDecor(key){ const dc=DECOR.find(d=>d.key===key); if(!dc || Math.floor(pearls)<dc.price) return;
+      pearls-=dc.price; decor.push({ key, x:rand(W*0.14, W*0.86) });
       save(); pearlN.textContent=Math.floor(pearls); renderShop(); }
 
     // feeding: tap the tank water to drop food
