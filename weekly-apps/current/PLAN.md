@@ -49,9 +49,11 @@ weekly-apps/current/
       heading; sandy substrate with swaying weeds; reuses the animated water
       (gradient, god-rays, bubbles). Dive In → live tank + pearls top bar.
       Verified in browser, no JS errors.
-- [ ] Wed: interaction + economy — tap to feed (food particles, fish seek them),
-      pearls accrue over time & from feeding, a SHOP to buy species/décor,
-      persistence (localStorage).
+- [x] Wed: interaction + economy — tap the water to drop food (pellets sink; fish
+      seek + eat them), pearls accrue over time (with tank size) and +2 per bite; a
+      ☰ menu → SHOP to buy any of the 5 species (adds a fish, deducts pearls, Buy
+      greys out when unaffordable); pearls + owned fish persist in localStorage.
+      Verified: feed/economy/shop/reload-persistence all work, no JS errors.
 - [ ] Thu: content + polish — more species & décor, day↔night cycle with
       bioluminescence, COLLECTION screen, ambient sound, final production polish.
 - [ ] Ongoing (14:00 passes): richer graphics (god-rays, caustics, particles),
