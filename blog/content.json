@@ -1,81 +1,81 @@
 {
-  "issue": 51,
-  "date_short": "AUGUST 25",
-  "date_human": "Tuesday, August 25, 2026",
-  "construction_top": "pardon our HTML — the webmaster is still waiting for the A.I. to finish thinking",
+  "issue": 52,
+  "date_short": "AUGUST 26",
+  "date_human": "Wednesday, August 26, 2026",
+  "construction_top": "pardon our HTML — the webmaster's new mini computer is doubling as a hand-warmer",
   "ticker": [
-    "A.I. search startup now worth more than a small nation; too big to answer your actual question",
-    "New Zealand bans kids from the apps; teens deploy the ancient and undefeated birthday lie",
-    "folding phones now fold so much they're basically origami; behold the paper crane",
-    "chip giant raises prices again; the A.I. toll booth has noticed you have no choice",
-    "new models think slower to be smarter; the computer now says 'let me get back to you'",
-    "the future is expensive, foldable, patient, and quietly carding your teenager"
+    "A.I. firm catches a foreign influence op using its chatbot; propaganda now has a tone setting",
+    "Apple ships a tiny box that runs A.I. on your desk; your secrets finally stay indoors",
+    "new chip makes agents 'instantaneous'; they finish the task before you've explained it",
+    "phone maker bakes its own 3nm chip; everyone makes silicon now, like sourdough in 2020",
+    "hottest A.I. startup of the week makes... power supplies; even the boring parts pay now",
+    "the future is fast, homemade, private-ish, and quietly running the propaganda too"
   ],
   "articles": [
     {
-      "badge": "HOT!!",
+      "badge": "YIKES",
       "blink": true,
-      "title": "🔍 A.I. Search Startup's Value Balloons Past A Small Nation's Budget; Now Too Big To Actually Answer Your Question",
-      "dateline": "SILICON VALLEY — reported after a very long 'thinking…' spinner",
-      "tag": "MARKETS —",
+      "title": "🕵️ A.I. Company Catches A Foreign Influence Op Using Its Chatbot; Propaganda Now Comes With A Word Count And A Tone Setting",
+      "dateline": "SAN FRANCISCO — reported through a freshly closed loophole",
+      "tag": "SECURITY —",
       "paras": [
-        "An AI search company's valuation reportedly leapt from around $20 billion last year toward the stratosphere, with revenue topping $750 million as it pushes beyond mere search into \"agents\" that handle complex professional tasks — meaning it has graduated from answering your questions to confidently doing your job.",
-        "\"We're redefining how people find information,\" the company said, of a service now worth more than several countries and most human feelings. Analysts note the thesis is simple: if you own the box everyone types their questions into, you can eventually charge for the answers, the follow-ups, and possibly the silence in between."
+        "An AI lab announced it shut down a covert foreign influence operation that had been using its chatbot to churn out propaganda — confirming that the timeless craft of manufacturing lies has been thoroughly disrupted by a startup, and now ships with autocomplete.",
+        "\"We're committed to preventing abuse,\" the company said, of a service so useful that even the disinformation industry adopted it to boost productivity. Analysts note the propagandist's job has evolved from \"write a thousand fake comments\" to \"ask nicely and click regenerate,\" which is grim, efficient, and depressingly on-trend."
       ]
     },
     {
       "badge": "NEW!",
-      "title": "🚸 New Zealand Moves To Ban Kids From The Apps; Teens Discover The Ancient Art Of Lying About Their Birthday",
-      "dateline": "WELLINGTON — reported past a suspiciously tall 12-year-old",
-      "tag": "REGULATION —",
+      "title": "🖥️ Apple Ships A Tiny Box That Runs A.I. On Your Desk; The Cloud Is Now Slightly Closer To Home",
+      "dateline": "CUPERTINO — reported from a very small, very warm cube",
+      "tag": "GADGETS —",
       "paras": [
-        "New Zealand advanced legislation to keep young users off certain platforms, joining a global wave of age-ban laws — a well-meaning effort destined to be defeated, as always, within minutes, by a teenager and a birth year ending in a suspiciously round number.",
-        "\"We're protecting young people,\" lawmakers said, of rules that assume the internet can reliably tell how old anyone is, a thing it has never once managed to do. Experts note that the timeless teenage skill of clicking \"yes, I am 40 years old\" remains humanity's most durable and completely undefeated technology."
+        "Apple quietly released a new Mac mini built for the on-device AI era, letting the machine think for itself without shipping your every thought off to a distant data center — a refreshing idea in which your computer keeps its opinions, and your secrets, indoors.",
+        "\"It's powerful and private,\" Apple said, of a little box that runs models locally and, mercifully, does not first email them to a warehouse in another state. Reviewers praised the privacy while noting the device runs warm enough to double as a hand-warmer, a space heater, and, on cold mornings, a genuine reason to sit closer to your desk."
       ]
     },
     {
       "badge": "WOW!",
       "blink": true,
-      "title": "📱 Folding Phones Now Fold So Much They're Basically Origami; One More Crease And It's A Paper Crane",
-      "dateline": "SEOUL — reported along yet another hinge",
-      "tag": "GADGETS —",
+      "title": "⚡ New Chip Makes A.I. Agents 'Instantaneous'; They Now Finish The Task Before You've Explained It",
+      "dateline": "SANTA CLARA — reported faster than you can read this",
+      "tag": "HARDWARE —",
       "paras": [
-        "The latest wave of folding-phone breakthroughs has devices bending thinner, flatter, and more times than ever — a relentless march that will end, logically, with a smartphone you fold into a swan and place gently on the mantel.",
-        "\"It's the future of form factors,\" makers insist, of phones that now fold in half, then in half again, chasing a horizon where the device is technically a pamphlet. Reviewers admire the engineering while noting that the more a phone folds, the more ways it has learned to develop a mysterious crease exactly where you look most."
-      ]
-    },
-    {
-      "badge": "$$$",
-      "title": "💰 Chip Giant Warns Customers Of Price Hikes; The Toll Booth On The A.I. Highway Raises Its Rates Again",
-      "dateline": "SANTA CLARA — filed while re-reading the invoice",
-      "tag": "MARKETS —",
-      "paras": [
-        "The dominant AI chipmaker reportedly warned customers to brace for price increases, gently reminding the entire industry that the road to artificial intelligence runs through exactly one toll booth — and the toll booth has noticed.",
-        "\"Costs reflect demand,\" the company explained, to buyers with no realistic alternative and a deepening familiarity with the phrase \"take it or leave it.\" Analysts note that when everyone needs your product to compete, \"the price went up\" is less a business update and more a weather forecast."
+        "The dominant chipmaker pushed specialized inference silicon into full production to make AI agents feel instantaneous — so responsive that the assistant now completes your request in the brief silence between you deciding to speak and actually speaking.",
+        "\"Latency is the enemy,\" engineers explained, of hardware built so agents never make you wait, forever eliminating the last human buffer against a machine that acts before you've finished your sentence. Early users report it is thrilling, seamless, and only occasionally unsettling to be helped before asking, like a butler who has read the future and finds it a little dull."
       ]
     },
     {
       "badge": "SCOOP",
-      "title": "🐌 New A.I. Models Deliberately Think Slower To Be Smarter; Finally, A Computer That Says 'Let Me Get Back To You'",
-      "dateline": "THE DATA CENTER — reported during a long, thoughtful pause",
-      "tag": "MODELS —",
+      "title": "🔬 Phone Maker Debuts Its Own 3-Nanometer Chip; Everybody Now Makes Their Own Silicon, Like Sourdough In 2020",
+      "dateline": "BEIJING — reported through a microscope, again",
+      "tag": "HARDWARE —",
       "paras": [
-        "The latest frontier models increasingly trade raw speed for accuracy, taking extra time to \"reason\" before answering — meaning that, after decades of demanding faster computers, we have finally built one that thoughtfully asks for a minute.",
-        "\"Slower is smarter,\" researchers explained, of models that now pause, ponder, and double-check like a wise elder instead of blurting out the first thing that comes to mind. Users report the answers are markedly better and the waiting markedly worse, proving once again you cannot have everything — even from a machine that cost a billion dollars."
+        "A major phone maker showed off its latest homegrown 3-nanometer chip, joining the ever-growing club of companies that decided the only way to stop depending on someone else's silicon was to painstakingly bake their own.",
+        "\"Self-reliance is the goal,\" the company said, of an industry-wide urge to control its own chips that carries all the collective energy of everyone starting a sourdough during a lockdown. Analysts note that in 2026, announcing you make your own silicon is less a technical milestone than a personality — and everyone has it."
+      ]
+    },
+    {
+      "badge": "$$$",
+      "title": "🔌 Hottest A.I. Startup Of The Week Makes... Power Supplies; Even The Boring Parts Are Now A Gold Mine",
+      "dateline": "MUNICH-ISH — filed from beside a very in-demand transformer",
+      "tag": "DEALS —",
+      "paras": [
+        "A chip company is acquiring a startup that develops digital power technology for AI data centers, proving the AI boom has grown so vast that even the deeply unglamorous business of \"making sure the electricity arrives correctly\" is now a multimillion-dollar prize.",
+        "\"Power efficiency is critical,\" executives said, of the once-invisible plumbing that has quietly become the industry's most coveted skill. Analysts note the surest sign of a bubble — or a genuine revolution — is when the least exciting job in the building suddenly gets a standing ovation and a buyout offer."
       ]
     }
   ],
   "horoscopes": [
-    { "sign": "♒ Aquarius:", "text": "An A.I. will take its sweet time answering you today. Breathe. Genius, apparently, now buffers." },
-    { "sign": "♌ Leo:", "text": "You will be asked to prove your age online. Mercury suggests honesty; recorded history suggests otherwise." },
-    { "sign": "♓ Pisces:", "text": "Mercury folds a phone into a crane. Beauty is fragile, expensive, and creased exactly where you look." }
+    { "sign": "♒ Aquarius:", "text": "Something will help you before you even ask today. Enjoy it. Also, perhaps, be a little concerned." },
+    { "sign": "♌ Leo:", "text": "You will consider making your own chip today. Or bread. The urge is identical. Follow it wherever it leads." },
+    { "sign": "♓ Pisces:", "text": "Mercury runs locally now, on your desk, warm to the touch. Keep your secrets close and your vents clear." }
   ],
-  "tech_tip": "If an A.I. takes longer to answer now, that's a feature — it's 'thinking.' If YOU take longer, that's a meeting. Life remains deeply unfair.",
-  "gadget_watch": "Folding phones keep folding toward full origami, chip prices keep climbing, and your new A.I. would like a moment to think, thank you. The future: slower, pricier, and available in swan.",
+  "tech_tip": "If your new computer runs A.I. 'on device,' that's good for privacy — and great for warming your hands. Every feature is two features if you're cold enough.",
+  "gadget_watch": "Apple's new Mac mini keeps your A.I. (and your thoughts) at home, and it runs warm enough to notice. Meanwhile chips are now so fast your assistant answers before you ask — a butler from the future, mildly bored.",
   "classifieds": [
-    { "label": "FOR SALE:", "text": "one (1) folding phone; folds six times, developed a crease out of pure spite. Makes a genuinely lovely paper crane." },
-    { "label": "WANTED:", "text": "an A.I. chip toll-booth alternative. Any alternative. A dirt road would honestly do at this point." },
-    { "label": "LOST:", "text": "the ability to lie about my age online now that the whole world is checking. Rest in peace, birthday of 1985." },
-    { "label": "MISSED CONNECTION:", "text": "You: an A.I. that thinks carefully before answering. Me: someone in a real hurry. It'll never work, but take your time." }
+    { "label": "FOR SALE:", "text": "one (1) tiny A.I. computer; runs models locally, keeps secrets, doubles as a hand-warmer. Very cozy." },
+    { "label": "WANTED:", "text": "a propaganda operation that still writes its own lies by hand. For nostalgia purposes. Artisanal only." },
+    { "label": "LOST:", "text": "the gap between deciding to ask and getting an answer. The new chip ate it. It was, apparently, load-bearing." },
+    { "label": "MISSED CONNECTION:", "text": "You: a startup that just makes power supplies. Me: an investor who finally understands. Let's plug in." }
   ]
 }
