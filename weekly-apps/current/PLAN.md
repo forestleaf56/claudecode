@@ -65,11 +65,12 @@ weekly-apps/current/
 - Self-contained single index.html, Canvas 2D. NO Supabase / NO Gemini API → no API
   keys, no env vars, no api/ folder / Vercel setup. Runs by opening index.html.
 - Fathom is a cozy pocket aquarium: tap the water to feed fish (earns pearls),
-  pearls also accrue over time; open ☰ → Shop to buy species & décor; Collection
-  catalogues your fish; a day/night cycle brings out glowing fish at night. Saves
-  automatically to localStorage.
-- [ ] Ongoing (14:00 passes): richer graphics (god-rays, caustics, particles),
-      more species/décor/content, and title/menu refinement.
+  pearls also accrue over time; open ☰ → Shop to buy any of 7 species & 4 décor;
+  Collection catalogues your fish; a day/night cycle brings out glowing fish at
+  night; ambient sound with a 🔈/🔇 toggle. Saves automatically to localStorage.
+- [x] Thu 14:00 (ship-ready polish): ambient WebAudio (drone pad + feed/eat/buy
+      blips + 🔈/🔇 mute toggle, persisted), two more species (Guppy, Koi → 7
+      total), and feeding ripple rings. Verified headless, no JS errors.
 
 ## Status notes
 - Mon 2026-08-24: first week under the raised production-quality bar + twice-daily
