@@ -54,8 +54,20 @@ weekly-apps/current/
       ☰ menu → SHOP to buy any of the 5 species (adds a fish, deducts pearls, Buy
       greys out when unaffordable); pearls + owned fish persist in localStorage.
       Verified: feed/economy/shop/reload-persistence all work, no JS errors.
-- [ ] Thu: content + polish — more species & décor, day↔night cycle with
-      bioluminescence, COLLECTION screen, ambient sound, final production polish.
+- [x] Thu: day↔night cycle (~90s) — the water lerps day↔night, god-rays fade after
+      dark, a ☀/🌙 indicator in the top bar, and glowing species (neon tetra,
+      lanternfish) bioluminesce at night. A real COLLECTION screen (species cards
+      with in-tank counts; unowned dimmed), reachable from the title and the menu.
+      Verified in browser (day + night + collection), no JS errors.
+      (Ambient sound + extra species left for the 14:00 pass.)
+
+## Friday readme notes
+- Self-contained single index.html, Canvas 2D. NO Supabase / NO Gemini API → no API
+  keys, no env vars, no api/ folder / Vercel setup. Runs by opening index.html.
+- Fathom is a cozy pocket aquarium: tap the water to feed fish (earns pearls),
+  pearls also accrue over time; open ☰ → Shop to buy species & décor; Collection
+  catalogues your fish; a day/night cycle brings out glowing fish at night. Saves
+  automatically to localStorage.
 - [ ] Ongoing (14:00 passes): richer graphics (god-rays, caustics, particles),
       more species/décor/content, and title/menu refinement.
 
