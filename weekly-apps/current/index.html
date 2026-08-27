@@ -103,7 +103,10 @@
   <!-- in-tank top bar -->
   <div class="topbar hidden" id="topbar">
     <div class="pearls">◍ <b id="pearlN">0</b> <span>pearls</span> <span class="dn" id="daynight">☀</span></div>
-    <button class="iconbtn" id="backBtn">☰</button>
+    <div style="display:flex; gap:8px">
+      <button class="iconbtn" id="soundBtn">🔈</button>
+      <button class="iconbtn" id="backBtn">☰</button>
+    </div>
   </div>
 
   <!-- menu -->
@@ -158,8 +161,24 @@
     let state='title';
     let bubbles=[], rays=[], fish=[], tank=[], motes=[], food=[], decor=[], pops=[];
     let pearls=20, ownedFish=[], saveT=0, dayPhase=0.25;
+    let actx=null, masterGain=null, soundOn=true, ripples=[];
+    try{ soundOn = localStorage.getItem('fathom_sound')!=='0'; }catch(e){}
+    function initAudio(){ if(actx) return; try{
+      actx=new (window.AudioContext||window.webkitAudioContext)();
+      masterGain=actx.createGain(); masterGain.gain.value=soundOn?1:0; masterGain.connect(actx.destination);
+      const pad=actx.createGain(); pad.gain.value=0.02; pad.connect(masterGain);       // soft ambient drone
+      [55,82.5,110].forEach((f,i)=>{ const o=actx.createOscillator(); o.type='sine'; o.frequency.value=f*(1+i*0.004);
+        const lp=actx.createBiquadFilter(); lp.type='lowpass'; lp.frequency.value=380; o.connect(lp); lp.connect(pad); o.start(); });
+    }catch(e){} }
+    function blip(freq,dur,type,vol){ if(!actx||!soundOn) return; try{ const t=actx.currentTime,o=actx.createOscillator(),g=actx.createGain();
+      o.type=type||'sine'; o.frequency.setValueAtTime(freq,t); g.gain.setValueAtTime(0.0001,t);
+      g.gain.exponentialRampToValueAtTime(vol||0.07,t+0.01); g.gain.exponentialRampToValueAtTime(0.0001,t+(dur||0.12));
+      o.connect(g); g.connect(masterGain); o.start(t); o.stop(t+(dur||0.12)+0.03); }catch(e){} }
+    function setSound(on){ soundOn=on; if(masterGain) masterGain.gain.value=on?1:0;
+      try{ localStorage.setItem('fathom_sound', on?'1':'0'); }catch(e){}
+      const el=document.getElementById('soundBtn'); if(el) el.textContent=on?'🔈':'🔇'; }
     const byKey = k => SPECIES.find(s=>s.key===k);
-    const PRICE = { neon:8, ember:14, sunny:18, angel:40, lumen:60 };
+    const PRICE = { guppy:10, neon:8, ember:14, sunny:18, angel:40, koi:80, lumen:60 };
     const DECOR = [
       { key:'kelp',  name:'Kelp',      price:12 },
       { key:'rock',  name:'Boulders',  price:16 },
@@ -171,6 +190,8 @@
       { key:'ember', name:'Ember Molly', body:'#ff8a5c', fin:'#ffd7b0', size:17, glow:false },
       { key:'sunny', name:'Sunfish',     body:'#f2c66d', fin:'#fff0c4', size:20, glow:false },
       { key:'angel', name:'Angelfish',   body:'#c9d6e6', fin:'#eef4ff', size:22, glow:false },
+      { key:'guppy', name:'Guppy',       body:'#7ad6a0', fin:'#d6ffe6', size:11, glow:false },
+      { key:'koi',   name:'Koi',         body:'#ff6b52', fin:'#ffd0c0', size:24, glow:false },
       { key:'lumen', name:'Lanternfish', body:'#b06cff', fin:'#e2c7ff', size:14, glow:true  },
     ];
     function seed(){
@@ -227,6 +248,11 @@
         for(const q of pops){ q.x+=q.vx*dt; q.y+=q.vy*dt; q.vy+=70*dt; q.life-=dt*1.8;
           ctx.globalAlpha=Math.max(0,q.life); ctx.fillStyle='#ffe9a8'; ctx.beginPath(); ctx.arc(q.x,q.y,2,0,7); ctx.fill(); }
         ctx.globalAlpha=1; pops=pops.filter(q=>q.life>0);
+        // feeding ripples
+        for(const rp of ripples){ rp.r+=90*dt; rp.life-=dt*1.4;
+          ctx.globalAlpha=Math.max(0,rp.life)*0.5; ctx.strokeStyle='#bfe9f2'; ctx.lineWidth=2;
+          ctx.beginPath(); ctx.arc(rp.x,rp.y,rp.r,0,7); ctx.stroke(); }
+        ctx.globalAlpha=1; ripples=ripples.filter(rp=>rp.life>0);
         // food pellets sink; fish eat them (see updatePet)
         for(const p of food){ if(p.y<H-30) p.y+=p.vy*dt; else p.rest=(p.rest||0)+dt;
           ctx.fillStyle='#ffd98a'; ctx.shadowColor='#ffcf6b'; ctx.shadowBlur=6;
@@ -290,7 +316,8 @@
         dx += (fed.x-f.x)/d*2.4; dy += (fed.y-f.y)/d*2.4;
         if(d<12){ fed.eaten=true; pearls+=2; f.spd=Math.min(f.spd+1.5,58);
           for(let i=0;i<4;i++) bubbles.push(Object.assign(mkBubble(false),{x:fed.x+rand(-4,4),y:fed.y}));
-          for(let i=0;i<5;i++) pops.push({ x:fed.x, y:fed.y, vx:rand(-40,40), vy:rand(-52,-12), life:1 }); } }
+          for(let i=0;i<5;i++) pops.push({ x:fed.x, y:fed.y, vx:rand(-40,40), vy:rand(-52,-12), life:1 });
+          blip(860,0.05,'triangle',0.05); } }
       // light schooling among the same species (cohesion + alignment + separation)
       let cx=0,cy=0,ax=0,ay=0,sx=0,sy=0,n=0;
       for(const o of tank){ if(o===f) continue; const ox=o.x-f.x, oy=o.y-f.y, d=Math.hypot(ox,oy);
@@ -378,8 +405,9 @@
           '<div class="coname">'+sp.name+'</div><div class="cocount">'+(n? n+' in tank' : 'not yet kept')+'</div>';
         collGrid.appendChild(c); } }
 
-    document.getElementById('playBtn').addEventListener('click', ()=>{ state='tank'; pearlN.textContent=Math.floor(pearls); show(titleScreen,false); show(topbar,true); });
+    document.getElementById('playBtn').addEventListener('click', ()=>{ initAudio(); setSound(soundOn); state='tank'; pearlN.textContent=Math.floor(pearls); show(titleScreen,false); show(topbar,true); });
     document.getElementById('backBtn').addEventListener('click', ()=>show(menu,true));
+    document.getElementById('soundBtn').addEventListener('click', ()=>{ initAudio(); setSound(!soundOn); });
     document.getElementById('menuResume').addEventListener('click', ()=>show(menu,false));
     document.getElementById('menuTitle').addEventListener('click', ()=>{ save(); state='title'; show(menu,false); show(topbar,false); show(titleScreen,true); });
     document.getElementById('shopOpen').addEventListener('click', ()=>{ show(menu,false); renderShop(); show(shop,true); });
@@ -417,16 +445,18 @@
     function buyFish(key){ const price=PRICE[key]; if(Math.floor(pearls)<price) return;
       pearls-=price; ownedFish.push(key); const sp=byKey(key); const p=mkPet(sp);
       p.x=rand(60,Math.max(80,W-60)); p.y=rand(120,Math.max(160,H-90)); tank.push(p);
-      save(); pearlN.textContent=Math.floor(pearls); renderShop(); }
+      blip(680,0.07,'square',0.05); save(); pearlN.textContent=Math.floor(pearls); renderShop(); }
     function buyDecor(key){ const dc=DECOR.find(d=>d.key===key); if(!dc || Math.floor(pearls)<dc.price) return;
       pearls-=dc.price; decor.push({ key, x:rand(W*0.14, W*0.86) });
-      save(); pearlN.textContent=Math.floor(pearls); renderShop(); }
+      blip(680,0.07,'square',0.05); save(); pearlN.textContent=Math.floor(pearls); renderShop(); }
 
     // feeding: tap the tank water to drop food
     cv.addEventListener('pointerdown', e=>{ if(state!=='tank'||anyOverlay()) return;
       const x=e.clientX, y=Math.max(70, e.clientY-30);
-      for(let i=0;i<4;i++) food.push({ x:x+rand(-16,16), y:y+rand(-8,8), vy:rand(26,40), r:rand(2.2,3.4) }); }, {passive:true});
+      for(let i=0;i<4;i++) food.push({ x:x+rand(-16,16), y:y+rand(-8,8), vy:rand(26,40), r:rand(2.2,3.4) });
+      ripples.push({ x:e.clientX, y:e.clientY, r:6, life:1 }); blip(560,0.09,'sine',0.05); }, {passive:true});
 
+    document.getElementById('soundBtn').textContent = soundOn?'🔈':'🔇';
     load();
     resize(); requestAnimationFrame(frame);
   })();
