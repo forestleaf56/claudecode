@@ -1,81 +1,81 @@
 {
-  "issue": 52,
-  "date_short": "AUGUST 26",
-  "date_human": "Wednesday, August 26, 2026",
-  "construction_top": "pardon our HTML — the webmaster's new mini computer is doubling as a hand-warmer",
+  "issue": 53,
+  "date_short": "AUGUST 27",
+  "date_human": "Thursday, August 27, 2026",
+  "construction_top": "pardon our HTML — the webmaster is trying to keep up with 362 new A.I. models and has stopped blinking",
   "ticker": [
-    "A.I. firm catches a foreign influence op using its chatbot; propaganda now has a tone setting",
-    "Apple ships a tiny box that runs A.I. on your desk; your secrets finally stay indoors",
-    "new chip makes agents 'instantaneous'; they finish the task before you've explained it",
-    "phone maker bakes its own 3nm chip; everyone makes silicon now, like sourdough in 2020",
-    "hottest A.I. startup of the week makes... power supplies; even the boring parts pay now",
-    "the future is fast, homemade, private-ish, and quietly running the propaganda too"
+    "social giant pays $16.68B for hooking teens; calls it a rounding error with feelings",
+    "the humans who trained the A.I. are laid off after 21 years; the student fired the teacher",
+    "A.I. firm's own chip beats the chip king per watt; the customer built a better toll booth",
+    "rocket company plans a $100B launch complex; the number left Earth without a rocket",
+    "A.I. industry now ships a new model every time you blink; nobody can keep up, including them",
+    "the future is addictive, self-taught, efficient, astronomically expensive, and already out of date"
   ],
   "articles": [
     {
-      "badge": "YIKES",
+      "badge": "HOT!!",
       "blink": true,
-      "title": "🕵️ A.I. Company Catches A Foreign Influence Op Using Its Chatbot; Propaganda Now Comes With A Word Count And A Tone Setting",
-      "dateline": "SAN FRANCISCO — reported through a freshly closed loophole",
-      "tag": "SECURITY —",
+      "title": "💸 Social Giant To Pay $16.68 Billion For Designing Apps To Hook Teenagers; Calls It A 'Rounding Error With Feelings'",
+      "dateline": "MENLO PARK — reported between two infinite scrolls",
+      "tag": "LEGAL —",
       "paras": [
-        "An AI lab announced it shut down a covert foreign influence operation that had been using its chatbot to churn out propaganda — confirming that the timeless craft of manufacturing lies has been thoroughly disrupted by a startup, and now ships with autocomplete.",
-        "\"We're committed to preventing abuse,\" the company said, of a service so useful that even the disinformation industry adopted it to boost productivity. Analysts note the propagandist's job has evolved from \"write a thousand fake comments\" to \"ask nicely and click regenerate,\" which is grim, efficient, and depressingly on-trend."
+        "A social-media giant agreed to pay up to $16.68 billion to settle claims it deliberately engineered its apps to hook teenagers — a number large enough to sting slightly and small enough to be recouped by roughly Tuesday afternoon.",
+        "\"We've always prioritized well-being,\" the company said, of platforms scientifically optimized to be impossible to put down, now paying a historic sum to acknowledge they succeeded. Analysts note the settlement confirms the apps were addictive by design, which everyone already knew — having checked the app in question about four times while reading this very sentence."
       ]
     },
     {
       "badge": "NEW!",
-      "title": "🖥️ Apple Ships A Tiny Box That Runs A.I. On Your Desk; The Cloud Is Now Slightly Closer To Home",
-      "dateline": "CUPERTINO — reported from a very small, very warm cube",
-      "tag": "GADGETS —",
+      "title": "🧑‍💻 The Humans Who Trained The A.I. Are Laid Off After 21 Years; The Student Has Officially Fired The Teacher",
+      "dateline": "THE INTERNET — reported by a suddenly very quiet crowd",
+      "tag": "INDUSTRY —",
       "paras": [
-        "Apple quietly released a new Mac mini built for the on-device AI era, letting the machine think for itself without shipping your every thought off to a distant data center — a refreshing idea in which your computer keeps its opinions, and your secrets, indoors.",
-        "\"It's powerful and private,\" Apple said, of a little box that runs models locally and, mercifully, does not first email them to a warehouse in another state. Reviewers praised the privacy while noting the device runs warm enough to double as a hand-warmer, a space heater, and, on cold mornings, a genuine reason to sit closer to your desk."
+        "A tech giant is shutting down its long-running human-work marketplace after 21 years — the vast crowd of people who labeled the data and answered the questions that taught modern AI how to think — in what may be the most on-the-nose ending in tech history.",
+        "\"We thank everyone for their contributions,\" the company said, closing the very service whose workers hand-fed the machine-learning era one tiny task at a time, until the machine no longer needed them. Historians will note that the tutors trained the pupil so well it graduated, took their job, and turned off the lights on the way out."
       ]
     },
     {
       "badge": "WOW!",
       "blink": true,
-      "title": "⚡ New Chip Makes A.I. Agents 'Instantaneous'; They Now Finish The Task Before You've Explained It",
-      "dateline": "SANTA CLARA — reported faster than you can read this",
+      "title": "🔋 A.I. Company's Own Chip Beats The Chip King On Efficiency; The Customer Has Built A Better Toll Booth",
+      "dateline": "SAN FRANCISCO — reported by the light of one very efficient LED",
       "tag": "HARDWARE —",
       "paras": [
-        "The dominant chipmaker pushed specialized inference silicon into full production to make AI agents feel instantaneous — so responsive that the assistant now completes your request in the brief silence between you deciding to speak and actually speaking.",
-        "\"Latency is the enemy,\" engineers explained, of hardware built so agents never make you wait, forever eliminating the last human buffer against a machine that acts before you've finished your sentence. Early users report it is thrilling, seamless, and only occasionally unsettling to be helped before asking, like a butler who has read the future and finds it a little dull."
+        "A leading AI lab says its first custom inference chip now outperforms the dominant chipmaker's flagship systems on AI-work-per-watt — meaning the industry's biggest customer looked at the world's most expensive toll booth and decided to build its own road.",
+        "\"We needed efficiency at our scale,\" the company said, of a chip born from the timeless frustration of paying someone else a fortune every single day. Analysts note that when your suppliers get rich enough, they eventually become your competitors — a lesson the chip king is now learning at a very high, very well-cooled clock speed."
       ]
     },
     {
       "badge": "SCOOP",
-      "title": "🔬 Phone Maker Debuts Its Own 3-Nanometer Chip; Everybody Now Makes Their Own Silicon, Like Sourdough In 2020",
-      "dateline": "BEIJING — reported through a microscope, again",
-      "tag": "HARDWARE —",
+      "title": "🚀 Rocket Company Plans A $100 Billion Launch Complex; The Number Has Left Earth Without A Rocket",
+      "dateline": "SOUTH TEXAS — reported from a respectful distance",
+      "tag": "MARKETS —",
       "paras": [
-        "A major phone maker showed off its latest homegrown 3-nanometer chip, joining the ever-growing club of companies that decided the only way to stop depending on someone else's silicon was to painstakingly bake their own.",
-        "\"Self-reliance is the goal,\" the company said, of an industry-wide urge to control its own chips that carries all the collective energy of everyone starting a sourdough during a lockdown. Analysts note that in 2026, announcing you make your own silicon is less a technical milestone than a personality — and everyone has it."
+        "A rocket company unveiled plans for a staggering $100 billion launch complex, a sum so enormous it has achieved escape velocity on its own and no longer requires a vehicle to leave the atmosphere.",
+        "\"We're building for the future,\" the company said, of a facility that costs more than the annual budget of several nations and, presumably, comes with genuinely excellent parking. Analysts note that in 2026, the phrase \"we're spending $100 billion\" is now delivered with the breezy calm most people reserve for \"we're getting a new couch.\""
       ]
     },
     {
-      "badge": "$$$",
-      "title": "🔌 Hottest A.I. Startup Of The Week Makes... Power Supplies; Even The Boring Parts Are Now A Gold Mine",
-      "dateline": "MUNICH-ISH — filed from beside a very in-demand transformer",
-      "tag": "DEALS —",
+      "badge": "NEAT",
+      "title": "🤯 A.I. Industry Now Releases A New Model Roughly Every Time You Blink; Nobody, Including The Makers, Can Keep Up",
+      "dateline": "EVERYWHERE AT ONCE — reported before this model was outdated",
+      "tag": "MODELS —",
       "paras": [
-        "A chip company is acquiring a startup that develops digital power technology for AI data centers, proving the AI boom has grown so vast that even the deeply unglamorous business of \"making sure the electricity arrives correctly\" is now a multimillion-dollar prize.",
-        "\"Power efficiency is critical,\" executives said, of the once-invisible plumbing that has quietly become the industry's most coveted skill. Analysts note the surest sign of a bubble — or a genuine revolution — is when the least exciting job in the building suddenly gets a standing ovation and a buyout offer."
+        "Trackers now count more than 362 AI model releases across major labs this year, a torrent so relentless that by the time you finish reading about a new state-of-the-art model, it has been quietly superseded by two others and a weekend hackathon.",
+        "\"Innovation is accelerating,\" companies insist, of a release schedule that has turned staying current into a full-time job with no salary and no end. Experts recommend simply picking one model, loving it, and refusing to look at the news — the way one survives any stampede: by standing very still and closing your eyes."
       ]
     }
   ],
   "horoscopes": [
-    { "sign": "♒ Aquarius:", "text": "Something will help you before you even ask today. Enjoy it. Also, perhaps, be a little concerned." },
-    { "sign": "♌ Leo:", "text": "You will consider making your own chip today. Or bread. The urge is identical. Follow it wherever it leads." },
-    { "sign": "♓ Pisces:", "text": "Mercury runs locally now, on your desk, warm to the touch. Keep your secrets close and your vents clear." }
+    { "sign": "♒ Aquarius:", "text": "You will check an app four times while trying to stop checking it. This is not your fault. It's a legal settlement." },
+    { "sign": "♌ Leo:", "text": "Do not chase every new model today. Pick one. Love it. Close the other tabs. There, at last, is peace." },
+    { "sign": "♓ Pisces:", "text": "Mercury reaches escape velocity on budget alone. Aim high, spend wildly, and park with tremendous ease." }
   ],
-  "tech_tip": "If your new computer runs A.I. 'on device,' that's good for privacy — and great for warming your hands. Every feature is two features if you're cold enough.",
-  "gadget_watch": "Apple's new Mac mini keeps your A.I. (and your thoughts) at home, and it runs warm enough to notice. Meanwhile chips are now so fast your assistant answers before you ask — a butler from the future, mildly bored.",
+  "tech_tip": "If keeping up with new A.I. models feels impossible, that's because it is. Pick one, learn it well, and let the stampede pass.",
+  "gadget_watch": "No new gadget this week — just a $100 billion launch complex and a chip war where the customers now build better chips than their supplier. The takeaway: everything is enormous, and your phone is fine, actually.",
   "classifieds": [
-    { "label": "FOR SALE:", "text": "one (1) tiny A.I. computer; runs models locally, keeps secrets, doubles as a hand-warmer. Very cozy." },
-    { "label": "WANTED:", "text": "a propaganda operation that still writes its own lies by hand. For nostalgia purposes. Artisanal only." },
-    { "label": "LOST:", "text": "the gap between deciding to ask and getting an answer. The new chip ate it. It was, apparently, load-bearing." },
-    { "label": "MISSED CONNECTION:", "text": "You: a startup that just makes power supplies. Me: an investor who finally understands. Let's plug in." }
+    { "label": "FOR SALE:", "text": "21 years of human-labeled training data. The workers are gone; the machine says thanks and means it, probably." },
+    { "label": "WANTED:", "text": "someone who has actually kept up with all 362 new A.I. models. For science, and possibly an intervention." },
+    { "label": "LOST:", "text": "$16.68 billion, down the back of a social network's couch. It'll turn up by roughly Tuesday afternoon." },
+    { "label": "MISSED CONNECTION:", "text": "You: a chip king, dethroned by your own best customer. Me: someone who warned you. Efficiently. Per watt." }
   ]
 }

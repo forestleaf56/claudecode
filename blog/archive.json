@@ -1,5 +1,21 @@
 [
   {
+    "issue": 52,
+    "date_short": "AUGUST 26",
+    "date_human": "Wednesday, August 26, 2026",
+    "article": {
+      "badge": "YIKES",
+      "blink": true,
+      "title": "🕵️ A.I. Company Catches A Foreign Influence Op Using Its Chatbot; Propaganda Now Comes With A Word Count And A Tone Setting",
+      "dateline": "SAN FRANCISCO — reported through a freshly closed loophole",
+      "tag": "SECURITY —",
+      "paras": [
+        "An AI lab announced it shut down a covert foreign influence operation that had been using its chatbot to churn out propaganda — confirming that the timeless craft of manufacturing lies has been thoroughly disrupted by a startup, and now ships with autocomplete.",
+        "\"We're committed to preventing abuse,\" the company said, of a service so useful that even the disinformation industry adopted it to boost productivity. Analysts note the propagandist's job has evolved from \"write a thousand fake comments\" to \"ask nicely and click regenerate,\" which is grim, efficient, and depressingly on-trend."
+      ]
+    }
+  },
+  {
     "issue": 51,
     "date_short": "AUGUST 25",
     "date_human": "Tuesday, August 25, 2026",
