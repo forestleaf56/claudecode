@@ -38,6 +38,17 @@ Each app must be:
 - **Good graphics + real content** — better visuals (animation, particles, shadows,
   transitions, nicer shapes/sprites) and enough depth (more levels/words/modes) that
   it never feels thin. This is what the 14:00 afternoon passes are for.
+- **Long-term playable (longevity)** — the app must have enough content/depth to stay
+  engaging for a **very long time** (weeks/months), not run dry after a few minutes.
+  Designed in on Monday (the concept itself must be inherently long-lived) and built up
+  through the week: for a **game** — procedural/randomized generation, escalating
+  difficulty & progression, many levels/words/puzzles/items/enemies, unlockables &
+  upgrades, multiple modes, high-score/streak/daily-challenge chasing; for an
+  **app/toy** — no artificial content ceiling (arbitrary user input, saved
+  history/projects/collections, presets, multiple tools/modes, export/share). The
+  Monday `PLAN.md` carries an explicit **"LONGEVITY: endless/replayable content &
+  progression"** checklist item; the 14:00 passes expand it; Thursday verifies it
+  before ship.
 
 ---
 
