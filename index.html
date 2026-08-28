@@ -3,321 +3,462 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-<meta name="theme-color" content="#12161b">
-<title>Fives</title>
+<meta name="theme-color" content="#04121f">
+<title>Fathom</title>
 <style>
   :root{
-    --bg:#12161b; --panel:#1b2129; --line:#2b333d; --tile:#212a33;
-    --green:#3ec46d; --amber:#e5a63b; --slate:#3a4550; --ink:#eef3f7; --muted:#8b98a6;
+    --ink:#eaf6ff; --muted:#8fb2c6; --gold:#f2c66d; --gold-2:#e3a94a;
+    --teal:#4fd0d6; --deep:#04121f;
   }
   *{ margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
   html,body{ height:100%; }
-  body{ background:var(--bg); color:var(--ink); overflow:hidden;
-    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
-    user-select:none; -webkit-user-select:none; touch-action:manipulation;
-    display:flex; flex-direction:column; align-items:center;
-    padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left); }
+  body{ background:var(--deep); color:var(--ink); overflow:hidden;
+    font-family:Georgia,"Times New Roman",serif; user-select:none; -webkit-user-select:none; touch-action:none; }
+  #bg{ position:fixed; inset:0; display:block; z-index:0; }
 
-  header{ position:relative; width:100%; max-width:460px; display:flex; align-items:center; justify-content:center;
-    padding:16px; border-bottom:1px solid var(--line); }
-  .logo{ font-size:28px; font-weight:900; letter-spacing:8px; padding-left:8px;
-    background:linear-gradient(120deg,var(--green),#bfe8cf); -webkit-background-clip:text; background-clip:text; color:transparent; }
-  .tag{ position:absolute; right:16px; font-size:11px; color:var(--muted); letter-spacing:1px; text-transform:uppercase; }
+  .screen{ position:fixed; inset:0; z-index:1; display:flex; flex-direction:column;
+    align-items:center; justify-content:center; text-align:center; padding:28px;
+    padding-top:calc(28px + env(safe-area-inset-top)); }
+  .screen.hidden{ display:none; }
 
-  main{ flex:1 1 auto; width:100%; max-width:460px; display:flex; flex-direction:column;
-    align-items:center; justify-content:space-between; gap:10px; padding:14px 12px 12px; }
+  /* title */
+  .kicker{ font-size:12px; letter-spacing:6px; text-transform:uppercase; color:var(--teal);
+    opacity:.85; margin-bottom:10px; font-family:-apple-system,Segoe UI,Roboto,sans-serif; }
+  .logo{ font-size:clamp(48px,15vw,104px); font-weight:700; letter-spacing:9px; padding-left:9px;
+    line-height:.9; color:#dff6ff; text-shadow:0 2px 30px rgba(79,208,214,.45), 0 1px 0 rgba(0,0,0,.4); }
+  .tagline{ font-style:italic; font-size:clamp(15px,4.5vw,20px); color:var(--muted); margin-top:14px; letter-spacing:1px; }
+  .menu{ margin-top:44px; display:flex; flex-direction:column; gap:14px; width:min(78vw,300px); }
+  .btn{ padding:16px 22px; border-radius:14px; font-size:17px; font-weight:700; letter-spacing:2px;
+    text-transform:uppercase; cursor:pointer; font-family:-apple-system,Segoe UI,Roboto,sans-serif;
+    border:1px solid rgba(120,200,215,.35); color:var(--ink); background:rgba(11,40,58,.55);
+    backdrop-filter:blur(3px); transition:transform .08s, filter .15s; }
+  .btn:active{ transform:scale(.97); }
+  .btn.primary{ border:none; color:#20160a;
+    background:linear-gradient(160deg,#ffdc8a,var(--gold-2));
+    box-shadow:0 8px 26px rgba(226,169,74,.4), inset 0 1px 0 rgba(255,255,255,.5); }
 
-  .toast{ position:fixed; top:70px; left:50%; transform:translateX(-50%);
-    background:#eef3f7; color:#12161b; font-weight:700; font-size:13px; padding:8px 14px; border-radius:8px;
-    opacity:0; pointer-events:none; transition:opacity .15s; z-index:5; }
-  .toast.show{ opacity:1; }
+  /* tank (placeholder for now) */
+  .topbar{ position:fixed; top:0; left:0; right:0; z-index:2;
+    display:flex; align-items:center; justify-content:space-between;
+    padding:calc(14px + env(safe-area-inset-top)) 18px 12px;
+    font-family:-apple-system,Segoe UI,Roboto,sans-serif; }
+  .topbar.hidden{ display:none; }
+  .pearls{ font-weight:800; letter-spacing:1px; color:var(--gold); font-size:16px; }
+  .pearls span{ color:var(--muted); font-weight:600; margin-left:4px; }
+  .iconbtn{ width:40px; height:40px; border-radius:12px; border:1px solid rgba(120,200,215,.35);
+    background:rgba(11,40,58,.55); color:var(--ink); font-size:18px; cursor:pointer;
+    display:flex; align-items:center; justify-content:center; }
+  .tanknote{ background:rgba(6,22,34,.72); border:1px solid rgba(120,200,215,.3); border-radius:16px;
+    padding:22px 24px; max-width:300px; backdrop-filter:blur(3px); }
+  .tanknote h2{ font-size:20px; margin-bottom:8px; color:#dff6ff; letter-spacing:1px; }
+  .tanknote p{ font-size:14px; color:var(--muted); line-height:1.6; font-family:-apple-system,Segoe UI,Roboto,sans-serif; }
 
-  .board{ display:grid; grid-template-rows:repeat(6,1fr); gap:6px; }
-  .brow{ display:grid; grid-template-columns:repeat(5,1fr); gap:6px; }
-  .brow.shake{ animation:shake .4s; }
-  @keyframes shake{ 0%,100%{transform:translateX(0)} 20%,60%{transform:translateX(-6px)} 40%,80%{transform:translateX(6px)} }
-  .tile{ width:52px; height:52px; border:2px solid var(--line); border-radius:8px; background:var(--tile);
-    display:flex; align-items:center; justify-content:center; font-size:26px; font-weight:800; text-transform:uppercase; }
-  .tile.filled{ border-color:#4a5765; animation:pop .1s; }
-  @keyframes pop{ 0%{transform:scale(.9)} 100%{transform:scale(1)} }
-  @media (max-height:700px){ .tile{ width:46px; height:46px; font-size:23px; } }
-
-  .kb{ width:100%; max-width:460px; display:flex; flex-direction:column; gap:6px; }
-  .krow{ display:flex; gap:5px; justify-content:center; }
-  .key{ flex:1 1 auto; max-width:38px; height:50px; border-radius:6px; background:var(--slate); color:var(--ink);
-    font-weight:700; font-size:15px; display:flex; align-items:center; justify-content:center; text-transform:uppercase; cursor:pointer; }
-  .key:active{ filter:brightness(1.25); }
-  .key.wide{ max-width:60px; font-size:12px; flex:1.5 1 auto; }
-
-  .tile.green{ background:var(--green); border-color:var(--green); color:#0b120d; }
-  .tile.amber{ background:var(--amber); border-color:var(--amber); color:#1a1305; }
-  .tile.slate{ background:var(--slate); border-color:var(--slate); color:var(--ink); }
-  .key.green{ background:var(--green); color:#0b120d; }
-  .key.amber{ background:var(--amber); color:#1a1305; }
-  .key.slate{ background:#232a31; color:#6b7683; }
-
-  .hbtn{ position:absolute; top:50%; transform:translateY(-50%); width:38px; height:38px; border:none;
-    background:var(--panel); color:var(--ink); border-radius:10px; font-size:17px; font-weight:800; cursor:pointer; }
-  .hbtn.left{ left:14px; } .hbtn.right{ right:14px; }
-
-  .tile.flip{ animation:flip .5s ease; }
-  @keyframes flip{ 0%{transform:rotateX(0)} 50%{transform:rotateX(90deg)} 100%{transform:rotateX(0)} }
-
-  .overlay{ position:fixed; inset:0; z-index:10; display:flex; align-items:center; justify-content:center; padding:24px;
-    background:rgba(10,13,17,.93); backdrop-filter:blur(3px); }
-  .overlay.hidden{ display:none; }
-  .card{ width:100%; max-width:360px; text-align:center; }
-  .big{ font-size:clamp(46px,16vw,84px); font-weight:900; letter-spacing:10px; padding-left:10px;
-    background:linear-gradient(120deg,var(--green),#bfe8cf); -webkit-background-clip:text; background-clip:text; color:transparent; }
-  .sub{ color:var(--muted); font-size:15px; margin:6px 0 26px; }
-  .mbtn{ display:block; width:100%; margin:10px 0; padding:15px; border-radius:12px; border:1px solid var(--line);
-    background:var(--panel); color:var(--ink); font-size:16px; font-weight:800; letter-spacing:1px; cursor:pointer; }
-  .mbtn:active{ transform:scale(.98); }
-  .mbtn.primary{ background:linear-gradient(120deg,var(--green),#2f9c57); border:none; color:#08130b; }
-  .ctitle{ font-size:22px; font-weight:900; letter-spacing:2px; margin-bottom:14px; }
-  .rules{ text-align:left; color:#cdd6df; font-size:14px; line-height:1.6; }
-  .rules b{ color:var(--ink); }
-  .exrow{ display:flex; gap:5px; justify-content:center; margin:12px 0; }
-  .ex{ width:34px; height:34px; border-radius:6px; display:flex; align-items:center; justify-content:center; font-weight:800; background:var(--tile); border:1px solid var(--line); }
-  .ex.green{ background:var(--green); color:#08130b; border:none; } .ex.amber{ background:var(--amber); color:#1a1305; border:none; }
-  .statrow{ display:flex; justify-content:space-around; margin:14px 0 18px; }
-  .statn{ font-size:28px; font-weight:900; } .statl{ font-size:11px; color:var(--muted); text-transform:uppercase; letter-spacing:.5px; }
-  .dist{ text-align:left; }
-  .distrow{ display:flex; align-items:center; gap:8px; margin:4px 0; font-size:12px; color:var(--muted); }
-  .distbar{ height:18px; background:var(--slate); border-radius:3px; min-width:22px; color:var(--ink); font-weight:800;
-    display:flex; align-items:center; justify-content:flex-end; padding:0 6px; }
-  .distbar.hit{ background:var(--green); color:#08130b; }
-  .link{ color:var(--muted); font-size:13px; margin-top:14px; cursor:pointer; }
+  /* modal */
+  .modal{ position:fixed; inset:0; z-index:5; display:flex; align-items:center; justify-content:center;
+    padding:26px; background:rgba(3,12,20,.72); backdrop-filter:blur(4px); }
+  .modal.hidden{ display:none; }
+  .panel{ background:linear-gradient(180deg,#0c2836,#08202e); border:1px solid rgba(120,200,215,.3);
+    border-radius:18px; padding:26px; max-width:340px; width:100%; }
+  .panel h3{ font-size:22px; letter-spacing:2px; color:var(--gold); margin-bottom:12px; }
+  .panel p{ font-size:14.5px; line-height:1.65; color:#cfe6f2; margin-bottom:10px;
+    font-family:-apple-system,Segoe UI,Roboto,sans-serif; }
+  .panel .btn{ margin-top:12px; width:100%; }
+  .shophd{ display:flex; justify-content:space-between; align-items:baseline; margin-bottom:6px; }
+  .shophd .p{ color:var(--gold); font-weight:800; font-family:-apple-system,Segoe UI,Roboto,sans-serif; }
+  .shoplist{ max-height:52vh; overflow-y:auto; margin:4px 0 6px; }
+  .shoprow{ display:flex; align-items:center; gap:12px; padding:10px 2px; border-bottom:1px solid rgba(120,200,215,.14);
+    font-family:-apple-system,Segoe UI,Roboto,sans-serif; }
+  .swatch{ width:26px; height:26px; border-radius:50%; flex:0 0 auto; }
+  .sinfo{ flex:1; text-align:left; }
+  .sname{ font-size:15px; color:#eaf6ff; font-weight:600; }
+  .sprice{ font-size:12px; color:var(--muted); }
+  .buy{ padding:8px 15px; border-radius:10px; border:none; font-weight:800; cursor:pointer; font-size:13px;
+    background:linear-gradient(160deg,#ffdc8a,#e3a94a); color:#20160a; }
+  .buy:disabled{ background:#26333d; color:#5c6b76; cursor:default; }
+  .collgrid{ display:grid; grid-template-columns:repeat(2,1fr); gap:10px; margin:6px 0 4px; }
+  .cocard{ background:rgba(9,30,44,.6); border:1px solid rgba(120,200,215,.16); border-radius:12px;
+    padding:12px 8px; text-align:center; font-family:-apple-system,Segoe UI,Roboto,sans-serif; }
+  .cocard.dim{ opacity:.38; }
+  .codot{ width:30px; height:30px; border-radius:50%; margin:0 auto 8px; }
+  .coname{ font-size:13px; color:#eaf6ff; font-weight:600; }
+  .cocount{ font-size:11px; color:var(--muted); margin-top:2px; }
+  .dn{ font-size:15px; margin-left:2px; }
 </style>
 </head>
 <body>
-  <header>
-    <button class="hbtn left" id="help" aria-label="How to play">?</button>
-    <span class="logo">FIVES</span>
-    <button class="hbtn right" id="statsBtn" aria-label="Stats">▤</button>
-  </header>
+  <canvas id="bg"></canvas>
 
-  <div class="toast" id="toast"></div>
-
-  <main>
-    <div class="board" id="board"></div>
-    <div class="kb" id="kb"></div>
-  </main>
-
-  <div class="overlay" id="titleScreen">
-    <div class="card">
-      <div class="big">FIVES</div>
-      <div class="sub">guess the five-letter word in six tries</div>
-      <button class="mbtn primary" id="playBtn">PLAY</button>
-      <button class="mbtn" id="howBtn">HOW TO PLAY</button>
-      <button class="mbtn" id="statsBtn2">STATS</button>
+  <!-- title screen -->
+  <div class="screen" id="titleScreen">
+    <div class="kicker">a pocket ocean</div>
+    <div class="logo">FATHOM</div>
+    <div class="tagline">keep a living tank in your pocket</div>
+    <div class="menu">
+      <button class="btn primary" id="playBtn">Dive In</button>
+      <button class="btn" id="howBtn">How to Play</button>
+      <button class="btn" id="colBtn">Collection</button>
     </div>
   </div>
 
-  <div class="overlay hidden" id="howto">
-    <div class="card">
-      <div class="ctitle">HOW TO PLAY</div>
-      <div class="rules">Guess the hidden <b>five-letter word</b> in six tries. Type a word, press Enter. Each guess colors its letters:</div>
-      <div class="exrow"><div class="ex green">C</div><div class="ex">R</div><div class="ex">A</div><div class="ex">N</div><div class="ex">E</div></div>
-      <div class="rules"><b>Green</b> — right letter, right spot.</div>
-      <div class="exrow"><div class="ex">S</div><div class="ex amber">L</div><div class="ex">A</div><div class="ex">T</div><div class="ex">E</div></div>
-      <div class="rules"><b>Amber</b> — in the word, wrong spot. &nbsp;<b>Slate</b> — not in the word.</div>
-      <button class="mbtn" id="howBack" style="margin-top:22px">BACK</button>
+  <!-- in-tank top bar -->
+  <div class="topbar hidden" id="topbar">
+    <div class="pearls">◍ <b id="pearlN">0</b> <span>pearls</span> <span class="dn" id="daynight">☀</span></div>
+    <div style="display:flex; gap:8px">
+      <button class="iconbtn" id="soundBtn">🔈</button>
+      <button class="iconbtn" id="backBtn">☰</button>
     </div>
   </div>
 
-  <div class="overlay hidden" id="stats">
-    <div class="card">
-      <div class="ctitle">STATS</div>
-      <div class="statrow">
-        <div><div class="statn" id="sPlayed">0</div><div class="statl">played</div></div>
-        <div><div class="statn" id="sWin">0</div><div class="statl">win %</div></div>
-        <div><div class="statn" id="sCur">0</div><div class="statl">streak</div></div>
-        <div><div class="statn" id="sMax">0</div><div class="statl">max</div></div>
-      </div>
-      <div class="dist" id="dist"></div>
-      <button class="mbtn primary" id="newGame" style="margin-top:18px">NEW GAME</button>
-      <div class="link" id="statsBack">close</div>
+  <!-- menu -->
+  <div class="modal hidden" id="menu">
+    <div class="panel">
+      <h3>Menu</h3>
+      <button class="btn primary" id="shopOpen">Shop</button>
+      <button class="btn" id="collOpen">Collection</button>
+      <button class="btn" id="menuResume">Resume</button>
+      <button class="btn" id="menuTitle">Back to Title</button>
+    </div>
+  </div>
+
+  <!-- collection -->
+  <div class="modal hidden" id="collection">
+    <div class="panel">
+      <h3>Collection</h3>
+      <div class="collgrid" id="collGrid"></div>
+      <button class="btn" id="collClose">Close</button>
+    </div>
+  </div>
+
+  <!-- shop -->
+  <div class="modal hidden" id="shop">
+    <div class="panel">
+      <div class="shophd"><h3 style="margin:0">Shop</h3><div class="p">◍ <span id="shopPearls">0</span></div></div>
+      <div class="shoplist" id="shopList"></div>
+      <button class="btn" id="shopClose">Close</button>
+    </div>
+  </div>
+
+  <!-- info modal -->
+  <div class="modal hidden" id="modal">
+    <div class="panel">
+      <h3 id="mTitle">How to Play</h3>
+      <div id="mBody"></div>
+      <button class="btn primary" id="mClose">Close</button>
     </div>
   </div>
 
   <script>
   "use strict";
   (function(){
-    function vh(){ document.body.style.height = window.innerHeight + 'px'; }
-    window.addEventListener('resize', vh); vh();
+    const cv=document.getElementById('bg'), ctx=cv.getContext('2d');
+    let W=0,H=0,dpr=1;
+    const rand=(a,b)=>a+Math.random()*(b-a);
+    const hx=h=>[parseInt(h.slice(1,3),16),parseInt(h.slice(3,5),16),parseInt(h.slice(5,7),16)];
+    function mix(a,b,tt){ const A=hx(a),B=hx(b);
+      return 'rgb('+Math.round(A[0]+(B[0]-A[0])*tt)+','+Math.round(A[1]+(B[1]-A[1])*tt)+','+Math.round(A[2]+(B[2]-A[2])*tt)+')'; }
+    function daylight(){ return 0.5+0.5*Math.sin(dayPhase*6.2831853); }   // 1=day, 0=night
 
-    // ---- word list (common 5-letter words; answers + allowed guesses) ----
-    const WORDS = ("about above abuse actor acute admit adopt adult after again agent agree ahead alarm album "+
-    "alert alike alive allow alone along alter among anger angle angry apart apple apply arena argue arise array "+
-    "aside asset audio audit avoid award aware badly baker basic basis beach began begin begun being below bench "+
-    "birth black blame blank blast blind block blood board boost booth bound brain brand brass brave bread break "+
-    "breed brief bring broad broke brown build built buyer cable carry catch cause chain chair chaos charm chart "+
-    "chase cheap check chest chief child chose civil claim class clean clear click climb clock close cloud coach "+
-    "coast could count court cover craft crash crazy cream crime cross crowd crown crude curve cycle daily dance "+
-    "dated death debut delay depth doing doubt dozen draft drama drawn dream dress drill drink drive drove dying "+
-    "eager early earth eight elite empty enemy enjoy enter entry equal error event every exact exist extra faith "+
-    "false fault fiber field fifth fifty fight final first fixed flash fleet floor fluid focus force forth forty "+
-    "forum found frame frank fraud fresh front fruit fully funny giant given glass globe going grace grade grand "+
-    "grant grass great green gross group grown guard guess guest guide happy heart heavy hence horse hotel house "+
-    "human ideal image index inner input issue joint judge known label large laser later laugh layer learn lease "+
-    "least leave legal level light limit links lives local logic loose lower lucky lunch lying magic major maker "+
-    "march match maybe mayor meant media metal might minor minus mixed model money month moral motor mount mouse "+
-    "mouth movie music needs never newly night noise north noted novel nurse occur ocean offer often order other "+
-    "ought paint panel paper party peace phase phone photo piece pilot pitch place plain plane plant plate point "+
-    "pound power press price pride prime print prior prize proof proud prove queen quick quiet quite radio raise "+
-    "range rapid ratio reach ready refer right rival river rough round route royal rural scale scene scope score "+
-    "sense serve seven shall shape share sharp sheet shelf shell shift shirt shock shoot short shown sight since "+
-    "sixth sixty sized skill sleep slide small smart smile smoke solid solve sorry sound south space spare speak "+
-    "speed spend spent split spoke sport staff stage stake stand start state steam steel stick still stock stone "+
-    "stood store storm story strip stuck study stuff style sugar suite super sweet table taken taste taxes teach "+
-    "teeth thank theft their theme there these thick thing think third those three threw throw tight times tired "+
-    "title today topic total touch tough tower track trade train treat trend trial tribe trick tried tries truck "+
-    "truly trust truth twice under undue union unity until upper upset urban usage usual valid value video virus "+
-    "visit vital voice waste watch water wheel where which while white whole whose woman women world worry worse "+
-    "worst worth would wound write wrong wrote young youth").split(/\s+/);
-    const ALLOWED = new Set(WORDS);
-
-    const ROWS=6, COLS=5;
-    let answer = WORDS[Math.floor(Math.random()*WORDS.length)];
-    let row=0, col=0;
-
-    // ---- board ----
-    const board=document.getElementById('board'); const tiles=[];
-    for(let r=0;r<ROWS;r++){ const rowEl=document.createElement('div'); rowEl.className='brow'; const rt=[];
-      for(let c=0;c<COLS;c++){ const t=document.createElement('div'); t.className='tile'; rowEl.appendChild(t); rt.push(t); }
-      board.appendChild(rowEl); tiles.push(rt); }
-
-    // ---- keyboard ----
-    const KB=[ "QWERTYUIOP", "ASDFGHJKL", "↵ZXCVBNM⌫" ];  // Enter, Backspace glyphs
-    const kb=document.getElementById('kb'); const keyEls={};
-    KB.forEach((line,i)=>{ const rowEl=document.createElement('div'); rowEl.className='krow';
-      for(const ch of line){ const k=document.createElement('div');
-        const isEnter=ch==='↵', isBack=ch==='⌫';
-        k.className='key'+(isEnter||isBack?' wide':'');
-        k.textContent = isEnter?'Enter' : isBack?'⌫' : ch;
-        k.dataset.k = isEnter?'enter' : isBack?'back' : ch.toLowerCase();
-        if(!isEnter && !isBack) keyEls[k.dataset.k]=k;
-        rowEl.appendChild(k); }
-      kb.appendChild(rowEl); });
-    kb.addEventListener('click', e=>{ const k=e.target.closest('.key'); if(!k) return; handle(k.dataset.k); });
-
-    // ---- toast ----
-    let toastT=null; const toastEl=document.getElementById('toast');
-    function toast(msg){ toastEl.textContent=msg; toastEl.classList.add('show');
-      clearTimeout(toastT); toastT=setTimeout(()=>toastEl.classList.remove('show'),1100); }
-
-    // ---- input handling (no scoring yet — evaluation lands Wed) ----
-    function addLetter(ch){ if(col>=COLS||row>=ROWS) return;
-      tiles[row][col].textContent=ch; tiles[row][col].classList.add('filled'); col++; }
-    function delLetter(){ if(col<=0) return; col--; tiles[row][col].textContent=''; tiles[row][col].classList.remove('filled'); }
-    let gameOver=false, revealing=false, state='title';
-    // proper duplicate-letter handling: greens first, then ambers from remaining counts
-    function evaluate(guess){
-      const res=Array(COLS).fill('slate'), counts={};
-      for(const ch of answer) counts[ch]=(counts[ch]||0)+1;
-      for(let i=0;i<COLS;i++){ if(guess[i]===answer[i]){ res[i]='green'; counts[guess[i]]--; } }
-      for(let i=0;i<COLS;i++){ if(res[i]==='green') continue;
-        if(counts[guess[i]]>0){ res[i]='amber'; counts[guess[i]]--; } }
-      return res;
-    }
-    const RANK={slate:0,amber:1,green:2};
-    function colorKey(ch,state){ const el=keyEls[ch]; if(!el) return;
-      const cur=el.dataset.state||''; if(RANK[state] >= (RANK[cur]||0)){
-        el.dataset.state=state; el.classList.remove('green','amber','slate'); el.classList.add(state); } }
-    function submit(){
-      if(col<COLS){ toast('Not enough letters'); shake(); return; }
-      const guess = tiles[row].map(t=>t.textContent.toLowerCase()).join('');
-      // guesses accept any 5 letters (the curated list only supplies answers)
-      const res=evaluate(guess), r=row; revealing=true;
-      for(let i=0;i<COLS;i++){ (function(i){
-        setTimeout(()=>{ tiles[r][i].classList.add('flip');
-          setTimeout(()=>{ tiles[r][i].classList.add(res[i]); tick(); }, 230); }, i*180);
-      })(i); }
-      setTimeout(()=>finishGuess(guess,res,r), (COLS-1)*180 + 520);
-    }
-    function finishGuess(guess,res,r){
-      for(let i=0;i<COLS;i++) colorKey(guess[i],res[i]);
-      revealing=false;
-      if(guess===answer){ gameOver=true; win(r); return; }
-      row++; col=0;
-      if(row>=ROWS){ gameOver=true; lose(); }
-    }
-    function shake(){ const el=board.children[row]; el.classList.remove('shake'); void el.offsetWidth; el.classList.add('shake'); }
-    function handle(k){ if(state!=='play'||gameOver||revealing||anyOverlay()) return;
-      if(k==='enter') submit(); else if(k==='back') delLetter();
-      else if(/^[a-z]$/.test(k)) addLetter(k.toUpperCase()); }
-
-    window.addEventListener('keydown', e=>{
-      if(e.key==='Enter') handle('enter');
-      else if(e.key==='Backspace') handle('back');
-      else if(/^[a-zA-Z]$/.test(e.key)) handle(e.key.toLowerCase());
-    });
-
-    // ---- sound + haptics ----
-    let actx=null;
-    function tone(freq,dur=0.1,type='sine',vol=0.12,delay=0){ try{
-      if(!actx) actx=new (window.AudioContext||window.webkitAudioContext)();
-      if(actx.state==='suspended') actx.resume();
-      const t=actx.currentTime+delay,o=actx.createOscillator(),g=actx.createGain();
-      o.type=type; o.frequency.setValueAtTime(freq,t);
-      g.gain.setValueAtTime(0.0001,t); g.gain.exponentialRampToValueAtTime(vol,t+0.01);
-      g.gain.exponentialRampToValueAtTime(0.0001,t+dur);
-      o.connect(g); g.connect(actx.destination); o.start(t); o.stop(t+dur+0.02);
+    let state='title';
+    let bubbles=[], rays=[], fish=[], tank=[], motes=[], food=[], decor=[], pops=[];
+    let pearls=20, ownedFish=[], saveT=0, dayPhase=0.25;
+    let actx=null, masterGain=null, soundOn=true, ripples=[];
+    try{ soundOn = localStorage.getItem('fathom_sound')!=='0'; }catch(e){}
+    function initAudio(){ if(actx) return; try{
+      actx=new (window.AudioContext||window.webkitAudioContext)();
+      masterGain=actx.createGain(); masterGain.gain.value=soundOn?1:0; masterGain.connect(actx.destination);
+      const pad=actx.createGain(); pad.gain.value=0.02; pad.connect(masterGain);       // soft ambient drone
+      [55,82.5,110].forEach((f,i)=>{ const o=actx.createOscillator(); o.type='sine'; o.frequency.value=f*(1+i*0.004);
+        const lp=actx.createBiquadFilter(); lp.type='lowpass'; lp.frequency.value=380; o.connect(lp); lp.connect(pad); o.start(); });
     }catch(e){} }
-    function haptic(ms){ try{ if(navigator.vibrate) navigator.vibrate(ms); }catch(e){} }
-    function tick(){ tone(320,0.05,'square',0.05); }
-    function winSound(){ [523,659,784,1046].forEach((f,i)=>tone(f,0.32,'triangle',0.12,i*0.09)); haptic([20,40,20]); }
-    function loseSound(){ tone(180,0.5,'sawtooth',0.14); haptic(60); }
+    function blip(freq,dur,type,vol){ if(!actx||!soundOn) return; try{ const t=actx.currentTime,o=actx.createOscillator(),g=actx.createGain();
+      o.type=type||'sine'; o.frequency.setValueAtTime(freq,t); g.gain.setValueAtTime(0.0001,t);
+      g.gain.exponentialRampToValueAtTime(vol||0.07,t+0.01); g.gain.exponentialRampToValueAtTime(0.0001,t+(dur||0.12));
+      o.connect(g); g.connect(masterGain); o.start(t); o.stop(t+(dur||0.12)+0.03); }catch(e){} }
+    function setSound(on){ soundOn=on; if(masterGain) masterGain.gain.value=on?1:0;
+      try{ localStorage.setItem('fathom_sound', on?'1':'0'); }catch(e){}
+      const el=document.getElementById('soundBtn'); if(el) el.textContent=on?'🔈':'🔇'; }
+    const byKey = k => SPECIES.find(s=>s.key===k);
+    const PRICE = { guppy:10, neon:8, ember:14, sunny:18, angel:40, koi:80, lumen:60 };
+    const DECOR = [
+      { key:'kelp',  name:'Kelp',      price:12 },
+      { key:'rock',  name:'Boulders',  price:16 },
+      { key:'coral', name:'Coral',     price:24 },
+      { key:'wreck', name:'Shipwreck', price:48 },
+    ];
+    const SPECIES=[
+      { key:'neon',  name:'Neon Tetra',  body:'#4fd0d6', fin:'#bfeff2', size:12, glow:true  },
+      { key:'ember', name:'Ember Molly', body:'#ff8a5c', fin:'#ffd7b0', size:17, glow:false },
+      { key:'sunny', name:'Sunfish',     body:'#f2c66d', fin:'#fff0c4', size:20, glow:false },
+      { key:'angel', name:'Angelfish',   body:'#c9d6e6', fin:'#eef4ff', size:22, glow:false },
+      { key:'guppy', name:'Guppy',       body:'#7ad6a0', fin:'#d6ffe6', size:11, glow:false },
+      { key:'koi',   name:'Koi',         body:'#ff6b52', fin:'#ffd0c0', size:24, glow:false },
+      { key:'lumen', name:'Lanternfish', body:'#b06cff', fin:'#e2c7ff', size:14, glow:true  },
+    ];
+    function seed(){
+      bubbles=[]; for(let i=0;i<38;i++) bubbles.push(mkBubble(true));
+      rays=[]; for(let i=0;i<5;i++) rays.push({ x:rand(0,W), w:rand(60,150), a:rand(0.04,0.10), ph:rand(0,6.28), sp:rand(0.15,0.35) });
+      fish=[]; for(let i=0;i<7;i++) fish.push(mkFish());
+      motes=[]; for(let i=0;i<34;i++) motes.push(mkMote());
+      seedTank();
+    }
+    function mkMote(){ return { x:rand(0,W), y:rand(0,H), vx:rand(-4,4), vy:rand(4,14), r:rand(0.5,1.8), a:rand(0.04,0.14) }; }
+    function seedTank(){ tank=[]; for(const k of ownedFish){ const sp=byKey(k); if(sp) tank.push(mkPet(sp)); } }
+    function load(){ try{ const s=JSON.parse(localStorage.getItem('fathom_save'));
+        if(s && Array.isArray(s.fish) && s.fish.length){ pearls=+s.pearls||0; ownedFish=s.fish.filter(byKey);
+          decor = Array.isArray(s.decor) ? s.decor.filter(d=>d && DECOR.find(x=>x.key===d.key)) : []; return; } }catch(e){}
+      pearls=20; ownedFish=['neon','neon','neon','ember','sunny']; decor=[]; }
+    function save(){ try{ localStorage.setItem('fathom_save', JSON.stringify({v:2, pearls:Math.floor(pearls), fish:ownedFish, decor})); }catch(e){} }
+    function mkPet(sp){ return { spec:sp, size:sp.size, x:rand(60,Math.max(80,W-60)),
+      y:rand(120,Math.max(160,H-90)), ang:rand(0,6.28), spd:rand(24,44), tail:rand(0,6.28) }; }
+    function mkBubble(any){ return { x:rand(0,W), y:any?rand(0,H):H+10, r:rand(1.5,4.5), sp:rand(18,46), wob:rand(0,6.28), ws:rand(0.6,1.6) }; }
+    function mkFish(){ const dir=Math.random()<0.5?1:-1;
+      return { x:rand(0,W), y:rand(H*0.2,H*0.9), len:rand(16,42), dir, sp:rand(10,26)*dir,
+               tail:rand(0,6.28), depth:rand(0.25,0.7) }; }
 
-    // ---- stats (localStorage) ----
-    const S_KEY='fives_stats';
-    function loadStats(){ try{ const s=JSON.parse(localStorage.getItem(S_KEY)); if(s&&s.dist) return s; }catch(e){}
-      return {played:0,wins:0,cur:0,max:0,dist:[0,0,0,0,0,0]}; }
-    let stats=loadStats();
-    function saveStats(){ try{ localStorage.setItem(S_KEY, JSON.stringify(stats)); }catch(e){} }
-    function record(won,rowsUsed){ stats.played++;
-      if(won){ stats.wins++; stats.cur++; if(stats.cur>stats.max) stats.max=stats.cur; stats.dist[rowsUsed-1]++; }
-      else stats.cur=0; saveStats(); }
-    function renderStats(){
-      document.getElementById('sPlayed').textContent=stats.played;
-      document.getElementById('sWin').textContent = stats.played?Math.round(stats.wins/stats.played*100):0;
-      document.getElementById('sCur').textContent=stats.cur;
-      document.getElementById('sMax').textContent=stats.max;
-      const mx=Math.max(1,...stats.dist), d=document.getElementById('dist'); d.innerHTML='';
-      stats.dist.forEach((n,i)=>{ const rowEl=document.createElement('div'); rowEl.className='distrow';
-        const lab=document.createElement('span'); lab.textContent=(i+1);
-        const bar=document.createElement('div'); bar.className='distbar'+(n>0?' hit':'');
-        bar.style.width=(22+ n/mx*210)+'px'; bar.textContent=n;
-        rowEl.appendChild(lab); rowEl.appendChild(bar); d.appendChild(rowEl); });
+    function resize(){ dpr=Math.min(window.devicePixelRatio||1,2.5); W=window.innerWidth; H=window.innerHeight;
+      cv.width=Math.floor(W*dpr); cv.height=Math.floor(H*dpr); cv.style.width=W+'px'; cv.style.height=H+'px';
+      ctx.setTransform(dpr,0,0,dpr,0,0); seed(); }
+    window.addEventListener('resize', resize);
+
+    let last=performance.now(), t=0;
+    function frame(now){ const dt=Math.min((now-last)/1000,0.05); last=now; t+=dt; dayPhase+=dt/90; draw(dt); requestAnimationFrame(frame); }
+
+    function draw(dt){
+      const dl=daylight();
+      // depth gradient (day <-> night)
+      const g=ctx.createLinearGradient(0,0,0,H);
+      g.addColorStop(0,   mix('#081c2e','#0e3f57', dl));
+      g.addColorStop(0.35,mix('#05121f','#0a2c40', dl));
+      g.addColorStop(1,   mix('#01070d','#04121f', dl));
+      ctx.fillStyle=g; ctx.fillRect(0,0,W,H);
+
+      // god rays from the surface (fade at night)
+      for(const r of rays){ r.ph+=dt*r.sp; const x=r.x + Math.sin(r.ph)*30;
+        const grd=ctx.createLinearGradient(x,0,x+r.w*0.4,H);
+        grd.addColorStop(0,'rgba(120,220,230,'+(r.a*(0.15+dl*0.85))+')'); grd.addColorStop(1,'rgba(120,220,230,0)');
+        ctx.fillStyle=grd; ctx.beginPath();
+        ctx.moveTo(x,0); ctx.lineTo(x+r.w,0); ctx.lineTo(x+r.w*0.5+40,H); ctx.lineTo(x-40,H); ctx.closePath(); ctx.fill(); }
+
+      if(state==='tank'){
+        drawCaustics();
+        drawSubstrate();
+        drawDecor();
+        for(const f of tank){ updatePet(f,dt); drawPet(f); }
+        // eating sparkles
+        for(const q of pops){ q.x+=q.vx*dt; q.y+=q.vy*dt; q.vy+=70*dt; q.life-=dt*1.8;
+          ctx.globalAlpha=Math.max(0,q.life); ctx.fillStyle='#ffe9a8'; ctx.beginPath(); ctx.arc(q.x,q.y,2,0,7); ctx.fill(); }
+        ctx.globalAlpha=1; pops=pops.filter(q=>q.life>0);
+        // feeding ripples
+        for(const rp of ripples){ rp.r+=90*dt; rp.life-=dt*1.4;
+          ctx.globalAlpha=Math.max(0,rp.life)*0.5; ctx.strokeStyle='#bfe9f2'; ctx.lineWidth=2;
+          ctx.beginPath(); ctx.arc(rp.x,rp.y,rp.r,0,7); ctx.stroke(); }
+        ctx.globalAlpha=1; ripples=ripples.filter(rp=>rp.life>0);
+        // food pellets sink; fish eat them (see updatePet)
+        for(const p of food){ if(p.y<H-30) p.y+=p.vy*dt; else p.rest=(p.rest||0)+dt;
+          ctx.fillStyle='#ffd98a'; ctx.shadowColor='#ffcf6b'; ctx.shadowBlur=6;
+          ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,7); ctx.fill(); ctx.shadowBlur=0; }
+        food=food.filter(p=>!p.eaten && (p.rest||0)<6);
+        // pearls accrue with the size of the tank
+        pearls += tank.length*0.12*dt; pearlN.textContent=Math.floor(pearls);
+        dnEl.textContent = dl>0.5 ? '☀' : '🌙';
+        saveT+=dt; if(saveT>4){ saveT=0; save(); }
+      } else {
+        // silhouette fish drifting (title atmosphere)
+        for(const f of fish){ f.x+=f.sp*dt; f.tail+=dt*6;
+          if(f.dir>0 && f.x>W+60) { f.x=-60; f.y=rand(H*0.2,H*0.9); }
+          if(f.dir<0 && f.x<-60) { f.x=W+60; f.y=rand(H*0.2,H*0.9); }
+          drawFish(f); }
+      }
+
+      // rising bubbles
+      for(const b of bubbles){ b.y-=b.sp*dt; b.wob+=dt*b.ws; const x=b.x+Math.sin(b.wob)*6;
+        if(b.y<-10){ Object.assign(b, mkBubble(false)); }
+        ctx.beginPath(); ctx.arc(x,b.y,b.r,0,7);
+        ctx.strokeStyle='rgba(180,230,240,0.35)'; ctx.lineWidth=1; ctx.stroke();
+        ctx.fillStyle='rgba(180,230,240,0.08)'; ctx.fill(); }
+
+      // drifting marine snow (atmosphere)
+      for(const m of motes){ m.x+=m.vx*dt; m.y+=m.vy*dt;
+        if(m.y>H+4){ m.y=-4; m.x=rand(0,W); } if(m.x<-4)m.x=W+4; if(m.x>W+4)m.x=-4;
+        ctx.fillStyle='rgba(205,232,242,'+m.a+')'; ctx.beginPath(); ctx.arc(m.x,m.y,m.r,0,7); ctx.fill(); }
+
+      // vignette for depth
+      const v=ctx.createRadialGradient(W/2,H*0.42,H*0.26,W/2,H*0.5,H*0.82);
+      v.addColorStop(0,'rgba(0,0,0,0)'); v.addColorStop(1,'rgba(0,0,0,0.42)');
+      ctx.fillStyle=v; ctx.fillRect(0,0,W,H);
+    }
+    function drawCaustics(){
+      ctx.save(); ctx.globalCompositeOperation='screen';
+      for(let i=0;i<3;i++){ const y=H*0.48+i*H*0.15;
+        ctx.strokeStyle='rgba(130,225,235,0.05)'; ctx.lineWidth=12; ctx.beginPath();
+        for(let x=0;x<=W;x+=16){ const yy=y+Math.sin(x*0.028+t*0.8+i*1.3)*10; x===0?ctx.moveTo(x,yy):ctx.lineTo(x,yy); }
+        ctx.stroke(); }
+      ctx.restore();
+    }
+    function drawFish(f){
+      const a=0.10+f.depth*0.16, len=f.len, dir=f.dir;
+      ctx.save(); ctx.translate(f.x,f.y); ctx.scale(dir,1);
+      ctx.fillStyle='rgba(3,14,22,'+a+')';
+      ctx.beginPath(); ctx.ellipse(0,0,len,len*0.42,0,0,7); ctx.fill();
+      const tw=Math.sin(f.tail)*len*0.18;
+      ctx.beginPath(); ctx.moveTo(-len*0.9,0); ctx.lineTo(-len*1.5,-len*0.35+tw); ctx.lineTo(-len*1.5,len*0.35+tw); ctx.closePath(); ctx.fill();
+      ctx.restore();
     }
 
-    // ---- overlays / flow ----
-    const overlays={ title:document.getElementById('titleScreen'), howto:document.getElementById('howto'), stats:document.getElementById('stats') };
-    function anyOverlay(){ for(const k in overlays) if(!overlays[k].classList.contains('hidden')) return true; return false; }
-    function showOverlay(name){ for(const k in overlays) overlays[k].classList.toggle('hidden', k!==name); if(name==='stats') renderStats(); }
-    function hideOverlays(){ for(const k in overlays) overlays[k].classList.add('hidden'); }
+    // ---- tank (foreground pets) ----
+    function updatePet(f,dt){
+      f.ang += rand(-1,1)*1.3*dt;                       // gentle wander
+      let dx=Math.cos(f.ang), dy=Math.sin(f.ang)*0.6;   // flatten vertical for natural swim
+      // seek the nearest food pellet
+      let fed=null, fd=1e9;
+      for(const p of food){ if(p.eaten) continue; const d=(p.x-f.x)**2+(p.y-f.y)**2; if(d<fd){ fd=d; fed=p; } }
+      if(fed && fd < 150*150){ const d=Math.sqrt(fd)||1;
+        dx += (fed.x-f.x)/d*2.4; dy += (fed.y-f.y)/d*2.4;
+        if(d<12){ fed.eaten=true; pearls+=2; f.spd=Math.min(f.spd+1.5,58);
+          for(let i=0;i<4;i++) bubbles.push(Object.assign(mkBubble(false),{x:fed.x+rand(-4,4),y:fed.y}));
+          for(let i=0;i<5;i++) pops.push({ x:fed.x, y:fed.y, vx:rand(-40,40), vy:rand(-52,-12), life:1 });
+          blip(860,0.05,'triangle',0.05); } }
+      // light schooling among the same species (cohesion + alignment + separation)
+      let cx=0,cy=0,ax=0,ay=0,sx=0,sy=0,n=0;
+      for(const o of tank){ if(o===f) continue; const ox=o.x-f.x, oy=o.y-f.y, d=Math.hypot(ox,oy);
+        if(d<92 && o.spec===f.spec){ cx+=o.x; cy+=o.y; ax+=Math.cos(o.ang); ay+=Math.sin(o.ang); n++;
+          if(d<32){ sx-=ox/(d||1); sy-=oy/(d||1); } } }
+      if(n>0){ const clx=cx/n-f.x, cly=cy/n-f.y, cl=Math.hypot(clx,cly)||1;
+        dx += (clx/cl)*0.45 + (ax/n)*0.55 + sx*1.1;
+        dy += (cly/cl)*0.45 + (ay/n)*0.55 + sy*1.1; }
+      const pad=54, topPad=96, botPad=56;               // steer away from edges
+      if(f.x<pad) dx+=(pad-f.x)/pad;
+      if(f.x>W-pad) dx-=(f.x-(W-pad))/pad;
+      if(f.y<topPad) dy+=(topPad-f.y)/topPad;
+      if(f.y>H-botPad) dy-=(f.y-(H-botPad))/botPad;
+      const L=Math.hypot(dx,dy)||1; dx/=L; dy/=L;
+      f.ang=Math.atan2(dy,dx);
+      f.x+=dx*f.spd*dt; f.y+=dy*f.spd*dt; f.tail+=dt*9;
+    }
+    function drawPet(f){
+      const dir=Math.cos(f.ang)>=0?1:-1, s=f.size, sp=f.spec;
+      ctx.save(); ctx.translate(f.x,f.y); ctx.scale(dir,1);
+      if(sp.glow){ ctx.shadowColor=sp.body; ctx.shadowBlur=12+(1-daylight())*22; }
+      const tw=Math.sin(f.tail)*s*0.55;
+      ctx.fillStyle=sp.fin;
+      ctx.beginPath(); ctx.moveTo(-s*0.75,0); ctx.lineTo(-s*1.5,-s*0.5+tw); ctx.lineTo(-s*1.5,s*0.5+tw); ctx.closePath(); ctx.fill();
+      ctx.fillStyle=sp.body; ctx.beginPath(); ctx.ellipse(0,0,s,s*0.56,0,0,7); ctx.fill();
+      ctx.fillStyle=sp.fin; ctx.beginPath(); ctx.moveTo(-s*0.1,-s*0.5); ctx.lineTo(s*0.5,-s*0.95); ctx.lineTo(s*0.35,-s*0.35); ctx.closePath(); ctx.fill();
+      ctx.shadowBlur=0;
+      ctx.fillStyle='#fff'; ctx.beginPath(); ctx.arc(s*0.55,-s*0.1,s*0.16,0,7); ctx.fill();
+      ctx.fillStyle='#04121f'; ctx.beginPath(); ctx.arc(s*0.6,-s*0.1,s*0.08,0,7); ctx.fill();
+      ctx.restore();
+    }
+    function drawSubstrate(){
+      ctx.fillStyle='#b3894e';                           // sand mound
+      ctx.beginPath(); ctx.moveTo(0,H);
+      for(let x=0;x<=W;x+=24) ctx.lineTo(x, H-26 - Math.sin(x*0.02+1)*7);
+      ctx.lineTo(W,H); ctx.closePath(); ctx.fill();
+      ctx.fillStyle='rgba(255,240,200,0.10)';            // top sheen
+      ctx.beginPath(); ctx.moveTo(0,H-26);
+      for(let x=0;x<=W;x+=24) ctx.lineTo(x, H-26 - Math.sin(x*0.02+1)*7);
+      ctx.lineTo(W,H-26); ctx.closePath(); ctx.fill();
+      drawWeed(W*0.16,'#2f7d5b'); drawWeed(W*0.84,'#3a8f66');
+    }
+    function drawWeed(x,col){ ctx.strokeStyle=col; ctx.lineWidth=6; ctx.lineCap='round';
+      for(let k=-1;k<=1;k++){ const bx=x+k*10; ctx.beginPath(); ctx.moveTo(bx,H-24);
+        for(let i=1;i<=5;i++){ const yy=H-24-i*16, sway=Math.sin(t*1.2+i*0.6+k)*8; ctx.lineTo(bx+sway,yy); }
+        ctx.stroke(); } }
 
-    function resetBoard(){ for(let r=0;r<ROWS;r++) for(let c=0;c<COLS;c++){ tiles[r][c].textContent=''; tiles[r][c].className='tile'; }
-      for(const k in keyEls){ keyEls[k].className='key'; delete keyEls[k].dataset.state; } }
-    function startGame(){ resetBoard(); answer=WORDS[Math.floor(Math.random()*WORDS.length)]; window.__answer=answer;
-      row=0; col=0; gameOver=false; revealing=false; state='play'; hideOverlays(); }
-    function win(r){ winSound(); toast(['Genius!','Magnificent','Impressive','Splendid','Great','Phew!'][r]||'Solved!');
-      record(true,r+1); state='over'; setTimeout(()=>showOverlay('stats'),1500); }
-    function lose(){ loseSound(); toast('Answer: '+answer.toUpperCase()); record(false,0);
-      state='over'; setTimeout(()=>showOverlay('stats'),1600); }
+    // ---- décor (bought in the shop) ----
+    function drawDecor(){ const base=H-22; for(const d of decor){
+      if(d.key==='kelp') drawKelp(d.x,base);
+      else if(d.key==='rock') drawRock(d.x,base);
+      else if(d.key==='coral') drawCoral(d.x,base);
+      else if(d.key==='wreck') drawWreck(d.x,base); } }
+    function drawKelp(x,base){ ctx.strokeStyle='#2f8f60'; ctx.lineWidth=8; ctx.lineCap='round';
+      for(let k=-1;k<=1;k++){ const bx=x+k*12; ctx.beginPath(); ctx.moveTo(bx,base);
+        for(let i=1;i<=8;i++){ const yy=base-i*18, sway=Math.sin(t*1.1+i*0.5+k)*11; ctx.lineTo(bx+sway,yy); } ctx.stroke(); } }
+    function drawRock(x,base){ ctx.fillStyle='#57616b';
+      ctx.beginPath(); ctx.ellipse(x,base-4,27,16,0,Math.PI,0); ctx.fill();
+      ctx.fillStyle='#69737d'; ctx.beginPath(); ctx.ellipse(x-22,base-2,12,8,0,Math.PI,0); ctx.fill();
+      ctx.beginPath(); ctx.ellipse(x+21,base-2,10,7,0,Math.PI,0); ctx.fill(); }
+    function drawCoral(x,base){ ctx.strokeStyle='#e5749a'; ctx.lineCap='round';
+      const branch=(bx,by,ang,len,w)=>{ if(len<8) return; ctx.lineWidth=w; ctx.beginPath(); ctx.moveTo(bx,by);
+        const ex=bx+Math.cos(ang)*len, ey=by+Math.sin(ang)*len; ctx.lineTo(ex,ey); ctx.stroke();
+        branch(ex,ey,ang-0.5,len*0.7,w*0.7); branch(ex,ey,ang+0.5,len*0.7,w*0.7); };
+      branch(x,base,-Math.PI/2,32,9); }
+    function drawWreck(x,base){ ctx.save(); ctx.translate(x,base); ctx.rotate(-0.12);
+      ctx.fillStyle='#5a4632'; ctx.beginPath(); ctx.moveTo(-42,0); ctx.quadraticCurveTo(-48,-22,-20,-24);
+      ctx.lineTo(30,-24); ctx.quadraticCurveTo(48,-22,42,0); ctx.closePath(); ctx.fill();
+      ctx.fillStyle='#4a3a28'; ctx.fillRect(-4,-52,6,30);
+      ctx.strokeStyle='#3a2e20'; ctx.lineWidth=2;
+      for(let i=-30;i<=30;i+=12){ ctx.beginPath(); ctx.moveTo(i,-22); ctx.lineTo(i,-2); ctx.stroke(); }
+      ctx.restore(); }
 
-    document.getElementById('playBtn').addEventListener('click', startGame);
-    document.getElementById('newGame').addEventListener('click', startGame);
-    document.getElementById('howBtn').addEventListener('click', ()=>showOverlay('howto'));
-    document.getElementById('help').addEventListener('click', ()=>showOverlay('howto'));
-    document.getElementById('howBack').addEventListener('click', ()=>showOverlay('title'));
-    document.getElementById('statsBtn2').addEventListener('click', ()=>showOverlay('stats'));
-    document.getElementById('statsBtn').addEventListener('click', ()=>showOverlay('stats'));
-    document.getElementById('statsBack').addEventListener('click', ()=>{ if(state==='play') hideOverlays(); else showOverlay('title'); });
+    // ---- screens / UI ----
+    const titleScreen=document.getElementById('titleScreen'), topbar=document.getElementById('topbar'),
+          modal=document.getElementById('modal'), menu=document.getElementById('menu'), shop=document.getElementById('shop'),
+          collection=document.getElementById('collection'), collGrid=document.getElementById('collGrid'),
+          pearlN=document.getElementById('pearlN'), dnEl=document.getElementById('daynight');
+    function show(el,on){ el.classList.toggle('hidden', !on); }
+    function anyOverlay(){ return [modal,menu,shop,collection].some(o=>!o.classList.contains('hidden')); }
+    function renderCollection(){ collGrid.innerHTML='';
+      for(const sp of SPECIES){ const n=ownedFish.filter(k=>k===sp.key).length;
+        const c=document.createElement('div'); c.className='cocard'+(n?'':' dim');
+        c.innerHTML='<div class="codot" style="background:'+sp.body+'"></div>'+
+          '<div class="coname">'+sp.name+'</div><div class="cocount">'+(n? n+' in tank' : 'not yet kept')+'</div>';
+        collGrid.appendChild(c); } }
 
-    // boot: show the title screen (game starts on PLAY)
-    showOverlay('title');
+    document.getElementById('playBtn').addEventListener('click', ()=>{ initAudio(); setSound(soundOn); state='tank'; pearlN.textContent=Math.floor(pearls); show(titleScreen,false); show(topbar,true); });
+    document.getElementById('backBtn').addEventListener('click', ()=>show(menu,true));
+    document.getElementById('soundBtn').addEventListener('click', ()=>{ initAudio(); setSound(!soundOn); });
+    document.getElementById('menuResume').addEventListener('click', ()=>show(menu,false));
+    document.getElementById('menuTitle').addEventListener('click', ()=>{ save(); state='title'; show(menu,false); show(topbar,false); show(titleScreen,true); });
+    document.getElementById('shopOpen').addEventListener('click', ()=>{ show(menu,false); renderShop(); show(shop,true); });
+    document.getElementById('shopClose').addEventListener('click', ()=>show(shop,false));
+    document.getElementById('collOpen').addEventListener('click', ()=>{ show(menu,false); renderCollection(); show(collection,true); });
+    document.getElementById('collClose').addEventListener('click', ()=>show(collection,false));
+
+    // info modal (how to / collection)
+    const mTitle=document.getElementById('mTitle'), mBody=document.getElementById('mBody');
+    function openModal(title,html){ mTitle.textContent=title; mBody.innerHTML=html; show(modal,true); }
+    document.getElementById('howBtn').addEventListener('click', ()=>openModal('How to Play',
+      '<p>Tap the water to sprinkle food — your fish dart over to eat, and each bite earns pearls.</p>'+
+      '<p>Pearls also trickle in over time as your tank grows. Open the ☰ menu → <b>Shop</b> to spend them on new fish. Your tank saves automatically.</p>'));
+    document.getElementById('colBtn').addEventListener('click', ()=>{ renderCollection(); show(collection,true); });
+    document.getElementById('mClose').addEventListener('click', ()=>show(modal,false));
+
+    // shop
+    const shopList=document.getElementById('shopList'), shopPearls=document.getElementById('shopPearls');
+    const DSWATCH={ kelp:'#2f8f60', rock:'#69737d', coral:'#e5749a', wreck:'#5a4632' };
+    function shopRow(sw,name,sub,price,onbuy){ const can=Math.floor(pearls)>=price;
+      const row=document.createElement('div'); row.className='shoprow';
+      row.innerHTML='<div class="swatch" style="background:'+sw+'"></div>'+
+        '<div class="sinfo"><div class="sname">'+name+'</div><div class="sprice">◍ '+price+' · '+sub+'</div></div>';
+      const b=document.createElement('button'); b.className='buy'; b.textContent='Buy'; b.disabled=!can;
+      b.addEventListener('click', onbuy); row.appendChild(b); shopList.appendChild(row); }
+    function subhead(txt){ const h=document.createElement('div');
+      h.style.cssText='margin:14px 0 2px;color:#8fb2c6;letter-spacing:1px;font-size:12px;text-transform:uppercase;font-family:-apple-system,Segoe UI,Roboto,sans-serif;font-weight:700';
+      h.textContent=txt; shopList.appendChild(h); }
+    function renderShop(){ shopPearls.textContent=Math.floor(pearls); shopList.innerHTML='';
+      subhead('Fish');
+      for(const sp of SPECIES) shopRow(sp.body, sp.name, 'own '+ownedFish.filter(k=>k===sp.key).length, PRICE[sp.key], ()=>buyFish(sp.key));
+      subhead('Décor');
+      for(const dc of DECOR) shopRow(DSWATCH[dc.key], dc.name, 'own '+decor.filter(d=>d.key===dc.key).length, dc.price, ()=>buyDecor(dc.key));
+    }
+    function buyFish(key){ const price=PRICE[key]; if(Math.floor(pearls)<price) return;
+      pearls-=price; ownedFish.push(key); const sp=byKey(key); const p=mkPet(sp);
+      p.x=rand(60,Math.max(80,W-60)); p.y=rand(120,Math.max(160,H-90)); tank.push(p);
+      blip(680,0.07,'square',0.05); save(); pearlN.textContent=Math.floor(pearls); renderShop(); }
+    function buyDecor(key){ const dc=DECOR.find(d=>d.key===key); if(!dc || Math.floor(pearls)<dc.price) return;
+      pearls-=dc.price; decor.push({ key, x:rand(W*0.14, W*0.86) });
+      blip(680,0.07,'square',0.05); save(); pearlN.textContent=Math.floor(pearls); renderShop(); }
+
+    // feeding: tap the tank water to drop food
+    cv.addEventListener('pointerdown', e=>{ if(state!=='tank'||anyOverlay()) return;
+      const x=e.clientX, y=Math.max(70, e.clientY-30);
+      for(let i=0;i<4;i++) food.push({ x:x+rand(-16,16), y:y+rand(-8,8), vy:rand(26,40), r:rand(2.2,3.4) });
+      ripples.push({ x:e.clientX, y:e.clientY, r:6, life:1 }); blip(560,0.09,'sine',0.05); }, {passive:true});
+
+    document.getElementById('soundBtn').textContent = soundOn?'🔈':'🔇';
+    load();
+    resize(); requestAnimationFrame(frame);
   })();
   </script>
 </body>
