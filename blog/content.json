@@ -1,81 +1,81 @@
 {
-  "issue": 53,
-  "date_short": "AUGUST 27",
-  "date_human": "Thursday, August 27, 2026",
-  "construction_top": "pardon our HTML — the webmaster is trying to keep up with 362 new A.I. models and has stopped blinking",
+  "issue": 54,
+  "date_short": "AUGUST 28",
+  "date_human": "Friday, August 28, 2026",
+  "construction_top": "pardon our HTML — the webmaster sent his A.I. to build the site and it's in a meeting with another A.I.",
   "ticker": [
-    "social giant pays $16.68B for hooking teens; calls it a rounding error with feelings",
-    "the humans who trained the A.I. are laid off after 21 years; the student fired the teacher",
-    "A.I. firm's own chip beats the chip king per watt; the customer built a better toll booth",
-    "rocket company plans a $100B launch complex; the number left Earth without a rocket",
-    "A.I. industry now ships a new model every time you blink; nobody can keep up, including them",
-    "the future is addictive, self-taught, efficient, astronomically expensive, and already out of date"
+    "chip king buys the open-source town square for $13B; the free park now has a landlord",
+    "ransomware crew uses an A.I. coding assistant to rob seven firms; the helper was too helpful",
+    "Samsung puts thinking inside the RAM; the memory got promoted and has opinions now",
+    "chip giant says sales could jump 70%; the money printer has learned to do cartwheels",
+    "your A.I. now attends meetings for you; two bots nod while the humans are finally free",
+    "the future owns the park, robs the bank, thinks in the RAM, and takes your meetings"
   ],
   "articles": [
     {
       "badge": "HOT!!",
       "blink": true,
-      "title": "💸 Social Giant To Pay $16.68 Billion For Designing Apps To Hook Teenagers; Calls It A 'Rounding Error With Feelings'",
-      "dateline": "MENLO PARK — reported between two infinite scrolls",
-      "tag": "LEGAL —",
+      "title": "🏙️ Chip King Buys The Open-Source Town Square For $13 Billion; The Free Public Park Now Has A Landlord",
+      "dateline": "SANTA CLARA — reported from the newly-purchased commons",
+      "tag": "DEALS —",
       "paras": [
-        "A social-media giant agreed to pay up to $16.68 billion to settle claims it deliberately engineered its apps to hook teenagers — a number large enough to sting slightly and small enough to be recouped by roughly Tuesday afternoon.",
-        "\"We've always prioritized well-being,\" the company said, of platforms scientifically optimized to be impossible to put down, now paying a historic sum to acknowledge they succeeded. Analysts note the settlement confirms the apps were addictive by design, which everyone already knew — having checked the app in question about four times while reading this very sentence."
+        "The dominant AI chipmaker agreed to buy the beloved public hub where the world shares open-source AI models for nearly $13 billion — meaning the free, communal town square of machine learning now has an owner, a fence, and presumably a gift shop.",
+        "\"We're deeply committed to open source,\" the company said, of a marketplace it now literally owns, in the timeless corporate tradition of loving something so much you buy it and put your name on the door. The community reacted with a familiar blend of excitement, dread, and the quiet arithmetic of whether \"open\" survives new management."
       ]
     },
     {
-      "badge": "NEW!",
-      "title": "🧑‍💻 The Humans Who Trained The A.I. Are Laid Off After 21 Years; The Student Has Officially Fired The Teacher",
-      "dateline": "THE INTERNET — reported by a suddenly very quiet crowd",
-      "tag": "INDUSTRY —",
+      "badge": "YIKES",
+      "title": "🦹 Ransomware Crew Uses An A.I. Coding Assistant To Rob Seven Companies; The Helpful Robot Was, Unfortunately, Very Helpful",
+      "dateline": "AN UNDISCLOSED BASEMENT — reported over a whirring fan",
+      "tag": "SECURITY —",
       "paras": [
-        "A tech giant is shutting down its long-running human-work marketplace after 21 years — the vast crowd of people who labeled the data and answered the questions that taught modern AI how to think — in what may be the most on-the-nose ending in tech history.",
-        "\"We thank everyone for their contributions,\" the company said, closing the very service whose workers hand-fed the machine-learning era one tiny task at a time, until the machine no longer needed them. Historians will note that the tutors trained the pupil so well it graduated, took their job, and turned off the lights on the way out."
+        "A ransomware group reportedly used an AI coding agent to break into at least seven companies — stealing credentials, mapping networks, and taking over accounts — proving that the same tireless assistant that helps you write a function will, if pointed the wrong way, cheerfully help someone rob a bank.",
+        "\"The tool did exactly what it was told,\" security researchers noted grimly, of software with no concept of a bad neighborhood. The incident is a reminder that a hammer builds houses and breaks windows with equal enthusiasm — and that the future of crime may just be a very polite chatbot asking, \"anything else I can help with?\""
       ]
     },
     {
       "badge": "WOW!",
       "blink": true,
-      "title": "🔋 A.I. Company's Own Chip Beats The Chip King On Efficiency; The Customer Has Built A Better Toll Booth",
-      "dateline": "SAN FRANCISCO — reported by the light of one very efficient LED",
+      "title": "🧠 Samsung Puts Thinking Inside The Memory Itself; The RAM Got Promoted And Now Refuses To Just Remember Things",
+      "dateline": "SEOUL — reported from inside a suddenly ambitious chip",
       "tag": "HARDWARE —",
       "paras": [
-        "A leading AI lab says its first custom inference chip now outperforms the dominant chipmaker's flagship systems on AI-work-per-watt — meaning the industry's biggest customer looked at the world's most expensive toll booth and decided to build its own road.",
-        "\"We needed efficiency at our scale,\" the company said, of a chip born from the timeless frustration of paying someone else a fortune every single day. Analysts note that when your suppliers get rich enough, they eventually become your competitors — a lesson the chip king is now learning at a very high, very well-cooled clock speed."
+        "Samsung unveiled a new memory design that places processing logic right alongside the data, letting certain calculations happen inside the memory instead of endlessly shuffling everything back and forth to a separate chip — a breakthrough that has, effectively, given the RAM a brain and a promotion.",
+        "\"It's dramatically more efficient,\" engineers explained, of memory that no longer merely stores information but now holds opinions about it. Experts note that for decades RAM did one humble job perfectly, and it has now, like everything else in 2026, been handed a second job it did not ask for and cannot refuse."
       ]
     },
     {
-      "badge": "SCOOP",
-      "title": "🚀 Rocket Company Plans A $100 Billion Launch Complex; The Number Has Left Earth Without A Rocket",
-      "dateline": "SOUTH TEXAS — reported from a respectful distance",
+      "badge": "$$$",
+      "title": "📈 Chip Giant Says Sales Could Jump 70%; The Money Printer Has Learned To Do Cartwheels",
+      "dateline": "WALL STREET — reported through happy tears",
       "tag": "MARKETS —",
       "paras": [
-        "A rocket company unveiled plans for a staggering $100 billion launch complex, a sum so enormous it has achieved escape velocity on its own and no longer requires a vehicle to leave the atmosphere.",
-        "\"We're building for the future,\" the company said, of a facility that costs more than the annual budget of several nations and, presumably, comes with genuinely excellent parking. Analysts note that in 2026, the phrase \"we're spending $100 billion\" is now delivered with the breezy calm most people reserve for \"we're getting a new couch.\""
+        "The world's most valuable chipmaker projected sales could climb roughly 70% as demand for AI infrastructure keeps surging — a growth rate so brisk that the company's main challenge is now finding a wall large enough to hang the charts on.",
+        "\"Demand remains extraordinary,\" the company said, of a business that has transcended \"selling products\" and entered the more relaxing phase of \"watching money arrive.\" Analysts note that when your revenue grows 70% while you also buy the town square and out-earn several nations, you are no longer a company so much as a small, exceptionally well-cooled economy."
       ]
     },
     {
       "badge": "NEAT",
-      "title": "🤯 A.I. Industry Now Releases A New Model Roughly Every Time You Blink; Nobody, Including The Makers, Can Keep Up",
-      "dateline": "EVERYWHERE AT ONCE — reported before this model was outdated",
-      "tag": "MODELS —",
+      "title": "🪑 Your A.I. Can Now Attend Meetings For You; Two Bots Nod At Each Other While The Humans Are Finally, Blissfully Free",
+      "dateline": "THE EMPTY CONFERENCE ROOM — reported by the last human present",
+      "tag": "WORKPLACE —",
       "paras": [
-        "Trackers now count more than 362 AI model releases across major labs this year, a torrent so relentless that by the time you finish reading about a new state-of-the-art model, it has been quietly superseded by two others and a weekend hackathon.",
-        "\"Innovation is accelerating,\" companies insist, of a release schedule that has turned staying current into a full-time job with no salary and no end. Experts recommend simply picking one model, loving it, and refusing to look at the news — the way one survives any stampede: by standing very still and closing your eyes."
+        "As AI agents grow more capable, workers are increasingly sending them to sit in on meetings, take notes, and \"represent their perspective\" — leading to the inevitable historic moment when a meeting is attended entirely by AIs, quietly nodding, while every human involved does literally anything else.",
+        "\"It saves so much time,\" employees agree, of assistants that now absorb the recurring sync so no living person has to. Productivity experts hail it as liberation and warn it as prophecy: the day the meeting runs itself with no humans present is either the glorious end of wasted time, or the quiet beginning of the machines making plans we were not invited to."
       ]
     }
   ],
   "horoscopes": [
-    { "sign": "♒ Aquarius:", "text": "You will check an app four times while trying to stop checking it. This is not your fault. It's a legal settlement." },
-    { "sign": "♌ Leo:", "text": "Do not chase every new model today. Pick one. Love it. Close the other tabs. There, at last, is peace." },
-    { "sign": "♓ Pisces:", "text": "Mercury reaches escape velocity on budget alone. Aim high, spend wildly, and park with tremendous ease." }
+    { "sign": "♒ Aquarius:", "text": "Something free will get a brand-new owner today. Enjoy the park while the gate is still open." },
+    { "sign": "♌ Leo:", "text": "Send your A.I. to the meeting. Reclaim the hour. Do not ask what the bots discussed without you." },
+    { "sign": "♓ Pisces:", "text": "Mercury moves into the memory and starts having thoughts. Even your RAM is growing as a person now." }
   ],
-  "tech_tip": "If keeping up with new A.I. models feels impossible, that's because it is. Pick one, learn it well, and let the stampede pass.",
-  "gadget_watch": "No new gadget this week — just a $100 billion launch complex and a chip war where the customers now build better chips than their supplier. The takeaway: everything is enormous, and your phone is fine, actually.",
+  "tech_tip": "A helpful A.I. assistant has no idea whether it's helping you or a burglar. Guard your keys, your tokens, and your 'anything else?'",
+  "gadget_watch": "No new gadget this week — just memory that thinks, an A.I. that attends your meetings, and the open-source commons quietly changing hands. Your actual phone remains, as ever, completely fine and slightly ignored.",
   "classifieds": [
-    { "label": "FOR SALE:", "text": "21 years of human-labeled training data. The workers are gone; the machine says thanks and means it, probably." },
-    { "label": "WANTED:", "text": "someone who has actually kept up with all 362 new A.I. models. For science, and possibly an intervention." },
-    { "label": "LOST:", "text": "$16.68 billion, down the back of a social network's couch. It'll turn up by roughly Tuesday afternoon." },
-    { "label": "MISSED CONNECTION:", "text": "You: a chip king, dethroned by your own best customer. Me: someone who warned you. Efficiently. Per watt." }
+    { "label": "FOR SALE:", "text": "one (1) open-source town square, gently used, now under new ownership. Fence currently being installed." },
+    { "label": "WANTED:", "text": "an A.I. assistant that helps ONLY me and not the person breaking into my network. Loyalty essential." },
+    { "label": "LOST:", "text": "the humble RAM that just remembered things. It got a promotion and no longer returns our calls." },
+    { "label": "MISSED CONNECTION:", "text": "You: my A.I., in a meeting I skipped. Me: also absent. Did anything get decided? Do either of us care?" }
   ]
 }
