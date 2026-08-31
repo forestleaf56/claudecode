@@ -57,15 +57,19 @@ weekly-apps/current/
       embers, rune glow), engraved EMBERDELVE wordmark, styled amber/teal
       DESCEND / HOW TO / SCORES buttons, How-to + Scores modals, DESCEND → grid
       placeholder. Verify in browser, no JS errors. (Today: just plan + skeleton.)
-- [ ] Tue: the dungeon + movement — procedural floor generation (rooms + corridors),
-      a player @ that moves turn-by-turn (tap adjacent tile / d-pad), wall collision,
-      stairs to descend to a freshly generated next floor, torch-radius fog of war.
-- [ ] Wed: combat + enemies + economy — bump-to-attack, HP/hearts, 3–4 enemy types
-      with simple chase AI that act on your turn, gold + potions to pick up, death →
-      game over with run summary; HUD (floor, HP, gold).
-- [ ] Thu (production-ready front end): tiered loot (weapons/armor that change damage/
-      defense), more enemy variety by depth, a ☰ pause/menu overlay, and the polished
-      title screen finalized. Best depth/gold persisted; SCORES screen.
+- [x] Tue (done early in Mon 14:00 pass): the dungeon + movement — procedural floor
+      generation (6–9 rooms + L-corridors), a player @ that moves turn-by-turn (tap
+      adjacent tile / d-pad / arrows-WASD), wall collision, ▼ stairs that descend to a
+      freshly generated deeper floor, torch-radius fog of war with Bresenham line-of-
+      sight + remembered/dimmed explored tiles. Verified headless, no JS errors.
+- [x] Wed (done early in Mon 14:00 pass): combat + enemies + economy — bump-to-attack,
+      HP hearts, 5 enemy types (rat/bat/goblin/skeleton/brute) with chase AI that act
+      on your turn, gold + potions + gear pickups, death → run-summary modal; HUD
+      (floor, hearts, gold). Verified: descend, kill, and death paths all work.
+- [x] Thu (mostly done early): tiered loot — 6 weapon tiers + 5 armor tiers that change
+      damage/defense and scale with depth; enemy pool & difficulty scale by depth; a ☰
+      pause/menu overlay; best depth + best gold persisted; SCORES screen. Remaining for
+      Thu/14:00: finalize title polish + breadth (traps, shrine/shop, boss floors).
 - [ ] LONGEVITY (Tue–Thu + 14:00 passes): guarantee endless replayability — solid
       procedural generation, depth-scaled difficulty & loot, permadeath score chase,
       several enemy types + item tiers, and run stats. Add breadth (traps, a shrine/
@@ -82,4 +86,10 @@ weekly-apps/current/
 ## Status notes
 - Mon 2026-08-31: first week under the added **longevity** requirement. Chose a
   roguelike specifically because procedural generation + permadeath give effectively
-  infinite content. Today: plan + a minimal title-screen skeleton only.
+  infinite content. Mon morning: plan + title-screen skeleton. Mon 14:00 pass: the
+  fresh window had budget to build the WHOLE core game (procedural dungeons, turn-based
+  movement, fog of war, combat, 5 enemy types, tiered loot, economy, permadeath, HUD,
+  pause) — Emberdelve is already fully playable. Tue–Thu + 14:00 passes now go to
+  graphics polish and content breadth rather than core systems.
+- A read-only debug hook (`window.__ember`, only active with the `#dbg` URL hash) is
+  used by the headless test harness; it is inert and invisible during normal play.

@@ -20,10 +20,8 @@
   #game{position:absolute; inset:0;}
   canvas{position:absolute; inset:0; width:100%; height:100%; display:block;}
 
-  /* --- Overlay layer (title screen for now) --- */
   .overlay{position:absolute; inset:0; display:flex; flex-direction:column;
-    align-items:center; justify-content:center; text-align:center; padding:24px;
-    z-index:5;}
+    align-items:center; justify-content:center; text-align:center; padding:24px; z-index:5;}
   .hidden{display:none !important;}
 
   .brand{margin-bottom:6vh;}
@@ -31,12 +29,10 @@
   @keyframes flick{0%,100%{opacity:.85; transform:translateY(0) scale(1);}50%{opacity:1; transform:translateY(-1px) scale(1.06);}}
   .wordmark{
     margin:10px 0 4px; font-weight:800; letter-spacing:.14em;
-    font-size:clamp(40px,13vw,88px); line-height:.95;
-    color:var(--ember2);
+    font-size:clamp(40px,13vw,88px); line-height:.95; color:var(--ember2);
     text-shadow:0 1px 0 #5a3413, 0 0 26px rgba(255,154,60,.55), 0 6px 30px rgba(0,0,0,.6);
   }
-  .tagline{color:var(--muted); font-style:italic; letter-spacing:.06em;
-    font-size:clamp(13px,3.6vw,17px);}
+  .tagline{color:var(--muted); font-style:italic; letter-spacing:.06em; font-size:clamp(13px,3.6vw,17px);}
 
   .menu{display:flex; flex-direction:column; gap:14px; width:min(320px,84vw);}
   .btn{
@@ -55,8 +51,7 @@
   }
   .btn.secondary:active{transform:translateY(4px); box-shadow:0 2px 0 #0d1a1f, 0 5px 14px rgba(0,0,0,.4), inset 0 0 0 1px rgba(79,214,196,.35);}
 
-  /* --- Modal (How to / Scores) --- */
-  .modal{position:absolute; inset:0; z-index:10; display:flex; align-items:center;
+  .modal{position:absolute; inset:0; z-index:20; display:flex; align-items:center;
     justify-content:center; padding:24px; background:rgba(8,5,11,.72); backdrop-filter:blur(3px);}
   .card{width:min(440px,92vw); max-height:82vh; overflow:auto; border-radius:18px;
     padding:22px 22px 18px; background:linear-gradient(180deg,#221826,#160f1c);
@@ -65,11 +60,35 @@
   .card p, .card li{color:var(--text); line-height:1.55; font-size:15px;}
   .card ul{padding-left:18px; margin:8px 0;}
   .card .close{margin-top:16px;}
-  .placeholder{color:var(--muted); font-style:italic;}
+  .kbd{display:inline-block; padding:1px 7px; border-radius:6px; background:#2a1f31;
+    border:1px solid rgba(255,154,60,.3); color:var(--ember2); font-size:13px;}
 
-  /* --- Grid placeholder shown after DESCEND (skeleton only) --- */
-  #runScreen .panel{width:min(440px,90vw); padding:26px; border-radius:16px; text-align:center;
-    background:linear-gradient(180deg,#1d1524,#140e1a); border:1px solid rgba(79,214,196,.18);}
+  /* --- In-run HUD --- */
+  #hud{position:absolute; top:0; left:0; right:0; z-index:8; display:flex; align-items:center;
+    gap:10px; padding:10px 12px calc(10px + env(safe-area-inset-top)); pointer-events:none;
+    background:linear-gradient(180deg,rgba(8,5,11,.78),rgba(8,5,11,0));}
+  #hud .pill{display:flex; align-items:center; gap:6px; font-weight:700; letter-spacing:.04em;
+    font-size:15px; text-shadow:0 1px 3px #000;}
+  #hearts{letter-spacing:1px; font-size:17px;}
+  #hud .depth{color:var(--ember2);} #hud .gold{color:var(--ember2);}
+  #hud .spacer{flex:1;}
+  #menuBtn{pointer-events:auto; width:40px; height:40px; border-radius:10px; border:0; cursor:pointer;
+    color:var(--text); font-size:19px; background:rgba(36,26,43,.85); border:1px solid rgba(255,154,60,.25);}
+  #msg{position:absolute; left:0; right:0; bottom:calc(150px + env(safe-area-inset-bottom)); z-index:8;
+    text-align:center; pointer-events:none; color:var(--ember2); font-style:italic;
+    font-size:15px; text-shadow:0 1px 4px #000; opacity:0; transition:opacity .25s;}
+
+  /* --- D-pad --- */
+  #pad{position:absolute; left:0; right:0; bottom:calc(18px + env(safe-area-inset-bottom));
+    z-index:8; display:grid; grid-template-columns:repeat(3,64px); grid-template-rows:repeat(3,64px);
+    justify-content:center; gap:8px; }
+  .dbtn{border:0; border-radius:12px; cursor:pointer; color:var(--text); font-size:24px; font-weight:700;
+    background:linear-gradient(180deg,rgba(43,31,49,.92),rgba(26,18,33,.92));
+    border:1px solid rgba(255,154,60,.22); box-shadow:0 3px 10px rgba(0,0,0,.45);}
+  .dbtn:active{transform:translateY(2px); background:linear-gradient(180deg,rgba(255,154,60,.5),rgba(180,90,30,.5));}
+  .dbtn.mid{background:transparent; border:0; box-shadow:none;}
+  .du{grid-column:2; grid-row:1;} .dl{grid-column:1; grid-row:2;}
+  .dwait{grid-column:2; grid-row:2; font-size:16px;} .dr{grid-column:3; grid-row:2;} .dd{grid-column:2; grid-row:3;}
 </style>
 </head>
 <body>
@@ -90,16 +109,35 @@
     </div>
   </div>
 
+  <!-- IN-RUN HUD -->
+  <div id="hud" class="hidden">
+    <div class="pill depth">⛏ <span id="depthN">1</span></div>
+    <div class="pill"><span id="hearts">❤️❤️❤️</span></div>
+    <div class="spacer"></div>
+    <div class="pill gold">◈ <span id="goldN">0</span></div>
+    <button id="menuBtn" aria-label="Menu">☰</button>
+  </div>
+  <div id="msg"></div>
+
+  <!-- D-PAD -->
+  <div id="pad" class="hidden">
+    <button class="dbtn du" data-dir="up">▲</button>
+    <button class="dbtn dl" data-dir="left">◀</button>
+    <button class="dbtn dwait" data-dir="wait">wait</button>
+    <button class="dbtn dr" data-dir="right">▶</button>
+    <button class="dbtn dd" data-dir="down">▼</button>
+  </div>
+
   <!-- HOW-TO MODAL -->
   <div id="howModal" class="modal hidden">
     <div class="card">
-      <h2>How to play</h2>
-      <p class="placeholder">Full rules arrive as the dungeon is built this week.</p>
+      <h2>How to delve</h2>
       <ul>
-        <li>Tap an adjacent tile (or the d-pad) to move — the dungeon takes a turn with you.</li>
-        <li>Move into an enemy to attack it. Watch your hearts.</li>
-        <li>Grab gold, potions and gear; take the stairs down to delve deeper.</li>
-        <li>Death is permanent — the goal is to beat your deepest floor.</li>
+        <li>Tap a tile next to you, use the on-screen <b>d-pad</b>, or the <span class="kbd">arrow</span>/<span class="kbd">WASD</span> keys to move.</li>
+        <li>Move <b>into an enemy</b> to strike it. Everything acts only when <i>you</i> do — take your time.</li>
+        <li>Step onto <b>◈ gold</b>, <b>❤ potions</b>, <b>weapons</b> and <b>armor</b> to grab them. Better gear replaces weaker gear.</li>
+        <li>Find the <b>▼ stairs</b> and descend. Each floor is generated fresh and grows deadlier — and richer.</li>
+        <li>Death is <b>permanent</b>. The only goal is to reach a deeper floor than last time.</li>
       </ul>
       <button class="btn secondary close" data-close>Close</button>
     </div>
@@ -114,13 +152,30 @@
     </div>
   </div>
 
-  <!-- RUN SCREEN (skeleton placeholder for now) -->
-  <div id="runScreen" class="overlay hidden">
-    <div class="panel">
-      <div class="wordmark" style="font-size:clamp(24px,7vw,34px)">The delve awaits</div>
-      <p class="placeholder">The dungeon, movement and combat are built across this week's
-      increments. For now this confirms the shell works.</p>
-      <button class="btn secondary" id="backBtn" style="margin-top:14px">Back</button>
+  <!-- PAUSE MODAL -->
+  <div id="pauseModal" class="modal hidden">
+    <div class="card">
+      <h2>Paused</h2>
+      <p class="placeholder">Floor <span id="pauseFloor">1</span> · <span id="pauseGold">0</span> gold gathered.</p>
+      <div class="menu" style="width:auto; margin-top:8px;">
+        <button class="btn" id="resumeBtn">Resume</button>
+        <button class="btn secondary" id="pauseHowBtn">How to</button>
+        <button class="btn secondary" id="abandonBtn">Abandon delve</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- DEATH MODAL -->
+  <div id="deathModal" class="modal hidden">
+    <div class="card" style="text-align:center;">
+      <div class="flame" style="font-size:28px;">💀</div>
+      <h2 style="color:var(--danger);">You fell in the dark</h2>
+      <p id="deathBody">You reached floor 1.</p>
+      <p id="deathBest" class="placeholder"></p>
+      <div class="menu" style="width:auto; margin-top:8px;">
+        <button class="btn" id="againBtn">Delve again</button>
+        <button class="btn secondary" id="titleBtn">To title</button>
+      </div>
     </div>
   </div>
 </div>
@@ -128,89 +183,384 @@
 <script>
 (function(){
   'use strict';
-  // ---- Animated torch-lit title background (Canvas 2D) ----
-  const cv = document.getElementById('bg');
-  const ctx = cv.getContext('2d');
-  let W=0, H=0, DPR=1;
+  const $=id=>document.getElementById(id);
+  const show=(el,on)=>el.classList.toggle('hidden',!on);
+  const cv=$('bg'), ctx=cv.getContext('2d');
+  let W=0,H=0,DPR=1;
   function resize(){
-    DPR = Math.min(window.devicePixelRatio||1, 2);
-    W = cv.clientWidth; H = cv.clientHeight;
-    cv.width = Math.round(W*DPR); cv.height = Math.round(H*DPR);
+    DPR=Math.min(window.devicePixelRatio||1,2);
+    W=cv.clientWidth; H=cv.clientHeight;
+    cv.width=Math.round(W*DPR); cv.height=Math.round(H*DPR);
     ctx.setTransform(DPR,0,0,DPR,0,0);
   }
-  window.addEventListener('resize', resize); resize();
+  window.addEventListener('resize',resize); resize();
 
-  // rising embers
-  const embers = [];
-  function spawnEmber(){
-    embers.push({ x:Math.random()*W, y:H+10, r:1+Math.random()*2.2,
-      vy:-(12+Math.random()*26), drift:(Math.random()-0.5)*10, life:0, max:3+Math.random()*3 });
+  // ===================== STATE =====================
+  let mode='title';                // 'title' | 'run'
+  const rnd=(n)=>Math.floor(Math.random()*n);
+  const rr=(a,b)=>a+Math.floor(Math.random()*(b-a+1));
+  const clamp=(v,a,b)=>v<a?a:v>b?b:v;
+
+  // ---- Title screen embers ----
+  const tEmbers=[];
+  function spawnT(){ tEmbers.push({x:Math.random()*W,y:H+10,r:1+Math.random()*2.2,vy:-(12+Math.random()*26),drift:(Math.random()-.5)*10,life:0,max:3+Math.random()*3}); }
+  for(let i=0;i<40;i++){ spawnT(); tEmbers[i].y=Math.random()*H; }
+
+  // ===================== DUNGEON =====================
+  const COLS=34, ROWS=30;
+  const WALL=0, FLOOR=1, STAIRS=2;
+  let map, seen, vis, rooms, depth, player, enemies, items, turnLock=false, deadShown=false;
+  let anim=[]; // transient effects (hit flashes, floating dmg)
+
+  const ENEMY_KINDS={
+    rat:     {ch:'r', name:'rat',      hp:3,  atk:1, gold:[0,2],  col:'#9a8f86', aggro:5},
+    bat:     {ch:'w', name:'bat',      hp:2,  atk:1, gold:[0,1],  col:'#b06cff', aggro:6, erratic:true},
+    goblin:  {ch:'g', name:'goblin',   hp:6,  atk:2, gold:[2,6],  col:'#79c46a', aggro:6},
+    skeleton:{ch:'s', name:'skeleton', hp:9,  atk:3, gold:[3,8],  col:'#e8e2d0', aggro:7},
+    brute:   {ch:'B', name:'brute',    hp:16, atk:5, gold:[6,14], col:'#e8564b', aggro:6},
+  };
+  function poolFor(d){
+    if(d<=2) return ['rat','rat','bat'];
+    if(d<=4) return ['rat','bat','goblin','goblin'];
+    if(d<=6) return ['bat','goblin','goblin','skeleton'];
+    if(d<=9) return ['goblin','skeleton','skeleton','brute'];
+    return ['skeleton','skeleton','brute','brute'];
   }
-  for(let i=0;i<40;i++){ spawnEmber(); embers[i].y=Math.random()*H; }
+  const WEAPONS=[{name:'fists',atk:0},{name:'dagger',atk:1},{name:'shortsword',atk:2},{name:'war axe',atk:3},{name:'warhammer',atk:4},{name:'ember blade',atk:6}];
+  const ARMORS =[{name:'rags',def:0},{name:'leather',def:1},{name:'chainmail',def:2},{name:'plate',def:3},{name:'runed plate',def:4}];
 
-  let t=0, last=performance.now();
+  function blankMap(){ map=[]; seen=[]; for(let y=0;y<ROWS;y++){ map.push(new Array(COLS).fill(WALL)); seen.push(new Array(COLS).fill(false)); } }
+  function carveRoom(r){ for(let y=r.y;y<r.y+r.h;y++) for(let x=r.x;x<r.x+r.w;x++) map[y][x]=FLOOR; }
+  function hCorr(x1,x2,y){ for(let x=Math.min(x1,x2);x<=Math.max(x1,x2);x++) map[y][x]=FLOOR; }
+  function vCorr(y1,y2,x){ for(let y=Math.min(y1,y2);y<=Math.max(y1,y2);y++) map[y][x]=FLOOR; }
+  function overlaps(a,b){ return a.x<=b.x+b.w+1 && a.x+a.w+1>=b.x && a.y<=b.y+b.h+1 && a.y+a.h+1>=b.y; }
+
+  function genFloor(d){
+    blankMap(); rooms=[]; enemies=[]; items=[]; anim=[];
+    const want=rr(6,9);
+    let tries=0;
+    while(rooms.length<want && tries<200){
+      tries++;
+      const w=rr(4,7), h=rr(3,6);
+      const x=rr(1,COLS-w-2), y=rr(1,ROWS-h-2);
+      const room={x,y,w,h};
+      if(rooms.some(r=>overlaps(r,room))) continue;
+      carveRoom(room);
+      if(rooms.length){
+        const p=roomCenter(rooms[rooms.length-1]), c=roomCenter(room);
+        if(Math.random()<.5){ hCorr(p.x,c.x,p.y); vCorr(p.y,c.y,c.x); }
+        else { vCorr(p.y,c.y,p.x); hCorr(p.x,c.x,c.y); }
+      }
+      rooms.push(room);
+    }
+    // player in first room
+    const start=roomCenter(rooms[0]);
+    if(!player) player={x:start.x,y:start.y,hp:12,maxHp:12,gold:0,wp:0,ar:0};
+    else { player.x=start.x; player.y=start.y; }
+    // stairs in last room
+    const last=roomCenter(rooms[rooms.length-1]);
+    map[last.y][last.x]=STAIRS;
+    // enemies: more & tougher with depth, skip first room
+    const pool=poolFor(d);
+    const nEnem=clamp(3+Math.floor(d*1.4),3,16);
+    let placed=0, guard=0;
+    while(placed<nEnem && guard<400){
+      guard++;
+      const rm=rooms[rr(1,rooms.length-1)];
+      const ex=rr(rm.x,rm.x+rm.w-1), ey=rr(rm.y,rm.y+rm.h-1);
+      if(map[ey][ex]!==FLOOR) continue;
+      if(enemies.some(e=>e.x===ex&&e.y===ey)) continue;
+      const kind=pool[rr(0,pool.length-1)];
+      const base=ENEMY_KINDS[kind];
+      const scale=1+Math.max(0,d-1)*0.14;
+      enemies.push({x:ex,y:ey,kind,hp:Math.round(base.hp*scale),max:Math.round(base.hp*scale),atk:base.atk+Math.floor((d-1)/4),flash:0});
+      placed++;
+    }
+    // items: gold piles, potions, occasional gear scaling with depth
+    const nItems=rr(4,7);
+    for(let i=0;i<nItems;i++){
+      const rm=rooms[rr(0,rooms.length-1)];
+      const ix=rr(rm.x,rm.x+rm.w-1), iy=rr(rm.y,rm.y+rm.h-1);
+      if(map[iy][ix]!==FLOOR) continue;
+      if(ix===player.x&&iy===player.y) continue;
+      if(items.some(it=>it.x===ix&&it.y===iy)||enemies.some(e=>e.x===ix&&e.y===iy)) continue;
+      const roll=Math.random();
+      if(roll<0.5) items.push({x:ix,y:iy,type:'gold',amt:rr(2,5+d)});
+      else if(roll<0.78) items.push({x:ix,y:iy,type:'potion',heal:5});
+      else if(roll<0.9){ const t=clamp(1+Math.floor(d/2)+rr(-1,1),1,WEAPONS.length-1); items.push({x:ix,y:iy,type:'weapon',tier:t}); }
+      else { const t=clamp(1+Math.floor(d/2)+rr(-1,1),1,ARMORS.length-1); items.push({x:ix,y:iy,type:'armor',tier:t}); }
+    }
+    depth=d; recompute();
+  }
+  function roomCenter(r){ return {x:Math.floor(r.x+r.w/2), y:Math.floor(r.y+r.h/2)}; }
+
+  // ---- visibility: torch radius + remembered ----
+  const TORCH=4.6;
+  function recompute(){
+    vis=[]; for(let y=0;y<ROWS;y++) vis.push(new Array(COLS).fill(false));
+    const px=player.x, py=player.y;
+    const R=Math.ceil(TORCH);
+    for(let dy=-R;dy<=R;dy++) for(let dx=-R;dx<=R;dx++){
+      const x=px+dx, y=py+dy;
+      if(x<0||y<0||x>=COLS||y>=ROWS) continue;
+      if(Math.hypot(dx,dy)>TORCH+0.3) continue;
+      if(los(px,py,x,y)){ vis[y][x]=true; seen[y][x]=true; }
+    }
+    vis[py][px]=true; seen[py][px]=true;
+  }
+  function los(x0,y0,x1,y1){ // Bresenham; blocked by walls (walls themselves are visible)
+    let dx=Math.abs(x1-x0), dy=Math.abs(y1-y0);
+    let sx=x0<x1?1:-1, sy=y0<y1?1:-1, err=dx-dy, x=x0, y=y0;
+    while(true){
+      if(x===x1&&y===y1) return true;
+      if(!(x===x0&&y===y0) && map[y][x]===WALL) return false;
+      const e2=2*err;
+      if(e2>-dy){ err-=dy; x+=sx; }
+      if(e2<dx){ err+=dx; y+=sy; }
+    }
+  }
+
+  // ===================== TURN LOGIC =====================
+  function flash(text,col){ const m=$('msg'); m.textContent=text; m.style.color=col||'#ffcf7a'; m.style.opacity='1'; clearTimeout(flash._t); flash._t=setTimeout(()=>m.style.opacity='0',1100); }
+
+  function tryMove(dx,dy){
+    if(mode!=='run'||turnLock||player.hp<=0) return;
+    if(dx===0&&dy===0){ enemyTurn(); return; } // wait
+    const nx=player.x+dx, ny=player.y+dy;
+    if(nx<0||ny<0||nx>=COLS||ny>=ROWS) return;
+    const foe=enemies.find(e=>e.x===nx&&e.y===ny);
+    if(foe){ attack(foe); enemyTurn(); return; }
+    if(map[ny][nx]===WALL) return;
+    player.x=nx; player.y=ny;
+    pickup();
+    if(map[ny][nx]===STAIRS){ descend(); return; }
+    enemyTurn();
+  }
+  function attack(foe){
+    const dmg=2+WEAPONS[player.wp].atk;
+    foe.hp-=dmg; foe.flash=1;
+    anim.push({type:'dmg',x:foe.x,y:foe.y,val:dmg,life:0.7,col:'#ffcf7a'});
+    if(foe.hp<=0){
+      const g=ENEMY_KINDS[foe.kind].gold; const drop=rr(g[0],g[1]);
+      if(drop>0){ player.gold+=drop; }
+      enemies=enemies.filter(e=>e!==foe);
+      flash('the '+ENEMY_KINDS[foe.kind].name+' falls'+(drop>0?' (+'+drop+'◈)':''));
+    }
+  }
+  function pickup(){
+    const it=items.find(i=>i.x===player.x&&i.y===player.y);
+    if(!it) return;
+    if(it.type==='gold'){ player.gold+=it.amt; flash('+'+it.amt+' gold'); }
+    else if(it.type==='potion'){ player.hp=clamp(player.hp+it.heal,0,player.maxHp); flash('potion — +'+it.heal+' HP','#79c46a'); }
+    else if(it.type==='weapon'){ if(it.tier>player.wp){ player.wp=it.tier; flash('found a '+WEAPONS[it.tier].name+'!','#ffcf7a'); } else flash('a lesser '+WEAPONS[it.tier].name+' — left it'); }
+    else if(it.type==='armor'){ if(it.tier>player.ar){ player.ar=it.tier; flash('donned '+ARMORS[it.tier].name+'!','#4fd6c4'); } else flash('weaker '+ARMORS[it.tier].name+' — left it'); }
+    if(it.type==='gold'||it.type==='potion'|| (it.type==='weapon'&&it.tier>player.wp-0)|| (it.type==='armor'&&it.tier>player.ar-0))
+      items=items.filter(i=>i!==it);
+  }
+  function descend(){
+    turnLock=true;
+    player.hp=clamp(player.hp+2,0,player.maxHp); // small relief between floors
+    flash('you descend to floor '+(depth+1),'#4fd6c4');
+    setTimeout(()=>{ genFloor(depth+1); turnLock=false; updateHUD(); },260);
+  }
+  function enemyTurn(){
+    turnLock=true;
+    for(const e of enemies){
+      const base=ENEMY_KINDS[e.kind];
+      const dist=Math.hypot(e.x-player.x,e.y-player.y);
+      const adjacent=Math.abs(e.x-player.x)+Math.abs(e.y-player.y)===1;
+      if(adjacent){
+        const dmg=Math.max(1,e.atk-ARMORS[player.ar].def);
+        player.hp-=dmg;
+        anim.push({type:'dmg',x:player.x,y:player.y,val:dmg,life:0.7,col:'#e8564b'});
+        continue;
+      }
+      let mvx=0,mvy=0;
+      if(dist<=base.aggro && vis[e.y] && vis[e.y][e.x]){ // chase when in lit range
+        mvx=Math.sign(player.x-e.x); mvy=Math.sign(player.y-e.y);
+        // prefer axis with greater distance, avoid walls/others
+        if(Math.abs(player.x-e.x)>=Math.abs(player.y-e.y)){ if(!step(e,mvx,0)) step(e,0,mvy); }
+        else { if(!step(e,0,mvy)) step(e,mvx,0); }
+      } else if(base.erratic && Math.random()<0.5){
+        const d=[[1,0],[-1,0],[0,1],[0,-1]][rr(0,3)]; step(e,d[0],d[1]);
+      }
+    }
+    recompute(); updateHUD();
+    if(player.hp<=0) die();
+    turnLock=false;
+  }
+  function step(e,dx,dy){
+    if(dx===0&&dy===0) return false;
+    const nx=e.x+dx, ny=e.y+dy;
+    if(nx<0||ny<0||nx>=COLS||ny>=ROWS) return false;
+    if(map[ny][nx]===WALL) return false;
+    if(nx===player.x&&ny===player.y) return false;
+    if(enemies.some(o=>o!==e&&o.x===nx&&o.y===ny)) return false;
+    e.x=nx; e.y=ny; return true;
+  }
+
+  function die(){
+    if(deadShown) return; deadShown=true;
+    let best=0; try{ best=parseInt(localStorage.getItem('emberdelve_best')||'0',10)||0; }catch(err){}
+    const isBest=depth>best;
+    if(isBest){ try{ localStorage.setItem('emberdelve_best',String(depth)); }catch(err){} }
+    try{ const bg=parseInt(localStorage.getItem('emberdelve_gold')||'0',10)||0; if(player.gold>bg) localStorage.setItem('emberdelve_gold',String(player.gold)); }catch(err){}
+    $('deathBody').textContent='You reached floor '+depth+' with '+player.gold+' gold.';
+    $('deathBest').textContent=isBest?('★ New deepest floor — '+depth+'!'):('Your best is floor '+best+'.');
+    setTimeout(()=>show($('deathModal'),true),380);
+  }
+
+  // ===================== HUD =====================
+  function heartsStr(){
+    const full=Math.floor(player.hp/2), half=player.hp%2, total=Math.ceil(player.maxHp/2);
+    let s=''; for(let i=0;i<total;i++){ s+= i<full?'❤️': (i===full&&half)?'💔':'🖤'; } return s;
+  }
+  function updateHUD(){ $('depthN').textContent=depth; $('goldN').textContent=player.gold; $('hearts').textContent=heartsStr(); }
+
+  // ===================== RENDER =====================
+  let last=performance.now(), t=0;
   function frame(now){
     const dt=Math.min(0.05,(now-last)/1000); last=now; t+=dt;
-
-    // stone backdrop
-    const g=ctx.createLinearGradient(0,0,0,H);
-    g.addColorStop(0,'#140d1a'); g.addColorStop(0.6,'#1b1222'); g.addColorStop(1,'#0d0812');
-    ctx.fillStyle=g; ctx.fillRect(0,0,W,H);
-
-    // flickering torch light pool, centered-ish
-    const flick = 0.82 + 0.18*Math.sin(t*7.3) + 0.06*Math.sin(t*17.1);
-    const cx=W*0.5, cy=H*0.42, rad=Math.min(W,H)*0.75*flick;
-    const rg=ctx.createRadialGradient(cx,cy,0,cx,cy,rad);
-    rg.addColorStop(0,'rgba(255,168,74,'+(0.34*flick)+')');
-    rg.addColorStop(0.4,'rgba(255,120,40,'+(0.12*flick)+')');
-    rg.addColorStop(1,'rgba(255,120,40,0)');
-    ctx.fillStyle=rg; ctx.fillRect(0,0,W,H);
-
-    // faint rune glow accents (teal)
-    ctx.save(); ctx.globalCompositeOperation='lighter';
-    for(let i=0;i<3;i++){
-      const rx=W*(0.2+0.3*i), ry=H*(0.72+0.03*Math.sin(t*1.3+i));
-      const rr=ctx.createRadialGradient(rx,ry,0,rx,ry,60);
-      const a=0.05+0.04*Math.sin(t*2+i*2);
-      rr.addColorStop(0,'rgba(79,214,196,'+a+')'); rr.addColorStop(1,'rgba(79,214,196,0)');
-      ctx.fillStyle=rr; ctx.fillRect(rx-70,ry-70,140,140);
-    }
-    ctx.restore();
-
-    // embers
-    ctx.save(); ctx.globalCompositeOperation='lighter';
-    for(const e of embers){
-      e.life+=dt; e.y+=e.vy*dt; e.x+=e.drift*dt;
-      const k=Math.max(0,1-e.life/e.max);
-      ctx.fillStyle='rgba(255,'+Math.round(150+90*k)+','+Math.round(60+40*k)+','+(0.5*k)+')';
-      ctx.beginPath(); ctx.arc(e.x,e.y,e.r,0,Math.PI*2); ctx.fill();
-    }
-    for(let i=embers.length-1;i>=0;i--){ if(embers[i].life>=embers[i].max||embers[i].y<-20){ embers.splice(i,1); spawnEmber(); } }
-    ctx.restore();
-
-    // vignette
-    const vg=ctx.createRadialGradient(W/2,H/2,Math.min(W,H)*0.35,W/2,H/2,Math.max(W,H)*0.7);
-    vg.addColorStop(0,'rgba(0,0,0,0)'); vg.addColorStop(1,'rgba(0,0,0,0.6)');
-    ctx.fillStyle=vg; ctx.fillRect(0,0,W,H);
-
+    if(mode==='title') drawTitle(dt); else drawRun(dt);
     requestAnimationFrame(frame);
+  }
+  function drawTitle(dt){
+    const g=ctx.createLinearGradient(0,0,0,H);
+    g.addColorStop(0,'#140d1a'); g.addColorStop(.6,'#1b1222'); g.addColorStop(1,'#0d0812');
+    ctx.fillStyle=g; ctx.fillRect(0,0,W,H);
+    const flick=0.82+0.18*Math.sin(t*7.3)+0.06*Math.sin(t*17.1);
+    const cx=W*.5, cy=H*.42, rad=Math.min(W,H)*.75*flick;
+    const rg=ctx.createRadialGradient(cx,cy,0,cx,cy,rad);
+    rg.addColorStop(0,'rgba(255,168,74,'+(0.34*flick)+')'); rg.addColorStop(.4,'rgba(255,120,40,'+(0.12*flick)+')'); rg.addColorStop(1,'rgba(255,120,40,0)');
+    ctx.fillStyle=rg; ctx.fillRect(0,0,W,H);
+    ctx.save(); ctx.globalCompositeOperation='lighter';
+    for(const e of tEmbers){ e.life+=dt; e.y+=e.vy*dt; e.x+=e.drift*dt; const k=Math.max(0,1-e.life/e.max);
+      ctx.fillStyle='rgba(255,'+Math.round(150+90*k)+','+Math.round(60+40*k)+','+(0.5*k)+')';
+      ctx.beginPath(); ctx.arc(e.x,e.y,e.r,0,6.283); ctx.fill(); }
+    for(let i=tEmbers.length-1;i>=0;i--){ if(tEmbers[i].life>=tEmbers[i].max||tEmbers[i].y<-20){ tEmbers.splice(i,1); spawnT(); } }
+    ctx.restore();
+    const vg=ctx.createRadialGradient(W/2,H/2,Math.min(W,H)*.35,W/2,H/2,Math.max(W,H)*.7);
+    vg.addColorStop(0,'rgba(0,0,0,0)'); vg.addColorStop(1,'rgba(0,0,0,.6)'); ctx.fillStyle=vg; ctx.fillRect(0,0,W,H);
+  }
+
+  function drawRun(dt){
+    ctx.fillStyle='#0b070f'; ctx.fillRect(0,0,W,H);
+    const TILE=Math.max(22,Math.floor(Math.min(W,H)/11));
+    const camX=player.x*TILE+TILE/2-W/2, camY=player.y*TILE+TILE/2-H/2;
+    const flick=0.86+0.14*Math.sin(t*9)+0.05*Math.sin(t*21);
+    // tiles
+    for(let y=0;y<ROWS;y++) for(let x=0;x<COLS;x++){
+      if(!seen[y][x]) continue;
+      const sx=Math.round(x*TILE-camX), sy=Math.round(y*TILE-camY);
+      if(sx<-TILE||sy<-TILE||sx>W||sy>H) continue;
+      const lit=vis[y][x];
+      const cell=map[y][x];
+      if(cell===WALL){
+        ctx.fillStyle=lit?'#3a2b46':'#1c1526'; ctx.fillRect(sx,sy,TILE,TILE);
+        ctx.fillStyle=lit?'rgba(255,180,110,.06)':'rgba(0,0,0,0)'; ctx.fillRect(sx,sy,TILE,3);
+      } else {
+        ctx.fillStyle=lit?'#241a2e':'#140e1c'; ctx.fillRect(sx,sy,TILE,TILE);
+        ctx.strokeStyle=lit?'rgba(0,0,0,.35)':'rgba(0,0,0,.5)'; ctx.lineWidth=1; ctx.strokeRect(sx+.5,sy+.5,TILE-1,TILE-1);
+        if(cell===STAIRS){ ctx.fillStyle=lit?'#4fd6c4':'#2b6b64'; ctx.font='bold '+Math.floor(TILE*.8)+'px serif'; ctx.textAlign='center'; ctx.textBaseline='middle'; ctx.fillText('▼',sx+TILE/2,sy+TILE/2+1); }
+      }
+    }
+    // items (only if visible)
+    ctx.textAlign='center'; ctx.textBaseline='middle';
+    for(const it of items){ if(!vis[it.y]||!vis[it.y][it.x]) continue;
+      const sx=Math.round(it.x*TILE-camX)+TILE/2, sy=Math.round(it.y*TILE-camY)+TILE/2;
+      ctx.font='bold '+Math.floor(TILE*.62)+'px serif';
+      if(it.type==='gold'){ ctx.fillStyle='#ffcf7a'; ctx.fillText('◈',sx,sy); }
+      else if(it.type==='potion'){ ctx.fillStyle='#79c46a'; ctx.fillText('❤',sx,sy); }
+      else if(it.type==='weapon'){ ctx.fillStyle='#e8e2d0'; ctx.fillText('†',sx,sy); }
+      else if(it.type==='armor'){ ctx.fillStyle='#8fb7c9'; ctx.fillText('◘',sx,sy); }
+    }
+    // enemies
+    for(const e of enemies){ if(!vis[e.y]||!vis[e.y][e.x]) continue;
+      const sx=Math.round(e.x*TILE-camX)+TILE/2, sy=Math.round(e.y*TILE-camY)+TILE/2;
+      const base=ENEMY_KINDS[e.kind];
+      if(e.flash>0){ e.flash-=dt*3; ctx.fillStyle='rgba(255,255,255,'+Math.max(0,e.flash)+')'; ctx.beginPath(); ctx.arc(sx,sy,TILE*.42,0,6.283); ctx.fill(); }
+      ctx.fillStyle=base.col; ctx.font='bold '+Math.floor(TILE*.72)+'px serif'; ctx.fillText(base.ch,sx,sy);
+      // hp bar
+      if(e.hp<e.max){ const w=TILE*.7; ctx.fillStyle='rgba(0,0,0,.6)'; ctx.fillRect(sx-w/2,sy-TILE*.5,w,3); ctx.fillStyle='#e8564b'; ctx.fillRect(sx-w/2,sy-TILE*.5,w*e.hp/e.max,3); }
+    }
+    // player
+    const psx=Math.round(player.x*TILE-camX)+TILE/2, psy=Math.round(player.y*TILE-camY)+TILE/2;
+    ctx.fillStyle='#ffcf7a'; ctx.font='bold '+Math.floor(TILE*.8)+'px serif'; ctx.fillText('@',psx,psy);
+    // floating dmg
+    for(const a of anim){ a.life-=dt; if(a.type==='dmg'){ const ax=Math.round(a.x*TILE-camX)+TILE/2, ay=Math.round(a.y*TILE-camY)+TILE/2-(0.7-a.life)*22;
+      ctx.globalAlpha=clamp(a.life/0.7,0,1); ctx.fillStyle=a.col; ctx.font='bold '+Math.floor(TILE*.5)+'px serif'; ctx.fillText('-'+a.val,ax,ay); ctx.globalAlpha=1; } }
+    anim=anim.filter(a=>a.life>0);
+    // torch light over the scene
+    const rad=TILE*(TORCH+0.6)*flick;
+    const rg=ctx.createRadialGradient(psx,psy,TILE*0.6,psx,psy,rad);
+    rg.addColorStop(0,'rgba(255,168,74,.16)'); rg.addColorStop(.55,'rgba(255,120,40,.05)'); rg.addColorStop(1,'rgba(0,0,0,0)');
+    ctx.fillStyle=rg; ctx.fillRect(0,0,W,H);
+    // darkness vignette beyond torch
+    const vg=ctx.createRadialGradient(psx,psy,rad*0.6,psx,psy,rad*1.25);
+    vg.addColorStop(0,'rgba(6,4,9,0)'); vg.addColorStop(1,'rgba(6,4,9,.92)'); ctx.fillStyle=vg; ctx.fillRect(0,0,W,H);
   }
   requestAnimationFrame(frame);
 
-  // ---- Menu wiring (skeleton navigation only) ----
-  const $=id=>document.getElementById(id);
-  const show=(el,on)=>el.classList.toggle('hidden',!on);
-  $('descendBtn').addEventListener('click',()=>{ show($('titleScreen'),false); show($('runScreen'),true); });
-  $('backBtn').addEventListener('click',()=>{ show($('runScreen'),false); show($('titleScreen'),true); });
+  // ===================== INPUT =====================
+  function startRun(){
+    deadShown=false; player=null; genFloor(1); updateHUD();
+    mode='run'; show($('titleScreen'),false); show($('hud'),true); show($('pad'),true);
+    show($('deathModal'),false); show($('pauseModal'),false);
+  }
+  function toTitle(){ mode='title'; show($('hud'),false); show($('pad'),false); show($('deathModal'),false); show($('pauseModal'),false); show($('titleScreen'),true); }
+
+  $('descendBtn').addEventListener('click',startRun);
   $('howBtn').addEventListener('click',()=>show($('howModal'),true));
   $('scoresBtn').addEventListener('click',()=>{
-    let best=0; try{ best=parseInt(localStorage.getItem('emberdelve_best')||'0',10)||0; }catch(e){}
-    $('scoresBody').textContent = best>0 ? ('Deepest floor reached: '+best) : 'No runs yet — your deepest floor will be recorded here.';
+    let best=0,bg=0; try{ best=parseInt(localStorage.getItem('emberdelve_best')||'0',10)||0; bg=parseInt(localStorage.getItem('emberdelve_gold')||'0',10)||0; }catch(e){}
+    $('scoresBody').textContent = best>0 ? ('Deepest floor reached: '+best+'  ·  Most gold in a run: '+bg) : 'No runs yet — your deepest floor will be recorded here.';
     show($('scoresModal'),true);
   });
-  document.querySelectorAll('[data-close]').forEach(b=>b.addEventListener('click',e=>{
-    e.target.closest('.modal').classList.add('hidden');
-  }));
+  document.querySelectorAll('[data-close]').forEach(b=>b.addEventListener('click',e=>e.target.closest('.modal').classList.add('hidden')));
+
+  // d-pad
+  const DIRS={up:[0,-1],down:[0,1],left:[-1,0],right:[1,0],wait:[0,0]};
+  $('pad').addEventListener('click',e=>{ const b=e.target.closest('[data-dir]'); if(!b) return; const d=DIRS[b.dataset.dir]; tryMove(d[0],d[1]); });
+  // keyboard
+  window.addEventListener('keydown',e=>{
+    if(mode!=='run') return;
+    const k=e.key.toLowerCase();
+    if(k==='arrowup'||k==='w'){ tryMove(0,-1); e.preventDefault(); }
+    else if(k==='arrowdown'||k==='s'){ tryMove(0,1); e.preventDefault(); }
+    else if(k==='arrowleft'||k==='a'){ tryMove(-1,0); e.preventDefault(); }
+    else if(k==='arrowright'||k==='d'){ tryMove(1,0); e.preventDefault(); }
+    else if(k===' '||k==='.'){ tryMove(0,0); e.preventDefault(); }
+  });
+  // tap-to-move on canvas (step toward tapped tile)
+  cv.addEventListener('pointerdown',e=>{
+    if(mode!=='run') return;
+    const TILE=Math.max(22,Math.floor(Math.min(W,H)/11));
+    const camX=player.x*TILE+TILE/2-W/2, camY=player.y*TILE+TILE/2-H/2;
+    const tx=Math.floor((e.clientX+camX)/TILE), ty=Math.floor((e.clientY+camY)/TILE);
+    const dx=tx-player.x, dy=ty-player.y;
+    if(dx===0&&dy===0){ tryMove(0,0); return; }
+    if(Math.abs(dx)>=Math.abs(dy)) tryMove(Math.sign(dx),0); else tryMove(0,Math.sign(dy));
+  });
+
+  // pause / death buttons
+  $('menuBtn').addEventListener('click',()=>{ $('pauseFloor').textContent=depth; $('pauseGold').textContent=player.gold; show($('pauseModal'),true); });
+  $('resumeBtn').addEventListener('click',()=>show($('pauseModal'),false));
+  $('pauseHowBtn').addEventListener('click',()=>show($('howModal'),true));
+  $('abandonBtn').addEventListener('click',()=>{ show($('pauseModal'),false); toTitle(); });
+  $('againBtn').addEventListener('click',startRun);
+  $('titleBtn').addEventListener('click',toTitle);
+
+  // Read-only debug hook (only when the URL ends in #dbg) — used by the
+  // headless verification harness; inert and invisible during normal play.
+  if(location.hash==='#dbg'){
+    window.__ember={
+      state:()=>({mode,depth,hp:player&&player.hp,gold:player&&player.gold,enemies:enemies&&enemies.length,items:items&&items.length,px:player&&player.x,py:player&&player.y}),
+      stairs:()=>{ for(let y=0;y<ROWS;y++)for(let x=0;x<COLS;x++) if(map[y][x]===STAIRS) return {x,y}; return null; },
+      warpToStairs:()=>{ const s=window.__ember.stairs(); if(s){ player.x=s.x; player.y=s.y; recompute(); } },
+      spawnAdj:()=>{ enemies.push({x:player.x+1,y:player.y,kind:'rat',hp:3,max:3,atk:1,flash:0}); },
+      hurtTo:(n)=>{ player.hp=n; }
+    };
+  }
 })();
 </script>
 </body>
