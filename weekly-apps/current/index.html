@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#171019">
+<title>Emberdelve</title>
+<style>
+  :root{
+    --stone:#171019; --stone2:#241a2b; --ember:#ff9a3c; --ember2:#ffcf7a;
+    --teal:#4fd6c4; --ink:#0c080f; --text:#f3e6d6; --muted:#b39a8c; --danger:#e8564b;
+  }
+  *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
+  html,body{margin:0; height:100%; overflow:hidden; background:var(--ink);}
+  body{
+    font-family:'Iowan Old Style','Palatino Linotype',Palatino,Georgia,'Times New Roman',serif;
+    color:var(--text); position:fixed; inset:0; touch-action:none;
+    -webkit-user-select:none; user-select:none;
+  }
+  #game{position:absolute; inset:0;}
+  canvas{position:absolute; inset:0; width:100%; height:100%; display:block;}
+
+  /* --- Overlay layer (title screen for now) --- */
+  .overlay{position:absolute; inset:0; display:flex; flex-direction:column;
+    align-items:center; justify-content:center; text-align:center; padding:24px;
+    z-index:5;}
+  .hidden{display:none !important;}
+
+  .brand{margin-bottom:6vh;}
+  .flame{font-size:34px; line-height:1; filter:drop-shadow(0 0 12px rgba(255,154,60,.75)); animation:flick 1.6s ease-in-out infinite;}
+  @keyframes flick{0%,100%{opacity:.85; transform:translateY(0) scale(1);}50%{opacity:1; transform:translateY(-1px) scale(1.06);}}
+  .wordmark{
+    margin:10px 0 4px; font-weight:800; letter-spacing:.14em;
+    font-size:clamp(40px,13vw,88px); line-height:.95;
+    color:var(--ember2);
+    text-shadow:0 1px 0 #5a3413, 0 0 26px rgba(255,154,60,.55), 0 6px 30px rgba(0,0,0,.6);
+  }
+  .tagline{color:var(--muted); font-style:italic; letter-spacing:.06em;
+    font-size:clamp(13px,3.6vw,17px);}
+
+  .menu{display:flex; flex-direction:column; gap:14px; width:min(320px,84vw);}
+  .btn{
+    position:relative; border:0; cursor:pointer; font:inherit; font-weight:700;
+    letter-spacing:.16em; text-transform:uppercase; padding:15px 18px; border-radius:13px;
+    color:var(--ink); font-size:clamp(14px,4vw,17px);
+    background:linear-gradient(180deg,var(--ember2),var(--ember));
+    box-shadow:0 6px 0 #7a3d12, 0 10px 22px rgba(0,0,0,.45), inset 0 1px 0 rgba(255,255,255,.5);
+    transition:transform .06s ease, box-shadow .06s ease;
+  }
+  .btn:active{transform:translateY(4px); box-shadow:0 2px 0 #7a3d12, 0 5px 14px rgba(0,0,0,.4), inset 0 1px 0 rgba(255,255,255,.45);}
+  .btn.secondary{
+    color:var(--teal); background:linear-gradient(180deg,#243642,#182731);
+    box-shadow:0 6px 0 #0d1a1f, 0 10px 22px rgba(0,0,0,.45), inset 0 0 0 1px rgba(79,214,196,.35);
+    text-shadow:0 0 10px rgba(79,214,196,.35);
+  }
+  .btn.secondary:active{transform:translateY(4px); box-shadow:0 2px 0 #0d1a1f, 0 5px 14px rgba(0,0,0,.4), inset 0 0 0 1px rgba(79,214,196,.35);}
+
+  /* --- Modal (How to / Scores) --- */
+  .modal{position:absolute; inset:0; z-index:10; display:flex; align-items:center;
+    justify-content:center; padding:24px; background:rgba(8,5,11,.72); backdrop-filter:blur(3px);}
+  .card{width:min(440px,92vw); max-height:82vh; overflow:auto; border-radius:18px;
+    padding:22px 22px 18px; background:linear-gradient(180deg,#221826,#160f1c);
+    border:1px solid rgba(255,154,60,.22); box-shadow:0 20px 60px rgba(0,0,0,.6);}
+  .card h2{margin:2px 0 12px; color:var(--ember2); letter-spacing:.06em; font-size:22px;}
+  .card p, .card li{color:var(--text); line-height:1.55; font-size:15px;}
+  .card ul{padding-left:18px; margin:8px 0;}
+  .card .close{margin-top:16px;}
+  .placeholder{color:var(--muted); font-style:italic;}
+
+  /* --- Grid placeholder shown after DESCEND (skeleton only) --- */
+  #runScreen .panel{width:min(440px,90vw); padding:26px; border-radius:16px; text-align:center;
+    background:linear-gradient(180deg,#1d1524,#140e1a); border:1px solid rgba(79,214,196,.18);}
+</style>
+</head>
+<body>
+<div id="game">
+  <canvas id="bg"></canvas>
+
+  <!-- TITLE SCREEN -->
+  <div id="titleScreen" class="overlay">
+    <div class="brand">
+      <div class="flame">🔥</div>
+      <div class="wordmark">EMBERDELVE</div>
+      <div class="tagline">descend by lantern-light</div>
+    </div>
+    <div class="menu">
+      <button class="btn" id="descendBtn">Descend</button>
+      <button class="btn secondary" id="howBtn">How to</button>
+      <button class="btn secondary" id="scoresBtn">Scores</button>
+    </div>
+  </div>
+
+  <!-- HOW-TO MODAL -->
+  <div id="howModal" class="modal hidden">
+    <div class="card">
+      <h2>How to play</h2>
+      <p class="placeholder">Full rules arrive as the dungeon is built this week.</p>
+      <ul>
+        <li>Tap an adjacent tile (or the d-pad) to move — the dungeon takes a turn with you.</li>
+        <li>Move into an enemy to attack it. Watch your hearts.</li>
+        <li>Grab gold, potions and gear; take the stairs down to delve deeper.</li>
+        <li>Death is permanent — the goal is to beat your deepest floor.</li>
+      </ul>
+      <button class="btn secondary close" data-close>Close</button>
+    </div>
+  </div>
+
+  <!-- SCORES MODAL -->
+  <div id="scoresModal" class="modal hidden">
+    <div class="card">
+      <h2>Best delve</h2>
+      <p id="scoresBody" class="placeholder">No runs yet — your deepest floor will be recorded here.</p>
+      <button class="btn secondary close" data-close>Close</button>
+    </div>
+  </div>
+
+  <!-- RUN SCREEN (skeleton placeholder for now) -->
+  <div id="runScreen" class="overlay hidden">
+    <div class="panel">
+      <div class="wordmark" style="font-size:clamp(24px,7vw,34px)">The delve awaits</div>
+      <p class="placeholder">The dungeon, movement and combat are built across this week's
+      increments. For now this confirms the shell works.</p>
+      <button class="btn secondary" id="backBtn" style="margin-top:14px">Back</button>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+  'use strict';
+  // ---- Animated torch-lit title background (Canvas 2D) ----
+  const cv = document.getElementById('bg');
+  const ctx = cv.getContext('2d');
+  let W=0, H=0, DPR=1;
+  function resize(){
+    DPR = Math.min(window.devicePixelRatio||1, 2);
+    W = cv.clientWidth; H = cv.clientHeight;
+    cv.width = Math.round(W*DPR); cv.height = Math.round(H*DPR);
+    ctx.setTransform(DPR,0,0,DPR,0,0);
+  }
+  window.addEventListener('resize', resize); resize();
+
+  // rising embers
+  const embers = [];
+  function spawnEmber(){
+    embers.push({ x:Math.random()*W, y:H+10, r:1+Math.random()*2.2,
+      vy:-(12+Math.random()*26), drift:(Math.random()-0.5)*10, life:0, max:3+Math.random()*3 });
+  }
+  for(let i=0;i<40;i++){ spawnEmber(); embers[i].y=Math.random()*H; }
+
+  let t=0, last=performance.now();
+  function frame(now){
+    const dt=Math.min(0.05,(now-last)/1000); last=now; t+=dt;
+
+    // stone backdrop
+    const g=ctx.createLinearGradient(0,0,0,H);
+    g.addColorStop(0,'#140d1a'); g.addColorStop(0.6,'#1b1222'); g.addColorStop(1,'#0d0812');
+    ctx.fillStyle=g; ctx.fillRect(0,0,W,H);
+
+    // flickering torch light pool, centered-ish
+    const flick = 0.82 + 0.18*Math.sin(t*7.3) + 0.06*Math.sin(t*17.1);
+    const cx=W*0.5, cy=H*0.42, rad=Math.min(W,H)*0.75*flick;
+    const rg=ctx.createRadialGradient(cx,cy,0,cx,cy,rad);
+    rg.addColorStop(0,'rgba(255,168,74,'+(0.34*flick)+')');
+    rg.addColorStop(0.4,'rgba(255,120,40,'+(0.12*flick)+')');
+    rg.addColorStop(1,'rgba(255,120,40,0)');
+    ctx.fillStyle=rg; ctx.fillRect(0,0,W,H);
+
+    // faint rune glow accents (teal)
+    ctx.save(); ctx.globalCompositeOperation='lighter';
+    for(let i=0;i<3;i++){
+      const rx=W*(0.2+0.3*i), ry=H*(0.72+0.03*Math.sin(t*1.3+i));
+      const rr=ctx.createRadialGradient(rx,ry,0,rx,ry,60);
+      const a=0.05+0.04*Math.sin(t*2+i*2);
+      rr.addColorStop(0,'rgba(79,214,196,'+a+')'); rr.addColorStop(1,'rgba(79,214,196,0)');
+      ctx.fillStyle=rr; ctx.fillRect(rx-70,ry-70,140,140);
+    }
+    ctx.restore();
+
+    // embers
+    ctx.save(); ctx.globalCompositeOperation='lighter';
+    for(const e of embers){
+      e.life+=dt; e.y+=e.vy*dt; e.x+=e.drift*dt;
+      const k=Math.max(0,1-e.life/e.max);
+      ctx.fillStyle='rgba(255,'+Math.round(150+90*k)+','+Math.round(60+40*k)+','+(0.5*k)+')';
+      ctx.beginPath(); ctx.arc(e.x,e.y,e.r,0,Math.PI*2); ctx.fill();
+    }
+    for(let i=embers.length-1;i>=0;i--){ if(embers[i].life>=embers[i].max||embers[i].y<-20){ embers.splice(i,1); spawnEmber(); } }
+    ctx.restore();
+
+    // vignette
+    const vg=ctx.createRadialGradient(W/2,H/2,Math.min(W,H)*0.35,W/2,H/2,Math.max(W,H)*0.7);
+    vg.addColorStop(0,'rgba(0,0,0,0)'); vg.addColorStop(1,'rgba(0,0,0,0.6)');
+    ctx.fillStyle=vg; ctx.fillRect(0,0,W,H);
+
+    requestAnimationFrame(frame);
+  }
+  requestAnimationFrame(frame);
+
+  // ---- Menu wiring (skeleton navigation only) ----
+  const $=id=>document.getElementById(id);
+  const show=(el,on)=>el.classList.toggle('hidden',!on);
+  $('descendBtn').addEventListener('click',()=>{ show($('titleScreen'),false); show($('runScreen'),true); });
+  $('backBtn').addEventListener('click',()=>{ show($('runScreen'),false); show($('titleScreen'),true); });
+  $('howBtn').addEventListener('click',()=>show($('howModal'),true));
+  $('scoresBtn').addEventListener('click',()=>{
+    let best=0; try{ best=parseInt(localStorage.getItem('emberdelve_best')||'0',10)||0; }catch(e){}
+    $('scoresBody').textContent = best>0 ? ('Deepest floor reached: '+best) : 'No runs yet — your deepest floor will be recorded here.';
+    show($('scoresModal'),true);
+  });
+  document.querySelectorAll('[data-close]').forEach(b=>b.addEventListener('click',e=>{
+    e.target.closest('.modal').classList.add('hidden');
+  }));
+})();
+</script>
+</body>
+</html>
