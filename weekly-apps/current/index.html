@@ -209,7 +209,7 @@
   // ===================== DUNGEON =====================
   const COLS=34, ROWS=30;
   const WALL=0, FLOOR=1, STAIRS=2;
-  let map, seen, vis, rooms, depth, player, enemies, items, turnLock=false, deadShown=false;
+  let map, seen, vis, rooms, depth, player, enemies, items, traps, turnLock=false, deadShown=false;
   let anim=[]; // transient effects (hit flashes, floating dmg)
 
   const ENEMY_KINDS={
@@ -236,7 +236,7 @@
   function overlaps(a,b){ return a.x<=b.x+b.w+1 && a.x+a.w+1>=b.x && a.y<=b.y+b.h+1 && a.y+a.h+1>=b.y; }
 
   function genFloor(d){
-    blankMap(); rooms=[]; enemies=[]; items=[]; anim=[];
+    blankMap(); rooms=[]; enemies=[]; items=[]; traps=[]; anim=[];
     const want=rr(6,9);
     let tries=0;
     while(rooms.length<want && tries<200){
@@ -290,6 +290,20 @@
       else if(roll<0.9){ const t=clamp(1+Math.floor(d/2)+rr(-1,1),1,WEAPONS.length-1); items.push({x:ix,y:iy,type:'weapon',tier:t}); }
       else { const t=clamp(1+Math.floor(d/2)+rr(-1,1),1,ARMORS.length-1); items.push({x:ix,y:iy,type:'armor',tier:t}); }
     }
+    // hidden spike traps — a lurking hazard that scales with depth (skip the
+    // first room and never block the stairs). Sprung once, then inert.
+    const nTraps=clamp(1+Math.floor(d/2),1,7);
+    let tg=0, tp=0;
+    while(tp<nTraps && tg<300){
+      tg++;
+      const rm=rooms[rr(1,rooms.length-1)];
+      const tx=rr(rm.x,rm.x+rm.w-1), ty=rr(rm.y,rm.y+rm.h-1);
+      if(map[ty][tx]!==FLOOR) continue;
+      if(tx===player.x&&ty===player.y) continue;
+      if(items.some(i=>i.x===tx&&i.y===ty)||enemies.some(e=>e.x===tx&&e.y===ty)||traps.some(t=>t.x===tx&&t.y===ty)) continue;
+      traps.push({x:tx,y:ty,dmg:2+Math.floor(d/2),sprung:false});
+      tp++;
+    }
     depth=d; recompute();
   }
   function roomCenter(r){ return {x:Math.floor(r.x+r.w/2), y:Math.floor(r.y+r.h/2)}; }
@@ -333,8 +347,17 @@
     if(map[ny][nx]===WALL) return;
     player.x=nx; player.y=ny;
     pickup();
+    springTrap();
+    if(player.hp<=0){ recompute(); die(); return; }
     if(map[ny][nx]===STAIRS){ descend(); return; }
     enemyTurn();
+  }
+  function springTrap(){
+    const tr=traps.find(t=>t.x===player.x&&t.y===player.y&&!t.sprung);
+    if(!tr) return;
+    tr.sprung=true; player.hp-=tr.dmg;
+    anim.push({type:'dmg',x:player.x,y:player.y,val:tr.dmg,life:0.7,col:'#e8564b'});
+    flash('a spike trap! −'+tr.dmg+' HP','#e8564b');
   }
   function attack(foe){
     const dmg=2+WEAPONS[player.wp].atk;
@@ -464,8 +487,13 @@
         if(cell===STAIRS){ ctx.fillStyle=lit?'#4fd6c4':'#2b6b64'; ctx.font='bold '+Math.floor(TILE*.8)+'px serif'; ctx.textAlign='center'; ctx.textBaseline='middle'; ctx.fillText('▼',sx+TILE/2,sy+TILE/2+1); }
       }
     }
-    // items (only if visible)
+    // sprung traps (only once revealed + visible)
     ctx.textAlign='center'; ctx.textBaseline='middle';
+    for(const tr of traps){ if(!tr.sprung) continue; if(!vis[tr.y]||!vis[tr.y][tr.x]) continue;
+      const sx=Math.round(tr.x*TILE-camX)+TILE/2, sy=Math.round(tr.y*TILE-camY)+TILE/2;
+      ctx.fillStyle='#8a5a4a'; ctx.font='bold '+Math.floor(TILE*.6)+'px serif'; ctx.fillText('╳',sx,sy);
+    }
+    // items (only if visible)
     for(const it of items){ if(!vis[it.y]||!vis[it.y][it.x]) continue;
       const sx=Math.round(it.x*TILE-camX)+TILE/2, sy=Math.round(it.y*TILE-camY)+TILE/2;
       ctx.font='bold '+Math.floor(TILE*.62)+'px serif';
@@ -554,7 +582,8 @@
   // headless verification harness; inert and invisible during normal play.
   if(location.hash==='#dbg'){
     window.__ember={
-      state:()=>({mode,depth,hp:player&&player.hp,gold:player&&player.gold,enemies:enemies&&enemies.length,items:items&&items.length,px:player&&player.x,py:player&&player.y}),
+      state:()=>({mode,depth,hp:player&&player.hp,gold:player&&player.gold,enemies:enemies&&enemies.length,items:items&&items.length,traps:traps&&traps.length,px:player&&player.x,py:player&&player.y}),
+      warpToTrap:()=>{ const t=traps.find(t=>!t.sprung); if(t){ player.x=t.x; player.y=t.y; springTrap(); recompute(); return true; } return false; },
       stairs:()=>{ for(let y=0;y<ROWS;y++)for(let x=0;x<COLS;x++) if(map[y][x]===STAIRS) return {x,y}; return null; },
       warpToStairs:()=>{ const s=window.__ember.stairs(); if(s){ player.x=s.x; player.y=s.y; recompute(); } },
       spawnAdj:()=>{ enemies.push({x:player.x+1,y:player.y,kind:'rat',hp:3,max:3,atk:1,flash:0}); },

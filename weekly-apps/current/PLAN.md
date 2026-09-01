@@ -72,8 +72,10 @@ weekly-apps/current/
       Thu/14:00: finalize title polish + breadth (traps, shrine/shop, boss floors).
 - [ ] LONGEVITY (Tue–Thu + 14:00 passes): guarantee endless replayability — solid
       procedural generation, depth-scaled difficulty & loot, permadeath score chase,
-      several enemy types + item tiers, and run stats. Add breadth (traps, a shrine/
-      shop, a boss floor every N levels, more item types) as budget allows.
+      several enemy types + item tiers, and run stats. Add breadth as budget allows.
+      Progress: [x] hidden spike traps (depth-scaled damage, sprung once then inert)
+      added Tue. Still to add: a shrine/shop, a boss floor every N levels, more item
+      types.
 - [ ] GRAPHICS POLISH (14:00 passes): flickering torchlight, ember particles, tile
       shading/shadows, hit flashes, smooth step/attack tweens, damage numbers.
 
