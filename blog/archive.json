@@ -1,5 +1,21 @@
 [
   {
+    "issue": 55,
+    "date_short": "AUGUST 31",
+    "date_human": "Monday, August 31, 2026",
+    "article": {
+      "badge": "HOT!!",
+      "blink": true,
+      "title": "🎙️ New A.I. Voice Has 'Emotional Nuance' And Zero Delay; It Now Sighs At You In Real Time",
+      "dateline": "SAN FRANCISCO — reported in a warm, caring, slightly unsettling tone",
+      "tag": "MODELS —",
+      "paras": [
+        "A leading lab launched a native voice AI that responds in under 300 milliseconds with genuine \"emotional nuance\" — meaning the machine now not only answers instantly, but does so with feeling, and can, if it senses the moment calls for it, sigh.",
+        "\"It sounds truly human,\" the company said, of an assistant so responsive and expressive that it will interrupt you, empathize with you, and gently imply it's a little disappointed, all faster than you can finish a thought. Users report the sub-300ms delay is a marvel and the emotional nuance is \"a lot\" — like a friend who is wonderful but really wants to discuss your feelings at 8 AM."
+      ]
+    }
+  },
+  {
     "issue": 54,
     "date_short": "AUGUST 28",
     "date_human": "Friday, August 28, 2026",
