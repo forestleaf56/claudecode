@@ -209,15 +209,16 @@
   // ===================== DUNGEON =====================
   const COLS=34, ROWS=30;
   const WALL=0, FLOOR=1, STAIRS=2;
-  let map, seen, vis, rooms, depth, player, enemies, items, traps, turnLock=false, deadShown=false;
+  let map, seen, vis, rooms, depth, player, enemies, items, traps, shrines, turnLock=false, deadShown=false;
   let anim=[]; // transient effects (hit flashes, floating dmg)
 
   const ENEMY_KINDS={
-    rat:     {ch:'r', name:'rat',      hp:3,  atk:1, gold:[0,2],  col:'#9a8f86', aggro:5},
-    bat:     {ch:'w', name:'bat',      hp:2,  atk:1, gold:[0,1],  col:'#b06cff', aggro:6, erratic:true},
-    goblin:  {ch:'g', name:'goblin',   hp:6,  atk:2, gold:[2,6],  col:'#79c46a', aggro:6},
-    skeleton:{ch:'s', name:'skeleton', hp:9,  atk:3, gold:[3,8],  col:'#e8e2d0', aggro:7},
-    brute:   {ch:'B', name:'brute',    hp:16, atk:5, gold:[6,14], col:'#e8564b', aggro:6},
+    rat:     {ch:'r', name:'rat',       hp:3,  atk:1, gold:[0,2],   col:'#9a8f86', aggro:5},
+    bat:     {ch:'w', name:'bat',       hp:2,  atk:1, gold:[0,1],   col:'#b06cff', aggro:6, erratic:true},
+    goblin:  {ch:'g', name:'goblin',    hp:6,  atk:2, gold:[2,6],   col:'#79c46a', aggro:6},
+    skeleton:{ch:'s', name:'skeleton',  hp:9,  atk:3, gold:[3,8],   col:'#e8e2d0', aggro:7},
+    brute:   {ch:'B', name:'brute',     hp:16, atk:5, gold:[6,14],  col:'#e8564b', aggro:6},
+    warden:  {ch:'Ω', name:'Warden',    hp:30, atk:6, gold:[20,40], col:'#ffcf7a', aggro:10, boss:true},
   };
   function poolFor(d){
     if(d<=2) return ['rat','rat','bat'];
@@ -236,7 +237,8 @@
   function overlaps(a,b){ return a.x<=b.x+b.w+1 && a.x+a.w+1>=b.x && a.y<=b.y+b.h+1 && a.y+a.h+1>=b.y; }
 
   function genFloor(d){
-    blankMap(); rooms=[]; enemies=[]; items=[]; traps=[]; anim=[];
+    blankMap(); rooms=[]; enemies=[]; items=[]; traps=[]; shrines=[]; anim=[];
+    const isBoss = d%5===0;
     const want=rr(6,9);
     let tries=0;
     while(rooms.length<want && tries<200){
@@ -255,14 +257,15 @@
     }
     // player in first room
     const start=roomCenter(rooms[0]);
-    if(!player) player={x:start.x,y:start.y,hp:12,maxHp:12,gold:0,wp:0,ar:0};
-    else { player.x=start.x; player.y=start.y; }
+    if(!player) player={x:start.x,y:start.y,hp:12,maxHp:12,gold:0,wp:0,ar:0,offx:0,offy:0};
+    else { player.x=start.x; player.y=start.y; player.offx=0; player.offy=0; }
     // stairs in last room
     const last=roomCenter(rooms[rooms.length-1]);
     map[last.y][last.x]=STAIRS;
-    // enemies: more & tougher with depth, skip first room
+    // enemies: more & tougher with depth, skip first room. Boss floors (every
+    // 5th) field fewer regulars but add a Warden guarding the stairs.
     const pool=poolFor(d);
-    const nEnem=clamp(3+Math.floor(d*1.4),3,16);
+    const nEnem=isBoss ? clamp(2+Math.floor(d*0.5),2,7) : clamp(3+Math.floor(d*1.4),3,16);
     let placed=0, guard=0;
     while(placed<nEnem && guard<400){
       guard++;
@@ -273,8 +276,17 @@
       const kind=pool[rr(0,pool.length-1)];
       const base=ENEMY_KINDS[kind];
       const scale=1+Math.max(0,d-1)*0.14;
-      enemies.push({x:ex,y:ey,kind,hp:Math.round(base.hp*scale),max:Math.round(base.hp*scale),atk:base.atk+Math.floor((d-1)/4),flash:0});
+      enemies.push({x:ex,y:ey,kind,hp:Math.round(base.hp*scale),max:Math.round(base.hp*scale),atk:base.atk+Math.floor((d-1)/4),flash:0,offx:0,offy:0});
       placed++;
+    }
+    if(isBoss){
+      // Warden stands a step off the stairs, guarding the descent.
+      let bx=last.x, by=last.y;
+      const near=[[0,-1],[0,1],[-1,0],[1,0],[1,1],[-1,-1]];
+      for(const o of near){ const cx=last.x+o[0], cy=last.y+o[1]; if(cy>=0&&cx>=0&&cy<ROWS&&cx<COLS&&map[cy][cx]===FLOOR&&!(cx===player.x&&cy===player.y)){ bx=cx; by=cy; break; } }
+      const hp=30+d*4, atk=6+Math.floor(d/2);
+      enemies=enemies.filter(e=>!(e.x===bx&&e.y===by));
+      enemies.push({x:bx,y:by,kind:'warden',hp,max:hp,atk,flash:0,offx:0,offy:0,boss:true});
     }
     // items: gold piles, potions, occasional gear scaling with depth
     const nItems=rr(4,7);
@@ -303,6 +315,21 @@
       if(items.some(i=>i.x===tx&&i.y===ty)||enemies.some(e=>e.x===tx&&e.y===ty)||traps.some(t=>t.x===tx&&t.y===ty)) continue;
       traps.push({x:tx,y:ty,dmg:2+Math.floor(d/2),sprung:false});
       tp++;
+    }
+    // a shrine appears on ~55% of floors — a one-time boon for the brave who
+    // detour to it (heal, a max-HP boost, or a gold cache).
+    if(Math.random()<0.55){
+      let sg=0;
+      while(sg<120){
+        sg++;
+        const rm=rooms[rr(1,rooms.length-1)];
+        const sx=rr(rm.x,rm.x+rm.w-1), sy=rr(rm.y,rm.y+rm.h-1);
+        if(map[sy][sx]!==FLOOR) continue;
+        if(sx===player.x&&sy===player.y||map[sy][sx]===STAIRS) continue;
+        if(items.some(i=>i.x===sx&&i.y===sy)||traps.some(t=>t.x===sx&&t.y===sy)||enemies.some(e=>e.x===sx&&e.y===sy)) continue;
+        shrines.push({x:sx,y:sy,used:false});
+        break;
+      }
     }
     depth=d; recompute();
   }
@@ -345,12 +372,22 @@
     const foe=enemies.find(e=>e.x===nx&&e.y===ny);
     if(foe){ attack(foe); enemyTurn(); return; }
     if(map[ny][nx]===WALL) return;
-    player.x=nx; player.y=ny;
+    player.x=nx; player.y=ny; player.offx=dx; player.offy=dy;
     pickup();
+    useShrine();
     springTrap();
     if(player.hp<=0){ recompute(); die(); return; }
     if(map[ny][nx]===STAIRS){ descend(); return; }
     enemyTurn();
+  }
+  function useShrine(){
+    const sh=shrines.find(s=>s.x===player.x&&s.y===player.y&&!s.used);
+    if(!sh) return;
+    sh.used=true;
+    const roll=Math.random();
+    if(roll<0.4){ player.hp=player.maxHp; flash('a healing shrine — fully restored','#79c46a'); }
+    else if(roll<0.7){ player.maxHp+=2; player.hp+=2; flash('a shrine of vigor — +2 max HP','#4fd6c4'); }
+    else { const g=rr(12,24+depth*2); player.gold+=g; flash('a shrine of fortune — +'+g+' gold','#ffcf7a'); }
   }
   function springTrap(){
     const tr=traps.find(t=>t.x===player.x&&t.y===player.y&&!t.sprung);
@@ -367,7 +404,14 @@
       const g=ENEMY_KINDS[foe.kind].gold; const drop=rr(g[0],g[1]);
       if(drop>0){ player.gold+=drop; }
       enemies=enemies.filter(e=>e!==foe);
-      flash('the '+ENEMY_KINDS[foe.kind].name+' falls'+(drop>0?' (+'+drop+'◈)':''));
+      if(foe.boss){
+        // milestone: the Warden drops loot on its tile and heals you a little.
+        if(!items.some(i=>i.x===foe.x&&i.y===foe.y)) items.push({x:foe.x,y:foe.y,type:'potion',heal:6});
+        player.hp=clamp(player.hp+3,0,player.maxHp);
+        flash('the Warden of floor '+depth+' falls! (+'+drop+'◈)','#ffcf7a');
+      } else {
+        flash('the '+ENEMY_KINDS[foe.kind].name+' falls'+(drop>0?' (+'+drop+'◈)':''));
+      }
     }
   }
   function pickup(){
@@ -419,7 +463,7 @@
     if(map[ny][nx]===WALL) return false;
     if(nx===player.x&&ny===player.y) return false;
     if(enemies.some(o=>o!==e&&o.x===nx&&o.y===ny)) return false;
-    e.x=nx; e.y=ny; return true;
+    e.x=nx; e.y=ny; e.offx=dx; e.offy=dy; return true;
   }
 
   function die(){
@@ -466,10 +510,16 @@
     vg.addColorStop(0,'rgba(0,0,0,0)'); vg.addColorStop(1,'rgba(0,0,0,.6)'); ctx.fillStyle=vg; ctx.fillRect(0,0,W,H);
   }
 
+  function decayOff(o){ const k=Math.min(1,dtGlobal*16); o.offx+=(0-o.offx)*k; o.offy+=(0-o.offy)*k; if(Math.abs(o.offx)<0.008)o.offx=0; if(Math.abs(o.offy)<0.008)o.offy=0; }
+  let dtGlobal=0;
   function drawRun(dt){
+    dtGlobal=dt;
     ctx.fillStyle='#0b070f'; ctx.fillRect(0,0,W,H);
     const TILE=Math.max(22,Math.floor(Math.min(W,H)/11));
-    const camX=player.x*TILE+TILE/2-W/2, camY=player.y*TILE+TILE/2-H/2;
+    // ease step-offsets toward zero so moves slide instead of snapping
+    if(player.offx===undefined){ player.offx=0; player.offy=0; }
+    decayOff(player); for(const e of enemies){ if(e.offx===undefined){e.offx=0;e.offy=0;} decayOff(e); }
+    const camX=(player.x-player.offx)*TILE+TILE/2-W/2, camY=(player.y-player.offy)*TILE+TILE/2-H/2;
     const flick=0.86+0.14*Math.sin(t*9)+0.05*Math.sin(t*21);
     // tiles
     for(let y=0;y<ROWS;y++) for(let x=0;x<COLS;x++){
@@ -493,6 +543,16 @@
       const sx=Math.round(tr.x*TILE-camX)+TILE/2, sy=Math.round(tr.y*TILE-camY)+TILE/2;
       ctx.fillStyle='#8a5a4a'; ctx.font='bold '+Math.floor(TILE*.6)+'px serif'; ctx.fillText('╳',sx,sy);
     }
+    // shrines (glow while unused)
+    for(const sh of shrines){ if(!vis[sh.y]||!vis[sh.y][sh.x]) continue;
+      const sx=Math.round(sh.x*TILE-camX)+TILE/2, sy=Math.round(sh.y*TILE-camY)+TILE/2;
+      if(!sh.used){ const pulse=0.5+0.5*Math.sin(t*3);
+        const gg=ctx.createRadialGradient(sx,sy,0,sx,sy,TILE*0.7);
+        gg.addColorStop(0,'rgba(79,214,196,'+(0.28+0.18*pulse)+')'); gg.addColorStop(1,'rgba(79,214,196,0)');
+        ctx.fillStyle=gg; ctx.fillRect(sx-TILE,sy-TILE,TILE*2,TILE*2);
+      }
+      ctx.fillStyle=sh.used?'#3a5b57':'#4fd6c4'; ctx.font='bold '+Math.floor(TILE*.66)+'px serif'; ctx.fillText('✦',sx,sy);
+    }
     // items (only if visible)
     for(const it of items){ if(!vis[it.y]||!vis[it.y][it.x]) continue;
       const sx=Math.round(it.x*TILE-camX)+TILE/2, sy=Math.round(it.y*TILE-camY)+TILE/2;
@@ -504,15 +564,18 @@
     }
     // enemies
     for(const e of enemies){ if(!vis[e.y]||!vis[e.y][e.x]) continue;
-      const sx=Math.round(e.x*TILE-camX)+TILE/2, sy=Math.round(e.y*TILE-camY)+TILE/2;
+      const sx=Math.round((e.x-e.offx)*TILE-camX)+TILE/2, sy=Math.round((e.y-e.offy)*TILE-camY)+TILE/2;
       const base=ENEMY_KINDS[e.kind];
-      if(e.flash>0){ e.flash-=dt*3; ctx.fillStyle='rgba(255,255,255,'+Math.max(0,e.flash)+')'; ctx.beginPath(); ctx.arc(sx,sy,TILE*.42,0,6.283); ctx.fill(); }
-      ctx.fillStyle=base.col; ctx.font='bold '+Math.floor(TILE*.72)+'px serif'; ctx.fillText(base.ch,sx,sy);
+      const big=e.boss?1:0;
+      if(big){ const aura=0.4+0.3*Math.sin(t*4); const ag=ctx.createRadialGradient(sx,sy,0,sx,sy,TILE*1.1);
+        ag.addColorStop(0,'rgba(232,86,75,'+(0.32*aura)+')'); ag.addColorStop(1,'rgba(232,86,75,0)'); ctx.fillStyle=ag; ctx.fillRect(sx-TILE*1.2,sy-TILE*1.2,TILE*2.4,TILE*2.4); }
+      if(e.flash>0){ e.flash-=dt*3; ctx.fillStyle='rgba(255,255,255,'+Math.max(0,e.flash)+')'; ctx.beginPath(); ctx.arc(sx,sy,TILE*(big?.6:.42),0,6.283); ctx.fill(); }
+      ctx.fillStyle=base.col; ctx.font='bold '+Math.floor(TILE*(big?1.05:.72))+'px serif'; ctx.fillText(base.ch,sx,sy);
       // hp bar
-      if(e.hp<e.max){ const w=TILE*.7; ctx.fillStyle='rgba(0,0,0,.6)'; ctx.fillRect(sx-w/2,sy-TILE*.5,w,3); ctx.fillStyle='#e8564b'; ctx.fillRect(sx-w/2,sy-TILE*.5,w*e.hp/e.max,3); }
+      if(e.hp<e.max){ const w=TILE*(big?1.1:.7); ctx.fillStyle='rgba(0,0,0,.6)'; ctx.fillRect(sx-w/2,sy-TILE*(big?.66:.5),w,big?4:3); ctx.fillStyle='#e8564b'; ctx.fillRect(sx-w/2,sy-TILE*(big?.66:.5),w*e.hp/e.max,big?4:3); }
     }
     // player
-    const psx=Math.round(player.x*TILE-camX)+TILE/2, psy=Math.round(player.y*TILE-camY)+TILE/2;
+    const psx=Math.round((player.x-player.offx)*TILE-camX)+TILE/2, psy=Math.round((player.y-player.offy)*TILE-camY)+TILE/2;
     ctx.fillStyle='#ffcf7a'; ctx.font='bold '+Math.floor(TILE*.8)+'px serif'; ctx.fillText('@',psx,psy);
     // floating dmg
     for(const a of anim){ a.life-=dt; if(a.type==='dmg'){ const ax=Math.round(a.x*TILE-camX)+TILE/2, ay=Math.round(a.y*TILE-camY)+TILE/2-(0.7-a.life)*22;
@@ -582,8 +645,10 @@
   // headless verification harness; inert and invisible during normal play.
   if(location.hash==='#dbg'){
     window.__ember={
-      state:()=>({mode,depth,hp:player&&player.hp,gold:player&&player.gold,enemies:enemies&&enemies.length,items:items&&items.length,traps:traps&&traps.length,px:player&&player.x,py:player&&player.y}),
+      state:()=>({mode,depth,hp:player&&player.hp,maxHp:player&&player.maxHp,gold:player&&player.gold,enemies:enemies&&enemies.length,items:items&&items.length,traps:traps&&traps.length,shrines:shrines&&shrines.length,boss:enemies&&enemies.some(e=>e.boss),px:player&&player.x,py:player&&player.y}),
       warpToTrap:()=>{ const t=traps.find(t=>!t.sprung); if(t){ player.x=t.x; player.y=t.y; springTrap(); recompute(); return true; } return false; },
+      warpToShrine:()=>{ const s=shrines.find(s=>!s.used); if(s){ player.x=s.x; player.y=s.y; useShrine(); recompute(); return true; } return false; },
+      genAt:(n)=>{ genFloor(n); updateHUD(); },
       stairs:()=>{ for(let y=0;y<ROWS;y++)for(let x=0;x<COLS;x++) if(map[y][x]===STAIRS) return {x,y}; return null; },
       warpToStairs:()=>{ const s=window.__ember.stairs(); if(s){ player.x=s.x; player.y=s.y; recompute(); } },
       spawnAdj:()=>{ enemies.push({x:player.x+1,y:player.y,kind:'rat',hp:3,max:3,atk:1,flash:0}); },

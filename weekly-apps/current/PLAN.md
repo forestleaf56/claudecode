@@ -73,11 +73,14 @@ weekly-apps/current/
 - [ ] LONGEVITY (Tue–Thu + 14:00 passes): guarantee endless replayability — solid
       procedural generation, depth-scaled difficulty & loot, permadeath score chase,
       several enemy types + item tiers, and run stats. Add breadth as budget allows.
-      Progress: [x] hidden spike traps (depth-scaled damage, sprung once then inert)
-      added Tue. Still to add: a shrine/shop, a boss floor every N levels, more item
-      types.
-- [ ] GRAPHICS POLISH (14:00 passes): flickering torchlight, ember particles, tile
-      shading/shadows, hit flashes, smooth step/attack tweens, damage numbers.
+      Progress: [x] hidden spike traps (Tue); [x] boss floors every 5th level (a
+      Warden guarding the stairs — big hp/atk, aura, milestone gold + potion drop +
+      heal); [x] shrines (~55% of floors, one-time boon: full heal / +2 max HP /
+      gold cache). Still to add: more item types, maybe a shop.
+- [~] GRAPHICS POLISH (14:00 passes): [x] flickering torchlight, [x] tile shading,
+      [x] hit flashes, [x] damage numbers, [x] smooth step-tween movement (player +
+      enemies slide between tiles; camera eases), [x] boss/shrine glow auras. Still
+      to add: in-run ember/dust motes, attack lunge, screen-shake on boss hits.
 
 ## Friday readme notes
 - Self-contained single index.html, Canvas 2D. NO Supabase / NO Gemini API → no API
