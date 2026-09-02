@@ -1,81 +1,81 @@
 {
-  "issue": 56,
-  "date_short": "SEPTEMBER 1",
-  "date_human": "Tuesday, September 1, 2026",
-  "construction_top": "pardon our HTML — the webmaster's résumé was written by one A.I. and rejected by another",
+  "issue": 57,
+  "date_short": "SEPTEMBER 2",
+  "date_human": "Wednesday, September 2, 2026",
+  "construction_top": "pardon our HTML — the webmaster is being transferred between three chatbots and cannot get back",
   "ticker": [
-    "Apple gets a new CEO; he inherits the cash, the chair, and the homework called 'Apple Intelligence'",
-    "A.I. startup's new cash buys a full gigawatt; the company now needs its own power plant",
-    "free A.I. models catch up to the pricey ones; paid labs discover the terror of 'good enough, for nothing'",
-    "humanoid robots start taking real jobs; the store greeter now runs on batteries",
-    "A.I. writes the job applications AND screens them; two robots negotiate your career",
-    "the future has a new boss, a power plant, a free tier, and a robot at the door"
+    "the military gets its own A.I. portal for 3 million people; the chatbot now outranks you",
+    "a third of companies just build the software instead of buying it; the A.I. ate the sales pitch",
+    "new app indexes everything you own; finally, a search bar for your entire life",
+    "bank rebuilds its chatbot to hand you off to OTHER bots; customer service is now eternal",
+    "A.I. agents get sandboxes and audit trails; the interns now have a compliance department",
+    "the future is cleared for duty, self-built, fully indexed, endlessly transferred, and supervised"
   ],
   "articles": [
     {
       "badge": "HOT!!",
       "blink": true,
-      "title": "🍎 Apple Gets A New CEO; He Inherits The Company, The Cash, And The Unfinished Homework Called 'Apple Intelligence'",
-      "dateline": "CUPERTINO — reported from a freshly reupholstered chair",
-      "tag": "INDUSTRY —",
+      "title": "🎖️ The Military Gets Its Own A.I. Portal For 3 Million People; The Chatbot Now Outranks You",
+      "dateline": "THE PENTAGON — reported at attention",
+      "tag": "GOVERNMENT —",
       "paras": [
-        "Apple installed a new chief executive this week, handing him the keys to the most valuable gadget empire on Earth along with its trickiest open question: what, exactly, is the plan for the company's much-discussed, much-delayed AI push.",
-        "\"We're excited for the next chapter,\" the company said, of a leadership handoff that comes with a corner office, a stock chart shaped like a mountain, and a to-do list whose first item is \"figure out the AI thing everyone keeps asking about.\" Analysts note the new boss inherits a machine that prints money and a mandate to make the voice assistant, at long last, unembarrassing."
+        "The Department of Defense opened a secure AI portal bundling several major chatbots for its three million personnel, with well over a million already signed up — meaning the world's most powerful military now runs, in part, on the same \"please rewrite this email\" technology as everyone else.",
+        "\"It's about efficiency and readiness,\" officials said, of a system that lets a vast institution summarize memos, draft reports, and presumably ask an AI to make a briefing \"sound more confident.\" Analysts note that whatever else the future holds, it will at least be well-formatted — and that the chatbot has, bureaucratically speaking, now been granted clearance."
       ]
     },
     {
       "badge": "NEW!",
-      "title": "⚡ A.I. Startup's New Cash Will Buy A Full Gigawatt Of Computing; The Company Now Requires Its Own Power Plant",
-      "dateline": "SHENZHEN — reported beside a humming substation",
-      "tag": "INFRASTRUCTURE —",
+      "title": "🔨 A Third Of Companies Now Just Build The Software Instead Of Buying It; The A.I. Ate The Sales Pitch",
+      "dateline": "THE ENTERPRISE — reported from a suddenly very quiet vendor booth",
+      "tag": "INDUSTRY —",
       "paras": [
-        "An AI company's fresh multibillion-dollar war chest will reportedly fund roughly a gigawatt of new computing capacity — an amount of power that has quietly promoted the startup from \"software company\" to \"entity that must now think seriously about electricity.\"",
-        "\"Scale is everything,\" executives said, of a plan to acquire enough compute to run a small city's worth of thinking. Analysts note the defining unit of the AI age is no longer the algorithm but the gigawatt, and that every ambitious lab now dreams less of a breakthrough and more of a very large, very reliable extension cord."
+        "A major survey found that roughly a third of organizations have skipped buying a software product because AI coding tools let them simply build it themselves — a quiet revolution in which \"we'll make our own\" has gone from an empty bluff to a Tuesday.",
+        "\"Why license it when we can build it over lunch?\" one executive shrugged, in a sentence that turned an entire industry's blood cold. Analysts note the software salesperson now faces a novel objection — not \"too expensive\" or \"not now,\" but the far worse \"our intern's A.I. already did it, thanks\" — and that the moat around 'boring but useful software' has developed a distinct leak."
       ]
     },
     {
       "badge": "WOW!",
       "blink": true,
-      "title": "🆓 Free A.I. Models Quietly Catch Up To The Expensive Ones; Paid Labs Discover The Terror Of 'Good Enough, For Nothing'",
-      "dateline": "THE REPO — reported from a suspiciously affordable download",
-      "tag": "MODELS —",
+      "title": "🔎 New App Indexes Everything You Own So A.I. Can Find It; Finally, A Search Bar For Your Entire Life",
+      "dateline": "YOUR HARD DRIVE — reported from a suspiciously well-organized folder",
+      "tag": "GADGETS —",
       "paras": [
-        "Open-source AI models are rapidly closing the gap with pricey commercial ones, meaning the free option is now nearly as good as the expensive one — a development thrilling for everyone except the companies whose entire business is that shrinking difference.",
-        "\"Premium still offers more,\" paid labs insist, in the strained voice of a restaurant explaining why its water costs money now that the tap works fine. Experts note that \"nearly as good, but completely free\" are the most dangerous words in commerce, and the AI industry may be about to learn what the encyclopedia and the newspaper already know."
+        "A startup raised fresh funding for a tool that indexes your local videos, photos, meetings, and documents so an AI can search them in plain language — meaning you can finally ask \"where's that thing from that call?\" and get an answer instead of a forty-minute scroll of despair.",
+        "\"It understands your whole world,\" the company said, of software that has now read everything you have ever saved and stands ready to recall it instantly, forever. Users are delighted to finally find their files and mildly unnerved to have built a search engine that knows, in exhaustive detail, exactly what lives in the folder named 'misc.'"
       ]
     },
     {
       "badge": "SCOOP",
-      "title": "🤖 Humanoid Robots Start Taking Real Jobs; A Machine Now Greets You At The Store And Means It More Than The Last Guy",
-      "dateline": "THE SHOP FLOOR — reported near aisle 4",
-      "tag": "ROBOTS —",
+      "title": "☎️ Bank Rebuilds Its Chatbot To Hand You Off To Other Bots; Customer Service Achieves The Full Circle Of Life",
+      "dateline": "SEOUL — reported while still on hold, technically",
+      "tag": "SERVICE —",
       "paras": [
-        "With humanoid robots getting cheaper and more capable, companies are quietly slotting them into actual roles — greeting, stocking, serving — meaning the friendly face welcoming you to the store may now run on batteries and boundless, uncomplaining enthusiasm.",
-        "\"They're wonderful with customers,\" a manager said, of employees who never call in sick, never roll their eyes, and never quietly resent a schedule they cannot express. Sociologists note the robots are polite, efficient, and unsettlingly consistent — which is either excellent customer service or the single most ominous thing a store greeter has ever been."
+        "A telecom is rebuilding a major bank's chatbots so they can hand conversations and tasks off to other AI agents — perfecting the ancient art of customer service, in which you are transferred, seamlessly and forever, to someone (or now something) else.",
+        "\"It creates a smooth experience,\" the companies said, of a system where one bot greets you, a second bot handles your request, and a third bot politely apologizes for the first two. Experts note that being passed between agents used to be a frustration and is now, officially, the product — and that no human need be inconvenienced by your problem at any point in the journey."
       ]
     },
     {
       "badge": "NEAT",
-      "title": "🔁 A.I. Now Writes The Job Applications And Also Screens Them; Two Robots Negotiate Your Career While You Wait Outside",
-      "dateline": "THE HR DEPARTMENT — reported from the waiting room",
-      "tag": "WORKPLACE —",
+      "title": "📋 A.I. Agents Now Need Sandboxes, Audit Trails, And Role-Based Access; The Interns Have Been Given A Compliance Department",
+      "dateline": "THE OPS TEAM — reported through proper documentation",
+      "tag": "TECH —",
       "paras": [
-        "As AI tools flood hiring, candidates now use AI to write their résumés and cover letters while companies use AI to read and rank them — producing the perfectly modern job hunt, in which two machines correspond at length about a human neither of them has actually met.",
-        "\"It streamlines everything,\" recruiters say, of a process where one bot writes \"passionate self-starter\" and another bot decides whether it believes it. Experts note we have built a hiring system that a human enters only at the very end, blinking, to shake a hand and quietly ask what, if anything, just happened."
+        "A new wave of platforms promises to wrap AI agents in sandboxes, permissions, credential controls, and audit logs so companies can deploy them safely — meaning the tireless little robots that do everyone's tasks have officially been assigned a manager, an HR file, and a paper trail.",
+        "\"You need governance at scale,\" experts explained, of agents so capable they now require the corporate equivalent of a lanyard and a badge. Analysts note we spent years building AI that acts on its own, and are now spending just as long building the systems to watch it do so — the timeless human instinct to hire someone brilliant and immediately hand them a form to fill out."
       ]
     }
   ],
   "horoscopes": [
-    { "sign": "♒ Aquarius:", "text": "A new leader inherits an old mess today. Somewhere, distantly, that mess is also, quietly, yours." },
-    { "sign": "♌ Leo:", "text": "The free version is now nearly as good as the one you paid for. Sit with that a while. Then cancel something." },
-    { "sign": "♓ Pisces:", "text": "Mercury applies for a job written by one A.I. and read by another. You will hear back approximately never." }
+    { "sign": "♒ Aquarius:", "text": "An A.I. will find a file you forgot you ever saved. Brace yourself. It is in the folder named 'misc.'" },
+    { "sign": "♌ Leo:", "text": "You will be transferred between three bots today and reach no human. This is not a bug. This is a kind of peace." },
+    { "sign": "♓ Pisces:", "text": "Mercury enlists. Even the planets now have clearance. Format your feelings neatly and await further orders." }
   ],
-  "tech_tip": "If a robot greets you warmly at a store, smile back. It's good practice for the performance review it will one day give you.",
-  "gadget_watch": "No new gadget this week — just a leadership change at the world's biggest one, a startup that now needs its own power plant, and free A.I. catching the paid stuff. Your phone remains the same, awaiting a voice assistant that finally works.",
+  "tech_tip": "Before you index your whole life for A.I. search, remember: it will find EVERYTHING — the drafts, the screenshots, and the folder you don't talk about.",
+  "gadget_watch": "No new gadget this week — just A.I. you can build instead of buy, a search bar for your entire hard drive, and a bank that transfers you between robots forever. Your phone remains a loyal, slightly nosy friend.",
   "classifieds": [
-    { "label": "FOR SALE:", "text": "one (1) gigawatt of compute; some assembly and a nearby river required. Extension cord regrettably not included." },
-    { "label": "WANTED:", "text": "a paid A.I. feature the free one still can't do. Any feature at all. Several business models depend on it." },
-    { "label": "LOST:", "text": "the human part of the hiring process. Last seen shaking a hand at the very end, visibly confused." },
-    { "label": "MISSED CONNECTION:", "text": "You: a store-greeting robot, sincerely happy to see me. Me: a customer, unexpectedly moved. Are you okay in there?" }
+    { "label": "FOR SALE:", "text": "one (1) software company's entire sales pitch, no longer needed. Buyer's intern already built the product." },
+    { "label": "WANTED:", "text": "a customer-service line with, at any point, one (1) actual human. We will wait. We are, always, waiting." },
+    { "label": "LOST:", "text": "a file, somewhere in 'misc.' The new A.I. found it in 0.2 seconds and now we must talk about it." },
+    { "label": "MISSED CONNECTION:", "text": "You: three chatbots who transferred me in a perfect circle. Me: still here, still holding. Hello? Hello?" }
   ]
 }
