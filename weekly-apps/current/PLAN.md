@@ -76,7 +76,9 @@ weekly-apps/current/
       Progress: [x] hidden spike traps (Tue); [x] boss floors every 5th level (a
       Warden guarding the stairs — big hp/atk, aura, milestone gold + potion drop +
       heal); [x] shrines (~55% of floors, one-time boon: full heal / +2 max HP /
-      gold cache). Still to add: more item types, maybe a shop.
+      gold cache). [x] more item types (Wed): ≈ Scroll of Flame (AoE — damages every
+      enemy in the torchlight) and ◆ Whetstone (permanent +1 attack, a run-building
+      upgrade). Still possible: a shop, rings/trinkets.
 - [~] GRAPHICS POLISH (14:00 passes): [x] flickering torchlight, [x] tile shading,
       [x] hit flashes, [x] damage numbers, [x] smooth step-tween movement (player +
       enemies slide between tiles; camera eases), [x] boss/shrine glow auras. Still

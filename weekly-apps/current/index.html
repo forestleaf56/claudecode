@@ -135,7 +135,8 @@
       <ul>
         <li>Tap a tile next to you, use the on-screen <b>d-pad</b>, or the <span class="kbd">arrow</span>/<span class="kbd">WASD</span> keys to move.</li>
         <li>Move <b>into an enemy</b> to strike it. Everything acts only when <i>you</i> do — take your time.</li>
-        <li>Step onto <b>◈ gold</b>, <b>❤ potions</b>, <b>weapons</b> and <b>armor</b> to grab them. Better gear replaces weaker gear.</li>
+        <li>Step onto <b>◈ gold</b>, <b>❤ potions</b>, <b>weapons</b>, <b>armor</b>, <b>≈ flame scrolls</b> (scorch nearby foes) and <b>◆ whetstones</b> (+1 attack) to grab them. Better gear replaces weaker gear.</li>
+        <li>Detour to a glowing <b>✦ shrine</b> for a one-time boon, and beware hidden traps. Every 5th floor a <b>Warden</b> guards the way down.</li>
         <li>Find the <b>▼ stairs</b> and descend. Each floor is generated fresh and grows deadlier — and richer.</li>
         <li>Death is <b>permanent</b>. The only goal is to reach a deeper floor than last time.</li>
       </ul>
@@ -297,10 +298,12 @@
       if(ix===player.x&&iy===player.y) continue;
       if(items.some(it=>it.x===ix&&it.y===iy)||enemies.some(e=>e.x===ix&&e.y===iy)) continue;
       const roll=Math.random();
-      if(roll<0.5) items.push({x:ix,y:iy,type:'gold',amt:rr(2,5+d)});
-      else if(roll<0.78) items.push({x:ix,y:iy,type:'potion',heal:5});
-      else if(roll<0.9){ const t=clamp(1+Math.floor(d/2)+rr(-1,1),1,WEAPONS.length-1); items.push({x:ix,y:iy,type:'weapon',tier:t}); }
-      else { const t=clamp(1+Math.floor(d/2)+rr(-1,1),1,ARMORS.length-1); items.push({x:ix,y:iy,type:'armor',tier:t}); }
+      if(roll<0.45) items.push({x:ix,y:iy,type:'gold',amt:rr(2,5+d)});
+      else if(roll<0.68) items.push({x:ix,y:iy,type:'potion',heal:5});
+      else if(roll<0.80){ const t=clamp(1+Math.floor(d/2)+rr(-1,1),1,WEAPONS.length-1); items.push({x:ix,y:iy,type:'weapon',tier:t}); }
+      else if(roll<0.90){ const t=clamp(1+Math.floor(d/2)+rr(-1,1),1,ARMORS.length-1); items.push({x:ix,y:iy,type:'armor',tier:t}); }
+      else if(roll<0.96) items.push({x:ix,y:iy,type:'scroll',dmg:5+d});
+      else items.push({x:ix,y:iy,type:'whetstone'});
     }
     // hidden spike traps — a lurking hazard that scales with depth (skip the
     // first room and never block the stairs). Sprung once, then inert.
@@ -397,7 +400,7 @@
     flash('a spike trap! −'+tr.dmg+' HP','#e8564b');
   }
   function attack(foe){
-    const dmg=2+WEAPONS[player.wp].atk;
+    const dmg=2+WEAPONS[player.wp].atk+(player.bonusAtk||0);
     foe.hp-=dmg; foe.flash=1;
     anim.push({type:'dmg',x:foe.x,y:foe.y,val:dmg,life:0.7,col:'#ffcf7a'});
     if(foe.hp<=0){
@@ -417,12 +420,27 @@
   function pickup(){
     const it=items.find(i=>i.x===player.x&&i.y===player.y);
     if(!it) return;
+    let take=true;
     if(it.type==='gold'){ player.gold+=it.amt; flash('+'+it.amt+' gold'); }
     else if(it.type==='potion'){ player.hp=clamp(player.hp+it.heal,0,player.maxHp); flash('potion — +'+it.heal+' HP','#79c46a'); }
-    else if(it.type==='weapon'){ if(it.tier>player.wp){ player.wp=it.tier; flash('found a '+WEAPONS[it.tier].name+'!','#ffcf7a'); } else flash('a lesser '+WEAPONS[it.tier].name+' — left it'); }
-    else if(it.type==='armor'){ if(it.tier>player.ar){ player.ar=it.tier; flash('donned '+ARMORS[it.tier].name+'!','#4fd6c4'); } else flash('weaker '+ARMORS[it.tier].name+' — left it'); }
-    if(it.type==='gold'||it.type==='potion'|| (it.type==='weapon'&&it.tier>player.wp-0)|| (it.type==='armor'&&it.tier>player.ar-0))
-      items=items.filter(i=>i!==it);
+    else if(it.type==='weapon'){ if(it.tier>player.wp){ player.wp=it.tier; flash('found a '+WEAPONS[it.tier].name+'!','#ffcf7a'); } else { flash('a lesser '+WEAPONS[it.tier].name+' — left it'); take=false; } }
+    else if(it.type==='armor'){ if(it.tier>player.ar){ player.ar=it.tier; flash('donned '+ARMORS[it.tier].name+'!','#4fd6c4'); } else { flash('weaker '+ARMORS[it.tier].name+' — left it'); take=false; } }
+    else if(it.type==='whetstone'){ player.bonusAtk=(player.bonusAtk||0)+1; flash('a whetstone — attack sharpened (+1)','#ffcf7a'); }
+    else if(it.type==='scroll'){ scrollOfFlame(it.dmg); }
+    if(take) items=items.filter(i=>i!==it);
+  }
+  // Scroll of Flame — a tactical burst: every enemy in the torchlight takes damage.
+  function scrollOfFlame(dmg){
+    let hit=0, killGold=0;
+    for(const e of enemies.slice()){
+      if(!vis[e.y]||!vis[e.y][e.x]) continue;
+      e.hp-=dmg; e.flash=1; hit++;
+      anim.push({type:'dmg',x:e.x,y:e.y,val:dmg,life:0.7,col:'#ff9a3c'});
+      if(e.hp<=0){ const g=ENEMY_KINDS[e.kind].gold; killGold+=rr(g[0],g[1]); }
+    }
+    enemies=enemies.filter(e=>e.hp>0);
+    player.gold+=killGold;
+    flash(hit? ('scroll of flame — scorched '+hit+' foe'+(hit>1?'s':'')) : 'scroll of flame — nothing to burn','#ff9a3c');
   }
   function descend(){
     turnLock=true;
@@ -561,6 +579,8 @@
       else if(it.type==='potion'){ ctx.fillStyle='#79c46a'; ctx.fillText('❤',sx,sy); }
       else if(it.type==='weapon'){ ctx.fillStyle='#e8e2d0'; ctx.fillText('†',sx,sy); }
       else if(it.type==='armor'){ ctx.fillStyle='#8fb7c9'; ctx.fillText('◘',sx,sy); }
+      else if(it.type==='scroll'){ ctx.fillStyle='#ff9a3c'; ctx.fillText('≈',sx,sy); }
+      else if(it.type==='whetstone'){ ctx.fillStyle='#c9c2b4'; ctx.fillText('◆',sx,sy); }
     }
     // enemies
     for(const e of enemies){ if(!vis[e.y]||!vis[e.y][e.x]) continue;
@@ -649,6 +669,8 @@
       warpToTrap:()=>{ const t=traps.find(t=>!t.sprung); if(t){ player.x=t.x; player.y=t.y; springTrap(); recompute(); return true; } return false; },
       warpToShrine:()=>{ const s=shrines.find(s=>!s.used); if(s){ player.x=s.x; player.y=s.y; useShrine(); recompute(); return true; } return false; },
       genAt:(n)=>{ genFloor(n); updateHUD(); },
+      grab:(o)=>{ items.push(Object.assign({x:player.x,y:player.y},o)); pickup(); return window.__ember.state(); },
+      atk:()=>2+WEAPONS[player.wp].atk+(player.bonusAtk||0),
       stairs:()=>{ for(let y=0;y<ROWS;y++)for(let x=0;x<COLS;x++) if(map[y][x]===STAIRS) return {x,y}; return null; },
       warpToStairs:()=>{ const s=window.__ember.stairs(); if(s){ player.x=s.x; player.y=s.y; recompute(); } },
       spawnAdj:()=>{ enemies.push({x:player.x+1,y:player.y,kind:'rat',hp:3,max:3,atk:1,flash:0}); },
