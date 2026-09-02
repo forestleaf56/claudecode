@@ -62,6 +62,14 @@
   .card .close{margin-top:16px;}
   .kbd{display:inline-block; padding:1px 7px; border-radius:6px; background:#2a1f31;
     border:1px solid rgba(255,154,60,.3); color:var(--ember2); font-size:13px;}
+  .shopRow{display:flex; align-items:center; gap:10px; padding:10px 4px; border-bottom:1px solid rgba(255,154,60,.14);}
+  .shopRow .nm{flex:1; font-size:15px;}
+  .shopRow .pr{color:var(--ember2); font-weight:700; font-size:14px; white-space:nowrap;}
+  .buyBtn{border:0; cursor:pointer; font:inherit; font-weight:700; letter-spacing:.06em; padding:8px 14px;
+    border-radius:9px; color:var(--ink); font-size:13px; background:linear-gradient(180deg,var(--ember2),var(--ember));
+    box-shadow:0 3px 0 #7a3d12;}
+  .buyBtn:active{transform:translateY(3px); box-shadow:0 0 0 #7a3d12;}
+  .buyBtn:disabled{cursor:default; color:#8a7d70; background:#2a1f31; box-shadow:none; opacity:.7;}
 
   /* --- In-run HUD --- */
   #hud{position:absolute; top:0; left:0; right:0; z-index:8; display:flex; align-items:center;
@@ -150,6 +158,16 @@
       <h2>Best delve</h2>
       <p id="scoresBody" class="placeholder">No runs yet — your deepest floor will be recorded here.</p>
       <button class="btn secondary close" data-close>Close</button>
+    </div>
+  </div>
+
+  <!-- SHOP / TRADER MODAL -->
+  <div id="shopModal" class="modal hidden">
+    <div class="card">
+      <h2>⚑ A wandering trader</h2>
+      <p class="placeholder">Rest a moment before you descend. You carry <b><span id="shopGold">0</span></b> gold.</p>
+      <div id="shopList"></div>
+      <button class="btn close" id="shopDescendBtn" style="margin-top:14px;">Descend ▼</button>
     </div>
   </div>
 
@@ -446,8 +464,53 @@
     turnLock=true;
     player.hp=clamp(player.hp+2,0,player.maxHp); // small relief between floors
     flash('you descend to floor '+(depth+1),'#4fd6c4');
-    setTimeout(()=>{ genFloor(depth+1); turnLock=false; updateHUD(); },260);
+    setTimeout(()=>{
+      genFloor(depth+1); updateHUD();
+      // A wandering trader appears on ~40% of descents (never before a boss
+      // floor, so you can gear up first) — a decision point and a gold sink.
+      if(depth%5!==0 && Math.random()<0.4){ openShop(); }
+      else turnLock=false;
+    },260);
   }
+
+  // ---- Trader / shop between floors ----
+  let shopStock=[];
+  function openShop(){
+    const canWeapon=player.wp<WEAPONS.length-1, canArmor=player.ar<ARMORS.length-1;
+    const pool=[
+      {k:'heal',   name:'Healing draught (+6 HP)', price:8+depth,  can:()=>player.hp<player.maxHp, buy:()=>{ player.hp=clamp(player.hp+6,0,player.maxHp); }},
+      {k:'full',   name:'Full mend',               price:16+depth, can:()=>player.hp<player.maxHp, buy:()=>{ player.hp=player.maxHp; }},
+      {k:'vigor',  name:'Tonic of vigor (+2 max HP)', price:18+depth, can:()=>true, buy:()=>{ player.maxHp+=2; player.hp+=2; }},
+      {k:'whet',   name:'Whetstone (+1 attack)',   price:22+depth*2, can:()=>true, buy:()=>{ player.bonusAtk=(player.bonusAtk||0)+1; }},
+    ];
+    if(canWeapon){ const t=player.wp+1; pool.push({k:'wp',name:'Weapon: '+WEAPONS[t].name+' (+'+WEAPONS[t].atk+' atk)',price:14+t*8,can:()=>player.wp<t,buy:()=>{ player.wp=t; }}); }
+    if(canArmor){ const t=player.ar+1; pool.push({k:'ar',name:'Armor: '+ARMORS[t].name+' (+'+ARMORS[t].def+' def)',price:14+t*8,can:()=>player.ar<t,buy:()=>{ player.ar=t; }}); }
+    // pick 3 distinct offers
+    shopStock=[]; const idx=[...pool.keys()];
+    for(let i=idx.length-1;i>0;i--){ const j=rr(0,i); [idx[i],idx[j]]=[idx[j],idx[i]]; }
+    for(const i of idx){ if(shopStock.length<3 && pool[i].can()) shopStock.push({...pool[i],sold:false}); }
+    renderShop(); show($('shopModal'),true);
+  }
+  function renderShop(){
+    $('shopGold').textContent=player.gold;
+    const list=$('shopList'); list.innerHTML='';
+    shopStock.forEach((o,i)=>{
+      const row=document.createElement('div'); row.className='shopRow';
+      const nm=document.createElement('div'); nm.className='nm'; nm.textContent=o.name;
+      const pr=document.createElement('div'); pr.className='pr'; pr.textContent='◈ '+o.price;
+      const btn=document.createElement('button'); btn.className='buyBtn';
+      const afford=player.gold>=o.price && !o.sold && o.can();
+      btn.textContent=o.sold?'sold':'Buy'; btn.disabled=!afford;
+      btn.addEventListener('click',()=>buyOffer(i));
+      row.appendChild(nm); row.appendChild(pr); row.appendChild(btn); list.appendChild(row);
+    });
+  }
+  function buyOffer(i){
+    const o=shopStock[i]; if(!o||o.sold||player.gold<o.price||!o.can()) return;
+    player.gold-=o.price; o.buy(); o.sold=true;
+    updateHUD(); renderShop();
+  }
+  function closeShop(){ show($('shopModal'),false); turnLock=false; updateHUD(); }
   function enemyTurn(){
     turnLock=true;
     for(const e of enemies){
@@ -530,6 +593,7 @@
 
   function decayOff(o){ const k=Math.min(1,dtGlobal*16); o.offx+=(0-o.offx)*k; o.offy+=(0-o.offy)*k; if(Math.abs(o.offx)<0.008)o.offx=0; if(Math.abs(o.offy)<0.008)o.offy=0; }
   let dtGlobal=0;
+  const motes=[]; for(let i=0;i<14;i++) motes.push({a:Math.random()*6.28,spd:0.4+Math.random()*0.8,rad:0.5+Math.random()*3,rise:Math.random()*80});
   function drawRun(dt){
     dtGlobal=dt;
     ctx.fillStyle='#0b070f'; ctx.fillRect(0,0,W,H);
@@ -601,6 +665,16 @@
     for(const a of anim){ a.life-=dt; if(a.type==='dmg'){ const ax=Math.round(a.x*TILE-camX)+TILE/2, ay=Math.round(a.y*TILE-camY)+TILE/2-(0.7-a.life)*22;
       ctx.globalAlpha=clamp(a.life/0.7,0,1); ctx.fillStyle=a.col; ctx.font='bold '+Math.floor(TILE*.5)+'px serif'; ctx.fillText('-'+a.val,ax,ay); ctx.globalAlpha=1; } }
     anim=anim.filter(a=>a.life>0);
+    // drifting ember motes in the torchlight (atmosphere)
+    ctx.save(); ctx.globalCompositeOperation='lighter';
+    for(const m of motes){
+      m.a+=dt*m.spd; const mx=psx+Math.cos(m.a)*m.rad*TILE*0.16, my=psy+Math.sin(m.a*0.7)*m.rad*TILE*0.16 - m.rise;
+      m.rise+=dt*10; if(m.rise>TILE*3){ m.rise=0; m.rad=0.5+Math.random()*3; }
+      const k=1-m.rise/(TILE*3);
+      ctx.fillStyle='rgba(255,'+Math.round(160+60*k)+',80,'+(0.35*k)+')';
+      ctx.beginPath(); ctx.arc(mx,my,1+Math.random()*0.6,0,6.283); ctx.fill();
+    }
+    ctx.restore();
     // torch light over the scene
     const rad=TILE*(TORCH+0.6)*flick;
     const rg=ctx.createRadialGradient(psx,psy,TILE*0.6,psx,psy,rad);
@@ -655,6 +729,7 @@
 
   // pause / death buttons
   $('menuBtn').addEventListener('click',()=>{ $('pauseFloor').textContent=depth; $('pauseGold').textContent=player.gold; show($('pauseModal'),true); });
+  $('shopDescendBtn').addEventListener('click',closeShop);
   $('resumeBtn').addEventListener('click',()=>show($('pauseModal'),false));
   $('pauseHowBtn').addEventListener('click',()=>show($('howModal'),true));
   $('abandonBtn').addEventListener('click',()=>{ show($('pauseModal'),false); toTitle(); });
@@ -671,6 +746,8 @@
       genAt:(n)=>{ genFloor(n); updateHUD(); },
       grab:(o)=>{ items.push(Object.assign({x:player.x,y:player.y},o)); pickup(); return window.__ember.state(); },
       atk:()=>2+WEAPONS[player.wp].atk+(player.bonusAtk||0),
+      openShop:()=>{ player.gold=999; openShop(); return shopStock.map(o=>({name:o.name,price:o.price})); },
+      buy:(i)=>{ const g0=player.gold; buyOffer(i); return {spent:g0-player.gold,gold:player.gold,maxHp:player.maxHp,hp:player.hp}; },
       stairs:()=>{ for(let y=0;y<ROWS;y++)for(let x=0;x<COLS;x++) if(map[y][x]===STAIRS) return {x,y}; return null; },
       warpToStairs:()=>{ const s=window.__ember.stairs(); if(s){ player.x=s.x; player.y=s.y; recompute(); } },
       spawnAdj:()=>{ enemies.push({x:player.x+1,y:player.y,kind:'rat',hp:3,max:3,atk:1,flash:0}); },

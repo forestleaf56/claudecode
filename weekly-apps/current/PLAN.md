@@ -78,11 +78,15 @@ weekly-apps/current/
       heal); [x] shrines (~55% of floors, one-time boon: full heal / +2 max HP /
       gold cache). [x] more item types (Wed): ≈ Scroll of Flame (AoE — damages every
       enemy in the torchlight) and ◆ Whetstone (permanent +1 attack, a run-building
-      upgrade). Still possible: a shop, rings/trinkets.
+      upgrade). [x] a shop (Wed 14:00): a wandering Trader appears on ~40% of descents
+      (never right before a boss floor) offering 3 randomized wares — healing, full
+      mend, +2 max HP, whetstone, or the next weapon/armor tier — a real gold sink and
+      decision point. Still possible: rings/trinkets, daily seed.
 - [~] GRAPHICS POLISH (14:00 passes): [x] flickering torchlight, [x] tile shading,
       [x] hit flashes, [x] damage numbers, [x] smooth step-tween movement (player +
       enemies slide between tiles; camera eases), [x] boss/shrine glow auras. Still
-      to add: in-run ember/dust motes, attack lunge, screen-shake on boss hits.
+      [x] in-run ember motes drifting in the torchlight. Still to add: attack lunge,
+      screen-shake on boss hits.
 
 ## Friday readme notes
 - Self-contained single index.html, Canvas 2D. NO Supabase / NO Gemini API → no API
