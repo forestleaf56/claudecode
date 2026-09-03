@@ -66,10 +66,11 @@ weekly-apps/current/
       HP hearts, 5 enemy types (rat/bat/goblin/skeleton/brute) with chase AI that act
       on your turn, gold + potions + gear pickups, death → run-summary modal; HUD
       (floor, hearts, gold). Verified: descend, kill, and death paths all work.
-- [x] Thu (mostly done early): tiered loot — 6 weapon tiers + 5 armor tiers that change
-      damage/defense and scale with depth; enemy pool & difficulty scale by depth; a ☰
-      pause/menu overlay; best depth + best gold persisted; SCORES screen. Remaining for
-      Thu/14:00: finalize title polish + breadth (traps, shrine/shop, boss floors).
+- [x] Thu (done): tiered loot — 6 weapon tiers + 5 armor tiers that change damage/
+      defense and scale with depth; enemy pool & difficulty scale by depth; a ☰ pause/
+      menu overlay; best depth + best gold persisted; SCORES screen. Thu finalize added
+      a title-screen "deepest delve · floor N" badge (returning-player hook) and a
+      build/gear readout in the pause menu. Front end is production-ready; ship-ready.
 - [ ] LONGEVITY (Tue–Thu + 14:00 passes): guarantee endless replayability — solid
       procedural generation, depth-scaled difficulty & loot, permadeath score chase,
       several enemy types + item tiers, and run stats. Add breadth as budget allows.
@@ -91,8 +92,23 @@ weekly-apps/current/
 ## Friday readme notes
 - Self-contained single index.html, Canvas 2D. NO Supabase / NO Gemini API → no API
   keys, no env vars, no api/ folder / Vercel setup. Runs by opening index.html.
-- (Fill in Friday: controls — tap adjacent tile or d-pad to move/attack, descend
-  stairs to go deeper, permadeath, beat your best depth; enemies/loot scale with depth.)
+- Controls: tap an adjacent tile, the on-screen d-pad, or arrow/WASD keys to move;
+  move into an enemy to attack; space/`.` waits a turn. Everything is turn-based —
+  the dungeon only acts when you do.
+- Loop: grab ◈ gold, ❤ potions, † weapons, ◘ armor, ≈ flame scrolls (AoE), ◆
+  whetstones (+1 atk); touch ✦ shrines for a one-time boon; avoid hidden spike
+  traps; a wandering trader may offer wares between floors; every 5th floor a Warden
+  guards the stairs. Take the ▼ stairs to descend — floors are generated fresh and
+  get deadlier and richer. Death is permanent; the goal is to beat your deepest floor
+  (shown on the title screen and SCORES). Best depth + gold saved to localStorage.
+
+## LONGEVITY sanity check (Thu)
+Strong / effectively endless. Sources of long-term play: infinite procedural floors,
+depth-scaled difficulty & loot, permadeath high-score chase (deepest floor + gold),
+5 enemy types + boss floors every 5 levels, 6 weapon + 5 armor tiers, flame scrolls,
+permanent whetstone upgrades, shrines, traps, and a between-floors shop as a gold
+sink. Not thin — no missing-depth work needed. Optional future breadth: a daily seed,
+rings/trinkets, more enemy/biome variety (left for 14:00 / future weeks).
 
 ## Status notes
 - Mon 2026-08-31: first week under the added **longevity** requirement. Chose a

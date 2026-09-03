@@ -33,6 +33,10 @@
     text-shadow:0 1px 0 #5a3413, 0 0 26px rgba(255,154,60,.55), 0 6px 30px rgba(0,0,0,.6);
   }
   .tagline{color:var(--muted); font-style:italic; letter-spacing:.06em; font-size:clamp(13px,3.6vw,17px);}
+  .bestBadge{margin-top:14px; display:inline-block; padding:5px 14px; border-radius:999px;
+    font-size:13px; letter-spacing:.08em; color:var(--teal);
+    background:rgba(20,40,44,.6); border:1px solid rgba(79,214,196,.3);
+    text-shadow:0 0 10px rgba(79,214,196,.3);}
 
   .menu{display:flex; flex-direction:column; gap:14px; width:min(320px,84vw);}
   .btn{
@@ -109,6 +113,7 @@
       <div class="flame">🔥</div>
       <div class="wordmark">EMBERDELVE</div>
       <div class="tagline">descend by lantern-light</div>
+      <div id="bestBadge" class="bestBadge hidden">deepest delve · floor <span id="bestBadgeN">0</span></div>
     </div>
     <div class="menu">
       <button class="btn" id="descendBtn">Descend</button>
@@ -176,6 +181,7 @@
     <div class="card">
       <h2>Paused</h2>
       <p class="placeholder">Floor <span id="pauseFloor">1</span> · <span id="pauseGold">0</span> gold gathered.</p>
+      <p id="pauseGear" class="placeholder" style="font-style:normal;"></p>
       <div class="menu" style="width:auto; margin-top:8px;">
         <button class="btn" id="resumeBtn">Resume</button>
         <button class="btn secondary" id="pauseHowBtn">How to</button>
@@ -692,7 +698,7 @@
     mode='run'; show($('titleScreen'),false); show($('hud'),true); show($('pad'),true);
     show($('deathModal'),false); show($('pauseModal'),false);
   }
-  function toTitle(){ mode='title'; show($('hud'),false); show($('pad'),false); show($('deathModal'),false); show($('pauseModal'),false); show($('titleScreen'),true); }
+  function toTitle(){ mode='title'; show($('hud'),false); show($('pad'),false); show($('deathModal'),false); show($('pauseModal'),false); show($('titleScreen'),true); refreshBadge(); }
 
   $('descendBtn').addEventListener('click',startRun);
   $('howBtn').addEventListener('click',()=>show($('howModal'),true));
@@ -727,8 +733,20 @@
     if(Math.abs(dx)>=Math.abs(dy)) tryMove(Math.sign(dx),0); else tryMove(0,Math.sign(dy));
   });
 
+  // title-screen "deepest delve" badge
+  function refreshBadge(){
+    let best=0; try{ best=parseInt(localStorage.getItem('emberdelve_best')||'0',10)||0; }catch(e){}
+    if(best>0){ $('bestBadgeN').textContent=best; show($('bestBadge'),true); } else show($('bestBadge'),false);
+  }
+  refreshBadge();
+
   // pause / death buttons
-  $('menuBtn').addEventListener('click',()=>{ $('pauseFloor').textContent=depth; $('pauseGold').textContent=player.gold; show($('pauseModal'),true); });
+  $('menuBtn').addEventListener('click',()=>{
+    $('pauseFloor').textContent=depth; $('pauseGold').textContent=player.gold;
+    const atk=2+WEAPONS[player.wp].atk+(player.bonusAtk||0), def=ARMORS[player.ar].def;
+    $('pauseGear').innerHTML='⚔ '+WEAPONS[player.wp].name+' · 🛡 '+ARMORS[player.ar].name+'<br>attack '+atk+' · defense '+def+' · '+Math.ceil(player.hp/2)+'/'+Math.ceil(player.maxHp/2)+' hearts';
+    show($('pauseModal'),true);
+  });
   $('shopDescendBtn').addEventListener('click',closeShop);
   $('resumeBtn').addEventListener('click',()=>show($('pauseModal'),false));
   $('pauseHowBtn').addEventListener('click',()=>show($('howModal'),true));
