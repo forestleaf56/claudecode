@@ -419,12 +419,15 @@
   function springTrap(){
     const tr=traps.find(t=>t.x===player.x&&t.y===player.y&&!t.sprung);
     if(!tr) return;
-    tr.sprung=true; player.hp-=tr.dmg;
+    tr.sprung=true; player.hp-=tr.dmg; addShake(5);
     anim.push({type:'dmg',x:player.x,y:player.y,val:tr.dmg,life:0.7,col:'#e8564b'});
     flash('a spike trap! −'+tr.dmg+' HP','#e8564b');
   }
   function attack(foe){
     const dmg=2+WEAPONS[player.wp].atk+(player.bonusAtk||0);
+    // lunge toward the foe (offset eases back), and a small impact shake
+    player.offx=-0.34*Math.sign(foe.x-player.x); player.offy=-0.34*Math.sign(foe.y-player.y);
+    addShake(foe.boss?5:3);
     foe.hp-=dmg; foe.flash=1;
     anim.push({type:'dmg',x:foe.x,y:foe.y,val:dmg,life:0.7,col:'#ffcf7a'});
     if(foe.hp<=0){
@@ -432,6 +435,7 @@
       if(drop>0){ player.gold+=drop; }
       enemies=enemies.filter(e=>e!==foe);
       if(foe.boss){
+        addShake(11);
         // milestone: the Warden drops loot on its tile and heals you a little.
         if(!items.some(i=>i.x===foe.x&&i.y===foe.y)) items.push({x:foe.x,y:foe.y,type:'potion',heal:6});
         player.hp=clamp(player.hp+3,0,player.maxHp);
@@ -525,7 +529,7 @@
       const adjacent=Math.abs(e.x-player.x)+Math.abs(e.y-player.y)===1;
       if(adjacent){
         const dmg=Math.max(1,e.atk-ARMORS[player.ar].def);
-        player.hp-=dmg;
+        player.hp-=dmg; addShake(dmg>=4?6:3.5);
         anim.push({type:'dmg',x:player.x,y:player.y,val:dmg,life:0.7,col:'#e8564b'});
         continue;
       }
@@ -598,11 +602,16 @@
   }
 
   function decayOff(o){ const k=Math.min(1,dtGlobal*16); o.offx+=(0-o.offx)*k; o.offy+=(0-o.offy)*k; if(Math.abs(o.offx)<0.008)o.offx=0; if(Math.abs(o.offy)<0.008)o.offy=0; }
-  let dtGlobal=0;
+  let dtGlobal=0, shake=0;
+  function addShake(v){ shake=Math.min(12,Math.max(shake,v)); }
   const motes=[]; for(let i=0;i<14;i++) motes.push({a:Math.random()*6.28,spd:0.4+Math.random()*0.8,rad:0.5+Math.random()*3,rise:Math.random()*80});
   function drawRun(dt){
     dtGlobal=dt;
     ctx.fillStyle='#0b070f'; ctx.fillRect(0,0,W,H);
+    // screen-shake: translate the world by a small decaying jitter
+    let shk=false;
+    if(shake>0.3){ shk=true; ctx.save(); ctx.translate((Math.random()*2-1)*shake,(Math.random()*2-1)*shake); shake+=(0-shake)*Math.min(1,dt*9); }
+    else shake=0;
     const TILE=Math.max(22,Math.floor(Math.min(W,H)/11));
     // ease step-offsets toward zero so moves slide instead of snapping
     if(player.offx===undefined){ player.offx=0; player.offy=0; }
@@ -689,6 +698,7 @@
     // darkness vignette beyond torch
     const vg=ctx.createRadialGradient(psx,psy,rad*0.6,psx,psy,rad*1.25);
     vg.addColorStop(0,'rgba(6,4,9,0)'); vg.addColorStop(1,'rgba(6,4,9,.92)'); ctx.fillStyle=vg; ctx.fillRect(0,0,W,H);
+    if(shk) ctx.restore();
   }
   requestAnimationFrame(frame);
 

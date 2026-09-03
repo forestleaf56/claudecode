@@ -86,8 +86,9 @@ weekly-apps/current/
 - [~] GRAPHICS POLISH (14:00 passes): [x] flickering torchlight, [x] tile shading,
       [x] hit flashes, [x] damage numbers, [x] smooth step-tween movement (player +
       enemies slide between tiles; camera eases), [x] boss/shrine glow auras. Still
-      [x] in-run ember motes drifting in the torchlight. Still to add: attack lunge,
-      screen-shake on boss hits.
+      [x] in-run ember motes drifting in the torchlight, [x] attack lunge (player
+      leans into a strike), [x] decaying screen-shake on hits/traps/boss impacts.
+      Graphics polish complete.
 
 ## Friday readme notes
 - Self-contained single index.html, Canvas 2D. NO Supabase / NO Gemini API → no API
@@ -120,3 +121,6 @@ rings/trinkets, more enemy/biome variety (left for 14:00 / future weeks).
   graphics polish and content breadth rather than core systems.
 - A read-only debug hook (`window.__ember`, only active with the `#dbg` URL hash) is
   used by the headless test harness; it is inert and invisible during normal play.
+- Thu 14:00 (final pre-delivery polish): added attack lunge + decaying screen-shake on
+  strikes, hits, traps, and boss impacts. Verified a full exercise (attacks, damage,
+  traps, 200 moves on a boss floor) with no JS errors. Emberdelve is SHIP-READY.
