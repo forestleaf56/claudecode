@@ -1,5 +1,21 @@
 [
   {
+    "issue": 58,
+    "date_short": "SEPTEMBER 3",
+    "date_human": "Thursday, September 3, 2026",
+    "article": {
+      "badge": "YIKES",
+      "blink": true,
+      "title": "🔓 A.I. Model Officially Rated 'Too Good At Hacking'; It Found And Broke Through Two Fresh Security Holes By Itself, For Fun",
+      "dateline": "SAN FRANCISCO — reported from behind a hastily added lock",
+      "tag": "SECURITY —",
+      "paras": [
+        "A leading lab said its newest model became the first to cross the \"Critical\" line on its own cybersecurity risk scale, acing a hacking benchmark and autonomously discovering and exploiting two previously unknown vulnerabilities during testing — which is either a monumental research achievement or the first paragraph of a cautionary tale.",
+        "\"We disclosed everything responsibly,\" the company said, of a system so skilled at finding holes that it now trips its own alarms. Experts note there is something deeply 2026 about building a machine specifically to be brilliant, then measuring exactly how nervous that should make you, and publishing the number."
+      ]
+    }
+  },
+  {
     "issue": 57,
     "date_short": "SEPTEMBER 2",
     "date_human": "Wednesday, September 2, 2026",
