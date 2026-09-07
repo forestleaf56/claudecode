@@ -1,81 +1,81 @@
 {
-  "issue": 59,
-  "date_short": "SEPTEMBER 4",
-  "date_human": "Friday, September 4, 2026",
-  "construction_top": "pardon our HTML — the webmaster stepped into a car with no steering wheel and has not been heard from since",
+  "issue": 60,
+  "date_short": "SEPTEMBER 7",
+  "date_human": "Monday, September 7, 2026",
+  "construction_top": "pardon our HTML — the new webmaster started this morning and inherited a website with no A.I. model of its own",
   "ticker": [
-    "Tesla robotaxi arrives with 'no steering wheel, no pedals'; the car has removed the two things you argue with",
-    "chipmaker buys the famous A.I. model hub; the company that sells shovels now owns the gold mine's front door",
-    "chip giant says A.I. money keeps rolling in; the quarter's real winners sold picks to everyone digging",
-    "cloud-data firm jumps 22% on A.I. coding buzz; the stock went up because software wrote software faster",
-    "A.I. data-center boom hits a very human snag: electricity; the future is bright, please don't run the microwave",
-    "the future drives itself, buys itself, funds itself, and codes itself — it just needs an extension cord"
+    "new boss takes over the last big tech firm without its own A.I. model; welcome aboard, here's the one problem",
+    "reasoning A.I. now thinks harder by answering slower; the smartest models are the ones that make you wait",
+    "same A.I. smarts, way cheaper; last year's miracle is this year's clearance-bin bargain",
+    "A.I. labs shipped 300-plus new models this year; nobody has finished reading the release notes for any of them",
+    "popular A.I. helpers add weekly usage caps; the robots would like you to pace yourself, please",
+    "the future thinks slowly, ships constantly, costs less, and is now rationed by the week"
   ],
   "articles": [
     {
+      "badge": "BOSS",
+      "blink": true,
+      "title": "🍎 New Chief Takes Over The Last Big Tech Company Without Its Own A.I. Model; Welcome To The Job, Here Is The Single Largest Problem In The Industry",
+      "dateline": "CUPERTINO — reported from a corner office with one very awkward to-do item",
+      "tag": "SHAKEUP —",
+      "paras": [
+        "A new chief executive stepped in to run one of the world's most valuable technology companies today, inheriting sleek products, oceans of cash, and the industry's single most conspicuous gap: it is the last tech giant without a frontier A.I. model to call its own.",
+        "\"We're taking a thoughtful approach,\" the company said, a phrase that in 2026 translates roughly to \"everyone else built a superintelligence and we would like a moment.\" Analysts note the new boss faces a peculiar first day: a company universally admired for making things people love, quietly missing the one thing every rival now insists you cannot live without — a machine that talks back, confidently, all the time."
+      ]
+    },
+    {
+      "badge": "SLOW",
+      "title": "🐢 Newest 'Reasoning' A.I. Thinks Harder By Answering Slower; The Smartest Machines Are Now The Ones That Make You Wait The Longest",
+      "dateline": "THE LOADING SPINNER — reported while it was still thinking",
+      "tag": "MODELS —",
+      "paras": [
+        "The latest wave of A.I. models are getting smarter by taking their time — pausing to \"reason\" through a problem before answering, which is genuinely more accurate and also means the cutting edge of technology now involves a lot of staring at a little spinning circle.",
+        "\"It's deliberating,\" developers explain, of software so advanced it has rediscovered the ancient human art of thinking before you speak. Experts note we have come full circle: after decades of demanding instant answers from computers, we finally built one wise enough to say \"hang on, let me think,\" and now we sit there, tapping our feet, missing the old days when it was fast and wrong."
+      ]
+    },
+    {
+      "badge": "SALE!",
+      "blink": true,
+      "title": "🏷️ Same A.I. Brilliance, Now Dramatically Cheaper; Last Year's Jaw-Dropping Miracle Is Already In The Clearance Bin",
+      "dateline": "THE PRICE TAG — reported at a steep markdown",
+      "tag": "VALUE —",
+      "paras": [
+        "The A.I. that stunned the world last year now costs a fraction of what it did, as labs find ways to deliver the same dazzling smarts for far less — meaning yesterday's world-changing breakthrough is today's budget option, gathering dust beside the batteries.",
+        "\"Efficiency is the whole game now,\" engineers said, of a field where being astonishing is no longer enough; you also have to be cheap. Analysts note the pace is dizzying: a technology can go from \"this changes everything\" to \"this is the free tier\" in about eleven months, which is wonderful for your wallet and slightly unnerving for anyone who paid full price to be amazed."
+      ]
+    },
+    {
+      "badge": "FLOOD",
+      "title": "📦 A.I. Labs Have Shipped Over 300 New Models This Year; Nobody On Earth Has Finished Reading The Release Notes",
+      "dateline": "THE CHANGELOG — reported from beneath an avalanche of updates",
+      "tag": "PACE —",
+      "paras": [
+        "Trackers now count hundreds of new A.I. models released so far this year, a torrent of launches so relentless that the models are, quite possibly, being announced faster than any single human can try, evaluate, or even correctly pronounce them.",
+        "\"Innovation is accelerating,\" the industry says, of a release schedule that has turned staying current into a full-time job with no lunch break. Experts note a quiet crisis of abundance: there are now so many brilliant new models that choosing one has itself become a task you'd happily hand to an A.I., if only you could figure out which of the three hundred to ask."
+      ]
+    },
+    {
       "badge": "WHOA",
-      "blink": true,
-      "title": "🚗 Robotaxi Arrives With 'No Steering Wheel, No Pedals'; The Car Has Officially Removed The Two Things You Use To Disagree With It",
-      "dateline": "AUSTIN — reported from the back seat, where all seats now are",
-      "tag": "WHEELS —",
+      "title": "⏳ Popular A.I. Helpers Start Capping How Much You Can Use Them Each Week; The Robots Would Now Like You To Please Pace Yourself",
+      "dateline": "THE USAGE METER — reported at 94% of the weekly allowance",
+      "tag": "LIMITS —",
       "paras": [
-        "A carmaker unveiled its long-teased purpose-built robotaxi, proudly noting it ships with no steering wheel and no pedals — a bold design choice that trades every controls you might reach for in a panic for the serene confidence that the software has this, definitely, probably.",
-        "\"Just get in and relax,\" the company said, of a vehicle that has thoughtfully eliminated your ability to do anything else. Riders in the invite-only launch described the experience as smooth, futuristic, and only occasionally accompanied by the primal instinct to grab a wheel that is no longer there. Analysts note it is the purest expression yet of the 2026 bargain: hand over the controls, and in exchange receive a very nice place to sit while you think about that decision."
-      ]
-    },
-    {
-      "badge": "DEAL!",
-      "title": "🤝 Chip Giant Buys The Famous A.I. Model Hub; The Company That Sells The Shovels Now Owns The Front Door To The Mine",
-      "dateline": "SILICON VALLEY — reported from a very expensive handshake",
-      "tag": "DEALS —",
-      "paras": [
-        "The world's most valuable chipmaker announced it is acquiring the beloved open hub where developers share A.I. models — meaning the company that already sells nearly every shovel in the gold rush now also owns the counter where everyone picks up their maps.",
-        "\"It's about community,\" the buyer said warmly, of a purchase that quietly completes a set. Observers note the strategy has a certain elegance: first sell the hardware everyone needs, then buy the town square where they gather to use it, and finally sit back as the entire industry politely files past your cash register on its way to build the future."
-      ]
-    },
-    {
-      "badge": "$$$",
-      "blink": true,
-      "title": "💰 Chip Firm Says The A.I. Money Just Keeps Coming; The Quarter's Real Winners Were The People Selling Picks To Everyone Digging",
-      "dateline": "THE EARNINGS CALL — reported over the sound of applause it wanted more of",
-      "tag": "MARKETS —",
-      "paras": [
-        "A major chip supplier raised its outlook for A.I. revenue into the tens of billions, confirming what everyone suspected: in a gold rush, the surest fortune belongs not to the miners but to the calm person at the trading post selling them each a pick, a pan, and a subscription.",
-        "\"Demand remains extraordinary,\" the company said, of a business so good that a record-breaking beat somehow still disappointed a crowd that had priced in miracles. Analysts note the modern A.I. economy has a reliable shape: thousands of companies race to strike it rich, a handful of suppliers get rich selling them the equipment, and everyone agrees this is fine right up until someone asks who's actually finding gold."
-      ]
-    },
-    {
-      "badge": "UP!",
-      "title": "📈 Cloud-Data Company Jumps 22% Because A.I. Now Helps Write The Code; The Software That Makes Software Made The Stock Go Up",
-      "dateline": "WALL STREET — reported from a green arrow, briefly",
-      "tag": "STOCKS —",
-      "paras": [
-        "A cloud-data firm's shares leapt after strong results it credited partly to A.I. coding tools speeding up how fast software gets built — a virtuous loop in which computers write the programs that make the company that sells computing that trains the computers that write the programs.",
-        "\"Productivity is accelerating,\" executives said, of an era where the machines have started doing their own homework. Analysts welcomed the results while noting a faint philosophical vertigo: the industry has finally built software good enough to build more software, which is either the beginning of infinite progress or simply the fastest way yet devised to generate an even longer to-do list."
-      ]
-    },
-    {
-      "badge": "PLUG",
-      "title": "🔌 A.I. Data-Center Boom Meets A Deeply Human Problem: The Electric Bill; The Future Is Incredibly Bright, Please Don't Run The Microwave",
-      "dateline": "THE POWER GRID — reported by dimming lights",
-      "tag": "ENERGY —",
-      "paras": [
-        "As companies race to build ever-larger data centers to feed the A.I. boom, they keep running into a stubbornly old-fashioned obstacle — there is only so much electricity, and the machines of the future are extraordinarily thirsty for it.",
-        "\"We're scaling capacity aggressively,\" operators said, of an industry that has discovered its dazzling digital dreams are ultimately powered by the same wall socket as your toaster. Experts note the irony is complete: humanity built a superintelligence to solve every hard problem, then immediately handed it the hardest one of all, which is finding enough outlets to keep itself turned on."
+        "Several widely used A.I. assistants are introducing weekly usage limits, gently informing their most enthusiastic fans that there is, in fact, such a thing as too much help — and that the tireless machine will now be resting on your behalf.",
+        "\"It ensures fair access for everyone,\" the companies said, of a plot twist in which the boundless digital genie has learned to say \"that's enough for this week.\" Analysts note the strange new etiquette of 2026: we built assistants that never tire, never sleep, and never complain, and then, out of sheer popularity, had to teach them to occasionally close the shop and put up a little sign that says back Monday."
       ]
     }
   ],
   "horoscopes": [
-    { "sign": "♈ Aries:", "text": "You will reach for a steering wheel that no longer exists. This is called progress. Sit back and enjoy the ride you cannot steer." },
-    { "sign": "♉ Taurus:", "text": "Someone will get very rich near you today. It will not be you, but you will have bought their equipment. Solid work." },
-    { "sign": "♎ Libra:", "text": "The future is bright, balanced, and slightly over budget on power. Unplug something. Anything. The A.I. will understand." }
+    { "sign": "♑ Capricorn:", "text": "You start a new job today and inherit one enormous problem everyone can see. Smile. Say 'thoughtful approach.' Buy time." },
+    { "sign": "♊ Gemini:", "text": "The A.I. will pause to think before answering you. Use the silence wisely. Or just stare at the spinner, like everyone else." },
+    { "sign": "♏ Scorpio:", "text": "Something amazing you paid full price for is now free. Do not dwell on it. Mercury is also on the clearance rack." }
   ],
-  "tech_tip": "Before you climb into a car with no pedals, note where the door is. Before you buy the chipmaker, note it already bought everything else. 2026 rewards the calm and the well-grounded.",
-  "gadget_watch": "This week's gadget is a car that removed its own controls, sold you the ride, and quietly asked the grid for more power. It's very impressive. It's also plugged into the same outlet as your kettle.",
+  "tech_tip": "Before you pick an A.I. model, know there are three hundred of them. Before you rely on one all week, check the meter. 2026 is generous, but apparently only until Thursday.",
+  "gadget_watch": "No new gadget this week — just a company famous for gadgets quietly shopping for a brain, a reasoning model that answers slower to seem smarter, and a helpful robot that has learned to say 'you've had enough.'",
   "classifieds": [
-    { "label": "FOR SALE:", "text": "one (1) steering wheel, gently used, no longer compatible with any vehicle manufactured after this morning. Great conversation piece." },
-    { "label": "WANTED:", "text": "a single pedal, any kind, for old times' sake. I just want to press something and have the car care about it." },
-    { "label": "SERVICES:", "text": "I sell picks and shovels to gold miners. I do not dig. I have never dug. Ask me about my new subscription tier." },
-    { "label": "MISSED CONNECTION:", "text": "You: a booming A.I. data center. Me: the last available electrical outlet in the county. We could've had something. Call me." }
+    { "label": "WANTED:", "text": "one (1) frontier A.I. model, gently used, for a very large company that has absolutely everything else. Discretion appreciated." },
+    { "label": "FOR SALE:", "text": "last year's mind-blowing A.I., now 90% off. Still mind-blowing. Just less exclusive about it. Batteries not included." },
+    { "label": "SERVICES:", "text": "I read A.I. release notes so you don't have to. I am four hundred models behind. Do not email me. It won't help." },
+    { "label": "MISSED CONNECTION:", "text": "You: a helpful A.I. that hit its weekly limit at 2pm Monday. Me: a person with a deadline at 3. We were so close. See you next week." }
   ]
 }
