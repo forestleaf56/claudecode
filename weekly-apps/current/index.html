@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#0d0b1a">
+<title>Mirrorbloom</title>
+<style>
+  :root{
+    --ink:#0a0814; --indigo:#0d0b1a; --indigo2:#141024;
+    --teal:#47e5d0; --magenta:#ff6bd6; --gold:#ffd36b; --violet:#9b6bff;
+    --text:#f2ecff; --muted:#a99fc7;
+  }
+  *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
+  html,body{margin:0; height:100%; overflow:hidden; background:var(--ink);}
+  body{
+    font-family:'Avenir Next','Segoe UI',system-ui,-apple-system,Helvetica,Arial,sans-serif;
+    color:var(--text); position:fixed; inset:0; touch-action:none;
+    -webkit-user-select:none; user-select:none;
+  }
+  #app{position:absolute; inset:0;}
+  canvas{position:absolute; inset:0; width:100%; height:100%; display:block;}
+
+  .overlay{position:absolute; inset:0; display:flex; flex-direction:column;
+    align-items:center; justify-content:center; text-align:center; padding:24px; z-index:5;}
+  .hidden{display:none !important;}
+
+  .brand{margin-bottom:6vh;}
+  .glyph{font-size:34px; line-height:1; filter:drop-shadow(0 0 16px rgba(155,107,255,.7)); animation:spin 18s linear infinite;}
+  @keyframes spin{to{transform:rotate(360deg);}}
+  .wordmark{
+    margin:12px 0 4px; font-weight:800; letter-spacing:.20em;
+    font-size:clamp(30px,9.5vw,64px); line-height:.98;
+    background:linear-gradient(90deg,var(--teal),var(--violet),var(--magenta),var(--gold));
+    -webkit-background-clip:text; background-clip:text; color:transparent;
+    filter:drop-shadow(0 2px 20px rgba(120,90,255,.35));
+  }
+  .tagline{color:var(--muted); letter-spacing:.16em; text-transform:lowercase; font-size:clamp(12px,3.4vw,16px);}
+
+  .menu{display:flex; flex-direction:column; gap:13px; width:min(320px,84vw);}
+  .btn{
+    position:relative; border:0; cursor:pointer; font:inherit; font-weight:700;
+    letter-spacing:.18em; text-transform:uppercase; padding:15px 18px; border-radius:14px;
+    color:#160c22; font-size:clamp(13px,3.8vw,16px);
+    background:linear-gradient(120deg,var(--teal),var(--violet));
+    box-shadow:0 8px 24px rgba(75,120,230,.35), inset 0 1px 0 rgba(255,255,255,.45);
+    transition:transform .06s ease, box-shadow .06s ease;
+  }
+  .btn:active{transform:translateY(3px); box-shadow:0 4px 14px rgba(75,120,230,.4), inset 0 1px 0 rgba(255,255,255,.4);}
+  .btn.secondary{
+    color:var(--text); background:rgba(30,24,54,.72);
+    box-shadow:inset 0 0 0 1px rgba(155,107,255,.4), 0 6px 18px rgba(0,0,0,.4);
+  }
+  .btn.secondary:active{transform:translateY(3px);}
+
+  .modal{position:absolute; inset:0; z-index:10; display:flex; align-items:center;
+    justify-content:center; padding:24px; background:rgba(8,6,18,.74); backdrop-filter:blur(4px);}
+  .card{width:min(440px,92vw); max-height:82vh; overflow:auto; border-radius:20px;
+    padding:24px 22px 18px; background:linear-gradient(180deg,#181233,#100c22);
+    border:1px solid rgba(155,107,255,.28); box-shadow:0 24px 70px rgba(0,0,0,.6);}
+  .card h2{margin:2px 0 12px; letter-spacing:.04em; font-size:22px;
+    background:linear-gradient(90deg,var(--teal),var(--magenta)); -webkit-background-clip:text; background-clip:text; color:transparent;}
+  .card p, .card li{color:var(--text); line-height:1.55; font-size:15px;}
+  .card ul{padding-left:18px; margin:8px 0;}
+  .card .close{margin-top:16px;}
+  .placeholder{color:var(--muted);}
+
+  #studioScreen .panel{width:min(460px,90vw); padding:26px; border-radius:18px; text-align:center;
+    background:linear-gradient(180deg,#181233,#100c22); border:1px solid rgba(71,229,208,.2);}
+</style>
+</head>
+<body>
+<div id="app">
+  <canvas id="bg"></canvas>
+
+  <!-- TITLE SCREEN -->
+  <div id="titleScreen" class="overlay">
+    <div class="brand">
+      <div class="glyph">❋</div>
+      <div class="wordmark">MIRRORBLOOM</div>
+      <div class="tagline">paint with symmetry</div>
+    </div>
+    <div class="menu">
+      <button class="btn" id="createBtn">Create</button>
+      <button class="btn secondary" id="howBtn">How to</button>
+      <button class="btn secondary" id="galleryBtn">Gallery</button>
+    </div>
+  </div>
+
+  <!-- HOW-TO MODAL -->
+  <div id="howModal" class="modal hidden">
+    <div class="card">
+      <h2>How it works</h2>
+      <p class="placeholder">The full studio is built across this week.</p>
+      <ul>
+        <li>Drag on the canvas to paint — every stroke is mirrored across the sectors into a symmetric bloom.</li>
+        <li>Tune symmetry, palette and brush; press <b>Bloom</b> for instant generative art.</li>
+        <li>Save pieces to your gallery and export any of them as a PNG.</li>
+      </ul>
+      <button class="btn secondary close" data-close>Close</button>
+    </div>
+  </div>
+
+  <!-- GALLERY MODAL -->
+  <div id="galleryModal" class="modal hidden">
+    <div class="card">
+      <h2>Your gallery</h2>
+      <p id="galleryBody" class="placeholder">Nothing saved yet — your creations will appear here.</p>
+      <button class="btn secondary close" data-close>Close</button>
+    </div>
+  </div>
+
+  <!-- STUDIO (skeleton placeholder) -->
+  <div id="studioScreen" class="overlay hidden">
+    <div class="panel">
+      <div class="wordmark" style="font-size:clamp(22px,6.5vw,32px)">The studio awaits</div>
+      <p class="placeholder">The symmetry canvas, palettes, Bloom generator and gallery
+      are built across this week's increments. For now this confirms the shell works.</p>
+      <button class="btn secondary" id="backBtn" style="margin-top:14px">Back</button>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+  'use strict';
+  const cv=document.getElementById('bg'), ctx=cv.getContext('2d');
+  let W=0,H=0,DPR=1;
+  function resize(){
+    DPR=Math.min(window.devicePixelRatio||1,2);
+    W=cv.clientWidth; H=cv.clientHeight;
+    cv.width=Math.round(W*DPR); cv.height=Math.round(H*DPR);
+    ctx.setTransform(DPR,0,0,DPR,0,0);
+  }
+  window.addEventListener('resize',resize); resize();
+
+  // ---- Animated generative mandala for the title background ----
+  // A set of orbiting "petals" drawn with K-fold radial symmetry, additive glow.
+  const PAL=['#47e5d0','#9b6bff','#ff6bd6','#ffd36b'];
+  const petals=[];
+  for(let i=0;i<10;i++){
+    petals.push({ r:40+Math.random()*180, a:Math.random()*6.283, spd:(Math.random()*0.4+0.1)*(Math.random()<.5?-1:1),
+      rad:8+Math.random()*26, col:PAL[i%PAL.length], puls:Math.random()*6.283 });
+  }
+  let t=0, last=performance.now();
+  function frame(now){
+    const dt=Math.min(0.05,(now-last)/1000); last=now; t+=dt;
+    // deep indigo ground with soft vignette
+    const g=ctx.createLinearGradient(0,0,0,H);
+    g.addColorStop(0,'#100c22'); g.addColorStop(1,'#0a0814');
+    ctx.fillStyle=g; ctx.fillRect(0,0,W,H);
+
+    const cx=W/2, cy=H*0.42, K=8;
+    ctx.save(); ctx.translate(cx,cy); ctx.globalCompositeOperation='lighter';
+    for(const p of petals){ p.a+=p.spd*dt; }
+    for(let s=0;s<K;s++){
+      ctx.save(); ctx.rotate((s/K)*6.283);
+      for(const p of petals){
+        const pr=1+0.25*Math.sin(t*1.4+p.puls);
+        const x=Math.cos(p.a)*p.r, y=Math.sin(p.a)*p.r;
+        const rr=ctx.createRadialGradient(x,y,0,x,y,p.rad*pr);
+        rr.addColorStop(0,p.col+'cc'); rr.addColorStop(1,p.col+'00');
+        ctx.fillStyle=rr; ctx.beginPath(); ctx.arc(x,y,p.rad*pr,0,6.283); ctx.fill();
+      }
+      ctx.restore();
+    }
+    ctx.restore();
+
+    const vg=ctx.createRadialGradient(cx,cy,Math.min(W,H)*0.2,cx,cy,Math.max(W,H)*0.7);
+    vg.addColorStop(0,'rgba(0,0,0,0)'); vg.addColorStop(1,'rgba(6,4,14,0.7)');
+    ctx.fillStyle=vg; ctx.fillRect(0,0,W,H);
+    requestAnimationFrame(frame);
+  }
+  requestAnimationFrame(frame);
+
+  // ---- Menu wiring (skeleton navigation only) ----
+  const $=id=>document.getElementById(id);
+  const show=(el,on)=>el.classList.toggle('hidden',!on);
+  $('createBtn').addEventListener('click',()=>{ show($('titleScreen'),false); show($('studioScreen'),true); });
+  $('backBtn').addEventListener('click',()=>{ show($('studioScreen'),false); show($('titleScreen'),true); });
+  $('howBtn').addEventListener('click',()=>show($('howModal'),true));
+  $('galleryBtn').addEventListener('click',()=>{
+    let n=0; try{ const g=JSON.parse(localStorage.getItem('mirrorbloom_gallery')||'[]'); n=g.length; }catch(e){}
+    $('galleryBody').textContent = n>0 ? (n+' saved piece'+(n>1?'s':'')+' — the gallery view arrives this week.') : 'Nothing saved yet — your creations will appear here.';
+    show($('galleryModal'),true);
+  });
+  document.querySelectorAll('[data-close]').forEach(b=>b.addEventListener('click',e=>e.target.closest('.modal').classList.add('hidden')));
+})();
+</script>
+</body>
+</html>
