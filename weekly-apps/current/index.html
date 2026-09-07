@@ -20,6 +20,7 @@
   }
   #app{position:absolute; inset:0;}
   canvas{position:absolute; inset:0; width:100%; height:100%; display:block;}
+  #art{touch-action:none;}
 
   .overlay{position:absolute; inset:0; display:flex; flex-direction:column;
     align-items:center; justify-content:center; text-align:center; padding:24px; z-index:5;}
@@ -53,9 +54,9 @@
   }
   .btn.secondary:active{transform:translateY(3px);}
 
-  .modal{position:absolute; inset:0; z-index:10; display:flex; align-items:center;
+  .modal{position:absolute; inset:0; z-index:20; display:flex; align-items:center;
     justify-content:center; padding:24px; background:rgba(8,6,18,.74); backdrop-filter:blur(4px);}
-  .card{width:min(440px,92vw); max-height:82vh; overflow:auto; border-radius:20px;
+  .card{width:min(460px,92vw); max-height:82vh; overflow:auto; border-radius:20px;
     padding:24px 22px 18px; background:linear-gradient(180deg,#181233,#100c22);
     border:1px solid rgba(155,107,255,.28); box-shadow:0 24px 70px rgba(0,0,0,.6);}
   .card h2{margin:2px 0 12px; letter-spacing:.04em; font-size:22px;
@@ -65,13 +66,71 @@
   .card .close{margin-top:16px;}
   .placeholder{color:var(--muted);}
 
-  #studioScreen .panel{width:min(460px,90vw); padding:26px; border-radius:18px; text-align:center;
-    background:linear-gradient(180deg,#181233,#100c22); border:1px solid rgba(71,229,208,.2);}
+  /* --- Studio toolbar --- */
+  #toolbar{position:absolute; left:0; right:0; bottom:0; z-index:8;
+    display:flex; gap:7px; padding:9px 10px calc(9px + env(safe-area-inset-bottom));
+    overflow-x:auto; -webkit-overflow-scrolling:touch;
+    background:linear-gradient(0deg,rgba(8,6,18,.92),rgba(8,6,18,.55) 70%,rgba(8,6,18,0));}
+  #toolbar::-webkit-scrollbar{display:none;}
+  .tool{flex:0 0 auto; min-width:58px; border:0; cursor:pointer; border-radius:13px;
+    padding:8px 10px 6px; color:var(--text); font:inherit; text-align:center;
+    background:rgba(30,24,54,.82); border:1px solid rgba(155,107,255,.24);
+    box-shadow:0 4px 12px rgba(0,0,0,.35);}
+  .tool:active{transform:translateY(2px);}
+  .tool .ic{font-size:19px; line-height:1.1; display:block;}
+  .tool .lb{font-size:10px; letter-spacing:.04em; color:var(--muted); margin-top:2px; display:block; white-space:nowrap;}
+  .tool.primary{background:linear-gradient(120deg,var(--teal),var(--violet)); border:0;}
+  .tool.primary .lb{color:#eae4ff;}
+  .swatch{width:20px; height:20px; border-radius:50%; margin:0 auto; box-shadow:inset 0 0 0 1px rgba(255,255,255,.3);}
+  #symVal{font-size:17px; font-weight:800;}
+  .brushdot{width:18px; height:18px; margin:1px auto; border-radius:50%; background:var(--text);}
+
+  #topbar{position:absolute; top:0; left:0; right:0; z-index:8; display:flex; align-items:center;
+    justify-content:space-between; padding:calc(8px + env(safe-area-inset-top)) 12px 8px; pointer-events:none;
+    background:linear-gradient(180deg,rgba(8,6,18,.7),rgba(8,6,18,0));}
+  #topbar .mini{font-weight:800; letter-spacing:.14em; font-size:14px; pointer-events:none;
+    background:linear-gradient(90deg,var(--teal),var(--magenta)); -webkit-background-clip:text; background-clip:text; color:transparent;}
+  #homeBtn{pointer-events:auto; width:38px; height:38px; border-radius:10px; border:0; cursor:pointer;
+    color:var(--text); font-size:18px; background:rgba(30,24,54,.8); border:1px solid rgba(155,107,255,.24);}
+
+  #toast{position:absolute; left:50%; top:16%; transform:translateX(-50%); z-index:15;
+    padding:9px 16px; border-radius:999px; background:rgba(20,16,40,.92); color:var(--text);
+    font-size:14px; border:1px solid rgba(155,107,255,.4); opacity:0; transition:opacity .25s; pointer-events:none;}
+
+  /* --- Gallery grid --- */
+  #galleryGrid{display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin:6px 0 4px;}
+  .gcell{position:relative; aspect-ratio:1; border-radius:12px; overflow:hidden; cursor:pointer;
+    border:1px solid rgba(155,107,255,.25); background:#0c0a18;}
+  .gcell img{width:100%; height:100%; object-fit:cover; display:block;}
+  .gcell .del{position:absolute; top:3px; right:3px; width:22px; height:22px; border:0; border-radius:50%;
+    background:rgba(10,8,20,.8); color:#ff9ecb; font-size:13px; cursor:pointer; line-height:22px; text-align:center;}
 </style>
 </head>
 <body>
 <div id="app">
   <canvas id="bg"></canvas>
+  <canvas id="art" class="hidden"></canvas>
+
+  <!-- STUDIO CHROME -->
+  <div id="topbar" class="hidden">
+    <button id="homeBtn" aria-label="Menu">☰</button>
+    <div class="mini">MIRRORBLOOM</div>
+    <div style="width:38px"></div>
+  </div>
+
+  <div id="toolbar" class="hidden">
+    <button class="tool" id="symBtn"><span class="ic" id="symVal">8</span><span class="lb">symmetry</span></button>
+    <button class="tool" id="mirrorBtn"><span class="ic">🪞</span><span class="lb" id="mirrorLb">mirror on</span></button>
+    <button class="tool" id="palBtn"><span class="ic"><span class="swatch" id="palSwatch"></span></span><span class="lb" id="palLb">Aurora</span></button>
+    <button class="tool" id="brushBtn"><span class="ic"><span class="brushdot" id="brushDot"></span></span><span class="lb" id="brushLb">medium</span></button>
+    <button class="tool primary" id="bloomBtn"><span class="ic">❋</span><span class="lb">bloom</span></button>
+    <button class="tool" id="undoBtn"><span class="ic">↶</span><span class="lb">undo</span></button>
+    <button class="tool" id="clearBtn"><span class="ic">🗑</span><span class="lb">clear</span></button>
+    <button class="tool" id="saveBtn"><span class="ic">💾</span><span class="lb">save</span></button>
+    <button class="tool" id="exportBtn"><span class="ic">⤓</span><span class="lb">export</span></button>
+  </div>
+
+  <div id="toast"></div>
 
   <!-- TITLE SCREEN -->
   <div id="titleScreen" class="overlay">
@@ -91,11 +150,11 @@
   <div id="howModal" class="modal hidden">
     <div class="card">
       <h2>How it works</h2>
-      <p class="placeholder">The full studio is built across this week.</p>
       <ul>
-        <li>Drag on the canvas to paint — every stroke is mirrored across the sectors into a symmetric bloom.</li>
-        <li>Tune symmetry, palette and brush; press <b>Bloom</b> for instant generative art.</li>
-        <li>Save pieces to your gallery and export any of them as a PNG.</li>
+        <li><b>Drag on the canvas</b> to paint — every stroke is mirrored across the sectors into a symmetric bloom.</li>
+        <li>Tap <b>symmetry</b> to change the number of sectors, <b>mirror</b> for kaleidoscope reflection, <b>palette</b> and <b>brush</b> to change the look.</li>
+        <li>Press <b>❋ Bloom</b> for an instant generative piece — a fresh one every time.</li>
+        <li><b>Save</b> keeps a piece in your gallery; <b>Export</b> downloads it as a PNG; <b>Undo</b> and <b>Clear</b> help you iterate.</li>
       </ul>
       <button class="btn secondary close" data-close>Close</button>
     </div>
@@ -105,18 +164,9 @@
   <div id="galleryModal" class="modal hidden">
     <div class="card">
       <h2>Your gallery</h2>
-      <p id="galleryBody" class="placeholder">Nothing saved yet — your creations will appear here.</p>
+      <p id="galleryEmpty" class="placeholder">Nothing saved yet — press Save in the studio and your creations appear here.</p>
+      <div id="galleryGrid"></div>
       <button class="btn secondary close" data-close>Close</button>
-    </div>
-  </div>
-
-  <!-- STUDIO (skeleton placeholder) -->
-  <div id="studioScreen" class="overlay hidden">
-    <div class="panel">
-      <div class="wordmark" style="font-size:clamp(22px,6.5vw,32px)">The studio awaits</div>
-      <p class="placeholder">The symmetry canvas, palettes, Bloom generator and gallery
-      are built across this week's increments. For now this confirms the shell works.</p>
-      <button class="btn secondary" id="backBtn" style="margin-top:14px">Back</button>
     </div>
   </div>
 </div>
@@ -124,67 +174,201 @@
 <script>
 (function(){
   'use strict';
-  const cv=document.getElementById('bg'), ctx=cv.getContext('2d');
-  let W=0,H=0,DPR=1;
-  function resize(){
-    DPR=Math.min(window.devicePixelRatio||1,2);
-    W=cv.clientWidth; H=cv.clientHeight;
-    cv.width=Math.round(W*DPR); cv.height=Math.round(H*DPR);
-    ctx.setTransform(DPR,0,0,DPR,0,0);
-  }
-  window.addEventListener('resize',resize); resize();
-
-  // ---- Animated generative mandala for the title background ----
-  // A set of orbiting "petals" drawn with K-fold radial symmetry, additive glow.
-  const PAL=['#47e5d0','#9b6bff','#ff6bd6','#ffd36b'];
-  const petals=[];
-  for(let i=0;i<10;i++){
-    petals.push({ r:40+Math.random()*180, a:Math.random()*6.283, spd:(Math.random()*0.4+0.1)*(Math.random()<.5?-1:1),
-      rad:8+Math.random()*26, col:PAL[i%PAL.length], puls:Math.random()*6.283 });
-  }
-  let t=0, last=performance.now();
-  function frame(now){
-    const dt=Math.min(0.05,(now-last)/1000); last=now; t+=dt;
-    // deep indigo ground with soft vignette
-    const g=ctx.createLinearGradient(0,0,0,H);
-    g.addColorStop(0,'#100c22'); g.addColorStop(1,'#0a0814');
-    ctx.fillStyle=g; ctx.fillRect(0,0,W,H);
-
-    const cx=W/2, cy=H*0.42, K=8;
-    ctx.save(); ctx.translate(cx,cy); ctx.globalCompositeOperation='lighter';
-    for(const p of petals){ p.a+=p.spd*dt; }
-    for(let s=0;s<K;s++){
-      ctx.save(); ctx.rotate((s/K)*6.283);
-      for(const p of petals){
-        const pr=1+0.25*Math.sin(t*1.4+p.puls);
-        const x=Math.cos(p.a)*p.r, y=Math.sin(p.a)*p.r;
-        const rr=ctx.createRadialGradient(x,y,0,x,y,p.rad*pr);
-        rr.addColorStop(0,p.col+'cc'); rr.addColorStop(1,p.col+'00');
-        ctx.fillStyle=rr; ctx.beginPath(); ctx.arc(x,y,p.rad*pr,0,6.283); ctx.fill();
-      }
-      ctx.restore();
-    }
-    ctx.restore();
-
-    const vg=ctx.createRadialGradient(cx,cy,Math.min(W,H)*0.2,cx,cy,Math.max(W,H)*0.7);
-    vg.addColorStop(0,'rgba(0,0,0,0)'); vg.addColorStop(1,'rgba(6,4,14,0.7)');
-    ctx.fillStyle=vg; ctx.fillRect(0,0,W,H);
-    requestAnimationFrame(frame);
-  }
-  requestAnimationFrame(frame);
-
-  // ---- Menu wiring (skeleton navigation only) ----
   const $=id=>document.getElementById(id);
   const show=(el,on)=>el.classList.toggle('hidden',!on);
-  $('createBtn').addEventListener('click',()=>{ show($('titleScreen'),false); show($('studioScreen'),true); });
-  $('backBtn').addEventListener('click',()=>{ show($('studioScreen'),false); show($('titleScreen'),true); });
-  $('howBtn').addEventListener('click',()=>show($('howModal'),true));
-  $('galleryBtn').addEventListener('click',()=>{
-    let n=0; try{ const g=JSON.parse(localStorage.getItem('mirrorbloom_gallery')||'[]'); n=g.length; }catch(e){}
-    $('galleryBody').textContent = n>0 ? (n+' saved piece'+(n>1?'s':'')+' — the gallery view arrives this week.') : 'Nothing saved yet — your creations will appear here.';
-    show($('galleryModal'),true);
+
+  // ===== canvases =====
+  const bg=$('bg'), bx=bg.getContext('2d');
+  const art=$('art'), ax=art.getContext('2d');
+  let W=0,H=0,DPR=1, mode='title';
+  function resize(){
+    DPR=Math.min(window.devicePixelRatio||1,2);
+    W=bg.clientWidth; H=bg.clientHeight;
+    for(const c of [bg,art]){ c.width=Math.round(W*DPR); c.height=Math.round(H*DPR); }
+    bx.setTransform(DPR,0,0,DPR,0,0); ax.setTransform(DPR,0,0,DPR,0,0);
+    if(mode==='studio') repaint();
+  }
+  window.addEventListener('resize',resize);
+
+  // ===== palettes / tools =====
+  const PALETTES=[
+    {name:'Aurora', cols:['#47e5d0','#5b8bff','#9b6bff','#ff6bd6','#ffd36b']},
+    {name:'Ember',  cols:['#ffd36b','#ff9a3c','#ff5a5f','#ff2d95','#b06cff']},
+    {name:'Ocean',  cols:['#7ef0ff','#39c0ff','#4f7bff','#3ad6c4','#a6ffe0']},
+    {name:'Neon',   cols:['#39ff14','#00e5ff','#ff00e5','#faff00','#ff2d2d']},
+    {name:'Petal',  cols:['#ff8fce','#ffb3d9','#c59bff','#8fd4ff','#fff1a8']},
+    {name:'Gold',   cols:['#fff3c4','#ffd36b','#ffae42','#ff8a3c','#e86a2c']},
+  ];
+  const SYMS=[6,8,12,16,24];
+  const BRUSHES=[{lb:'fine',w:3},{lb:'medium',w:6},{lb:'bold',w:11}];
+  let palI=0, symI=1, brushI=1, mirror=true, hue=0;
+
+  function hexToRgb(h){ h=h.replace('#',''); return [parseInt(h.slice(0,2),16),parseInt(h.slice(2,4),16),parseInt(h.slice(4,6),16)]; }
+  function lerp(a,b,t){ return Math.round(a+(b-a)*t); }
+  function palColor(cols,tt){ const n=cols.length; const f=((tt%1)+1)%1*n; const i=Math.floor(f); const a=hexToRgb(cols[i%n]), b=hexToRgb(cols[(i+1)%n]); const k=f-i; return 'rgb('+lerp(a[0],b[0],k)+','+lerp(a[1],b[1],k)+','+lerp(a[2],b[2],k)+')'; }
+  const BGGRAD=()=>{ const g=ax.createLinearGradient(0,0,0,H); g.addColorStop(0,'#100c22'); g.addColorStop(1,'#0a0814'); return g; };
+
+  // ===== studio state (stroke history for undo/repaint) =====
+  // Each committed item: {type:'stroke', pts:[[x,y]...], sym, mirror, w, hue0} or {type:'bloom', seed, ...}
+  let history=[];      // committed pieces (for undo/repaint)
+  let cur=null;        // active stroke being drawn
+
+  function clearArt(){ ax.setTransform(DPR,0,0,DPR,0,0); ax.globalCompositeOperation='source-over'; ax.fillStyle=BGGRAD(); ax.fillRect(0,0,W,H); }
+  function repaint(){ clearArt(); for(const it of history){ if(it.type==='stroke') paintStroke(it); else if(it.type==='bloom') paintBloom(it); } if(cur) paintStroke(cur); }
+
+  // draw one symmetric segment set
+  function seg(cx,cy,x0,y0,x1,y1,sym,mir,w,col){
+    ax.globalCompositeOperation='lighter'; ax.lineCap='round'; ax.lineJoin='round';
+    for(let s=0;s<sym;s++){
+      const rot=(s/sym)*6.283185;
+      for(let m=0;m<(mir?2:1);m++){
+        ax.save(); ax.translate(cx,cy); ax.rotate(rot); if(m) ax.scale(1,-1);
+        // glow halo
+        ax.strokeStyle=col; ax.globalAlpha=0.22; ax.lineWidth=w*2.6;
+        ax.beginPath(); ax.moveTo(x0-cx,y0-cy); ax.lineTo(x1-cx,y1-cy); ax.stroke();
+        // core
+        ax.globalAlpha=0.95; ax.lineWidth=w;
+        ax.beginPath(); ax.moveTo(x0-cx,y0-cy); ax.lineTo(x1-cx,y1-cy); ax.stroke();
+        ax.restore();
+      }
+    }
+    ax.globalAlpha=1;
+  }
+  function paintStroke(it){
+    const cx=W/2, cy=H/2, cols=PALETTES[it.palI].cols;
+    for(let i=1;i<it.pts.length;i++){
+      const col=palColor(cols, it.hue0 + i*0.012);
+      seg(cx,cy, it.pts[i-1][0],it.pts[i-1][1], it.pts[i][0],it.pts[i][1], it.sym, it.mirror, it.w, col);
+    }
+  }
+
+  // ===== Bloom generator =====
+  function paintBloom(it){
+    const cx=W/2, cy=H/2, cols=PALETTES[it.palI].cols;
+    let rng=mulberry32(it.seed);
+    const layers=it.layers;
+    for(const L of layers){
+      let a=L.a0, r=L.r0, px=cx+Math.cos(a)*r, py=cy+Math.sin(a)*r, h=L.h0;
+      for(let i=0;i<L.steps;i++){
+        a+=L.da + Math.sin(i*L.wob)*L.wobA;
+        r=L.r0 + Math.sin(i*L.rf)*L.rA + i*L.grow;
+        const nx=cx+Math.cos(a)*r, ny=cy+Math.sin(a)*r;
+        seg(cx,cy, px,py, nx,ny, it.sym, it.mirror, L.w, palColor(cols, h+i*0.02));
+        px=nx; py=ny;
+      }
+    }
+  }
+  function makeBloom(){
+    const seed=(Math.random()*1e9)|0; let rng=mulberry32(seed);
+    const sym=SYMS[(rng()*SYMS.length)|0];
+    const nLayers=3+((rng()*4)|0);
+    const R=Math.min(W,H)*0.42;
+    const layers=[];
+    for(let i=0;i<nLayers;i++){
+      layers.push({ a0:rng()*6.283, r0:R*(0.15+rng()*0.7), rA:R*(0.06+rng()*0.28), rf:0.15+rng()*0.5,
+        da:(rng()*0.5+0.08)*(rng()<.5?-1:1), wob:0.2+rng()*0.8, wobA:(rng()*0.3), grow:(rng()-0.5)*1.2,
+        steps:60+((rng()*120)|0), w:1.5+rng()*4, h0:rng() });
+    }
+    return {type:'bloom', seed, sym, mirror:mirror, palI:palI, layers};
+  }
+  function mulberry32(a){ return function(){ a|=0; a=a+0x6D2B79F5|0; let t=Math.imul(a^a>>>15,1|a); t=t+Math.imul(t^t>>>7,61|t)^t; return ((t^t>>>14)>>>0)/4294967296; }; }
+
+  // ===== pointer drawing =====
+  function pos(e){ return [e.clientX, e.clientY]; }
+  art.addEventListener('pointerdown',e=>{ if(mode!=='studio') return; e.preventDefault();
+    const [x,y]=pos(e); cur={type:'stroke',pts:[[x,y]],sym:SYMS[symI],mirror,w:BRUSHES[brushI].w,palI,hue0:hue}; art.setPointerCapture(e.pointerId);
   });
+  art.addEventListener('pointermove',e=>{ if(mode!=='studio'||!cur) return; e.preventDefault();
+    const [x,y]=pos(e); const last=cur.pts[cur.pts.length-1];
+    if(Math.hypot(x-last[0],y-last[1])<1.5) return;
+    cur.pts.push([x,y]);
+    const cx=W/2, cy=H/2, cols=PALETTES[cur.palI].cols; const i=cur.pts.length-1;
+    seg(cx,cy, last[0],last[1], x,y, cur.sym, cur.mirror, cur.w, palColor(cols, cur.hue0+i*0.012));
+  });
+  function endStroke(){ if(cur){ if(cur.pts.length>1) history.push(cur); cur=null; hue=(hue+0.07)%1; } }
+  art.addEventListener('pointerup',e=>{ if(mode==='studio'){ e.preventDefault(); endStroke(); } });
+  art.addEventListener('pointercancel',endStroke);
+  art.addEventListener('pointerleave',endStroke);
+
+  // ===== title animation =====
+  const PAL=['#47e5d0','#9b6bff','#ff6bd6','#ffd36b'];
+  const tp=[]; for(let i=0;i<10;i++) tp.push({r:40+Math.random()*180,a:Math.random()*6.283,spd:(Math.random()*0.4+0.1)*(Math.random()<.5?-1:1),rad:8+Math.random()*26,col:PAL[i%PAL.length],puls:Math.random()*6.283});
+  let t=0,last=performance.now();
+  function frame(now){ const dt=Math.min(0.05,(now-last)/1000); last=now; t+=dt;
+    if(mode==='title'){
+      const g=bx.createLinearGradient(0,0,0,H); g.addColorStop(0,'#100c22'); g.addColorStop(1,'#0a0814'); bx.fillStyle=g; bx.fillRect(0,0,W,H);
+      const cx=W/2, cy=H*0.42, K=8; bx.save(); bx.translate(cx,cy); bx.globalCompositeOperation='lighter';
+      for(const p of tp) p.a+=p.spd*dt;
+      for(let s=0;s<K;s++){ bx.save(); bx.rotate((s/K)*6.283);
+        for(const p of tp){ const pr=1+0.25*Math.sin(t*1.4+p.puls); const x=Math.cos(p.a)*p.r, y=Math.sin(p.a)*p.r;
+          const rr=bx.createRadialGradient(x,y,0,x,y,p.rad*pr); rr.addColorStop(0,p.col+'cc'); rr.addColorStop(1,p.col+'00');
+          bx.fillStyle=rr; bx.beginPath(); bx.arc(x,y,p.rad*pr,0,6.283); bx.fill(); }
+        bx.restore(); }
+      bx.restore();
+      const vg=bx.createRadialGradient(cx,cy,Math.min(W,H)*0.2,cx,cy,Math.max(W,H)*0.7); vg.addColorStop(0,'rgba(0,0,0,0)'); vg.addColorStop(1,'rgba(6,4,14,0.7)'); bx.fillStyle=vg; bx.fillRect(0,0,W,H);
+    }
+    requestAnimationFrame(frame);
+  }
+
+  // ===== UI updates =====
+  function refreshTools(){
+    $('symVal').textContent=SYMS[symI];
+    $('palLb').textContent=PALETTES[palI].name;
+    const cols=PALETTES[palI].cols; $('palSwatch').style.background='conic-gradient('+cols.join(',')+','+cols[0]+')';
+    $('brushLb').textContent=BRUSHES[brushI].lb; $('brushDot').style.width=$('brushDot').style.height=(6+BRUSHES[brushI].w)+'px';
+    $('mirrorLb').textContent=mirror?'mirror on':'mirror off';
+  }
+  function toast(msg){ const el=$('toast'); el.textContent=msg; el.style.opacity='1'; clearTimeout(toast._t); toast._t=setTimeout(()=>el.style.opacity='0',1300); }
+
+  // ===== gallery (localStorage) =====
+  function loadGallery(){ try{ return JSON.parse(localStorage.getItem('mirrorbloom_gallery')||'[]'); }catch(e){ return []; } }
+  function saveGallery(g){ try{ localStorage.setItem('mirrorbloom_gallery', JSON.stringify(g)); }catch(e){ toast('storage full — delete some'); } }
+  function thumbDataURL(max){ const s=Math.min(max/art.width, max/art.height); const w=Math.round(art.width*s), h=Math.round(art.height*s);
+    const off=document.createElement('canvas'); off.width=w; off.height=h; const ox=off.getContext('2d'); ox.drawImage(art,0,0,w,h); return off.toDataURL('image/png'); }
+  function savePiece(){ const g=loadGallery(); g.unshift({id:Date.now(), thumb:thumbDataURL(520)}); while(g.length>12) g.pop(); saveGallery(g); toast('saved to gallery ✓'); }
+  function renderGallery(){ const g=loadGallery(); const grid=$('galleryGrid'); grid.innerHTML='';
+    show($('galleryEmpty'), g.length===0);
+    g.forEach(item=>{ const cell=document.createElement('div'); cell.className='gcell';
+      const img=document.createElement('img'); img.src=item.thumb; img.alt='saved piece';
+      const del=document.createElement('button'); del.className='del'; del.textContent='✕';
+      del.addEventListener('click',ev=>{ ev.stopPropagation(); const gg=loadGallery().filter(x=>x.id!==item.id); saveGallery(gg); renderGallery(); });
+      cell.addEventListener('click',()=>loadPiece(item)); cell.appendChild(img); cell.appendChild(del); grid.appendChild(cell); });
+  }
+  function loadPiece(item){ // raster the saved image back onto the canvas to continue from
+    enterStudio(); const im=new Image(); im.onload=()=>{ clearArt(); const s=Math.min(W/im.width,H/im.height); const w=im.width*s,h=im.height*s; ax.globalCompositeOperation='source-over'; ax.drawImage(im,(W-w)/2,(H-h)/2,w,h); history=[]; };
+    im.src=item.thumb; show($('galleryModal'),false);
+  }
+
+  // ===== navigation =====
+  function enterStudio(){ mode='studio'; if(!history.length) clearArt(); show($('titleScreen'),false); show($('art'),true); show($('topbar'),true); show($('toolbar'),true); refreshTools(); }
+  function toTitle(){ mode='title'; show($('art'),false); show($('topbar'),false); show($('toolbar'),false); show($('titleScreen'),true); }
+
+  $('createBtn').addEventListener('click',()=>{ history=[]; enterStudio(); clearArt(); });
+  $('homeBtn').addEventListener('click',toTitle);
+  $('howBtn').addEventListener('click',()=>show($('howModal'),true));
+  $('galleryBtn').addEventListener('click',()=>{ renderGallery(); show($('galleryModal'),true); });
   document.querySelectorAll('[data-close]').forEach(b=>b.addEventListener('click',e=>e.target.closest('.modal').classList.add('hidden')));
+
+  // toolbar
+  $('symBtn').addEventListener('click',()=>{ symI=(symI+1)%SYMS.length; refreshTools(); toast(SYMS[symI]+'-fold symmetry'); });
+  $('mirrorBtn').addEventListener('click',()=>{ mirror=!mirror; refreshTools(); });
+  $('palBtn').addEventListener('click',()=>{ palI=(palI+1)%PALETTES.length; refreshTools(); toast(PALETTES[palI].name); });
+  $('brushBtn').addEventListener('click',()=>{ brushI=(brushI+1)%BRUSHES.length; refreshTools(); });
+  $('bloomBtn').addEventListener('click',()=>{ const b=makeBloom(); history.push(b); repaint(); toast('bloomed ❋'); });
+  $('undoBtn').addEventListener('click',()=>{ if(history.length){ history.pop(); repaint(); } });
+  $('clearBtn').addEventListener('click',()=>{ history=[]; clearArt(); });
+  $('saveBtn').addEventListener('click',savePiece);
+  $('exportBtn').addEventListener('click',()=>{ const a=document.createElement('a'); a.download='mirrorbloom-'+Date.now()+'.png'; a.href=art.toDataURL('image/png'); document.body.appendChild(a); a.click(); a.remove(); toast('exported PNG ⤓'); });
+
+  resize(); refreshTools(); requestAnimationFrame(frame);
+
+  // read-only debug hook (only with #dbg) — used by the headless harness
+  if(location.hash==='#dbg'){
+    window.__mb={ state:()=>({mode,history:history.length,sym:SYMS[symI],pal:PALETTES[palI].name,mirror,gallery:loadGallery().length}),
+      enter:()=>enterStudio(), bloom:()=>{ const b=makeBloom(); history.push(b); repaint(); return history.length; },
+      save:()=>{ savePiece(); return loadGallery().length; }, clearGal:()=>{ saveGallery([]); },
+      exportLen:()=>art.toDataURL('image/png').length };
+  }
 })();
 </script>
 </body>

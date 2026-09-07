@@ -58,15 +58,18 @@ weekly-apps/current/
       iridescent CREATE / HOW TO / GALLERY buttons, How-to + Gallery modals, and
       CREATE → studio placeholder. Verify in browser, no JS errors. (Today: plan +
       skeleton only.)
-- [ ] Tue: the symmetry canvas — touch/drag to paint strokes mirrored across N
-      sectors (kaleidoscope), adjustable symmetry count, brush size, a color, and a
-      Clear button. Smooth, mobile-first drawing.
-- [ ] Wed: palettes + Bloom generator — curated iridescent palettes, a brush/tool
-      selector, and a **Bloom** button that seeds a full procedural symmetric
-      composition from random curves/dots. Undo.
-- [ ] Thu (production-ready front end): the GALLERY — Save the current piece to
-      localStorage (thumbnail), reload/delete saved pieces; Export current canvas as
-      a PNG; finalize the title screen + menu polish.
+- [x] Tue (done early in Mon 14:00 pass): the symmetry canvas — drag to paint strokes
+      mirrored across N sectors with optional kaleidoscope reflection; adjustable
+      symmetry (6/8/12/16/24), brush size (fine/medium/bold), iridescent auto-cycling
+      colour, additive glow, and a Clear button. Smooth, mobile-first pointer drawing.
+- [x] Wed (done early in Mon 14:00 pass): palettes + Bloom generator — 6 curated
+      palettes, mirror toggle, brush selector, and a **Bloom** button (seeded mulberry32
+      RNG) that generates a full procedural symmetric composition every press. Undo +
+      stroke/bloom history with repaint.
+- [x] Thu (done early in Mon 14:00 pass): the GALLERY — Save the current canvas to
+      localStorage (PNG thumbnail, capped at 12, newest first), a grid view with tap-to-
+      reload and per-item delete; Export the canvas as a PNG download. Title screen +
+      studio chrome (top bar + scrollable toolbar) in place.
 - [ ] LONGEVITY (Tue–Thu + 14:00 passes): guarantee endless use — infinite generative
       parameter space (symmetry × palette × brush × seed), a growing saved gallery,
       the Bloom randomizer, multiple tools/modes, and export/share. Add breadth
@@ -83,5 +86,11 @@ weekly-apps/current/
 ## Status notes
 - Mon 2026-09-07: chose a creative APP/TOY for category variety (archive is mostly
   games) and because a generative art studio is inherently endless — infinite
-  parameter space + a growing personal gallery. Today: plan + a minimal animated
-  title-screen skeleton only.
+  parameter space + a growing personal gallery. Mon morning: plan + title skeleton.
+  Mon 14:00 pass: the fresh window had budget to build the WHOLE studio — symmetry
+  drawing, 6 palettes, mirror, brushes, the Bloom generator, undo, gallery
+  (save/reload/delete) and PNG export — so Mirrorbloom is already fully usable.
+  Tue–Thu + 14:00 passes now go to graphics polish and breadth (more brush kinds,
+  palettes, modes) rather than core.
+- A read-only debug hook (`window.__mb`, only active with the `#dbg` URL hash) is used
+  by the headless test harness; inert during normal use.
