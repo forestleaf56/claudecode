@@ -73,9 +73,11 @@ weekly-apps/current/
 - [ ] LONGEVITY (Tue–Thu + 14:00 passes): guarantee endless use — infinite generative
       parameter space (symmetry × palette × brush × seed), a growing saved gallery,
       the Bloom randomizer, multiple tools/modes, and export/share.
-      Progress: [x] 3 brush kinds (Tue) — line, beaded dots, bold ribbon — selectable
-      and also varied by Bloom, multiplying the look-space. Still possible: more
-      palettes, an animation/auto-rotate mode.
+      Progress: [x] 3 brush kinds (Tue) — line, beaded dots, bold ribbon. [x] 10
+      palettes total (added Forest, Dusk, Mono, Candy). [x] a "Living" auto-rotate
+      mode (Tue 14:00) — snapshots the piece and slowly spins it into a live
+      kaleidoscope; tap the canvas or the button to stop. Multiplying the look-space
+      further. Still possible: a daily-seed challenge.
 - [ ] GRAPHICS POLISH (14:00 passes): glow/additive blending, smooth strokes, subtle
       background gradients/particles, nice transitions, tasteful UI.
 

@@ -125,6 +125,7 @@
     <button class="tool" id="brushBtn"><span class="ic"><span class="brushdot" id="brushDot"></span></span><span class="lb" id="brushLb">medium</span></button>
     <button class="tool" id="kindBtn"><span class="ic" id="kindIc">✒</span><span class="lb" id="kindLb">line</span></button>
     <button class="tool primary" id="bloomBtn"><span class="ic">❋</span><span class="lb">bloom</span></button>
+    <button class="tool" id="livingBtn"><span class="ic">🌀</span><span class="lb" id="livingLb">living</span></button>
     <button class="tool" id="undoBtn"><span class="ic">↶</span><span class="lb">undo</span></button>
     <button class="tool" id="clearBtn"><span class="ic">🗑</span><span class="lb">clear</span></button>
     <button class="tool" id="saveBtn"><span class="ic">💾</span><span class="lb">save</span></button>
@@ -187,7 +188,7 @@
     W=bg.clientWidth; H=bg.clientHeight;
     for(const c of [bg,art]){ c.width=Math.round(W*DPR); c.height=Math.round(H*DPR); }
     bx.setTransform(DPR,0,0,DPR,0,0); ax.setTransform(DPR,0,0,DPR,0,0);
-    if(mode==='studio') repaint();
+    if(mode==='studio'){ living=false; refreshTools&&refreshTools(); repaint(); }
   }
   window.addEventListener('resize',resize);
 
@@ -199,11 +200,16 @@
     {name:'Neon',   cols:['#39ff14','#00e5ff','#ff00e5','#faff00','#ff2d2d']},
     {name:'Petal',  cols:['#ff8fce','#ffb3d9','#c59bff','#8fd4ff','#fff1a8']},
     {name:'Gold',   cols:['#fff3c4','#ffd36b','#ffae42','#ff8a3c','#e86a2c']},
+    {name:'Forest', cols:['#a8ff9e','#5fe08a','#39c48f','#2ea2a8','#bff2c4']},
+    {name:'Dusk',   cols:['#ffd1a1','#ff8f7a','#c86bd6','#6b6bff','#3a2b6b']},
+    {name:'Mono',   cols:['#ffffff','#cfe0ff','#9fb6e6','#7f97cc','#e6f0ff']},
+    {name:'Candy',  cols:['#ff5fa2','#ff9ec4','#ffd36b','#7ef0ff','#b06cff']},
   ];
   const SYMS=[6,8,12,16,24];
   const BRUSHES=[{lb:'fine',w:3},{lb:'medium',w:6},{lb:'bold',w:11}];
   const KINDS=[{k:'line',ic:'✒',lb:'line'},{k:'dots',ic:'⋮',lb:'dots'},{k:'ribbon',ic:'〜',lb:'ribbon'}];
   let palI=0, symI=1, brushI=1, kindI=0, mirror=true, hue=0;
+  let living=false, spin=0, snap=null;
 
   function hexToRgb(h){ h=h.replace('#',''); return [parseInt(h.slice(0,2),16),parseInt(h.slice(2,4),16),parseInt(h.slice(4,6),16)]; }
   function lerp(a,b,t){ return Math.round(a+(b-a)*t); }
@@ -217,6 +223,15 @@
 
   function clearArt(){ ax.setTransform(DPR,0,0,DPR,0,0); ax.globalCompositeOperation='source-over'; ax.fillStyle=BGGRAD(); ax.fillRect(0,0,W,H); }
   function repaint(){ clearArt(); for(const it of history){ if(it.type==='stroke') paintStroke(it); else if(it.type==='bloom') paintBloom(it); } if(cur) paintStroke(cur); }
+
+  // ===== "Living" auto-rotate mode: spin a snapshot of the piece =====
+  function startLiving(){ if(living) return; snap=document.createElement('canvas'); snap.width=art.width; snap.height=art.height; snap.getContext('2d').drawImage(art,0,0); living=true; spin=0; refreshTools(); }
+  function stopLiving(){ if(!living) return; living=false;
+    // restore the exact un-rotated art from the snapshot
+    ax.setTransform(1,0,0,1,0,0); ax.globalCompositeOperation='source-over'; ax.clearRect(0,0,art.width,art.height); if(snap) ax.drawImage(snap,0,0); ax.setTransform(DPR,0,0,DPR,0,0); refreshTools(); }
+  function drawLiving(dt){ spin+=dt*0.22;
+    ax.setTransform(DPR,0,0,DPR,0,0); ax.globalCompositeOperation='source-over'; ax.fillStyle=BGGRAD(); ax.fillRect(0,0,W,H);
+    ax.save(); ax.translate(W/2,H/2); ax.rotate(spin); const D=Math.hypot(W,H)*1.02; ax.drawImage(snap,-D/2,-D/2,D,D); ax.restore(); }
 
   // apply fn once per symmetric copy (rotation + optional reflection)
   const TAU=6.283185307;
@@ -285,6 +300,7 @@
   // ===== pointer drawing =====
   function pos(e){ return [e.clientX, e.clientY]; }
   art.addEventListener('pointerdown',e=>{ if(mode!=='studio') return; e.preventDefault();
+    if(living){ stopLiving(); return; } // a tap exits Living mode; draw on the next touch
     const [x,y]=pos(e); cur={type:'stroke',pts:[[x,y]],sym:SYMS[symI],mirror,w:BRUSHES[brushI].w,palI,hue0:hue,kind:KINDS[kindI].k}; art.setPointerCapture(e.pointerId);
   });
   art.addEventListener('pointermove',e=>{ if(mode!=='studio'||!cur) return; e.preventDefault();
@@ -316,7 +332,7 @@
         bx.restore(); }
       bx.restore();
       const vg=bx.createRadialGradient(cx,cy,Math.min(W,H)*0.2,cx,cy,Math.max(W,H)*0.7); vg.addColorStop(0,'rgba(0,0,0,0)'); vg.addColorStop(1,'rgba(6,4,14,0.7)'); bx.fillStyle=vg; bx.fillRect(0,0,W,H);
-    }
+    } else if(mode==='studio' && living && snap){ drawLiving(dt); }
     requestAnimationFrame(frame);
   }
 
@@ -328,6 +344,7 @@
     $('brushLb').textContent=BRUSHES[brushI].lb; $('brushDot').style.width=$('brushDot').style.height=(6+BRUSHES[brushI].w)+'px';
     $('kindIc').textContent=KINDS[kindI].ic; $('kindLb').textContent=KINDS[kindI].lb;
     $('mirrorLb').textContent=mirror?'mirror on':'mirror off';
+    const lb=$('livingLb'); if(lb) lb.textContent=living?'stop':'living';
   }
   function toast(msg){ const el=$('toast'); el.textContent=msg; el.style.opacity='1'; clearTimeout(toast._t); toast._t=setTimeout(()=>el.style.opacity='0',1300); }
 
@@ -352,7 +369,7 @@
 
   // ===== navigation =====
   function enterStudio(){ mode='studio'; if(!history.length) clearArt(); show($('titleScreen'),false); show($('art'),true); show($('topbar'),true); show($('toolbar'),true); refreshTools(); }
-  function toTitle(){ mode='title'; show($('art'),false); show($('topbar'),false); show($('toolbar'),false); show($('titleScreen'),true); }
+  function toTitle(){ stopLiving(); mode='title'; show($('art'),false); show($('topbar'),false); show($('toolbar'),false); show($('titleScreen'),true); }
 
   $('createBtn').addEventListener('click',()=>{ history=[]; enterStudio(); clearArt(); });
   $('homeBtn').addEventListener('click',toTitle);
@@ -366,9 +383,10 @@
   $('palBtn').addEventListener('click',()=>{ palI=(palI+1)%PALETTES.length; refreshTools(); toast(PALETTES[palI].name); });
   $('brushBtn').addEventListener('click',()=>{ brushI=(brushI+1)%BRUSHES.length; refreshTools(); });
   $('kindBtn').addEventListener('click',()=>{ kindI=(kindI+1)%KINDS.length; refreshTools(); toast(KINDS[kindI].lb+' brush'); });
-  $('bloomBtn').addEventListener('click',()=>{ const b=makeBloom(); history.push(b); repaint(); toast('bloomed ❋'); });
-  $('undoBtn').addEventListener('click',()=>{ if(history.length){ history.pop(); repaint(); } });
-  $('clearBtn').addEventListener('click',()=>{ history=[]; clearArt(); });
+  $('bloomBtn').addEventListener('click',()=>{ stopLiving(); const b=makeBloom(); history.push(b); repaint(); toast('bloomed ❋'); });
+  $('livingBtn').addEventListener('click',()=>{ if(living) stopLiving(); else { startLiving(); toast('living mode — tap canvas to stop'); } });
+  $('undoBtn').addEventListener('click',()=>{ stopLiving(); if(history.length){ history.pop(); repaint(); } });
+  $('clearBtn').addEventListener('click',()=>{ stopLiving(); history=[]; clearArt(); });
   $('saveBtn').addEventListener('click',savePiece);
   $('exportBtn').addEventListener('click',()=>{ const a=document.createElement('a'); a.download='mirrorbloom-'+Date.now()+'.png'; a.href=art.toDataURL('image/png'); document.body.appendChild(a); a.click(); a.remove(); toast('exported PNG ⤓'); });
 
@@ -378,6 +396,7 @@
   if(location.hash==='#dbg'){
     window.__mb={ state:()=>({mode,history:history.length,sym:SYMS[symI],pal:PALETTES[palI].name,kind:KINDS[kindI].k,mirror,gallery:loadGallery().length}),
       setKind:(i)=>{ kindI=i%KINDS.length; refreshTools(); return KINDS[kindI].k; },
+      living:()=>living, toggleLiving:()=>{ if(living) stopLiving(); else startLiving(); return living; }, palettes:()=>PALETTES.length,
       enter:()=>enterStudio(), bloom:()=>{ const b=makeBloom(); history.push(b); repaint(); return history.length; },
       save:()=>{ savePiece(); return loadGallery().length; }, clearGal:()=>{ saveGallery([]); },
       exportLen:()=>art.toDataURL('image/png').length };
