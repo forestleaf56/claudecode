@@ -72,8 +72,10 @@ weekly-apps/current/
       studio chrome (top bar + scrollable toolbar) in place.
 - [ ] LONGEVITY (Tue–Thu + 14:00 passes): guarantee endless use — infinite generative
       parameter space (symmetry × palette × brush × seed), a growing saved gallery,
-      the Bloom randomizer, multiple tools/modes, and export/share. Add breadth
-      (more palettes, brush kinds, animation/mirror modes) as budget allows.
+      the Bloom randomizer, multiple tools/modes, and export/share.
+      Progress: [x] 3 brush kinds (Tue) — line, beaded dots, bold ribbon — selectable
+      and also varied by Bloom, multiplying the look-space. Still possible: more
+      palettes, an animation/auto-rotate mode.
 - [ ] GRAPHICS POLISH (14:00 passes): glow/additive blending, smooth strokes, subtle
       background gradients/particles, nice transitions, tasteful UI.
 
