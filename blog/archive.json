@@ -1,5 +1,21 @@
 [
   {
+    "issue": 60,
+    "date_short": "SEPTEMBER 7",
+    "date_human": "Monday, September 7, 2026",
+    "article": {
+      "badge": "BOSS",
+      "blink": true,
+      "title": "🍎 New Chief Takes Over The Last Big Tech Company Without Its Own A.I. Model; Welcome To The Job, Here Is The Single Largest Problem In The Industry",
+      "dateline": "CUPERTINO — reported from a corner office with one very awkward to-do item",
+      "tag": "SHAKEUP —",
+      "paras": [
+        "A new chief executive stepped in to run one of the world's most valuable technology companies today, inheriting sleek products, oceans of cash, and the industry's single most conspicuous gap: it is the last tech giant without a frontier A.I. model to call its own.",
+        "\"We're taking a thoughtful approach,\" the company said, a phrase that in 2026 translates roughly to \"everyone else built a superintelligence and we would like a moment.\" Analysts note the new boss faces a peculiar first day: a company universally admired for making things people love, quietly missing the one thing every rival now insists you cannot live without — a machine that talks back, confidently, all the time."
+      ]
+    }
+  },
+  {
     "issue": 59,
     "date_short": "SEPTEMBER 4",
     "date_human": "Friday, September 4, 2026",
