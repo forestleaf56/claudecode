@@ -21,6 +21,7 @@
   #app{position:absolute; inset:0;}
   canvas{position:absolute; inset:0; width:100%; height:100%; display:block;}
   #art{touch-action:none;}
+  #guide{pointer-events:none;}
 
   .overlay{position:absolute; inset:0; display:flex; flex-direction:column;
     align-items:center; justify-content:center; text-align:center; padding:24px; z-index:5;}
@@ -110,6 +111,7 @@
 <div id="app">
   <canvas id="bg"></canvas>
   <canvas id="art" class="hidden"></canvas>
+  <canvas id="guide" class="hidden"></canvas>
 
   <!-- STUDIO CHROME -->
   <div id="topbar" class="hidden">
@@ -183,12 +185,13 @@
   // ===== canvases =====
   const bg=$('bg'), bx=bg.getContext('2d');
   const art=$('art'), ax=art.getContext('2d');
-  let W=0,H=0,DPR=1, mode='title';
+  const guide=$('guide'), gx=guide.getContext('2d');
+  let W=0,H=0,DPR=1, mode='title', guideAlpha=0;
   function resize(){
     DPR=Math.min(window.devicePixelRatio||1,2);
     W=bg.clientWidth; H=bg.clientHeight;
-    for(const c of [bg,art]){ c.width=Math.round(W*DPR); c.height=Math.round(H*DPR); }
-    bx.setTransform(DPR,0,0,DPR,0,0); ax.setTransform(DPR,0,0,DPR,0,0);
+    for(const c of [bg,art,guide]){ c.width=Math.round(W*DPR); c.height=Math.round(H*DPR); }
+    bx.setTransform(DPR,0,0,DPR,0,0); ax.setTransform(DPR,0,0,DPR,0,0); gx.setTransform(DPR,0,0,DPR,0,0);
     if(mode==='studio'){ living=false; refreshTools&&refreshTools(); repaint(); }
   }
   window.addEventListener('resize',resize);
@@ -233,6 +236,19 @@
   function drawLiving(dt){ spin+=dt*0.22;
     ax.setTransform(DPR,0,0,DPR,0,0); ax.globalCompositeOperation='source-over'; ax.fillStyle=BGGRAD(); ax.fillRect(0,0,W,H);
     ax.save(); ax.translate(W/2,H/2); ax.rotate(spin); const D=Math.hypot(W,H)*1.02; ax.drawImage(snap,-D/2,-D/2,D,D); ax.restore(); }
+
+  // ===== symmetry guide (faint spokes that fade in while drawing/adjusting) =====
+  function flashGuide(){ guideAlpha=1; }
+  function drawGuide(al){ gx.setTransform(DPR,0,0,DPR,0,0); gx.clearRect(0,0,W,H);
+    const cx=W/2, cy=H/2, K=SYMS[symI], R=Math.hypot(W,H)/2;
+    gx.save(); gx.translate(cx,cy);
+    gx.strokeStyle='#b3a6ff'; gx.lineWidth=1; gx.globalAlpha=al*0.22;
+    for(let s=0;s<K;s++){ gx.save(); gx.rotate((s/K)*TAU); gx.beginPath(); gx.moveTo(0,0); gx.lineTo(R,0); gx.stroke(); gx.restore(); }
+    // faint reference rings
+    gx.globalAlpha=al*0.12; for(let r=1;r<=3;r++){ gx.beginPath(); gx.arc(0,0,R*0.28*r,0,TAU); gx.stroke(); }
+    gx.globalAlpha=al*0.6; gx.fillStyle='#d7cfff'; gx.beginPath(); gx.arc(0,0,3,0,TAU); gx.fill();
+    gx.restore(); gx.globalAlpha=1;
+  }
 
   // apply fn once per symmetric copy (rotation + optional reflection)
   const TAU=6.283185307;
@@ -310,6 +326,7 @@
   function pos(e){ return [e.clientX, e.clientY]; }
   art.addEventListener('pointerdown',e=>{ if(mode!=='studio') return; e.preventDefault();
     if(living){ stopLiving(); return; } // a tap exits Living mode; draw on the next touch
+    flashGuide();
     const [x,y]=pos(e); cur={type:'stroke',pts:[[x,y]],sym:SYMS[symI],mirror,w:BRUSHES[brushI].w,palI,hue0:hue,kind:KINDS[kindI].k}; art.setPointerCapture(e.pointerId);
   });
   art.addEventListener('pointermove',e=>{ if(mode!=='studio'||!cur) return; e.preventDefault();
@@ -342,6 +359,7 @@
       bx.restore();
       const vg=bx.createRadialGradient(cx,cy,Math.min(W,H)*0.2,cx,cy,Math.max(W,H)*0.7); vg.addColorStop(0,'rgba(0,0,0,0)'); vg.addColorStop(1,'rgba(6,4,14,0.7)'); bx.fillStyle=vg; bx.fillRect(0,0,W,H);
     } else if(mode==='studio' && living && snap){ drawLiving(dt); }
+    if(mode==='studio' && guideAlpha>0){ guideAlpha=Math.max(0,guideAlpha-dt*0.85); drawGuide(guideAlpha); if(guideAlpha===0) gx.clearRect(0,0,W,H); }
     requestAnimationFrame(frame);
   }
 
@@ -377,8 +395,8 @@
   }
 
   // ===== navigation =====
-  function enterStudio(){ mode='studio'; if(!history.length) clearArt(); show($('titleScreen'),false); show($('art'),true); show($('topbar'),true); show($('toolbar'),true); refreshTools(); }
-  function toTitle(){ stopLiving(); mode='title'; show($('art'),false); show($('topbar'),false); show($('toolbar'),false); show($('titleScreen'),true); }
+  function enterStudio(){ mode='studio'; if(!history.length) clearArt(); show($('titleScreen'),false); show($('art'),true); show($('guide'),true); show($('topbar'),true); show($('toolbar'),true); refreshTools(); flashGuide(); }
+  function toTitle(){ stopLiving(); mode='title'; guideAlpha=0; gx.clearRect(0,0,W,H); show($('art'),false); show($('guide'),false); show($('topbar'),false); show($('toolbar'),false); show($('titleScreen'),true); }
 
   $('createBtn').addEventListener('click',()=>{ history=[]; enterStudio(); clearArt(); });
   $('homeBtn').addEventListener('click',toTitle);
@@ -387,8 +405,8 @@
   document.querySelectorAll('[data-close]').forEach(b=>b.addEventListener('click',e=>e.target.closest('.modal').classList.add('hidden')));
 
   // toolbar
-  $('symBtn').addEventListener('click',()=>{ symI=(symI+1)%SYMS.length; refreshTools(); toast(SYMS[symI]+'-fold symmetry'); });
-  $('mirrorBtn').addEventListener('click',()=>{ mirror=!mirror; refreshTools(); });
+  $('symBtn').addEventListener('click',()=>{ symI=(symI+1)%SYMS.length; refreshTools(); flashGuide(); toast(SYMS[symI]+'-fold symmetry'); });
+  $('mirrorBtn').addEventListener('click',()=>{ mirror=!mirror; refreshTools(); flashGuide(); });
   $('palBtn').addEventListener('click',()=>{ palI=(palI+1)%PALETTES.length; refreshTools(); toast(PALETTES[palI].name); });
   $('brushBtn').addEventListener('click',()=>{ brushI=(brushI+1)%BRUSHES.length; refreshTools(); });
   $('kindBtn').addEventListener('click',()=>{ kindI=(kindI+1)%KINDS.length; refreshTools(); toast(KINDS[kindI].lb+' brush'); });

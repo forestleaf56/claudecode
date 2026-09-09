@@ -80,8 +80,11 @@ weekly-apps/current/
       a 📅 button generates a deterministic piece seeded from today's date (identical
       symmetry/palette/mirror/kind for everyone that day), a reason to return daily
       and then riff on it. Multiplying the look-space further.
-- [ ] GRAPHICS POLISH (14:00 passes): glow/additive blending, smooth strokes, subtle
-      background gradients/particles, nice transitions, tasteful UI.
+- [~] GRAPHICS POLISH (14:00 passes): [x] glow/additive blending, [x] smooth strokes,
+      [x] animated generative title, [x] a symmetry-guide overlay (Wed 14:00) — faint
+      radial spokes + reference rings that fade in while drawing or changing symmetry
+      on a dedicated overlay canvas, so the mandala structure is legible without being
+      baked into the art. Still possible: subtle in-studio background motes.
 
 ## Friday readme notes
 - Self-contained single index.html, Canvas 2D. NO Supabase / NO Gemini API → no API
