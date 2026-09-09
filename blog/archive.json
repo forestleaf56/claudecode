@@ -1,5 +1,21 @@
 [
   {
+    "issue": 61,
+    "date_short": "SEPTEMBER 8",
+    "date_human": "Tuesday, September 8, 2026",
+    "article": {
+      "badge": "HUGE",
+      "blink": true,
+      "title": "🧠 A.I. Lab Unveils Its Best Model Yet And Declares 'The Age Of AGI Has Begun'; The Press Release Is Extremely Confident, The Definition Slightly Less So",
+      "dateline": "SAN FRANCISCO — reported from the dawn of something, allegedly",
+      "tag": "MILESTONE —",
+      "paras": [
+        "A leading A.I. lab launched what it calls its most capable model ever and, in the same breath, announced that humanity has officially entered \"the age of artificial general intelligence\" — a milestone so momentous that nobody in the room could fully agree on what it means, only that we are definitely in it now.",
+        "\"This changes everything,\" the company said, of a threshold it has been announcing the imminent arrival of for several years running. Experts note the peculiar genius of the moment: we have built a machine smart enough to be called generally intelligent, yet the humans remain locked in a decade-long debate over what that phrase actually is — which may, in the end, be the most convincing proof that people are still in charge."
+      ]
+    }
+  },
+  {
     "issue": 60,
     "date_short": "SEPTEMBER 7",
     "date_human": "Monday, September 7, 2026",
