@@ -89,8 +89,21 @@ weekly-apps/current/
 ## Friday readme notes
 - Self-contained single index.html, Canvas 2D. NO Supabase / NO Gemini API → no API
   keys, no env vars, no api/ folder / Vercel setup. Runs by opening index.html.
-- (Fill in Friday: controls — drag to paint with symmetry, pick symmetry/palette/brush,
-  Bloom for instant art, Save to gallery, Export PNG; saves to localStorage.)
+- Controls: press Create; DRAG on the canvas to paint — every stroke is mirrored
+  across the sectors. Toolbar: symmetry (6/8/12/16/24), mirror on/off, palette (10),
+  brush size (fine/medium/bold), brush kind (line/dots/ribbon), ❋ Bloom (random
+  generative piece), 📅 Daily (the same date-seeded piece for everyone that day),
+  🌀 Living (auto-rotating kaleidoscope — tap canvas to stop), Undo, Clear, Save
+  (to gallery), Export (PNG download). Gallery: tap a saved piece to reload it, ✕ to
+  delete. Everything saves to localStorage.
+
+## LONGEVITY sanity check (Thu)
+Strong / open-ended. It's a creative tool with no content ceiling: an effectively
+infinite parameter space (symmetry × mirror × 10 palettes × 3 brush kinds × seed),
+freehand input, a random Bloom generator, a deterministic Daily piece (daily return
+hook), a Living mode, a growing saved gallery, and PNG export/share. Not thin — no
+missing-depth work needed. Optional future breadth: shareable seed codes, more
+brush kinds, a gallery-to-Living slideshow.
 
 ## Status notes
 - Mon 2026-09-07: chose a creative APP/TOY for category variety (archive is mostly
