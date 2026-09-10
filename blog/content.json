@@ -1,81 +1,81 @@
 {
-  "issue": 62,
-  "date_short": "SEPTEMBER 9",
-  "date_human": "Wednesday, September 9, 2026",
-  "construction_top": "pardon our HTML — the webmaster folded his new phone in half to see what would happen and now needs a moment",
+  "issue": 63,
+  "date_short": "SEPTEMBER 10",
+  "date_human": "Thursday, September 10, 2026",
+  "construction_top": "pardon our HTML — the webmaster was told there's a 10% chance of doom and has decided to finish the website anyway",
   "ticker": [
-    "phone giant unveils its first folding phone; the future costs more, does the same things, and now folds in half",
-    "humanoid robots enter mass production; the factory of tomorrow is staffed by the coworkers of tomorrow",
-    "nation unveils plan to quadruple its A.I. computing power by 2030; the goal is a number no one can picture",
-    "A.I. boss publicly apologizes for a rocky launch; the most powerful model on Earth arrived, and then buffered",
-    "chipmakers upgrade a mask you've never heard of from 6 to 12 inches; the future runs on parts you can't see",
-    "the future folds, walks, computes in exaflops, apologizes, and is etched by machinery you'll never lay eyes on"
+    "researcher pegs odds of A.I. ending humanity at 10%; everyone nods thoughtfully and keeps building it",
+    "chip firm signs $60 billion deal to sell servers to a cloud giant; the numbers have officially stopped meaning anything",
+    "glassmaker to lay 80 million miles of fiber for A.I.; the internet is getting a much, much bigger straw",
+    "A.I. infrastructure stocks soar on deal news; Wall Street celebrates spending money on the ability to spend more",
+    "big conference puts rival A.I. bosses on one stage; everyone who might end the world, networking in one room",
+    "the future is 90% fine, wired with 80 million miles of glass, and worth an amount of money you cannot feel"
   ],
   "articles": [
     {
-      "badge": "FOLD!",
+      "badge": "GULP",
       "blink": true,
-      "title": "📱 Phone Giant Finally Unveils Its First Folding Phone; The Future Has Arrived, Costs Considerably More, Does The Same Things, And Now Bends In Half",
-      "dateline": "CUPERTINO — reported from a very expensive crease",
-      "tag": "LAUNCH —",
+      "title": "😬 Researcher Pegs The Odds Of A.I. Wiping Out Humanity At 10%; The Industry Nods Thoughtfully, Then Returns To Building It As Fast As Possible",
+      "dateline": "SAN FRANCISCO — reported from the 90% that's going great",
+      "tag": "OUTLOOK —",
       "paras": [
-        "The world's most famous phone maker took the stage today to unveil its long-rumored first folding phone — a sleek, hinged marvel that opens into a small tablet, folds back into a phone, and answers the one question everyone has been asking for years: what if your phone, but it bends?",
-        "\"It's the most personal device we've ever made,\" the company said, of a phone that is largely the previous phone, now with a fold. Analysts hailed the engineering while noting the industry has reached a familiar milestone: after a decade of adding cameras and shaving millimeters, the great remaining frontier of human progress turned out to be a hinge. Early buyers report the fold is deeply satisfying, right up until they remember the price, at which point it becomes deeply satisfying again, just more slowly."
+        "A researcher at a leading A.I. lab offered a memorable estimate this week, suggesting there is roughly a one-in-ten chance the technology could end humanity — a figure delivered with the calm precision of a weather forecast, and received by the industry with a thoughtful nod and no change whatsoever to anyone's schedule.",
+        "\"We take safety extremely seriously,\" the field said, of a number that would clear any building on Earth if it were printed on an elevator. Experts note the truly modern part is the percentage itself: we have reached a point where the smartest people alive will quantify the odds of the apocalypse to a decimal place, announce it publicly, and then break for lunch, secure in the knowledge that 90% is, mathematically speaking, most of the way to fine."
       ]
     },
     {
-      "badge": "WHOA",
-      "title": "🤖 Humanoid Robots Enter Mass Production; The Factory Of Tomorrow Will Be Staffed By The Coworkers Of Tomorrow, Who Never Ask For A Raise",
-      "dateline": "THE ASSEMBLY LINE — reported beside a robot that was also reporting",
-      "tag": "ROBOTS —",
+      "badge": "$$$",
+      "title": "💰 Chip Firm Signs A $60 Billion Deal To Sell Servers To A Cloud Giant; The Numbers In Tech Have Officially Stopped Meaning Anything",
+      "dateline": "THE PRESS RELEASE — reported past the point of comprehension",
+      "tag": "DEALS —",
       "paras": [
-        "A carmaker announced it has begun mass-producing humanoid robots, with large-scale output expected by year's end — meaning the two-legged, human-shaped worker of science fiction is quietly moving from prototype demo to actual product you can, in principle, order by the pallet.",
-        "\"They'll handle repetitive tasks,\" the company said, of a workforce that shows up early, never tires, and has no opinions about the break room. Sociologists note a certain circularity: humans spent centuries designing machines to avoid dull labor, and have now built a machine shaped exactly like a human to go do it, presumably so it feels more natural when it takes over your shift."
+        "A major chipmaker announced an agreement to supply as much as sixty billion dollars of server hardware to a cloud giant, a sum so large it has quietly crossed the threshold beyond which human beings can no longer picture it, feel it, or meaningfully react to it beyond saying \"wow, sixty billion\" and moving on.",
+        "\"It reflects the scale of demand,\" the company said, of a figure that would once have been the entire value of a large company and is now a supply contract. Analysts note the A.I. era has broken our relationship with numbers: a billion used to be a headline, sixty billion is a Tuesday, and somewhere in there the human brain simply filed the whole thing under \"a lot\" and went to get coffee."
       ]
     },
     {
-      "badge": "BIG",
+      "badge": "WOW!",
       "blink": true,
-      "title": "🏭 Nation Unveils Plan To Quadruple Its A.I. Computing Power By 2030; The Target Is A Number So Large No Human Can Actually Picture It",
-      "dateline": "THE FIVE-YEAR PLAN — reported in exaflops, whatever those are",
-      "tag": "POWER —",
+      "title": "🧵 Glassmaker To Lay 80 Million Miles Of Fiber For A.I. Networks; The Internet Is Getting A Dramatically Bigger Straw",
+      "dateline": "THE TRENCH — reported from beside a very long spool",
+      "tag": "PIPES —",
       "paras": [
-        "A major government unveiled an ambitious plan to more than quadruple its national A.I. computing capacity by the end of the decade, setting a target measured in \"exaflops\" — a unit so enormous it exists mainly to be announced in press releases and nodded at solemnly.",
-        "\"This is a national priority,\" officials said, of a goal that amounts to building an unimaginable amount of computer, then building four times more. Experts note the global A.I. race has entered its arms-buildup phase, in which nations compete to accumulate raw computing the way empires once counted battleships — the key difference being that a battleship is at least a thing you can point at, whereas an exaflop is a feeling you have about a warehouse."
+        "A century-old glass company signed a multibillion-dollar deal to supply eighty million miles of fiber-optic cable for A.I. network buildouts — enough glass thread to wrap around the planet several thousand times, all so the machines can talk to each other a little bit faster.",
+        "\"Bandwidth is the bottleneck,\" the company said, of a plan to physically thread the Earth with enough cable to reach well past the sun. Experts note the strangely reassuring truth beneath the A.I. gold rush: for all the talk of clouds and intelligence and abstraction, the future ultimately comes down to somebody, somewhere, burying an almost unimaginable amount of very thin glass in the actual ground."
       ]
     },
     {
-      "badge": "OOPS",
-      "title": "🙇 A.I. Chief Publicly Apologizes For A Rocky Launch; The Most Powerful Model On Earth Arrived And Then, Briefly, Buffered",
-      "dateline": "THE STATUS PAGE — reported between error messages",
-      "tag": "ROLLOUT —",
+      "badge": "UP!",
+      "title": "📈 A.I. Infrastructure Stocks Soar On A Pile Of New Deals; Wall Street Cheers The Act Of Spending Money On The Ability To Spend More",
+      "dateline": "THE TRADING FLOOR — reported from a very green screen",
+      "tag": "MARKETS —",
       "paras": [
-        "The head of a leading A.I. lab issued a public apology to paying subscribers after the debut of its most advanced model yet turned bumpy — a rollout in which the most sophisticated machine intelligence ever created stumbled over the ancient, humbling problem of too many people trying to use it at once.",
-        "\"We're sorry, and we're fixing it,\" the chief said, of a launch that proved even a superintelligence must first survive its own opening day. Experts note the reassuring lesson buried in the chaos: we have built a system smart enough to reason about nearly anything, and it can still be brought to its knees by the same thing that crushes concert-ticket websites — everybody wanting it at 10 a.m."
+        "Shares across the A.I. hardware world jumped after a flurry of enormous supply deals, as investors took the news that companies plan to spend colossal sums building data centers as a wonderful sign that companies will keep spending colossal sums building data centers.",
+        "\"Momentum is strong,\" analysts said, of a market that now rises chiefly on evidence that the spending will continue. Observers note the logic has folded neatly in on itself: every announcement that someone will buy more infrastructure lifts the stocks of everyone who sells it, who use the gains to build more, which is announced, which lifts the stocks — a machine that runs on optimism about its own fuel consumption."
       ]
     },
     {
-      "badge": "TINY",
-      "title": "🔬 Chipmakers Upgrade A Component You've Never Heard Of From 6 Inches To 12; The Future Runs On Parts You Will Never Once See",
-      "dateline": "THE CLEANROOM — reported through three layers of protective suit",
-      "tag": "SILICON —",
+      "badge": "SCENE",
+      "title": "🎤 Big Conference Puts Rival A.I. Chiefs On One Stage; Everyone Who Might Accidentally End The World, Networking In A Single Room",
+      "dateline": "THE MAIN STAGE — reported from the very expensive front row",
+      "tag": "EVENT —",
       "paras": [
-        "The world's top chip-tool makers announced a joint effort to upgrade the \"photomask\" — a decades-old stencil used to etch circuits onto silicon — from a six-inch format to twelve, a change invisible to everyone on Earth except the roughly four hundred people who care about it enormously.",
-        "\"It's a foundational shift,\" the companies said, of an improvement to a part that most humans will live and die without ever knowing existed. Analysts note the quiet truth of modern technology: beneath every dazzling folding phone and apologetic superintelligence lies a vast, unseen scaffolding of impossibly precise machinery, tended by specialists, measured in inches you'll never look at, making the future one microscopic stencil at a time."
+        "A major tech conference announced a lineup featuring the leaders of nearly every top A.I. lab, gathering under one roof the small group of people currently racing one another to build the most powerful technology in history — plus a coffee bar and a lanyard for everyone.",
+        "\"It's about the exchange of ideas,\" organizers said, of an event where the exchange of ideas is precisely what the attendees spend the rest of the year desperately trying to prevent among their competitors. Sociologists note the surreal spectacle of it: the handful of humans holding the industry's most consequential decisions, all shaking hands, comparing notes, and heading to the same after-party, before returning to their labs to keep the whole thing a secret from each other again."
       ]
     }
   ],
   "horoscopes": [
-    { "sign": "♊ Gemini:", "text": "You will fold something in half today and feel briefly like the future. Then you will unfold it. This, too, is the future." },
-    { "sign": "♑ Capricorn:", "text": "A robot will start work near you this week. Be kind. It never asked to be shaped like you. Neither, honestly, did you." },
-    { "sign": "♒ Aquarius:", "text": "Everyone wants the same thing at 10 a.m. So do you. Wait your turn. Even the superintelligence had to." }
+    { "sign": "♎ Libra:", "text": "You will hear a terrifying statistic today and then eat a perfectly nice sandwich. Both things are true. Balance, as ever, is everything." },
+    { "sign": "♉ Taurus:", "text": "A number too large to feel will pass through your life today. Do not try to picture $60 billion. Nobody can. Get the coffee instead." },
+    { "sign": "♓ Pisces:", "text": "Somewhere, 80 million miles of glass is being buried for you. You will never see it. It will carry your cat videos regardless. Be grateful." }
   ],
-  "tech_tip": "Before you buy the folding phone, sit with the price for a full minute. Before you panic about exaflops, remember you can't picture one anyway. The unseen photomask, meanwhile, is doing fine. Thank it silently.",
-  "gadget_watch": "This week's gadget is a phone that now folds in half — the same phone, plus a hinge, minus a chunk of your savings. Also entering production: a human-shaped robot for your workplace. Your desk and your pocket are both getting upgrades you didn't request.",
+  "tech_tip": "When someone gives the apocalypse a percentage, remember it's an estimate, not a schedule. When someone says '$60 billion,' don't strain to picture it — just nod, like everyone else, and enjoy your sandwich.",
+  "gadget_watch": "No new gadget this week — just the invisible plumbing of the future: sixty-billion-dollar server deals and eighty million miles of glass thread being stitched into the planet so your phone can load half a second faster. You're welcome. Probably.",
   "classifieds": [
-    { "label": "FOR SALE:", "text": "one (1) folding phone, opened once, closed once, opened once more. Deeply satisfying. Alarmingly expensive. Comes with crease." },
-    { "label": "WANTED:", "text": "a coworker who will never take my lunch from the fridge. Applicants must be two-legged, tireless, and recently mass-produced." },
-    { "label": "SERVICES:", "text": "I can explain what an exaflop is. I cannot make you picture one. Nobody can. That's the service. First consultation free." },
-    { "label": "MISSED CONNECTION:", "text": "You: the most powerful A.I. on Earth, at 10:04 a.m. Me: subscriber #4,000,001, staring at a spinning wheel. We'll always have the launch day." }
+    { "label": "WANTED:", "text": "someone to explain how a 10% chance of ending the world results in exactly zero change to anyone's calendar. Asking for humanity." },
+    { "label": "FOR SALE:", "text": "the number 'sixty billion,' slightly used, no longer means anything to anyone. Free to a good home. Cannot be pictured. Sold as-is." },
+    { "label": "SERVICES:", "text": "I bury very thin glass in the ground so machines can gossip faster. 80 million miles and counting. No, you can't see it. That's the point." },
+    { "label": "MISSED CONNECTION:", "text": "You: a rival A.I. chief, at the after-party. Me: the other one. We were so friendly for one night. See you next year, back to secrets." }
   ]
 }
