@@ -109,6 +109,12 @@
   .gcell img{width:100%; height:100%; object-fit:cover; display:block;}
   .gcell .del{position:absolute; top:3px; right:3px; width:22px; height:22px; border:0; border-radius:50%;
     background:rgba(10,8,20,.8); color:#ff9ecb; font-size:13px; cursor:pointer; line-height:22px; text-align:center;}
+  .codeLbl{display:block; color:var(--muted); font-size:12px; letter-spacing:.08em; text-transform:uppercase; margin:0 0 5px;}
+  .codeRow{display:flex; gap:8px;}
+  .codeInput{flex:1; min-width:0; padding:11px 12px; border-radius:11px; border:1px solid rgba(155,107,255,.3);
+    background:#0e0a1e; color:var(--text); font:inherit; font-size:15px; letter-spacing:.04em;}
+  .codeInput:focus{outline:none; border-color:var(--teal);}
+  .btn.codeAct{padding:11px 16px; border-radius:11px; letter-spacing:.1em;}
 </style>
 </head>
 <body>
@@ -135,6 +141,7 @@
     <button class="tool" id="livingBtn"><span class="ic">🌀</span><span class="lb" id="livingLb">living</span></button>
     <button class="tool" id="undoBtn"><span class="ic">↶</span><span class="lb">undo</span></button>
     <button class="tool" id="clearBtn"><span class="ic">🗑</span><span class="lb">clear</span></button>
+    <button class="tool" id="codeBtn"><span class="ic">🔗</span><span class="lb">code</span></button>
     <button class="tool" id="saveBtn"><span class="ic">💾</span><span class="lb">save</span></button>
     <button class="tool" id="exportBtn"><span class="ic">⤓</span><span class="lb">export</span></button>
   </div>
@@ -176,6 +183,21 @@
       <h2>Your gallery</h2>
       <p id="galleryEmpty" class="placeholder">Nothing saved yet — press Save in the studio and your creations appear here.</p>
       <div id="galleryGrid"></div>
+      <button class="btn secondary close" data-close>Close</button>
+    </div>
+  </div>
+
+  <!-- SEED CODE MODAL -->
+  <div id="codeModal" class="modal hidden">
+    <div class="card">
+      <h2>Share a bloom</h2>
+      <p class="placeholder" style="margin-top:0">Every generated bloom has a short code. Copy yours to share, or paste one to grow the exact same piece.</p>
+      <label class="codeLbl">this bloom's code</label>
+      <div class="codeRow"><input id="codeCurrent" class="codeInput" readonly><button class="btn secondary codeAct" id="copyCodeBtn">Copy</button></div>
+      <div style="height:12px"></div>
+      <label class="codeLbl">grow from a code</label>
+      <div class="codeRow"><input id="codeInput" class="codeInput" placeholder="e.g. 3k7f9.2.4.1.0" autocapitalize="off" autocomplete="off" spellcheck="false"><button class="btn codeAct" id="growCodeBtn">Grow</button></div>
+      <p id="codeMsg" class="placeholder" style="min-height:18px; margin:8px 0 0"></p>
       <button class="btn secondary close" data-close>Close</button>
     </div>
   </div>
@@ -304,25 +326,29 @@
       }
     }
   }
-  // seed a full composition. daily=true derives EVERYTHING (symmetry, palette,
-  // mirror, kind) from the seed so the piece is identical for everyone that day;
-  // otherwise it honours the current palette/mirror and randomizes the rest.
-  function makeSeededBloom(seed, daily){
-    let rng=mulberry32(seed);
-    const sym=SYMS[(rng()*SYMS.length)|0];
-    const pal=daily ? (rng()*PALETTES.length)|0 : palI;
-    const mir=daily ? rng()<0.5 : mirror;
-    const nLayers=3+((rng()*4)|0);
-    const R=Math.min(W,H)*0.42;
-    const layers=[];
+  // layers depend only on the seed (fixed RNG stream) — so any bloom is fully
+  // reproducible from (seed, symIx, palI, mirror, kind).
+  function bloomLayers(seed){
+    let rng=mulberry32(seed>>>0); const nLayers=3+((rng()*4)|0), R=Math.min(W,H)*0.42, layers=[];
     for(let i=0;i<nLayers;i++){
       layers.push({ a0:rng()*6.283, r0:R*(0.15+rng()*0.7), rA:R*(0.06+rng()*0.28), rf:0.15+rng()*0.5,
         da:(rng()*0.5+0.08)*(rng()<.5?-1:1), wob:0.2+rng()*0.8, wobA:(rng()*0.3), grow:(rng()-0.5)*1.2,
         steps:60+((rng()*120)|0), w:1.5+rng()*4, h0:rng() });
     }
-    return {type:'bloom', seed, sym, mirror:mir, palI:pal, kind:(rng()<0.5?'line':'ribbon'), layers};
+    return layers;
   }
-  function makeBloom(){ return makeSeededBloom((Math.random()*1e9)|0, false); }
+  function bloom(seed,symIx,palIx,mir,kind){ symIx=((symIx%SYMS.length)+SYMS.length)%SYMS.length; palIx=((palIx%PALETTES.length)+PALETTES.length)%PALETTES.length;
+    return {type:'bloom', seed:seed>>>0, symIx, sym:SYMS[symIx], mirror:!!mir, palI:palIx, kind:(kind==='dots'?'line':kind)||'line', layers:bloomLayers(seed)}; }
+  // deterministic style from a seed (for Daily and pasted codes) — independent of
+  // the layer RNG so both stay stable.
+  function styleFromSeed(seed){ let r=mulberry32((seed^0x9e3779b9)>>>0); return { symIx:(r()*SYMS.length)|0, palIx:(r()*PALETTES.length)|0, mir:r()<0.5, kind:(r()<0.5?'line':'ribbon') }; }
+  function makeBloom(){ const seed=(Math.random()*1e9)|0, symIx=(Math.random()*SYMS.length)|0, kind=Math.random()<0.5?'line':'ribbon'; return bloom(seed,symIx,palI,mirror,kind); }
+  function makeCoded(seed){ const s=styleFromSeed(seed); return bloom(seed,s.symIx,s.palIx,s.mir,s.kind); }
+  // share codes: compact, self-contained, reproduce a piece exactly for anyone
+  function encodeCode(it){ return (it.seed>>>0).toString(36)+'.'+it.symIx+'.'+it.palI+'.'+(it.mirror?1:0)+'.'+(it.kind==='line'?0:1); }
+  function decodeCode(str){ const p=(str||'').trim().toLowerCase().split('.'); if(p.length!==5) return null;
+    const seed=parseInt(p[0],36); if(!isFinite(seed)) return null;
+    return bloom(seed, parseInt(p[1],10)||0, parseInt(p[2],10)||0, p[3]==='1', p[4]==='0'?'line':'ribbon'); }
   function todayStr(){ const d=new Date(); return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); }
   function dateSeed(){ let h=2166136261; const s=todayStr(); for(let i=0;i<s.length;i++){ h^=s.charCodeAt(i); h=Math.imul(h,16777619); } return h>>>0; }
   function mulberry32(a){ return function(){ a|=0; a=a+0x6D2B79F5|0; let t=Math.imul(a^a>>>15,1|a); t=t+Math.imul(t^t>>>7,61|t)^t; return ((t^t>>>14)>>>0)/4294967296; }; }
@@ -399,6 +425,26 @@
     im.src=item.thumb; show($('galleryModal'),false);
   }
 
+  // ===== seed share codes =====
+  function openCode(){ stopLiving();
+    const last=[...history].reverse().find(x=>x.type==='bloom');
+    const cur=$('codeCurrent');
+    if(last){ cur.value=encodeCode(last); cur.parentElement.parentElement.style.opacity='1'; }
+    else { cur.value=''; cur.placeholder='press ❋ Bloom or 📅 Daily first'; }
+    $('codeInput').value=''; $('codeMsg').textContent=''; show($('codeModal'),true);
+  }
+  function copyCode(){ const v=$('codeCurrent').value; if(!v){ $('codeMsg').textContent='no bloom to copy yet'; return; }
+    const done=()=>{ $('codeMsg').textContent='copied ✓'; };
+    if(navigator.clipboard&&navigator.clipboard.writeText){ navigator.clipboard.writeText(v).then(done).catch(()=>{ selectFallback('codeCurrent'); done(); }); }
+    else { selectFallback('codeCurrent'); try{ document.execCommand('copy'); }catch(e){} done(); }
+  }
+  function selectFallback(id){ const el=$(id); el.removeAttribute('readonly'); el.focus(); el.select(); setTimeout(()=>el.setAttribute('readonly',''),0); }
+  function growCode(){ const p=decodeCode($('codeInput').value); if(!p){ $('codeMsg').textContent='that code doesn’t look right'; return; }
+    stopLiving(); history=[p]; repaint(); $('codeCurrent').value=encodeCode(p); $('codeMsg').textContent='grown ✦'; show($('codeModal'),false); toast('grown from code ✦'); }
+  $('copyCodeBtn').addEventListener('click',copyCode);
+  $('growCodeBtn').addEventListener('click',growCode);
+  $('codeInput').addEventListener('keydown',e=>{ if(e.key==='Enter') growCode(); });
+
   // ===== navigation =====
   function enterStudio(){ mode='studio'; if(!history.length) clearArt(); show($('titleScreen'),false); show($('art'),true); show($('guide'),true); show($('topbar'),true); show($('toolbar'),true); refreshTools(); flashGuide(); }
   function toTitle(){ stopLiving(); mode='title'; guideAlpha=0; gx.clearRect(0,0,W,H); show($('art'),false); show($('guide'),false); show($('topbar'),false); show($('toolbar'),false); show($('titleScreen'),true); refreshBadge(); }
@@ -417,10 +463,11 @@
   $('brushBtn').addEventListener('click',()=>{ brushI=(brushI+1)%BRUSHES.length; refreshTools(); });
   $('kindBtn').addEventListener('click',()=>{ kindI=(kindI+1)%KINDS.length; refreshTools(); toast(KINDS[kindI].lb+' brush'); });
   $('bloomBtn').addEventListener('click',()=>{ stopLiving(); const b=makeBloom(); history.push(b); repaint(); toast('bloomed ❋'); });
-  $('dailyBtn').addEventListener('click',()=>{ stopLiving(); history=[makeSeededBloom(dateSeed(),true)]; repaint(); toast("today's bloom · "+todayStr()); });
+  $('dailyBtn').addEventListener('click',()=>{ stopLiving(); history=[makeCoded(dateSeed())]; repaint(); toast("today's bloom · "+todayStr()); });
   $('livingBtn').addEventListener('click',()=>{ if(living) stopLiving(); else { startLiving(); toast('living mode — tap canvas to stop'); } });
   $('undoBtn').addEventListener('click',()=>{ stopLiving(); if(history.length){ history.pop(); repaint(); } });
   $('clearBtn').addEventListener('click',()=>{ stopLiving(); history=[]; clearArt(); });
+  $('codeBtn').addEventListener('click',openCode);
   $('saveBtn').addEventListener('click',savePiece);
   $('exportBtn').addEventListener('click',()=>{ const a=document.createElement('a'); a.download='mirrorbloom-'+Date.now()+'.png'; a.href=art.toDataURL('image/png'); document.body.appendChild(a); a.click(); a.remove(); toast('exported PNG ⤓'); });
 
@@ -431,7 +478,10 @@
     window.__mb={ state:()=>({mode,history:history.length,sym:SYMS[symI],pal:PALETTES[palI].name,kind:KINDS[kindI].k,mirror,gallery:loadGallery().length}),
       setKind:(i)=>{ kindI=i%KINDS.length; refreshTools(); return KINDS[kindI].k; },
       living:()=>living, toggleLiving:()=>{ if(living) stopLiving(); else startLiving(); return living; }, palettes:()=>PALETTES.length,
-      daily:()=>{ const a=makeSeededBloom(dateSeed(),true), b=makeSeededBloom(dateSeed(),true); return {seed:a.seed, sym:a.sym, pal:a.palI, deterministic:(a.seed===b.seed && a.sym===b.sym && a.palI===b.palI)}; },
+      daily:()=>{ const a=makeCoded(dateSeed()), b=makeCoded(dateSeed()); return {seed:a.seed, sym:a.sym, pal:a.palI, deterministic:(a.seed===b.seed && a.sym===b.sym && a.palI===b.palI)}; },
+      code:()=>{ const last=[...history].reverse().find(x=>x.type==='bloom'); return last?encodeCode(last):null; },
+      grow:(c)=>{ const p=decodeCode(c); if(!p) return null; history=[p]; repaint(); return encodeCode(p); },
+      roundtrip:(c)=>{ const p=decodeCode(c); return p?encodeCode(p):null; },
       enter:()=>enterStudio(), bloom:()=>{ const b=makeBloom(); history.push(b); repaint(); return history.length; },
       save:()=>{ savePiece(); return loadGallery().length; }, clearGal:()=>{ saveGallery([]); },
       exportLen:()=>art.toDataURL('image/png').length };

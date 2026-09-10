@@ -101,9 +101,10 @@ weekly-apps/current/
 Strong / open-ended. It's a creative tool with no content ceiling: an effectively
 infinite parameter space (symmetry × mirror × 10 palettes × 3 brush kinds × seed),
 freehand input, a random Bloom generator, a deterministic Daily piece (daily return
-hook), a Living mode, a growing saved gallery, and PNG export/share. Not thin — no
-missing-depth work needed. Optional future breadth: shareable seed codes, more
-brush kinds, a gallery-to-Living slideshow.
+hook), shareable seed codes (Thu 14:00 — copy/paste a compact code to reproduce any
+bloom exactly, a social/return hook), a Living mode, a growing saved gallery, and
+PNG export/share. Not thin — no missing-depth work needed. SHIP-READY.
+Optional future breadth: more brush kinds, a gallery-to-Living slideshow.
 
 ## Status notes
 - Mon 2026-09-07: chose a creative APP/TOY for category variety (archive is mostly
