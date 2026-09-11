@@ -1,5 +1,21 @@
 [
   {
+    "issue": 63,
+    "date_short": "SEPTEMBER 10",
+    "date_human": "Thursday, September 10, 2026",
+    "article": {
+      "badge": "GULP",
+      "blink": true,
+      "title": "😬 Researcher Pegs The Odds Of A.I. Wiping Out Humanity At 10%; The Industry Nods Thoughtfully, Then Returns To Building It As Fast As Possible",
+      "dateline": "SAN FRANCISCO — reported from the 90% that's going great",
+      "tag": "OUTLOOK —",
+      "paras": [
+        "A researcher at a leading A.I. lab offered a memorable estimate this week, suggesting there is roughly a one-in-ten chance the technology could end humanity — a figure delivered with the calm precision of a weather forecast, and received by the industry with a thoughtful nod and no change whatsoever to anyone's schedule.",
+        "\"We take safety extremely seriously,\" the field said, of a number that would clear any building on Earth if it were printed on an elevator. Experts note the truly modern part is the percentage itself: we have reached a point where the smartest people alive will quantify the odds of the apocalypse to a decimal place, announce it publicly, and then break for lunch, secure in the knowledge that 90% is, mathematically speaking, most of the way to fine."
+      ]
+    }
+  },
+  {
     "issue": 62,
     "date_short": "SEPTEMBER 9",
     "date_human": "Wednesday, September 9, 2026",
