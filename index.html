@@ -100,6 +100,10 @@ body.kbnav :focus,body.kbnav :focus:not(:focus-visible){outline:3px solid #3a8fd
 #fhook{position:absolute;top:-2px;bottom:-2px;width:6px;background:#f0c04a;border-radius:3px;margin-left:-3px;box-shadow:0 0 6px #f0c04a}
 #ffish{position:absolute;top:3px;width:24px;height:24px;margin-left:-12px;image-rendering:pixelated}
 #fprog{height:10px;background:#1c2a40;border-radius:5px;overflow:hidden}#fprogFill{height:100%;background:var(--gold);width:30%}
+body.touchmode.dlgopen #touch{z-index:16}
+body.touchmode.dlgopen #hotbar{visibility:hidden}
+@media (min-width:601px){body.touchmode.dlgopen #dialog{left:184px;right:176px;width:auto;transform:none}}
+@media (max-width:600px){body.touchmode.dlgopen #dialog{bottom:calc(max(12px,env(safe-area-inset-bottom)) + 166px)}}
 #fade{position:absolute;inset:0;background:#0d1220;opacity:0;pointer-events:none;transition:opacity .6s;z-index:25}
 #fade.on{opacity:1;pointer-events:auto}
 #title{position:absolute;inset:0;z-index:30;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;background:linear-gradient(rgba(246,201,160,.35),rgba(36,48,74,.55));padding:16px;text-align:center}
@@ -1664,7 +1668,7 @@ function drawEntities(a,lights){const cx=Math.round(cam.x),cy=Math.round(cam.y),
  if(a.id==='farm'){for(let i=0;i<state.animals.chicken;i++){const x=(64+((Math.sin(TIME*0.13+i*2.1)+1)/2)*14)*TS-cx;const Y=18*TS-cy;const hop=Math.abs(Math.sin(TIME*5+i))>0.9?1:0;R(x,Y-7-hop,7,6,'#f8f8f0');R(x+5,Y-9-hop,3,3,'#f8f8f0');R(x+7,Y-8-hop,2,1,'#f0a030');R(x+5,Y-10-hop,2,1,'#e04040');R(x+2,Y-1,1,1,'#f0a030');R(x+4,Y-1,1,1,'#f0a030');}
   for(let i=0;i<state.animals.goat;i++){const x=(70+((Math.sin(TIME*0.09+i*1.7)+1)/2)*8)*TS-cx;const Y=18*TS-cy;R(x,Y-11,14,7,'#e8e0d0');R(x+11,Y-15,5,6,'#e8e0d0');R(x+12,Y-17,1,3,'#8a7a6a');R(x+14,Y-17,1,3,'#8a7a6a');R(x+1,Y-4,2,4,'#a89a88');R(x+10,Y-4,2,4,'#a89a88');R(x+14,Y-13,1,1,'#222');}}
  // npcs
- for(const id in npcs){const n=npcs[id];if(!n.vis||n.area!==a.id)continue;const X=n.x-cx,Y=n.y-cy;if(X<-20||X>viewW+20)continue;drawChar(g,X,Y,NPCS[id].lk,Math.floor(n.anim*4)%4,n.face);
+ for(const id in npcs){const n=npcs[id];if(!n.vis||n.area!==a.id)continue;const X=n.x-cx,Y=n.y-cy;if(X<-20||X>viewW+20)continue;if(dk>0.05||a.dark)lights.push([X,Y-11,30,0.8]);drawChar(g,X,Y,NPCS[id].lk,Math.floor(n.anim*4)%4,n.face);
   const news=npcHasNews(id);if(news){const b=Math.sin(TIME*4)*1.5;R(X-4,Y-34+b,8,10,news===true?'#f0c040':'#ffffff');R(X-1,Y-32+b,2,4,'#24304a');R(X-1,Y-27+b,2,2,'#24304a');if(news==='q'){R(X-1,Y-32+b,2,2,'#24304a');}}
   if(festivalActive()&&festivalToday().id==='lucia'&&['linnea','astrid','saga','ture'].includes(id)){R(X-3,Y-25,6,2,'#3a8a3a');R(X-2,Y-28,1,3,'#fff');R(X+1,Y-28,1,3,'#fff');lights.push([X,Y-28,18,0.8]);}}
  // player
@@ -1716,9 +1720,10 @@ function drawWeather(a){if(a.bg==='cave'||a.bg==='greenhouse')return;const w=sta
  if(w==='rain'||w==='storm'){g.strokeStyle='rgba(200,220,255,.55)';g.beginPath();const n=w==='storm'?160:100;for(let i=0;i<n;i++){const x=((hash(i,1)*viewW*1.4+TIME*(80+hash(i,2)*40)-cam.x*0.5)%(viewW+40)+viewW+40)%(viewW+40)-20;const y=((hash(i,3)*viewH+TIME*(260+hash(i,4)*80))%(viewH+20))-10;g.moveTo(x,y);g.lineTo(x-2,y+6);}g.stroke();
   if(w==='storm'&&Math.sin(TIME*0.7)>0.995){g.fillStyle='rgba(255,255,255,.5)';g.fillRect(0,0,viewW,viewH);}}
  if(w==='snow'){g.fillStyle='rgba(255,255,255,.9)';for(let i=0;i<90;i++){const x=((hash(i,5)*viewW*1.3+Math.sin(TIME+i)*12+TIME*8-cam.x*0.6)%(viewW+20)+viewW+20)%(viewW+20)-10;const y=((hash(i,6)*viewH+TIME*(20+hash(i,7)*20))%(viewH+10))-5;g.fillRect(x|0,y|0,hash(i,8)>.5?2:1,hash(i,8)>.5?2:1);}}
- if(w==='fog'){for(let i=0;i<3;i++){const gr=g.createLinearGradient(0,0,0,viewH);gr.addColorStop(0,'rgba(220,225,232,0)');gr.addColorStop(0.5+i*0.1,'rgba(220,225,232,.35)');gr.addColorStop(1,'rgba(220,225,232,.15)');g.fillStyle=gr;g.fillRect(0,0,viewW,viewH);}}
+ if(w==='fog'){g.fillStyle='rgba(220,225,232,.12)';g.fillRect(0,0,viewW,viewH);}
  if(state.flags.fireworks&&hour()>=19&&state.area!=='cave'){if(Math.random()<0.04){const x=rnd(cam.x+40,cam.x+viewW-40),y=cam.y+rnd(20,90);const c=pick(['#f0c040','#e05a5a','#5ab0f0','#a0f070','#f080d0']);for(let i=0;i<30;i++){const an=i/30*Math.PI*2;parts.push({x,y,vx:Math.cos(an)*rnd(0.8,1.6),vy:Math.sin(an)*rnd(0.8,1.6),life:60,max:60,col:c,size:2,grav:0.02});}sfx('firework');}}
 }
+function drawFogBack(a){if(state.weather!=='fog'||a.bg==='cave'||a.bg==='greenhouse')return;for(let i=0;i<2;i++){const gr=g.createLinearGradient(0,0,0,viewH);gr.addColorStop(0,'rgba(220,225,232,0)');gr.addColorStop(0.55+i*0.1,'rgba(220,225,232,.38)');gr.addColorStop(1,'rgba(220,225,232,.2)');g.fillStyle=gr;g.fillRect(0,0,viewW,viewH);}}
 function drawLight(a,lights){const dk=a.dark?0.66:darkness();if(dk<=0.01&&!beams.length)return;
  lg.globalCompositeOperation='source-over';lg.clearRect(0,0,viewW,viewH);lg.fillStyle=a.dark?`rgba(5,4,12,${dk})`:`rgba(10,14,40,${dk})`;lg.fillRect(0,0,viewW,viewH);
  lg.globalCompositeOperation='destination-out';
@@ -1734,7 +1739,7 @@ function drawPrompt(){if(!target||dlg||panelOpen)return;let x,y;
  const X=Math.round(x-cam.x),Y=Math.round(y-cam.y+Math.sin(TIME*4)*1.5);R(X-5,Y-6,11,9,'#ffffff');R(X-1,Y+3,3,2,'#ffffff');R(X-3,Y-4,7,1,'#24304a');R(X-3,Y-2,5,1,'#24304a');R(X-3,Y,6,1,'#24304a');}
 function render(){
  const a=area();beams=[];const lights=[];
- drawBg(a);drawDeco(a,lights);drawInter(a,lights);drawTiles(a);drawEntities(a,lights);drawWater(a);drawParticles();drawWeather(a);drawLight(a,lights);drawPrompt();
+ drawBg(a);drawDeco(a,lights);drawInter(a,lights);drawFogBack(a);drawTiles(a);drawEntities(a,lights);drawWater(a);drawParticles();drawWeather(a);drawLight(a,lights);drawPrompt();
  if(areaFade>0){g.fillStyle=`rgba(13,18,32,${areaFade})`;g.fillRect(0,0,viewW,viewH);areaFade=Math.max(0,areaFade-0.06);}
  ctx.imageSmoothingEnabled=false;ctx.drawImage(buf,0,0,cv.width,cv.height);
 }
@@ -1806,7 +1811,7 @@ const S={
  relight2:['Ljuset fångas av linsen och kastas långt ut över det mörka havet.','The light is caught by the lens and cast far out over the dark sea.'],
  relight3:['Borta i Saltvik tänds lampor i fönstren, en efter en. Någon ringer i en klocka.','Back in Saltvik, lights come on in the windows, one by one. Someone rings a bell.'],
  relight4:['Fyren lyser igen. Mormor Ingrid — vi vinkar till dig. ✨','The lighthouse shines again. Grandma Ingrid — we\'re waving to you. ✨'],
- helpText:['<b>Mål:</b> Väck liv i hamnbyn Saltvik och tänd fyren igen. Odla, fiska, samla, laga mat, bli vän med byborna och slutför projekt på projekttavlan.<br><br><b>Tangentbord:</b> ←→ / A D gå · ↑↓ / W S klättra · Mellanslag / Z hoppa · E / X använd & prata (håll inne vid fiske) · 1–8 välj · Q/R byt · Esc / I meny · F helskärm<br><br><b>Handkontroll:</b> Styrspak/korsknapp gå · A hoppa · X/B använd · Y/Start meny · LB/RB byt föremål. I menyer: korsknapp navigerar, A väljer, B tillbaka.<br><br><b>Pekskärm:</b> Styrkors till vänster, ⤒ hoppa, ✋ använd/prata. Tryck på snabbfältet för att välja.<br><br><b>Tips:</b> Vattna grödor varje dag (regn räknas). Ät mat för energi. Sov i ditt hus för att spara och börja en ny dag. Gyllene snäckor gömmer sig på tak och höga platser. Glittrande fläckar i marken kan grävas med jordhackan. Spelet sparas automatiskt.','<b>Goal:</b> Bring the harbor village of Saltvik back to life and relight the lighthouse. Farm, fish, forage, cook, befriend villagers and complete projects on the project board.<br><br><b>Keyboard:</b> ←→ / A D walk · ↑↓ / W S climb · Space / Z jump · E / X use & talk (hold while fishing) · 1–8 select · Q/R cycle · Esc / I menu · F fullscreen<br><br><b>Gamepad:</b> Stick/D-pad move · A jump · X/B use · Y/Start menu · LB/RB cycle items. In menus: D-pad navigates, A selects, B goes back.<br><br><b>Touch:</b> D-pad on the left, ⤒ jump, ✋ use/talk. Tap the hotbar to select.<br><br><b>Tips:</b> Water crops daily (rain counts). Eat food for energy. Sleep in your house to save and start a new day. Golden shells hide on rooftops and high places. Glittering spots on the ground can be dug with the hoe. The game saves automatically.'],
+ helpText:['<b>Mål:</b> Väck liv i hamnbyn Saltvik och tänd fyren igen. Odla, fiska, samla, laga mat, bli vän med byborna och slutför projekt på projekttavlan.<br><br><b>Tangentbord:</b> ←→ / A D gå · ↑↓ / W S klättra · Mellanslag / Z hoppa · E / X / Enter använd & prata (håll inne vid fiske) · 1–8 välj · Q/R byt · Esc / I meny · F helskärm. I menyer: piltangenter navigerar, E/Enter bekräftar, Mellanslag/Esc tillbaka.<br><br><b>Handkontroll:</b> Styrspak/korsknapp gå · A hoppa · B använd & prata · Y/Start meny · LB/RB byt föremål. I menyer: korsknapp navigerar, B bekräftar, A tillbaka/avbryt, LB/RB byter flik, Y stänger menyn.<br><br><b>Pekskärm:</b> Styrkors till vänster, ⤒ hoppa, ✋ använd/prata. I samtal: ✋ bekräftar, ⤒ tillbaka, styrkorset väljer. Tryck på snabbfältet för att välja.<br><br><b>Tips:</b> Vattna grödor varje dag (regn räknas). Ät mat för energi. Sov i ditt hus för att spara och börja en ny dag. Gyllene snäckor gömmer sig på tak och höga platser. Glittrande fläckar i marken kan grävas med jordhackan. Spelet sparas automatiskt.','<b>Goal:</b> Bring the harbor village of Saltvik back to life and relight the lighthouse. Farm, fish, forage, cook, befriend villagers and complete projects on the project board.<br><br><b>Keyboard:</b> ←→ / A D walk · ↑↓ / W S climb · Space / Z jump · E / X / Enter use & talk (hold while fishing) · 1–8 select · Q/R cycle · Esc / I menu · F fullscreen. In menus: arrows navigate, E/Enter confirm, Space/Esc back.<br><br><b>Gamepad:</b> Stick/D-pad move · A jump · B use & talk · Y/Start menu · LB/RB cycle items. In menus: D-pad navigates, B confirms, A goes back/cancels, LB/RB switch tabs, Y closes the menu.<br><br><b>Touch:</b> D-pad on the left, ⤒ jump, ✋ use/talk. In conversations: ✋ confirms, ⤒ goes back, the D-pad picks a choice. Tap the hotbar to select.<br><br><b>Tips:</b> Water crops daily (rain counts). Eat food for energy. Sleep in your house to save and start a new day. Golden shells hide on rooftops and high places. Glittering spots on the ground can be dug with the hoe. The game saves automatically.'],
  aJump:['Hoppa','Jump'],aUse:['Använd','Use'],selected:['Vald','Selected'],
  greenhouseNote:['Växthus: alla frön växer här året runt!','Greenhouse: every seed grows here all year!'],
  unknown:['???','???'],museumProg:['Donerat {0}/{1}','Donated {0}/{1}'],nextReward:['Nästa belöning vid {0}','Next reward at {0}'],
@@ -1841,7 +1846,7 @@ function selectSlot(i){state.sel=(i+8)%8;refreshHotbar();sfx('menu');const s=sel
 
 // ================= DIALOG =================
 let dlg=null;
-function openDialog(o){dlg=Object.assign({page:0},o);if(!dlg.pages||!dlg.pages.length)dlg.pages=[''];renderDialog();$('#dialog').classList.remove('hidden');updateTouchVis();}
+function openDialog(o){dlg=Object.assign({page:0},o);document.body.classList.add('dlgopen');if(!dlg.pages||!dlg.pages.length)dlg.pages=[''];renderDialog();$('#dialog').classList.remove('hidden');updateTouchVis();}
 function renderDialog(){if(!dlg)return;const N=dlg.npc?NPCS[dlg.npc]:null;
  $('#dlgName').textContent=dlg.name||(N?N.n+' · '+tr(N.role):'');$('#dlgHearts').textContent=N?'♥'.repeat(hearts(dlg.npc))+'♡'.repeat(10-hearts(dlg.npc)):'';
  const pc=$('#dlgPortrait');pc.classList.toggle('hidden',!N&&!dlg.lk&&!dlg.icon);if(N)drawPortrait(pc,N.lk);else if(dlg.lk)drawPortrait(pc,dlg.lk);else if(dlg.icon){const g2=pc.getContext('2d');g2.imageSmoothingEnabled=false;g2.fillStyle='#fff8e8';g2.fillRect(0,0,72,72);g2.drawImage(iconCanvas(dlg.icon),12,12,48,48);}
@@ -1849,9 +1854,10 @@ function renderDialog(){if(!dlg)return;const N=dlg.npc?NPCS[dlg.npc]:null;
  const last=dlg.page>=dlg.pages.length-1;const ch=$('#dlgChoices');
  if(last&&dlg.choices&&dlg.choices.length){ch.innerHTML=dlg.choices.map((c,i)=>`<button class="btn${c.pri?' pri':''}" data-ch="${i}">${esc(c.label)}</button>`).join('');}
  else ch.innerHTML=`<button class="btn" data-ch="next">${last?'✓':'▶'}</button>`;
- setTimeout(()=>{const b=ch.querySelector('button');if(b&&navMode())b.focus();},30);}
+ if(navMode()||document.body.classList.contains('touchmode'))ch.insertAdjacentHTML('beforeend',`<span class="muted" style="align-self:center;font-size:11px">${t('btnHint')}</span>`);
+ setTimeout(()=>{const b=ch.querySelector('button');if(b&&document.body.classList.contains('touchmode')&&!$('#touch').classList.contains('hidden'))document.body.classList.add('kbnav');if(b&&navMode())b.focus();},30);}
 function dialogNext(){if(!dlg)return;if(dlg.page<dlg.pages.length-1){dlg.page++;sfx('menu');renderDialog();return;}if(dlg.choices&&dlg.choices.length)return;closeDialog();}
-function closeDialog(){const d=dlg;dlg=null;$('#dialog').classList.add('hidden');updateTouchVis();if(d&&d.onClose)d.onClose();}
+function closeDialog(){const d=dlg;dlg=null;document.body.classList.remove('dlgopen');$('#dialog').classList.add('hidden');updateTouchVis();if(d&&d.onClose)d.onClose();}
 $('#dialog').addEventListener('click',e=>{const b=e.target.closest('[data-ch]');if(!b){if(!dlg||!dlg.choices||dlg.page<dlg.pages.length-1)dialogNext();return;}e.stopPropagation();const v=b.dataset.ch;if(v==='next'){dialogNext();return;}const c=dlg.choices[+v];sfx('menu');const d=dlg;dlg=null;$('#dialog').classList.add('hidden');updateTouchVis();if(c.fn)c.fn();if(d.onClose&&c.close!==false&&!c.keepClose)d.onClose();});
 function msg(text,icon){openDialog({pages:Array.isArray(text)?text:[text],icon});}
 function confirmBox(text,yes,icon){openDialog({pages:[text],icon,choices:[{label:t('yes'),fn:yes,pri:1},{label:t('no')}]});}
@@ -2076,7 +2082,8 @@ function openCoop(){const b=state.coopBox;openPanel({title:'🐔 '+t('coop'),ren
  act:(a)=>{if(a==='col'){if(b.egg){b.egg=addItem('egg',b.egg);}if(b.milk){b.milk=addItem('milk',b.milk);}sfx('pick');if(b.egg||b.milk)toast(t('bagFull'));renderPanel();}}});}
 
 // ================= FISH UI =================
-S.reelTip=['Håll ✋ / E / X för att höja kroken – håll den i det gröna!','Hold ✋ / E / X to raise the hook – keep it in the green!'];
+S.reelTip=['Håll ✋ / B / E för att höja kroken – håll den i det gröna!','Hold ✋ / B / E to raise the hook – keep it in the green!'];
+S.btnHint=['✋ B E: OK · ⤒ A Mellanslag: tillbaka','✋ B E: OK · ⤒ A Space: back'];
 S.fishOn=['Fisk på kroken!','Fish on!'];
 function showFishUI(){$('#fishUI').classList.remove('hidden');$('#fTitle').textContent='🎣 '+t('fishOn');$('#fTip').textContent=t('reelTip');const id=fishing.c.id;$('#ffish').src=iconURL(ITEMS[id]?id:'herring');$('#ffish').style.filter=state.fishLog[id]?'':'brightness(0)';}
 function updateFishUI(inZ){const f=fishing;$('#fzone').style.left=(f.zone-f.zw/2)+'%';$('#fzone').style.width=f.zw+'%';$('#fzone').style.background=inZ?'rgba(150,235,120,.75)':'rgba(150,235,120,.4)';$('#fhook').style.left=f.hook+'%';$('#ffish').style.left=f.zone+'%';$('#fprogFill').style.width=f.prog+'%';}
@@ -2089,7 +2096,7 @@ const KEYMAP={ArrowLeft:'l',KeyA:'l',ArrowRight:'r',KeyD:'r',ArrowUp:'u',KeyW:'u
 function modalOpen(){return !!(panelOpen||dlg||onTitle||sleeping);}
 function isTouch(){return ('ontouchstart' in window)||navigator.maxTouchPoints>0;}
 function updateTouchVis(){const want=prefs.touch==='on'||(prefs.touch==='auto'&&isTouch()&&!usingPad);document.body.classList.toggle('touchmode',want);
- $('#touch').classList.toggle('hidden',!want||onTitle||!!dlg||!!panelOpen);}
+ $('#touch').classList.toggle('hidden',!want||onTitle||!!panelOpen||sleeping);document.body.classList.toggle('dlgopen',!!dlg);}
 function modalRoot(){if(onTitle)return $('#title');if(dlg)return $('#dialog');if(panelOpen)return $('#panel');return null;}
 function focusables(){const r=modalRoot();if(!r)return [];return [...r.querySelectorAll('button:not([disabled]),input')].filter(e=>e.offsetParent!==null);}
 function spatialNav(dir){const list=focusables();if(!list.length)return;let cur=document.activeElement;if(!list.includes(cur)){list[0].focus();list[0].scrollIntoView({block:'nearest'});return;}
@@ -2118,8 +2125,9 @@ window.addEventListener('keydown',e=>{audioInit();if(e.code!=='KeyF')autoFull();
  if(modalOpen()){if(sleeping)return;
   const nav={ArrowLeft:'l',ArrowRight:'r',ArrowUp:'u',ArrowDown:'d',KeyA:'l',KeyD:'r',KeyW:'u',KeyS:'d'}[e.code];
   if(nav){spatialNav(nav);e.preventDefault();return;}
-  if(['Enter','Space','KeyE','KeyX','KeyZ','NumpadEnter'].includes(e.code)){if(!e.repeat)uiConfirm();e.preventDefault();return;}
-  if(['Escape','Backspace','KeyI','Tab','KeyM'].includes(e.code)){if(!e.repeat)uiBack();e.preventDefault();return;}
+  if(['Enter','KeyE','KeyX','KeyJ','NumpadEnter'].includes(e.code)){if(!e.repeat)uiConfirm();e.preventDefault();return;}
+  if(['Space','KeyZ','KeyK','KeyC','Escape','Backspace'].includes(e.code)){if(!e.repeat)uiBack();e.preventDefault();return;}
+  if(['KeyI','Tab','KeyM'].includes(e.code)){if(!e.repeat&&panelOpen)uiBack();e.preventDefault();return;}
   if(e.code==='KeyQ'||e.code==='PageUp'){uiTab(-1);return;}if(e.code==='KeyR'||e.code==='PageDown'){uiTab(1);return;}
   return;}
  const k=KEYMAP[e.code];
@@ -2134,12 +2142,15 @@ window.addEventListener('wheel',e=>{if(!modalOpen()&&state&&!onTitle){selectSlot
 function setupTouch(){
  const dp=$('#dpad');let dpId=null;const btns={l:$('#tL'),r:$('#tR'),u:$('#tU'),d:$('#tD')};
  const hl=()=>{for(const k in btns)btns[k].classList.toggle('on',!!src.touch[k]);};
- const upd=e=>{const r=dp.getBoundingClientRect();const dx=e.clientX-(r.left+r.width/2),dy=e.clientY-(r.top+r.height/2);const th=16;src.touch.l=dx<-th;src.touch.r=dx>th;src.touch.u=dy<-th*1.4;src.touch.d=dy>th*1.4;hl();};
+ let lastDir=null;
+ const upd=e=>{const r=dp.getBoundingClientRect();const dx=e.clientX-(r.left+r.width/2),dy=e.clientY-(r.top+r.height/2);const th=16;
+  if(dlg){const dir=Math.abs(dx)>Math.abs(dy)?(dx<-th?'l':dx>th?'r':null):(dy<-th?'u':dy>th?'d':null);document.body.classList.add('kbnav');if(dir&&dir!==lastDir)spatialNav(dir);lastDir=dir;return;}lastDir=null;src.touch.l=dx<-th;src.touch.r=dx>th;src.touch.u=dy<-th*1.4;src.touch.d=dy>th*1.4;hl();};
  dp.addEventListener('pointerdown',e=>{e.preventDefault();dpId=e.pointerId;try{dp.setPointerCapture(e.pointerId);}catch(_){}upd(e);audioInit();});
  dp.addEventListener('pointermove',e=>{if(e.pointerId===dpId)upd(e);});
- const end=e=>{if(e.pointerId===dpId){dpId=null;src.touch.l=src.touch.r=src.touch.u=src.touch.d=false;hl();}};
+ const end=e=>{if(e.pointerId===dpId){dpId=null;lastDir=null;src.touch.l=src.touch.r=src.touch.u=src.touch.d=false;hl();}};
  dp.addEventListener('pointerup',end);dp.addEventListener('pointercancel',end);dp.addEventListener('lostpointercapture',end);
- const bind=(el,k)=>{el.addEventListener('pointerdown',e=>{e.preventDefault();try{el.setPointerCapture(e.pointerId);}catch(_){}src.touch[k]=true;press(k);el.classList.add('on');audioInit();});const up=()=>{src.touch[k]=false;el.classList.remove('on');};el.addEventListener('pointerup',up);el.addEventListener('pointercancel',up);el.addEventListener('lostpointercapture',up);};
+ const bind=(el,k)=>{el.addEventListener('pointerdown',e=>{e.preventDefault();try{el.setPointerCapture(e.pointerId);}catch(_){}el.classList.add('on');audioInit();
+  if(modalOpen()){if(dlg){document.body.classList.add('kbnav');if(k==='use')uiConfirm();else uiBack();}return;}src.touch[k]=true;press(k);});const up=()=>{src.touch[k]=false;el.classList.remove('on');};el.addEventListener('pointerup',up);el.addEventListener('pointercancel',up);el.addEventListener('lostpointercapture',up);};
  bind($('#tA'),'jump');bind($('#tB'),'use');
  $('#hotbar').addEventListener('pointerdown',e=>{const b=e.target.closest('[data-hb]');if(b){e.preventDefault();selectSlot(+b.dataset.hb);}});
  $('#bMenu').addEventListener('click',()=>{audioInit();openMenu();});$('#bFull').addEventListener('click',toggleFull);$('#tracker').addEventListener('click',()=>openMenu('quests'));
@@ -2154,8 +2165,8 @@ function pollPad(dt){let gp=null;try{const pads=navigator.getGamepads?navigator.
  const E=k=>st[k]&&!padPrev[k];
  if(modalOpen()){src.pad={};if(!sleeping){const dir=st.l?'l':st.r?'r':st.u?'u':st.d?'d':null;
    if(dir){navT-=dt;if(navT<=0||!(padPrev.l||padPrev.r||padPrev.u||padPrev.d)){spatialNav(dir);navT=(padPrev.l||padPrev.r||padPrev.u||padPrev.d)?0.11:0.3;}}else navT=0;
-   if(panelOpen&&Math.abs(gp.axes[3]||0)>0.3)$('#pbody').scrollBy(0,(gp.axes[3])*14);if(E('a'))uiConfirm();if(E('b'))uiBack();if(E('lb'))uiTab(-1);if(E('rb'))uiTab(1);if((E('st')||E('y'))&&!onTitle&&!dlg)uiBack();}}
- else{src.pad={l:st.l,r:st.r,u:st.u,d:st.d,jump:st.a,use:st.x||st.b};if(E('a'))press('jump');if(E('x')||E('b'))press('use');
+   if(panelOpen&&Math.abs(gp.axes[3]||0)>0.3)$('#pbody').scrollBy(0,(gp.axes[3])*14);if(E('b'))uiConfirm();if(E('a'))uiBack();if(E('lb'))uiTab(-1);if(E('rb'))uiTab(1);if((E('st')||E('y'))&&!onTitle&&!dlg)uiBack();}}
+ else{src.pad={l:st.l,r:st.r,u:st.u,d:st.d,jump:st.a,use:st.b};if(E('a'))press('jump');if(E('b'))press('use');
   if(E('y')||E('st'))openMenu();if(E('lb'))selectSlot(state.sel-1);if(E('rb'))selectSlot(state.sel+1);}
  padPrev=st;}
 function mergeInputs(){for(const k of ['l','r','u','d','jump','use'])inp[k]=!!(src.key[k]||src.touch[k]||src.pad[k]);}

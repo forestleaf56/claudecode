@@ -8,5 +8,5 @@ A cozy, story-driven 2D platformer RPG set in the sleepy Swedish harbor village 
 - **People:** 12 villagers with schedules, friendship hearts, gift tastes and rewards.
 - **Long-term goals:** 9 harbor projects, museum, 30 hidden golden shells, daily requests, 22 achievements, tool upgrades.
 - **Languages:** Svenska and English (switch on the title screen or in Settings).
-- **Controls:** keyboard, touch (on-screen D-pad and buttons) and gamepad. Fullscreen is on by default (entered on your first tap/click; toggle in Settings).
+- **Controls:** keyboard, touch (on-screen D-pad and buttons) and gamepad. Gamepad: A jump / back, B use & talk / confirm, Y menu, LB/RB cycle items. Keyboard: E confirm, Space back. Touch: ✋ confirm, ⤒ back. Fullscreen is on by default (entered on your first tap/click; toggle in Settings).
 - **Saving:** autosaves to browser storage every 30 seconds, when you sleep, and when the tab is hidden; "Save & exit" in the menu returns to the title screen. Saves can be exported/imported as text in Settings.
