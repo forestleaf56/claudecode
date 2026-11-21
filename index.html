@@ -24,7 +24,7 @@ button{font:inherit;color:inherit;cursor:pointer}
 #energyTxt{position:absolute;inset:0;font-size:11px;text-align:center;line-height:18px;color:#24304a}
 .spacer{flex:1}
 .ibtn{pointer-events:auto;width:40px;height:40px;border-radius:12px;background:rgba(251,243,225,.93);border:2px solid var(--wood2);font-size:20px;line-height:1;box-shadow:0 2px 0 rgba(0,0,0,.25);display:flex;align-items:center;justify-content:center;padding:0}
-#tracker{position:absolute;pointer-events:auto;top:calc(max(6px,env(safe-area-inset-top)) + 42px);left:max(6px,env(safe-area-inset-left));max-width:min(290px,44vw);background:rgba(36,48,74,.8);color:#fbf3e1;border-radius:10px;padding:6px 10px;font-size:12px;line-height:1.3}
+#tracker{position:absolute;pointer-events:auto;z-index:3;top:calc(max(6px,env(safe-area-inset-top)) + 42px);left:max(6px,env(safe-area-inset-left));max-width:min(290px,44vw);background:rgba(36,48,74,.8);color:#fbf3e1;border-radius:10px;padding:6px 10px;font-size:12px;line-height:1.3}
 #tracker b{color:var(--gold)}
 #buffs{position:absolute;top:calc(max(6px,env(safe-area-inset-top)) + 42px);right:max(6px,env(safe-area-inset-right));display:flex;gap:4px;font-size:16px}
 #buffs span{background:rgba(251,243,225,.85);border-radius:8px;padding:2px 5px}
@@ -1487,7 +1487,7 @@ const lightC=document.createElement('canvas'),lg=lightC.getContext('2d');
 const cam={x:0,y:0};
 function resize(){const dpr=Math.min(window.devicePixelRatio||1,2);const W=innerWidth,H=innerHeight;const Wd=Math.round(W*dpr),Hd=Math.round(H*dpr);
  let s=Math.max(Wd/480,Hd/270);s=Math.min(s,Wd/210);
- viewW=Math.round(Wd/s);viewH=Math.round(Hd/s);cv.width=Wd;cv.height=Hd;buf.width=viewW;buf.height=viewH;lightC.width=viewW;lightC.height=viewH;
+ if(typeof placeTracker==='function')setTimeout(placeTracker,0);viewW=Math.round(Wd/s);viewH=Math.round(Hd/s);cv.width=Wd;cv.height=Hd;buf.width=viewW;buf.height=viewH;lightC.width=viewW;lightC.height=viewH;
  const rot=H>W*1.15&&isTouch();$('#rotate').classList.toggle('hidden',!rot);$('#rotate').textContent=t('rotate');clearTimeout(resize.t);if(rot)resize.t=setTimeout(()=>$('#rotate').classList.add('hidden'),4500);}
 function clampCam(){const a=area();const W=a.w*TS,H=ROWS*TS;if(W<=viewW)cam.x=(W-viewW)/2;else cam.x=clamp(cam.x,0,W-viewW);if(H<=viewH)cam.y=H-viewH;else cam.y=clamp(cam.y,0,H-viewH);}
 function updateCam(){const tx=P.x-viewW/2+P.face*18,ty=P.y-viewH*0.6;cam.x+=(tx-cam.x)*0.09;cam.y+=(ty-cam.y)*0.09;clampCam();}
@@ -1833,7 +1833,8 @@ function refreshTracker(){if(!state)return;const q=MAINQ[state.mainIdx];const f=
  if(f)h+=`<div>${t('festTitle',tr(f.n))} <span style="opacity:.8">${f.h[0]}–${f.h[1]>24?f.h[1]-24:f.h[1]}</span></div>`;
  if(q){const [a,b]=goalProgress(q);h+=`<div><b>${esc(tr(q.n))}</b>${b>1?` (${a}/${b})`:''}</div><div style="opacity:.9">${esc(tr(q.d))}</div>`;}
  else{const next=ACH.find(a=>!state.ach[a[0]]);if(next)h+=`<div><b>🏆 ${esc(tr(next[1]))}</b></div><div style="opacity:.9">${esc(tr(next[2]))}</div>`;}
- $('#tracker').innerHTML=h;$('#tracker').classList.toggle('hidden',!h||prefs.hideTracker);}
+ if(!h)h=`<div><b>⚓ ${LANG==='sv'?'Utforska Saltvik':'Explore Saltvik'}</b></div>`;$('#tracker').innerHTML=h;$('#tracker').classList.remove('hidden');placeTracker();}
+function placeTracker(){const tb=$('#topbar'),tk=$('#tracker');if(!tb||!tk)return;tk.style.top=(tb.offsetTop+tb.offsetHeight+6)+'px';}
 function refreshHotbar(){if(!state)return;const hb=$('#hotbar');let h='';for(let i=0;i<8;i++){const s=state.inv[i];h+=`<button class="slot${i===state.sel?' sel':''}" data-hb="${i}" tabindex="-1"><span class="k">${i+1}</span>${s?iimg(s.id)+(s.n>1?`<span class="n">${s.n}</span>`:(s.id==='can'?`<span class="n">💧${state.water}</span>`:s.id==='rod'?`<span class="n">${state.tl.rod}</span>`:'')):''}</button>`;}hb.innerHTML=h;hudSig='';
  const s=selItem();$('#tBl').textContent='';}
 function selectSlot(i){state.sel=(i+8)%8;refreshHotbar();sfx('menu');const s=selItem();if(s)toast(tr(ITEMS[s.id].n)+(s.id==='rod'||ITEMS[s.id].cat==='tool'&&s.id!=='rod'?' · '+tr(UPG[s.id]?UPG[s.id].names[state.tl[s.id]-1]:['','']):''),s.id);}
@@ -1959,7 +1960,6 @@ function renderSettings(){const opt=(k,v,l)=>`<button class="btn sm${String(pref
  <h3>${t('sfx')}</h3><div class="chips">${[0,.35,.7,1].map(v=>opt('sfx',v,v?Math.round(v*100)+'%':t('off'))).join('')}</div>
  <h3>${t('speed')}</h3><div class="chips">${opt('speed',0.65,t('slow'))}${opt('speed',1,t('normal'))}${opt('speed',1.6,t('fast'))}</div>
  <h3>${t('touchC')}</h3><div class="chips">${opt('touch','auto',t('auto'))}${opt('touch','on',t('on'))}${opt('touch','off',t('off'))}</div>
- <h3>📜</h3><div class="chips"><button class="btn sm${prefs.hideTracker?'':' pri'}" data-act="set" data-arg="tracker:on">${t('on')}</button><button class="btn sm${prefs.hideTracker?' pri':''}" data-act="set" data-arg="tracker:off">${t('off')}</button></div>
  <h3>⛶ ${t('fullDef')}</h3><div class="chips">${opt('full',1,t('on'))}${opt('full',0,t('off'))}</div>
  <h3>💾</h3><div class="chips"><button class="btn sm pri" data-act="save">${t('saveNow')}</button><button class="btn sm" data-act="export">${t('exportS')}</button><button class="btn sm" data-act="import">${t('importS')}</button><button class="btn sm" data-act="exit">${t('saveExit')}</button></div>`;}
 
@@ -2163,6 +2163,7 @@ let fsDeclined=false,fsOurs=false;
 const isFull=()=>!!(document.fullscreenElement||document.webkitFullscreenElement);
 function enterFull(){const el=document.documentElement;const r=el.requestFullscreen||el.webkitRequestFullscreen;if(!r||isFull())return;try{const p=r.call(el,{navigationUI:'hide'});fsOurs=true;if(p&&p.catch)p.catch(()=>{fsOurs=false;});try{screen.orientation&&screen.orientation.lock&&screen.orientation.lock('landscape').catch(()=>{});}catch(_){}}catch(e){}}
 function exitFull(){const d=document;try{if(isFull())(d.exitFullscreen||d.webkitExitFullscreen).call(d);}catch(e){}}
+function forceFull(){if(prefs.full!==0){fsDeclined=false;enterFull();}}
 function autoFull(){if(prefs.full&&!fsDeclined&&!isFull())enterFull();}
 function toggleFull(){if(isFull()){prefs.full=0;fsDeclined=true;savePrefs();exitFull();}else{prefs.full=1;fsDeclined=false;savePrefs();enterFull();}if(panelOpen&&panelOpen.tab==='settings')renderPanel();}
 function toggleFullOld(){const d=document,el=d.documentElement;try{if(!d.fullscreenElement&&!d.webkitFullscreenElement){const r=(el.requestFullscreen||el.webkitRequestFullscreen);if(!r){toast('⛶ —');return;}const p=r.call(el,{navigationUI:'hide'});if(p&&p.catch)p.catch(()=>{});try{screen.orientation&&screen.orientation.lock&&screen.orientation.lock('landscape').catch(()=>{});}catch(_){}}else{(d.exitFullscreen||d.webkitExitFullscreen).call(d);}}catch(e){toast('⛶ —');}}
@@ -2248,8 +2249,8 @@ const SHIRTS=['#3a8ab0','#e0785a','#6aae5f','#a060c0','#f0c04a','#e8e8e8'],HAIRS
 let creator={name:'',shirt:0,hair:0,hs:0,hat:1};
 function showTitle(){onTitle=true;titleBack=null;const el=$('#title');el.classList.remove('hidden');$('#hud').classList.add('hidden');updateTouchVis();
  const hs=hasSave();el.innerHTML=`<h1>${LANG==='sv'?'Hamnljus':'Harbor Light'}</h1><div class="sub">⚓ ${t('sub')} ⚓</div><div class="menu">${hs?`<button class="btn pri" id="tCont">▶ ${t('cont')}</button>`:''}<button class="btn${hs?'':' pri'}" id="tNew">✨ ${t('newg')}</button><button class="btn" id="tLang">${LANG==='sv'?'🇬🇧 English':'🇸🇪 Svenska'}</button><button class="btn" id="tFull">⛶ ${t('full')}</button></div><div class="foot">${t('footer')}</div>`;
- if(hs)$('#tCont').onclick=()=>{audioInit();continueGame();};
- $('#tNew').onclick=()=>{audioInit();showCreator();};
+ if(hs)$('#tCont').onclick=()=>{audioInit();forceFull();continueGame();};
+ $('#tNew').onclick=()=>{audioInit();forceFull();showCreator();};
  $('#tLang').onclick=()=>{prefs.lang=LANG=LANG==='sv'?'en':'sv';document.documentElement.lang=LANG;savePrefs();showTitle();};
  $('#tFull').onclick=toggleFull;
  setTimeout(()=>{if(navMode()){const b=el.querySelector('button');if(b)b.focus();}},50);}
@@ -2268,7 +2269,7 @@ function showCreator(){titleBack=showTitle;const el=$('#title');if(!creator.name
  el.querySelectorAll('[data-hr]').forEach(b=>b.onclick=()=>{creator.hair=+b.dataset.hr;showCreator();el.querySelector(`[data-hr="${creator.hair}"]`).focus();});
  $('#cStyle').onclick=()=>{creator.hs=(creator.hs+1)%STYLES.length;showCreator();$('#cStyle').focus();};
  $('#cHat').onclick=()=>{creator.hat=creator.hat?0:1;showCreator();$('#cHat').focus();};
- $('#cBack').onclick=showTitle;$('#cGo').onclick=()=>startNew((creator.name||'').trim().slice(0,14)||'Alex',creatorLook());
+ $('#cBack').onclick=showTitle;$('#cGo').onclick=()=>{forceFull();startNew((creator.name||'').trim().slice(0,14)||'Alex',creatorLook());};
  setTimeout(()=>{if(navMode())$('#cGo').focus();},30);}
 function startNew(name,look){try{localStorage.removeItem(SAVE_KEY);}catch(e){}state=newState(name,look);buildWorld();spawnForage();spawnDigs();genRequests();for(const id in AREAS)ensureArea(id);state.mainStart=snapStats();initNPCs();
  P.x=state.px;P.y=state.py;P.face=1;beginPlay();
