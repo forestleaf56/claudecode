@@ -106,9 +106,10 @@ body.touchmode.dlgopen #touch{z-index:16}
 body.touchmode.dlgopen #hotbar{visibility:hidden}
 @media (min-width:601px){body.touchmode.dlgopen #dialog{left:184px;right:176px;width:auto;transform:none}}
 @media (max-width:600px){body.touchmode.dlgopen #dialog{bottom:calc(max(12px,env(safe-area-inset-bottom)) + 166px)}}
-#splash{position:fixed;inset:0;z-index:80;display:flex;align-items:center;justify-content:center;background:radial-gradient(circle at 50% 42%,#fff8ea 0%,#f8e6c8 55%,#efd3aa 100%);opacity:0;transition:opacity .6s ease}
-#splash.on{opacity:1}
-#splashCv{width:min(78vmin,440px);height:min(78vmin,440px)}
+#splash{position:fixed;inset:0;z-index:80;display:flex;align-items:center;justify-content:center;background:radial-gradient(circle at 50% 42%,#fff8ea 0%,#f8e6c8 55%,#efd3aa 100%);opacity:1;transition:opacity .6s ease}
+#splash.out{opacity:0}
+#splashCv{width:min(78vmin,440px);height:min(78vmin,440px);opacity:0;transform:scale(.94);transition:opacity .9s ease,transform 1.2s ease}
+#splash.on #splashCv{opacity:1;transform:scale(1)}
 #fade{position:absolute;inset:0;background:#0d1220;opacity:0;pointer-events:none;transition:opacity .6s;z-index:25}
 #fade.on{opacity:1;pointer-events:auto}
 #title{position:absolute;inset:0;z-index:30;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;background:linear-gradient(rgba(255,214,186,.3),rgba(46,56,100,.5));padding:16px;text-align:center}
@@ -2532,8 +2533,8 @@ function drawSplashLogo(g,t){const W=g.canvas.width;g.setTransform(W/200,0,0,W/2
 function showSplash(done){const el=$('#splash'),cv2=$('#splashCv');const g2=cv2.getContext('2d');splashing=true;const t0=performance.now();
  const loop=(now)=>{if(!splashing)return;drawSplashLogo(g2,(now-t0)/1000);requestAnimationFrame(loop);};requestAnimationFrame(loop);
  requestAnimationFrame(()=>el.classList.add('on'));
- setTimeout(()=>el.classList.remove('on'),4400);
- setTimeout(()=>{splashing=false;el.remove();done&&done();},5000);}
+ setTimeout(()=>el.classList.add('out'),9400);
+ setTimeout(()=>{splashing=false;el.remove();done&&done();},10000);}
 function boot(){loadPrefs();document.documentElement.lang=LANG;resize();
  state=newState();state.area='harbor';state.time=19.4*60;buildWorld();for(const id in AREAS)ensureArea(id);spawnForage();initNPCs();P.x=-500;P.y=0;
  setupTouch();$('#tAl').textContent=t('aJump');$('#tBl').textContent=t('aUse');showTitle();requestAnimationFrame(frame);showSplash(()=>{const b=document.querySelector('#title button');if(b&&navMode())b.focus();});}
