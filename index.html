@@ -327,7 +327,7 @@ const FISH={};
 I('egg','Ägg','Egg','animal',25,['egg','#f8f0e0','#e0d0b8'],{sub:'animal'});ITEMS.egg.cat='animal';
 I('milk','Getmjölk','Goat Milk','animal',60,['milkb','#ffffff','#a8c8e0'],{sub:'animal'});ITEMS.milk.cat='animal';
 [
-['flour','Mjöl','Flour',8,'sack','#f4f0e8','#c8b8a0',15],
+['flour','Mjöl','Flour',8,'sack','#f4f0e8','#c8b8a0',22],
 ['sugar','Socker','Sugar',8,'sack','#ffffff','#a8c0e0',15],
 ['vinegar','Ättika','Vinegar',8,'bottle','#e8f0f0','#c8d8d8',15],
 ['butter','Smör','Butter',15,'butter','#f8e070','#e8c040',30],
@@ -507,10 +507,10 @@ const PROJ=Object.fromEntries(PROJECTS.map(p=>[p.id,p]));
 const SHOPS={
  store:{npc:'bodil',n:['Bodils Bod','Bodil\'s Shop'],open:[8,18],items:()=>{const s=season();const l=Object.keys(CROPS).filter(c=>c!=='saffron'&&(CROPS[c].se.includes(s)||(state.proj.greenhouse))).map(c=>({id:c+'_seed'}));
    return [...l,{id:'flour'},{id:'sugar'},{id:'vinegar'},{id:'butter'},{id:'fertilizer'},{rec:'jar_m',price:600},{rec:'pancakes',price:300},{rec:'potsalad',price:300},{up:'bag'}];}},
- fish:{npc:'sixten',n:['Sixtens Fiskhandel','Sixten\'s Fish Shop'],open:[9,16],items:()=>[{id:'bait'},{id:'qbait',need:()=>state.stats.fish>=15},{rec:'smoker',price:800},{rec:'grilledmack',price:250},{rec:'fishstew',price:500,need:()=>state.stats.fish>=20},{rec:'gravlax',price:700,need:()=>state.stats.fish>=30},{rec:'toast_skagen',price:600},{up:'rod'}]},
+ fish:{npc:'sixten',n:['Sixtens Fiskhandel','Sixten\'s Fish Shop'],open:[9,16],items:()=>[{id:'bait'},{id:'qbait',need:()=>state.stats.fish>=15},{rec:'smoker',price:800},{rec:'qbait',price:500,need:()=>state.stats.fish>=10},{rec:'grilledmack',price:250},{rec:'fishstew',price:500,need:()=>state.stats.fish>=20},{rec:'gravlax',price:700,need:()=>state.stats.fish>=30},{rec:'toast_skagen',price:600},{up:'rod'}]},
  carp:{npc:'maja',n:['Majas Snickeri','Maja\'s Workshop'],open:[7,17],items:()=>[{id:'wood',buy:6},{id:'stone',buy:6},{id:'hardwood',buy:60},{id:'plank',buy:25},{rec:'bench',price:300},{rec:'birdhouse',price:300},{rec:'flowerbox',price:350},{rec:'sprinkler',price:1000},{rec:'hive',price:900},{rec:'scarecrow',price:300},{up:'hoe'},{up:'can'},{up:'axe'},{up:'pick'}]},
- cafe:{npc:'linnea',n:['Café Måsen','The Gull Café'],open:[7,21],items:()=>[{id:'coffee',buy:40},{id:'bun',buy:90},{id:'bread',buy:60},{id:'shrimpsand',buy:200,need:()=>state.proj.cafe},{id:'strawcake',buy:330,need:()=>state.proj.cafe},{rec:'bun',price:400},{rec:'omelette',price:0,need:()=>false},{rec:'bluepie',price:600,need:()=>state.proj.cafe},{rec:'rhubarbpie',price:500,need:()=>state.proj.cafe},{rec:'honeycake',price:700,need:()=>state.proj.cafe}]},
- greta:{npc:'greta',n:['Gretas Gårdsbod','Greta\'s Farm Stand'],open:[6,18],items:()=>[{id:'fertilizer'},{animal:'chicken',price:800,need:()=>state.proj.coop},{animal:'goat',price:2500,need:()=>state.proj.shed},{rec:'press',price:900,need:()=>state.proj.shed},{rec:'cabbagerolls',price:450},{rec:'peasoup',price:350},{rec:'kalesoup',price:350},{id:'milk',buy:120,need:()=>state.proj.shed},{id:'egg',buy:50}]},
+ cafe:{npc:'linnea',n:['Café Måsen','The Gull Café'],open:[7,21],items:()=>[{id:'coffee',buy:40},{id:'bun',buy:90},{id:'bread',buy:60},{id:'shrimpsand',buy:200,need:()=>state.proj.cafe},{id:'strawcake',buy:330,need:()=>state.proj.cafe},{rec:'bun',price:400},{rec:'shrimpsand',price:500,need:()=>state.proj.cafe},{rec:'omelette',price:0,need:()=>false},{rec:'bluepie',price:600,need:()=>state.proj.cafe},{rec:'rhubarbpie',price:500,need:()=>state.proj.cafe},{rec:'honeycake',price:700,need:()=>state.proj.cafe}]},
+ greta:{npc:'greta',n:['Gretas Gårdsbod','Greta\'s Farm Stand'],open:[6,18],items:()=>[{id:'fertilizer'},{animal:'chicken',price:800,need:()=>state.proj.coop},{animal:'goat',price:2500,need:()=>state.proj.shed},{rec:'press',price:900,need:()=>state.proj.shed},{rec:'cabbagerolls',price:450},{rec:'peasoup',price:350},{rec:'kalesoup',price:350},{rec:'pumpsoup',price:600},{id:'milk',buy:120,need:()=>state.proj.shed},{id:'egg',buy:50}]},
  saga:{npc:'saga',n:['Sagas Stuga','Saga\'s Cottage'],open:[6,20],items:()=>[{id:'herbtea',buy:200},{rec:'mushsoup',price:600},{rec:'chantoast',price:500},{rec:'dryer',price:700},{id:'dill_seed'},{id:'onion_seed'}]},
  nils:{npc:'nils',n:['Nils Gruvkontor','Nils\'s Mine Office'],open:[7,16],items:()=>[{id:'coal',buy:40},{id:'copper_ore',buy:30},{id:'iron_ore',buy:60,need:()=>state.flags.cave},{id:'clay',buy:20},{id:'sand',buy:10},{rec:'furnace',price:1200}]},
  ship:{npc:null,n:['Handelsskeppet','The Trading Ship'],open:[8,20],items:()=>[{id:'saffron_seed'},{id:'shipmodel',buy:2500},{id:'telescope',buy:4000},{id:'gnome',buy:1200},{id:'maypole',buy:1200},{id:'cloudberry',buy:300},{id:'silver_ore',buy:120},{id:'qbait',buy:20},{rec:'sprinkler2',price:3000},{rec:'cloudparfait',price:1500},{up:'rod'}]},
@@ -636,7 +636,7 @@ const MAINQ=[
  {id:'m_friends',n:['Gemenskap','Community'],d:['Nå 3 hjärtan med 3 bybor. Prata med dem varje dag och ge gåvor.','Reach 3 hearts with 3 villagers. Talk daily and give gifts.'],goal:{t:'hearts',n:3,lv:3},rw:{money:500}},
  {id:'m_coopcafe',n:['Hönor och kaffe','Hens and Coffee'],d:['Slutför projekten Hönshus och Kaféterrass.','Complete the Chicken Coop and Café Terrace projects.'],goal:{t:'proj',ids:['coop','cafe']}},
  {id:'m_viggo',n:['Albatrossen','The Albatross'],d:['Viggo vid bryggan har en båt som behöver lagas. Prata med honom.','Viggo on the boardwalk has a boat that needs fixing. Talk to him.'],goal:{t:'talk',npc:'viggo'},
-  say:[['Så du är den som får hamnen att leva igen. Respekt.','So you\'re the one bringing the harbor back to life. Respect.'],['Albatrossen här kan ta oss till Fyrön. Men hon behöver plankor, rep, järn och nya segel.','The Albatross here could take us to Lighthouse Isle. But she needs planks, rope, iron and new sails.'],['Segelduk väver du av fiber. Jag lär dig hur.','You weave sailcloth from fiber. I\'ll show you how.']],rw:{rec:'cloth',flag:'m_boat'}},
+  say:[['Så du är den som får hamnen att leva igen. Respekt.','So you\'re the one bringing the harbor back to life. Respect.'],['Albatrossen här kan ta oss till Fyrön. Men hon behöver plankor, rep, järn och nya segel.','The Albatross here could take us to Lighthouse Isle. But she needs planks, rope, iron and new sails.'],['Segelduk väver du av fiber. Jag lär dig hur.','You weave sailcloth from fiber. I\'ll show you how.'],['Järn? Det finns i grottan bortom klyftan vid Klipporna. Bygg Klippbron först, sen smälter du malmen i en smältugn.','Iron? You\'ll find it in the cave beyond the chasm at the Cliffs. Build the Cliff Bridge first, then smelt the ore in a furnace.']],rw:{rec:'cloth',flag:'m_boat'}},
  {id:'m_boatp',n:['Mot horisonten','Toward the Horizon'],d:['Slutför projektet "Viggos båt".','Complete the "Viggo\'s Boat" project.'],goal:{t:'proj',ids:['boat']},rw:{energy:10}},
  {id:'m_island',n:['Fyrön','Lighthouse Isle'],d:['Prata med Viggo vid båten och segla till Fyrön.','Talk to Viggo at the boat and sail to Lighthouse Isle.'],goal:{t:'area',a:'island'}},
  {id:'m_logbook',n:['Fyrvaktarens loggbok','The Keeper\'s Logbook'],d:['Klättra upp i fyren och undersök lampan.','Climb the lighthouse and examine the lamp.'],goal:{t:'flag',f:'logbook'}},
@@ -1217,6 +1217,7 @@ function newDay(passedOut){
  state.buffs={};
  state.energy=passedOut?Math.round(state.maxE*0.6):state.maxE;
  spawnForage();spawnDigs();genRequests();
+ state.mail=state.mail.filter(m=>m.id==='intro'||!(m.read&&(m.claimed||!m.rw)&&m.day<state.day-28));if(state.mail.length>60)state.mail=state.mail.filter(m=>m.id==='intro'||!m.read||(m.rw&&!m.claimed)).slice(-60);
  for(const id in AREAS)ensureArea(id);
  for(const id in NPCS){const f=fr(id);if(f.talk<state.day-7&&f.p>0&&hearts(id)<10)f.p=Math.max(0,f.p-5);}
  return total;
@@ -1473,7 +1474,7 @@ function completeMain(){const q=MAINQ[state.mainIdx];if(!q)return;
  refreshTracker();setTimeout(checkMain,100);saveGame(true);}
 function giveReward(rw){if(!rw)return;
  if(rw.money){earn(rw.money);toast(`💰 +${rw.money} kr`);}
- if(rw.items)for(const [id,n] of rw.items)giveItem(id,n);
+ if(rw.items)for(const [id,n] of rw.items){if(ITEMS[id].cat==='tool'&&(countItem(id)>0||state.chest.some(c=>c&&c.id===id)))continue;giveItem(id,n);}
  if(rw.rec&&!state.recipes[rw.rec]){state.recipes[rw.rec]=1;toast('📖 '+t('newRecipe')+': '+tr(ITEMS[RECIPES[rw.rec].out].n),RECIPES[rw.rec].out);}
  if(rw.flag)state.flags[rw.flag]=1;
  if(rw.energy){state.maxE+=rw.energy;state.energy=Math.min(state.maxE,state.energy+rw.energy);toast('⚡ '+t('maxEnergyUp',rw.energy));}
@@ -1829,7 +1830,7 @@ let toastQ=[];
 function toast(msg,icon,big){const el=document.createElement('div');el.className='toast'+(big?' big':'');el.innerHTML=(icon&&ITEMS[icon]?iimg(icon):'')+'<span>'+esc(msg)+'</span>';const box=$('#toasts');box.appendChild(el);while(box.children.length>5)box.firstChild.remove();setTimeout(()=>{el.style.transition='opacity .4s';el.style.opacity='0';setTimeout(()=>el.remove(),400);},big?4200:2800);}
 let hudSig='';
 function hudTick(){if(!state)return;const h=Math.floor(state.time/60)%24,m=Math.floor(state.time%60/10)*10;
- const clk=`${tr(SEASONS[season()])} ${dayOfSeason()} · ${tr(DAYS[weekday()])} · ${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')} ${WEATHER_ICON[state.weather]}`;
+ const nightW=state.weather==='sun'&&(hour()>=20.5||hour()<5.5)?'🌙':WEATHER_ICON[state.weather];const clk=`${tr(SEASONS[season()])} ${dayOfSeason()} · ${tr(DAYS[weekday()])} · ${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')} ${nightW}`;
  const sig=clk+state.money+Math.round(state.energy)+state.maxE+Object.keys(state.buffs).join()+state.water;if(sig===hudSig)return;hudSig=sig;
  $('#clock').textContent=clk;$('#money').textContent=`💰 ${state.money.toLocaleString('sv-SE')} kr`;
  $('#energyFill').style.width=(state.energy/state.maxE*100)+'%';$('#energyFill').style.background=state.energy<15?'linear-gradient(#f0a080,#d05040)':'';$('#energyTxt').textContent=`⚡ ${Math.round(state.energy)}/${state.maxE}`;
@@ -1838,10 +1839,12 @@ function hudTick(){if(!state)return;const h=Math.floor(state.time/60)%24,m=Math.
 }
 function refreshTracker(){if(!state)return;const q=MAINQ[state.mainIdx];const f=festivalToday();let h='';
  if(f)h+=`<div>${t('festTitle',tr(f.n))} <span style="opacity:.8">${f.h[0]}–${f.h[1]>24?f.h[1]-24:f.h[1]}</span></div>`;
- if(q){const [a,b]=goalProgress(q);h+=`<div><b>${esc(tr(q.n))}</b>${b>1?` (${a}/${b})`:''}</div><div style="opacity:.9">${esc(tr(q.d))}</div>`;}
+ if(q){const [a,b]=goalProgress(q);h+=`<div><b>${esc(tr(q.n))}</b>${b>1?` (${a}/${b})`:''}</div><div style="opacity:.9">${esc(tr(q.d))}</div>`;if(q.goal.t==='talk')h+=npcWhere(q.goal.npc);}
  else{const next=ACH.find(a=>!state.ach[a[0]]);if(next)h+=`<div><b>🏆 ${esc(tr(next[1]))}</b></div><div style="opacity:.9">${esc(tr(next[2]))}</div>`;}
  if(!h)h=`<div><b>⚓ ${LANG==='sv'?'Utforska Saltvik':'Explore Saltvik'}</b></div>`;$('#tracker').innerHTML=h;$('#tracker').classList.remove('hidden');placeTracker();}
 function placeTracker(){const tb=$('#topbar'),tk=$('#tracker');if(!tb||!tk)return;tk.style.top=(tb.offsetTop+tb.offsetHeight+6)+'px';}
+function npcWhere(id){const n=npcs[id],N=NPCS[id];if(!n)return '';if(n.vis&&n.area)return `<div style="color:#bfe8f8">📍 ${N.n}: ${tr(AREA_NAMES[n.area])}${n.area===state.area?(LANG==='sv'?' (här!)':' (here!)'):''}</div>`;
+ const h=hour();const nxt=N.sched.find(s=>s[1]&&s[0]>h);const first=N.sched.find(s=>s[1]);const at=nxt?nxt[0]:first[0];return `<div style="color:#bfe8f8">🌙 ${N.n} ${LANG==='sv'?`är inte ute nu – syns igen kl ${at}:00${nxt?'':' i morgon'}`:`isn't out now – back at ${at}:00${nxt?'':' tomorrow'}`}</div>`;}
 function refreshHotbar(){if(!state)return;const hb=$('#hotbar');let h='';for(let i=0;i<8;i++){const s=state.inv[i];h+=`<button class="slot${i===state.sel?' sel':''}" data-hb="${i}" tabindex="-1"><span class="k">${i+1}</span>${s?iimg(s.id)+(s.n>1?`<span class="n">${s.n}</span>`:(s.id==='can'?`<span class="n">💧${state.water}</span>`:s.id==='rod'?`<span class="n">${state.tl.rod}</span>`:'')):''}</button>`;}hb.innerHTML=h;hudSig='';
  const s=selItem();$('#tBl').textContent='';}
 function selectSlot(i){state.sel=(i+8)%8;refreshHotbar();sfx('menu');const s=selItem();if(s)toast(tr(ITEMS[s.id].n)+(s.id==='rod'||ITEMS[s.id].cat==='tool'&&s.id!=='rod'?' · '+tr(UPG[s.id]?UPG[s.id].names[state.tl[s.id]-1]:['','']):''),s.id);}
@@ -2049,7 +2052,7 @@ function interact(tg){
  case 'lamp':useLamp();break;
  }}
 const TRAVEL_DEST={farm:15.5,forest:58,harbor:46,beach:18,cliffs:13,cave:4,island:14,greenhouse:3};
-function travelAreas(){const v=state.visited||{};return Object.keys(TRAVEL_DEST).filter(a=>a!==state.area&&(v[a]||a==='farm')&&(a!=='island'||state.proj.boat)&&(a!=='greenhouse'||state.proj.greenhouse));}
+function travelAreas(){const v=state.visited||{};return Object.keys(TRAVEL_DEST).filter(a=>a!==state.area&&(v[a]||a==='farm')&&(a!=='island'||state.proj.boat)&&(a!=='cave'||state.proj.bridge)&&(a!=='greenhouse'||state.proj.greenhouse));}
 function openTravel(){const list=travelAreas();openDialog({name:'🧭 '+t('travelTo'),icon:'compass',pages:[t('travelWhere')],choices:[...list.map(a=>({label:tr(AREA_NAMES[a]),pri:1,fn:()=>sail(a,TRAVEL_DEST[a])})),{label:t('cancel')}]});}
 function sail(to,tx){sfx('splash');$('#fade').classList.add('on');setTimeout(()=>{state.time=Math.min(state.time+30,25.9*60);goArea(to,tx);$('#fade').classList.remove('on');},650);}
 function useLamp(){if(!state.flags.logbook){openDialog({icon:'compass',name:'📖',pages:[t('logbook1'),t('logbook2'),t('logbook3'),t('logbook4')],onClose:()=>{state.flags.logbook=1;checkMain();}});return;}
@@ -2310,7 +2313,7 @@ function goSleep(passed){if(sleeping)return;sleeping=true;fishing=null;hideFishU
 const TIME_SPEED=1.2;
 let hourMark=-1,achT=0;
 function collectTouch(){const a=area();const fl=state.forage[a.id]||[];
- for(let i=fl.length-1;i>=0;i--){const f=fl[i];const fx=f.x*TS+8,fy=(f.y+1)*TS;if(Math.abs(fx-P.x)<12&&Math.abs(fy-P.y)<20){if(!canFit(f.id))continue;fl.splice(i,1);giveItem(f.id,1);state.stats.forage++;sfx('pick');for(let k=0;k<5;k++)addParticle(fx,fy-8,rnd(-1,1),rnd(-1.5,-.3),20,'#fff8c0',1.5);}}
+ for(let i=fl.length-1;i>=0;i--){const f=fl[i];const fx=f.x*TS+8,fy=(f.y+1)*TS;if(Math.abs(fx-P.x)<12&&Math.abs(fy-P.y)<20){if(!canFit(f.id)){if(performance.now()-(collectTouch.t||0)>4000){collectTouch.t=performance.now();toast('🎒 '+t('bagFull'));}continue;}fl.splice(i,1);giveItem(f.id,1);state.stats.forage++;sfx('pick');for(let k=0;k<5;k++)addParticle(fx,fy-8,rnd(-1,1),rnd(-1.5,-.3),20,'#fff8c0',1.5);}}
  for(const sh of a.shells){if(state.shells[sh.id])continue;const sx=sh.x*TS+8,sy=(sh.y+1)*TS-7;if(Math.abs(sx-P.x)<12&&Math.abs(sy-(P.y-10))<16){state.shells[sh.id]=1;sfx('fanfare');toast('🐚 '+t('shellFound',Object.keys(state.shells).length),null,true);for(let k=0;k<14;k++)addParticle(sx,sy,rnd(-1.5,1.5),rnd(-2,0),40,'#f0c040',2);}}
  for(const sp of a.specials){if(sp.id==='lensrock'||!sp.cond()||state.flags['got_'+sp.id])continue;if(Math.abs(sp.x*TS+8-P.x)<14&&Math.abs((sp.y+1)*TS-P.y)<20){state.flags['got_'+sp.id]=1;giveItem(sp.id,1);sfx('fanfare');toast('✨ '+tr(ITEMS[sp.id].n),sp.id,true);checkMain();}}}
 function step(dt){TIME+=dt;
@@ -2319,7 +2322,7 @@ function step(dt){TIME+=dt;
  if(consume('use'))doUse();
  updatePlayer();updateFishing(dt);updateNPCs();collectTouch();target=findTarget();
  const hr=Math.floor(state.time/60);if(hr!==hourMark){hourMark=hr;refreshTracker();}
- achT+=dt;if(achT>2.5){achT=0;checkAch();checkMain();}
+ achT+=dt;if(achT>2.5){achT=0;checkAch();checkMain();refreshTracker();}
  if(state.time>=26*60){toast(t('passedOut'));goSleep(true);}
  updateCam();}
 let last=performance.now(),acc=0;
