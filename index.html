@@ -722,7 +722,7 @@ const tget=(a,x,y)=>(x<0||x>=a.w)?(y>=0?T.STONE:0):(y<0?0:(y>=a.h?T.STONE:a.t[y*
 const tset=(a,x,y,v)=>{if(x>=0&&x<a.w&&y>=0&&y<a.h)a.t[y*a.w+x]=v;};
 function fillT(a,x0,y0,x1,y1,v){for(let y=y0;y<=y1;y++)for(let x=x0;x<=x1;x++)tset(a,x,y,v);}
 function groundT(a,x0,x1,top,v){fillT(a,x0,top,x1,ROWS-1,v);}
-function floorRow(a,x){x=clamp(Math.floor(x),0,a.w-1);for(let y=0;y<ROWS;y++){if(isSolid(tget(a,x,y)))return y;}return ROWS;}
+function floorRow(a,x){x=clamp(Math.floor(x),0,a.w-1);for(let y=1;y<ROWS;y++){if(isSolid(tget(a,x,y))&&!isSolid(tget(a,x,y-1)))return y;}return ROWS;}
 function house(a,x0,w,h,o){const top=18-h;a.deco.push(Object.assign({k:'house',x:x0,w,h,top},o));fillT(a,x0+1,top-2,x0+w-2,top-2,T.INV);if(o.door!=null)a.inter.push({k:o.kind||'shop',id:o.id,x:o.door,y:18,label:o.label});}
 function climbAid(a,x,roofRow){for(let r=16;r>roofRow;r-=2){fillT(a,x-1,r,x+1,r,T.PLAT);}a.deco.push({k:'scaffold',x,roofRow});}
 function inter(a,k,x,y,o){a.inter.push(Object.assign({k,x,y},o||{}));}
@@ -1006,7 +1006,7 @@ function newState(name,look){
  tilled:{},crops:{},placed:{},trees:{},rocks:{},forage:{},digs:{},shipBin:[],chest:Array(36).fill(null),
  fr:{},mainIdx:0,mainStart:null,side:{},flags:{},proj:{},don:{},
  stats:{fish:0,planted:0,harvested:0,earned:0,forage:0,mined:0,chopped:0,cooked:0,crafted:0,shipped:0,gifts:0,artisan:0,talks:0},
- found:{},fishLog:{},museum:{},shells:{},cookedSet:{},recipes:{},ach:{},mail:[],reqs:[],animals:{chicken:0,goat:0},coopBox:{egg:0,milk:0},
+ visited:{farm:1},found:{},fishLog:{},museum:{},shells:{},cookedSet:{},recipes:{},ach:{},mail:[],reqs:[],animals:{chicken:0,goat:0},coopBox:{egg:0,milk:0},
  buffs:{},hrGiven:{},festGift:{},shellRw:{},musRw:{},playTime:0};
  s.inv[0]={id:'hoe',n:1};s.inv[1]={id:'can',n:1};s.inv[2]={id:'axe',n:1};s.inv[3]={id:'pick',n:1};s.inv[4]={id:'bread',n:3};
  for(const r in RECIPES)if(RECIPES[r].def)s.recipes[r]=1;
@@ -1152,7 +1152,7 @@ function goArea(to,tx){
  let fy=floorRow(a,tx);
  const nx=clamp(x,8,a.w*TS-8);P.x=nx;P.y=fy*TS;P.vx=0;P.vy=0;P.climb=false;
  if(to==='cave'&&!state.flags.cave){state.flags.cave=1;}
- if(to==='island')state.flags.visitIsland=1;
+ if(to==='island')state.flags.visitIsland=1;if(!state.visited)state.visited={};state.visited[to]=1;
  ensureArea(to);areaFade=1;areaLabelT=150;sfx('door');
  cam.x=P.x-viewW/2;cam.y=P.y-viewH*0.6;clampCam();
  checkMain();refreshTracker();
@@ -1638,7 +1638,9 @@ function drawInter(a,lights){const cx=cam.x,cy=Math.round(cam.y),dk=darkness();
   case 'well':R(X,Y-12,18,12,'#9a9aa0');R(X,Y-12,18,2,'#b8b8c0');R(X+1,Y-30,2,18,'#6a4428');R(X+15,Y-30,2,18,'#6a4428');g.fillStyle='#7a4a3a';g.beginPath();g.moveTo(X-4,Y-28);g.lineTo(X+9,Y-38);g.lineTo(X+22,Y-28);g.fill();R(X+8,Y-28,1,10,'#888');R(X+6,Y-18,5,4,'#8a5a30');break;
   case 'stall':R(X-12,Y-28,40,4,'#4f8f48');for(let i=0;i<5;i++)R(X-12+i*8,Y-24,4,4,i%2?'#4f8f48':'#f8f0e0');R(X-10,Y-22,2,22,'#8a5a30');R(X+24,Y-22,2,22,'#8a5a30');R(X-10,Y-12,36,12,'#a8743f');g.drawImage(iconCanvas('pumpkin'),X-6,Y-18,10,10);g.drawImage(iconCanvas('carrot'),X+6,Y-18,10,10);g.drawImage(iconCanvas('egg'),X+16,Y-17,8,8);break;
   case 'ship':{const Yw=19*TS-cy+Math.sin(TIME)*1.5;g.fillStyle='#6a3a2a';g.beginPath();g.moveTo(X-40,Yw-14);g.lineTo(X+70,Yw-14);g.lineTo(X+58,Yw+8);g.lineTo(X-30,Yw+8);g.fill();R(X-40,Yw-16,110,3,'#e8c060');R(X+10,Yw-90,4,76,'#5a3a20');R(X+40,Yw-70,3,56,'#5a3a20');g.fillStyle='#f8f0dc';g.fillRect(X-10,Yw-86,44,30);g.fillRect(X+26,Yw-66,30,24);R(X+12,Yw-94,10,5,'#3a6ab0');for(let i=0;i<5;i++)R(X-30+i*18,Yw-10,6,5,dk>.15?'#ffd880':'#3a2a20');if(dk>.15)lights.push([X+14,Yw-10,30,0.6]);}break;
-  case 'coop':break;case 'boat':break;case 'warp':break;case 'lamp':break;
+  case 'warp':if(a.id==='cave'){g.fillStyle='#4a4250';g.beginPath();g.ellipse(X+8,Y,18,30,0,Math.PI,0);g.fill();const gr=g.createLinearGradient(X,Y-26,X,Y);gr.addColorStop(0,'#f8e8b8');gr.addColorStop(1,'#c8d8a0');g.fillStyle=gr;g.beginPath();g.ellipse(X+8,Y,12,24,0,Math.PI,0);g.fill();R(X-14,Y-40,16,10,'#7a5030');R(X-13,Y-39,14,8,'#e8d8b0');R(X-11,Y-36,8,2,'#3a2a1a');R(X-11,Y-37,2,4,'#3a2a1a');R(X-12,Y-36,1,2,'#3a2a1a');R(X-8,Y-30,2,30,'#6a4428');lights.push([X+8,Y-12,70,1]);}
+   else if(a.id==='greenhouse'){R(X-2,Y-26,16,26,'#5a7a6a');R(X,Y-24,12,24,'#a8d8c8');R(X+9,Y-13,2,2,'#f0c040');}break;
+  case 'coop':break;case 'boat':break;case 'lamp':break;
   }}
 }
 function drawEntities(a,lights){const cx=Math.round(cam.x),cy=Math.round(cam.y),dk=darkness(),s=season();
@@ -1798,7 +1800,7 @@ const S={
  askAt:['Fråga {0}','Ask {0}'],talkedToday:['Pratat idag','Talked today'],giftedToday:['Gåva idag','Gifted today'],loves:['Älskar','Loves'],
  music:['Musik','Music'],sfx:['Ljud','Sound'],speed:['Dagslängd','Day length'],slow:['Lugn','Relaxed'],normal:['Normal','Normal'],fast:['Snabb','Quick'],
  touchC:['Pekkontroller','Touch controls'],auto:['Auto','Auto'],on:['På','On'],off:['Av','Off'],saveNow:['Spara nu','Save now'],exportS:['Exportera sparfil','Export save'],importS:['Importera sparfil','Import save'],
- toTitle:['Till titelskärmen','To title screen'],saveExit:['💾 Spara & avsluta','💾 Save & exit'],fullDef:['Helskärm (standard)','Fullscreen (default)'],autosaved:['Autosparat','Autosaved'],language:['Språk','Language'],copied:['Kopierat till urklipp!','Copied to clipboard!'],pasteSave:['Klistra in sparkod:','Paste save code:'],badSave:['Ogiltig sparkod.','Invalid save code.'],
+ toTitle:['Till titelskärmen','To title screen'],travelHome:['Res hem (30 min)','Travel home (30 min)'],travelTo:['Res till…','Travel to…'],travelWhere:['Vart vill du resa? Resan tar 30 minuter.','Where would you like to go? The trip takes 30 minutes.'],homeBtn:['🏠 Hem','🏠 Home'],saveExit:['💾 Spara & avsluta','💾 Save & exit'],fullDef:['Helskärm (standard)','Fullscreen (default)'],autosaved:['Autosparat','Autosaved'],language:['Språk','Language'],copied:['Kopierat till urklipp!','Copied to clipboard!'],pasteSave:['Klistra in sparkod:','Paste save code:'],badSave:['Ogiltig sparkod.','Invalid save code.'],
  stats:['Statistik','Statistics'],played:['Speltid','Play time'],wateredCan:['Vatten: {0}','Water: {0}'],
  intro1:['Ett brev väntade på dig i den gamla stugan…','A letter was waiting for you in the old cottage…'],
  intro2:['Du har ärvt Mormor Ingrids gård i Saltvik — en sömnig hamnby vid havet, där fyren slocknat.','You\'ve inherited Grandma Ingrid\'s farm in Saltvik — a sleepy harbor village by the sea, where the lighthouse has gone dark.'],
@@ -1880,7 +1882,7 @@ function chips(list,mult=1){return '<div class="chips">'+list.map(([s,n])=>{cons
 function itemRow(id,sub,btns,cls){return `<div class="row ${cls||''}">${iimg(id)}<div class="grow"><b>${esc(tr(ITEMS[id].n))}</b>${sub?`<div class="sub">${sub}</div>`:''}</div>${btns||''}</div>`;}
 
 // ---- main menu
-function openMenu(tab){if(!state)return;openPanel({title:'☰ '+state.name,tabs:[{id:'inv',label:'🎒 '+t('inv')},{id:'craft',label:'🔨 '+t('craft')},{id:'quests',label:'📜 '+t('quests')},{id:'coll',label:'📚 '+t('coll')},{id:'friends',label:'❤️ '+t('friends')},{id:'settings',label:'⚙️ '+t('settings')},{id:'help',label:'❓ '+t('help')}],render:renderMenuTab,act:menuAct,headExtra:`<button class="btn sm" data-act="exit" data-fid="exit">${t('saveExit')}</button>`});if(tab){panelOpen.tab=tab;renderPanel(false);}}
+function openMenu(tab){if(!state)return;openPanel({title:'☰ '+state.name,tabs:[{id:'inv',label:'🎒 '+t('inv')},{id:'craft',label:'🔨 '+t('craft')},{id:'quests',label:'📜 '+t('quests')},{id:'coll',label:'📚 '+t('coll')},{id:'friends',label:'❤️ '+t('friends')},{id:'settings',label:'⚙️ '+t('settings')},{id:'help',label:'❓ '+t('help')}],render:renderMenuTab,act:menuAct,headExtra:`${state.area!=='farm'?`<button class="btn sm" data-act="gohome" data-fid="gohome">${t('homeBtn')}</button>`:''}<button class="btn sm" data-act="exit" data-fid="exit">${t('saveExit')}</button>`});if(tab){panelOpen.tab=tab;renderPanel(false);}}
 let invUI={sel:-1,moving:false,trashC:false};
 function renderMenuTab(tab){
  if(tab==='inv'){let h=`<div class="muted">${t('hotbarHint')} · ${invSize()} / 40</div><div class="grid" style="margin-top:6px">`;
@@ -1915,6 +1917,7 @@ function menuAct(a,arg){
  if(a==='export'){const code=btoa(unescape(encodeURIComponent(JSON.stringify(state))));try{navigator.clipboard.writeText(code).then(()=>toast(t('copied')),()=>prompt('',code));}catch(e){prompt('',code);}return;}
  if(a==='import'){const c=prompt(t('pasteSave'));if(!c)return;try{const s=JSON.parse(decodeURIComponent(escape(atob(c.trim()))));if(!s.inv||!s.stats)throw 0;localStorage.setItem(SAVE_KEY,JSON.stringify(s));location.reload();}catch(e){toast(t('badSave'));}return;}
  if(a==='title'||a==='exit'){exitToTitle();return;}
+ if(a==='gohome'){closePanel();sail('farm',15.5);return;}
 }
 function refreshAllText(){refreshHotbar();refreshTracker();hudSig='';hudTick();$('#tAl').textContent=t('aJump');$('#tBl').textContent=t('aUse');}
 
@@ -2011,6 +2014,8 @@ function talkTo(id){const N=NPCS[id];const f=fr(id);
  if(mainAllowsSide())for(const q of SIDEQ.filter(q=>q.npc===id&&!state.side[q.id]&&(!q.pre||q.pre()))){choices.push({label:'❔ '+t('quest')+': '+tr(q.n),fn:()=>openDialog({npc:id,pages:[tr(q.d)],choices:[{label:t('accept'),pri:1,fn:()=>{state.side[q.id]='active';sfx('quest');toast('📌 '+tr(q.n));}},{label:t('notNow')}]})});break;}
  choices.push({label:'🎁 '+t('gift'),fn:()=>openPicker(t('giftWhat'),i=>!['tool','special'].includes(ITEMS[i].cat),it=>giveGift(id,it))});
  const shopId=Object.keys(SHOPS).find(k=>SHOPS[k].npc===id);if(shopId&&shopOpen(shopId))choices.push({label:'🛒 '+t('shop'),fn:()=>openShop(shopId)});
+ if(id==='greta')choices.push({label:'🧭 '+t('travelTo'),fn:openTravel});
+ if(state.area!=='farm')choices.push({label:'🏠 '+t('travelHome'),fn:()=>sail('farm',15.5)});
  choices.push({label:t('bye')});
  openDialog({npc:id,pages:[pickLine(id)],choices});if(first)sfx('talk');}
 function markTalk(id){const f=fr(id);if(f.talk!==state.day){f.talk=state.day;addPts(id,20);state.stats.talks++;}}
@@ -2030,7 +2035,7 @@ function interact(tg){
  case 'ship':openShop('ship');break;
  case 'fest':openShop('fest');break;
  case 'stall':if(!shopOpen('greta')){toast(t('closed',6,18));return;}openShop('greta');break;
- case 'home':openDialog({name:'🏠 '+t('home'),pages:[`${tr(SEASONS[season()])} ${dayOfSeason()} · ${t('tomorrow',tr(WEATHER_N[state.tomorrow])+' '+WEATHER_ICON[state.tomorrow])}`],choices:[{label:'🛏️ '+t('sleep'),pri:1,fn:()=>confirmBox(t('sleepQ'),()=>goSleep(false))},{label:'🍳 '+t('kitchen'),fn:openKitchen},{label:'📦 '+t('chest'),fn:openChest},{label:t('cancel')}]});break;
+ case 'home':openDialog({name:'🏠 '+t('home'),pages:[`${tr(SEASONS[season()])} ${dayOfSeason()} · ${t('tomorrow',tr(WEATHER_N[state.tomorrow])+' '+WEATHER_ICON[state.tomorrow])}`],choices:[{label:'🛏️ '+t('sleep'),pri:1,fn:()=>confirmBox(t('sleepQ'),()=>goSleep(false))},{label:'🍳 '+t('kitchen'),fn:openKitchen},{label:'🧭 '+t('travelTo'),fn:openTravel},{label:'📦 '+t('chest'),fn:openChest},{label:t('cancel')}]});break;
  case 'museum':openMuseum();break;
  case 'elofhome':msg(t('elofHome'));break;
  case 'warp':goArea(o.to,o.tx);break;
@@ -2043,6 +2048,9 @@ function interact(tg){
  case 'boat':if(o.back){confirmBox(t('sailBack'),()=>sail('harbor',127));return;}if(!state.proj.boat){msg(t('boatBroken'));return;}confirmBox(t('sailQ'),()=>sail('island',5));break;
  case 'lamp':useLamp();break;
  }}
+const TRAVEL_DEST={farm:15.5,forest:58,harbor:46,beach:18,cliffs:13,cave:4,island:14,greenhouse:3};
+function travelAreas(){const v=state.visited||{};return Object.keys(TRAVEL_DEST).filter(a=>a!==state.area&&(v[a]||a==='farm')&&(a!=='island'||state.proj.boat)&&(a!=='greenhouse'||state.proj.greenhouse));}
+function openTravel(){const list=travelAreas();openDialog({name:'🧭 '+t('travelTo'),icon:'compass',pages:[t('travelWhere')],choices:[...list.map(a=>({label:tr(AREA_NAMES[a]),pri:1,fn:()=>sail(a,TRAVEL_DEST[a])})),{label:t('cancel')}]});}
 function sail(to,tx){sfx('splash');$('#fade').classList.add('on');setTimeout(()=>{state.time=Math.min(state.time+30,25.9*60);goArea(to,tx);$('#fade').classList.remove('on');},650);}
 function useLamp(){if(!state.flags.logbook){openDialog({icon:'compass',name:'📖',pages:[t('logbook1'),t('logbook2'),t('logbook3'),t('logbook4')],onClose:()=>{state.flags.logbook=1;checkMain();}});return;}
  if(state.flags.relit){msg(t('litAlready'));return;}
@@ -2285,8 +2293,8 @@ function showCreator(){titleBack=showTitle;const el=$('#title');if(!creator.name
 function startNew(name,look){try{localStorage.removeItem(SAVE_KEY);}catch(e){}state=newState(name,look);buildWorld();spawnForage();spawnDigs();genRequests();for(const id in AREAS)ensureArea(id);state.mainStart=snapStats();initNPCs();
  P.x=state.px;P.y=state.py;P.face=1;beginPlay();
  openDialog({lk:look,name:name,pages:[t('intro1'),tr(state.mail[0].body),t('intro2'),t('intro3')],onClose:()=>{state.mail[0].read=true;saveGame(true);refreshTracker();}});}
-function continueGame(){if(!loadGame()){showCreator();return;}buildWorld();for(const id in AREAS)ensureArea(id);if(!state.forage||!Object.keys(state.forage).length)spawnForage();if(!state.reqs.length)genRequests();if(!state.mainStart)state.mainStart=snapStats();initNPCs();
- P.x=state.px;P.y=state.py;P.face=state.face||1;const a=area();if(P.x<0||P.x>a.w*TS){P.x=a.w*TS/2;P.y=floorRow(a,P.x/TS)*TS;}beginPlay();toast(`👋 ${LANG==='sv'?'Välkommen tillbaka':'Welcome back'}, ${state.name}!`);}
+function continueGame(){if(!loadGame()){showCreator();return;}buildWorld();if(!state.visited)state.visited={};Object.assign(state.visited,{farm:1,harbor:1,[state.area]:1});if(state.flags.visitIsland)state.visited.island=1;if(state.flags.cave)state.visited.cave=1;for(const id in AREAS)ensureArea(id);if(!state.forage||!Object.keys(state.forage).length)spawnForage();if(!state.reqs.length)genRequests();if(!state.mainStart)state.mainStart=snapStats();initNPCs();
+ P.x=state.px;P.y=state.py;P.face=state.face||1;const a=area();if(P.x<0||P.x>a.w*TS){P.x=a.w*TS/2;}{const tx=Math.floor(P.x/TS);const inSolid=isSolid(tget(a,tx,Math.floor((P.y-4)/TS)));if(inSolid||(a.id==='cave'&&P.y<6*TS))P.y=floorRow(a,tx)*TS;}beginPlay();toast(`👋 ${LANG==='sv'?'Välkommen tillbaka':'Welcome back'}, ${state.name}!`);}
 function beginPlay(){onTitle=false;$('#title').classList.add('hidden');$('#hud').classList.remove('hidden');hourMark=Math.floor(state.time/60);
  cam.x=P.x-viewW/2;cam.y=P.y-viewH*0.6;clampCam();areaFade=1;refreshAllText();updateTouchVis();audioInit();}
 
