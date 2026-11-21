@@ -2110,14 +2110,18 @@ function updateTouchVis(){const want=prefs.touch==='on'||(prefs.touch==='auto'&&
  $('#touch').classList.toggle('hidden',!want||onTitle||!!panelOpen||sleeping);document.body.classList.toggle('dlgopen',!!dlg);}
 function modalRoot(){if(onTitle)return $('#title');if(dlg)return $('#dialog');if(panelOpen)return $('#panel');return null;}
 function focusables(){const r=modalRoot();if(!r)return [];return [...r.querySelectorAll('button:not([disabled]),input')].filter(e=>e.offsetParent!==null);}
-function spatialNav(dir){const list=focusables();if(!list.length)return;let cur=document.activeElement;if(!list.includes(cur)){list[0].focus();list[0].scrollIntoView({block:'nearest'});return;}
+function canScroll(el,dir){if(!el)return false;return dir==='d'?el.scrollTop+el.clientHeight<el.scrollHeight-2:el.scrollTop>1;}
+function spatialNav(dir){
+ if(dlg&&(dir==='u'||dir==='d')){const tx=$('#dlgText');if(canScroll(tx,dir)){tx.scrollBy(0,dir==='d'?60:-60);return;}}
+ const list=focusables();if(!list.length)return;let cur=document.activeElement;if(!list.includes(cur)){list[0].focus();list[0].scrollIntoView({block:'nearest'});return;}
  let best=null;
  if(panelOpen){const head=$('#phead'),body=$('#pbody');const inBody=body.contains(cur);best=navSearch(dir,cur,list.filter(e=>(inBody?body:head).contains(e)));
-  if(!best&&inBody&&dir==='u')best=head.querySelector('.tab.act')||navSearch(dir,cur,list);
+  if(!best&&inBody&&dir==='u'){if(canScroll(body,'u')){body.scrollBy(0,-120);return;}best=head.querySelector('.tab.act')||navSearch(dir,cur,list);}
   else if(!best&&!inBody&&dir==='d')best=list.find(e=>body.contains(e));
-  else if(!best)best=navSearch(dir,cur,list);}
+  else if(!best&&!(inBody&&dir==='d'))best=navSearch(dir,cur,list);}
  else best=navSearch(dir,cur,list);
- if(!best&&panelOpen&&(dir==='u'||dir==='d')){$('#pbody').scrollBy(0,dir==='d'?120:-120);return;}
+ if(panelOpen&&(dir==='u'||dir==='d')){const body=$('#pbody'),br=body.getBoundingClientRect();const inBody=body.contains(cur);
+  if(!best||(inBody&&body.contains(best)&&(dir==='d'?best.getBoundingClientRect().bottom>br.bottom+4:best.getBoundingClientRect().top<br.top-4)&&canScroll(body,dir))){if(canScroll(body,dir)){body.scrollBy(0,dir==='d'?120:-120);return;}if(!best)return;}}
  if(best){best.focus();best.scrollIntoView({block:'nearest'});sfx('tick');}}
 function navSearch(dir,cur,list){const r0=cur.getBoundingClientRect();const cx=r0.left+r0.width/2,cy=r0.top+r0.height/2;let best=null,bd=1e9;
  for(const el of list){if(el===cur)continue;const r=el.getBoundingClientRect();const x=r.left+r.width/2,y=r.top+r.height/2;const dx=x-cx,dy=y-cy;
@@ -2176,7 +2180,7 @@ function pollPad(dt){let gp=null;try{const pads=navigator.getGamepads?navigator.
  const E=k=>st[k]&&!padPrev[k];
  if(modalOpen()){src.pad={};if(!sleeping){const dir=st.l?'l':st.r?'r':st.u?'u':st.d?'d':null;
    if(dir){navT-=dt;if(navT<=0||!(padPrev.l||padPrev.r||padPrev.u||padPrev.d)){spatialNav(dir);navT=(padPrev.l||padPrev.r||padPrev.u||padPrev.d)?0.11:0.3;}}else navT=0;
-   if(panelOpen&&Math.abs(gp.axes[3]||0)>0.3)$('#pbody').scrollBy(0,(gp.axes[3])*14);if(E('b'))uiConfirm();if(E('a'))uiBack();if(E('lb'))uiTab(-1);if(E('rb'))uiTab(1);if((E('st')||E('y'))&&!onTitle&&!dlg)uiBack();}}
+   if(Math.abs(gp.axes[3]||0)>0.3){const el=dlg?$('#dlgText'):panelOpen?$('#pbody'):null;if(el)el.scrollBy(0,(gp.axes[3])*14);}if(E('b'))uiConfirm();if(E('a'))uiBack();if(E('lb'))uiTab(-1);if(E('rb'))uiTab(1);if((E('st')||E('y'))&&!onTitle&&!dlg)uiBack();}}
  else{src.pad={l:st.l,r:st.r,u:st.u,d:st.d,jump:st.a,use:st.b};if(E('a'))press('jump');if(E('b'))press('use');
   if(E('y')||E('st'))openMenu();if(E('lb'))selectSlot(state.sel-1);if(E('rb'))selectSlot(state.sel+1);}
  padPrev=st;}
