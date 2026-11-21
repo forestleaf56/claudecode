@@ -790,13 +790,13 @@ function buildWorld(){
  // ---------- CLIFFS
  a=makeArea('cliffs',90,{left:'beach',water:'S',bg:'cliff'});
  groundT(a,0,15,18,T.STONE);groundT(a,16,25,16,T.STONE);groundT(a,26,35,14,T.STONE);groundT(a,36,45,12,T.STONE);groundT(a,46,60,10,T.STONE);
- fillT(a,61,0,67,23,T.AIR);fillT(a,61,19,67,23,T.WATER);fillT(a,61,10,61,18,T.LADDER);
- groundT(a,68,89,10,T.STONE);
+ fillT(a,61,0,70,23,T.AIR);fillT(a,61,19,70,23,T.WATER);fillT(a,61,10,61,18,T.LADDER);
+ groundT(a,71,89,10,T.STONE);
  fillT(a,47,8,49,8,T.PLAT);fillT(a,50,6,53,6,T.PLAT);
  house(a,2,8,4,{wall:'#8a7a6a',roof:'#4a4a5a',door:6,id:'nils',sign:'copper_ore'});climbAid(a,11,12);
  a.deco.push({k:'cavemouth',x:80});inter(a,'warp',80,10,{to:'cave',tx:3});
  [[12],[19],[23],[29],[33],[39],[43],[50],[55],[72],[76],[85]].forEach(([x],i)=>a.rocks.push({x,i,pool:x>67?'plateau':'cliff'}));
- a.forageSpots=[14,20,31,41,48,58,70,74,83,88];
+ a.forageSpots=[14,20,31,41,48,58,73,77,83,88];
  a.shells=[{id:'k1',x:5,y:11},{id:'k2',x:64,y:23},{id:'k3',x:88,y:9},{id:'k4',x:52,y:5},{id:'k5',x:30,y:13}];
  a.lamps=[];
  // ---------- CAVE
@@ -829,7 +829,7 @@ function buildWorld(){
 function applyProjects(){
  const h=AREAS.harbor;if(!h)return;
  fillT(h,112,18,119,18,state.proj.pier?T.WOOD:T.AIR);
- const c=AREAS.cliffs;fillT(c,62,10,67,10,state.proj.bridge?T.WOOD:T.AIR);
+ const c=AREAS.cliffs;fillT(c,62,10,70,10,state.proj.bridge?T.WOOD:T.AIR);
  const f=AREAS.farm;f.inter=f.inter.filter(i=>!['coop','warp'].includes(i.k));
  if(state.proj.coop)inter(f,'coop',67,18);if(state.proj.shed)inter(f,'coop',75,18,{shed:1});
  if(state.proj.greenhouse)inter(f,'warp',4,18,{to:'greenhouse',tx:2});
