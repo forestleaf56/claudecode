@@ -210,7 +210,7 @@ const CROPS={};
 ['lingon','Lingon','Lingonberry','2',9,3,40,80,'berry','#c8202a','#3d7a3d','berry'],
 ['onion','Lök','Onion','12',5,0,35,15,'onion','#e8c89a','#7aa84f','veg'],
 ['kale','Grönkål','Kale','3',6,0,80,35,'leafy','#3f7a3a','#7ab85f','veg'],
-['julros','Julros','Christmas Rose','3',8,0,130,60,'flower','#f8f4ee','#e8c84a','flower'],
+['julros','Snöros','Snow Rose','3',8,0,130,60,'flower','#f8f4ee','#e8c84a','flower'],
 ['saffron','Saffran','Saffron','2',10,0,420,200,'flower','#9a5ad0','#e85a2a','flower'],
 ].forEach(c=>{const [id,sv,en,se,d,rg,sell,seed,sh,c1,c2,sub]=c;CROPS[id]={id,se:se.split('').map(Number),days:d,regrow:rg,c1,c2,sh};
  I(id,sv,en,'crop',sell,[sh,c1,c2],{sub});
@@ -381,7 +381,7 @@ I('fertilizer','Gödsel','Fertilizer','fert',5,['sack','#8a6a3a','#5a8a3a'],{buy
 ['pumpsoup','Pumpasoppa','Pumpkin Soup',300,110,'','bowl','#f0a040','#e8862a'],
 ['cabbagerolls','Kåldolmar','Cabbage Rolls',230,100,'','plate','#b8e09a','#a86a3a'],
 ['kalesoup','Grönkålssoppa','Kale Soup',160,90,'','bowl','#5a9a4a','#3f7a3a'],
-['crayparty','Kräftskiva','Crayfish Party',380,150,'luck','plate','#e8502a','#f8e070'],
+['crayparty','Skaldjursfat','Shellfish Platter',380,150,'luck','plate','#e8502a','#f8e070'],
 ['rhubarbpie','Rabarberpaj','Rhubarb Pie',220,90,'','pie','#d8a060','#d8425c'],
 ['berrybowl','Bärskål','Berry Bowl',90,50,'speed','bowl','#f0e8f0','#c8303a'],
 ['fishstew','Fiskgryta','Fish Stew',240,120,'fish','bowl','#e8703a','#f0e0c0'],
@@ -409,8 +409,8 @@ I('fertilizer','Gödsel','Fertilizer','fert',5,['sack','#8a6a3a','#5a8a3a'],{buy
 ['birdhouse','Fågelholk','Birdhouse',60,'birdhouse','#c8503a','#a87a4a','decor'],
 ['kite','Drake','Kite',80,'kite','#e05a5a','#f0d040','decor'],
 ['scarecrow','Fågelskrämma','Scarecrow',70,'scarecrow','#c8a050','#5a7ab0','decor'],
-['gnome','Tomte','Yule Gnome',150,'gnome','#d83a3a','#f8f8f8','decor'],
-['maypole','Midsommarstång','Midsummer Pole',150,'pole','#6aa84f','#f8d070','decor'],
+['gnome','Vintertomte','Winter Gnome',150,'gnome','#d83a3a','#f8f8f8','decor'],
+['maypole','Blomsterstång','Blossom Pole',150,'pole','#6aa84f','#f8d070','decor'],
 ['shipmodel','Fyrmodell','Lighthouse Model',400,'lhmodel','#f8f8f8','#d83a3a','decor'],
 ['telescope','Kikare','Telescope',500,'scope','#c8a040','#5a5a68','decor'],
 ].forEach(f=>I(f[0],f[1],f[2],'place',f[3],[f[4],f[5],f[6]],{sub:f[7]}));
@@ -523,7 +523,7 @@ const SHOPS={
  nils:{npc:'nils',n:['Nils Gruvkontor','Nils\'s Mine Office'],open:[7,16],items:()=>[{id:'coal',buy:40},{id:'copper_ore',buy:30},{id:'iron_ore',buy:60,need:()=>state.flags.cave},{id:'clay',buy:20},{id:'sand',buy:10},{rec:'furnace',price:1200}]},
  ship:{npc:null,n:['Handelsskeppet','The Trading Ship'],open:[8,20],items:()=>[{id:'saffron_seed'},{id:'shipmodel',buy:2500},{id:'telescope',buy:4000},{id:'gnome',buy:1200},{id:'maypole',buy:1200},{id:'cloudberry',buy:300},{id:'silver_ore',buy:120},{id:'qbait',buy:20},{rec:'sprinkler2',price:3000},{rec:'cloudparfait',price:1500},{up:'rod'}]},
  fest:{npc:null,n:['Festivalståndet','Festival Stall'],open:[0,30],items:()=>{const f=festivalToday();const base=[{id:'coffee',buy:40},{id:'bun',buy:90}];
-   if(!f)return base;if(f.id==='valborg')return [...base,{id:'kite',buy:600},{rec:'kite',price:900}];if(f.id==='midsommar')return [...base,{id:'maypole',buy:900},{id:'strawcake',buy:300},{id:'pickledherring',buy:200}];if(f.id==='kraft')return [...base,{id:'crayfish',buy:120},{rec:'crayparty',price:800},{rec:'pickledherring',price:500}];if(f.id==='lucia')return [...base,{id:'gnome',buy:900},{rec:'porridge',price:500},{id:'julros_seed'}];return base;}},
+   if(!f)return base;if(f.id==='ember')return [...base,{id:'kite',buy:600},{rec:'kite',price:900}];if(f.id==='blossom')return [...base,{id:'maypole',buy:900},{id:'strawcake',buy:300},{id:'pickledherring',buy:200}];if(f.id==='lantern')return [...base,{id:'crayfish',buy:120},{rec:'crayparty',price:800},{rec:'pickledherring',price:500}];if(f.id==='starlight')return [...base,{id:'gnome',buy:900},{rec:'porridge',price:500},{id:'julros_seed'}];return base;}},
 };
 const UPG={
  rod:{n:['Fiskespö','Fishing Rod'],max:4,names:[['Bambuspö','Bamboo Rod'],['Glasfiberspö','Fiberglass Rod'],['Kolfiberspö','Carbon Rod'],['Gyllene spö','Golden Rod']],cost:[null,[1800,[['copper_bar',2]]],[5000,[['iron_bar',3]]],[15000,[['silver_bar',3]]]]},
@@ -686,10 +686,10 @@ const SIDEQ=[
  {id:'q_cheese',npc:'astrid',pre:()=>state.proj.shed,need:[['cheese',1]],rw:{money:500,items:[['oldkey',1]]},n:['Museifika','Museum Fika'],d:['Astrid har vernissage. Hon behöver en getost.','Astrid is hosting an opening. She needs a goat cheese.']},
 ];
 const FESTS=[
- {id:'valborg',s:0,d:13,h:[18,25],n:['Valborgsmässoafton','Walpurgis Night'],d2:['Brasa på torget och vårsånger!','Bonfire on the square and spring songs!'],gift:[['bouquet',1],['kite',1]]},
- {id:'midsommar',s:1,d:6,h:[10,22],n:['Midsommar','Midsummer'],d2:['Dans kring midsommarstången på torget!','Dance around the maypole on the square!'],gift:[['strawberry',5],['maypole',1]]},
- {id:'kraft',s:2,d:8,h:[17,25],n:['Kräftskiva','Crayfish Party'],d2:['Kräftor, lyktor och visor vid hamnen!','Crayfish, lanterns and songs by the harbor!'],gift:[['crayfish',5],['dill',2]]},
- {id:'lucia',s:3,d:13,h:[16,22],n:['Luciafirande','Lucia Celebration'],d2:['Ljus i mörkret — luciatåg på torget.','Light in the darkness — Lucia procession on the square.'],gift:[['bun',3],['gnome',1]]},
+ {id:'ember',s:0,d:13,h:[18,25],n:['Glödkvällen','Ember Eve'],d2:['En stor brasa på torget som hälsar de ljusa vårnätterna välkomna!','A big bonfire on the square welcoming the bright spring nights!'],gift:[['bouquet',1],['kite',1]]},
+ {id:'blossom',s:1,d:6,h:[10,22],n:['Blomsterdansen','The Blossom Dance'],d2:['Dans kring blomsterstången på torget!','Dance around the blossom pole on the square!'],gift:[['strawberry',5],['maypole',1]]},
+ {id:'lantern',s:2,d:8,h:[17,25],n:['Lyktnatten','Lantern Night'],d2:['Lyktor, skaldjur och visor vid hamnen!','Lanterns, shellfish and songs by the harbor!'],gift:[['crayfish',5],['dill',2]]},
+ {id:'starlight',s:3,d:13,h:[16,22],n:['Stjärnljusfesten','The Starlight Festival'],d2:['Ljus i mörkret — ett ljuståg på torget.','Light in the darkness — a candle procession on the square.'],gift:[['bun',3],['gnome',1]]},
 ];
 const SHELL_REWARDS={5:{boots:1},10:{items:[['qbait',30]],money:1000},15:{items:[['shipmodel',1]]},20:{money:5000},25:{items:[['telescope',1]]},30:{money:20000}};
 const MUSEUM_REWARDS={3:{money:500},6:{items:[['sprinkler',2]]},9:{money:1500},12:{items:[['telescope',1]]},15:{money:4000},18:{money:10000,items:[['shipmodel',1]]}};
@@ -1687,13 +1687,13 @@ function drawDeco(a,lights){
   if(state.proj.greenhouse){const X=1*TS-cx,base=18*TS-cy;g.fillStyle='rgba(205,240,252,.5)';g.beginPath();g.moveTo(X,base);g.lineTo(X,base-40);g.quadraticCurveTo(X+64,base-90,X+128,base-40);g.lineTo(X+128,base);g.fill();g.strokeStyle='rgba(255,255,255,.85)';g.lineWidth=1.4;g.stroke();
    g.lineWidth=0.8;for(let i=1;i<8;i++){g.beginPath();g.moveTo(X+i*16,base);g.lineTo(X+i*16,base-40-Math.sin(i/8*Math.PI)*25);g.stroke();}RR(X+50,base-24,13,24,[6.5,6.5,0,0],'#79a08e');}}
  if(a.id==='harbor'){const f=festivalToday();if(f){const Y=18*TS-cy;
-  if(f.id==='valborg'&&hour()>=17){const X=54*TS-cx;RR(X-10,Y-5,36,5,2.5,'#6a4428');RR(X-5,Y-9,26,5,2.5,'#7a5030');for(let i=0;i<7;i++){const fh=12+Math.sin(TIME*9+i*1.7)*4+(i%3)*5;const fx=X-4+i*4;g.fillStyle=i%2?'#f6a23a':'#fbd35a';g.beginPath();g.moveTo(fx-3,Y-7);g.quadraticCurveTo(fx-3,Y-7-fh*0.6,fx,Y-7-fh);g.quadraticCurveTo(fx+3,Y-7-fh*0.6,fx+3,Y-7);g.fill();}lights.push([X+8,Y-14,90,1]);if(Math.random()<0.3)addParticle(X+8+rnd(-8,8)+cx,Y-20+cy,rnd(-.3,.3),rnd(-1.2,-.5),50,'#fbc85a',1.2,true);}
-  if(f.id==='midsommar'){const X=47*TS-cx;RR(X+6,Y-82,4,82,2,'#8a643f');RR(X-14,Y-72,44,4,2,'#6aa84f');g.strokeStyle='#6aa84f';g.lineWidth=3.2;g.beginPath();g.arc(X-10,Y-60,8,0,TAU);g.stroke();g.beginPath();g.arc(X+26,Y-60,8,0,TAU);g.stroke();g.lineWidth=1;for(let i=0;i<11;i++)CI(X+6+(i%2)*4,Y-78+i*7,1.8,['#ff8fb2','#ffd84a','#ffffff'][i%3]);CI(X+8,Y-86,3.2,'#ffd84a');
+  if(f.id==='ember'&&hour()>=17){const X=54*TS-cx;RR(X-10,Y-5,36,5,2.5,'#6a4428');RR(X-5,Y-9,26,5,2.5,'#7a5030');for(let i=0;i<7;i++){const fh=12+Math.sin(TIME*9+i*1.7)*4+(i%3)*5;const fx=X-4+i*4;g.fillStyle=i%2?'#f6a23a':'#fbd35a';g.beginPath();g.moveTo(fx-3,Y-7);g.quadraticCurveTo(fx-3,Y-7-fh*0.6,fx,Y-7-fh);g.quadraticCurveTo(fx+3,Y-7-fh*0.6,fx+3,Y-7);g.fill();}lights.push([X+8,Y-14,90,1]);if(Math.random()<0.3)addParticle(X+8+rnd(-8,8)+cx,Y-20+cy,rnd(-.3,.3),rnd(-1.2,-.5),50,'#fbc85a',1.2,true);}
+  if(f.id==='blossom'){const X=47*TS-cx;RR(X+6,Y-82,4,82,2,'#8a643f');RR(X-14,Y-72,44,4,2,'#6aa84f');g.strokeStyle='#6aa84f';g.lineWidth=3.2;g.beginPath();g.arc(X-10,Y-60,8,0,TAU);g.stroke();g.beginPath();g.arc(X+26,Y-60,8,0,TAU);g.stroke();g.lineWidth=1;for(let i=0;i<11;i++)CI(X+6+(i%2)*4,Y-78+i*7,1.8,['#ff8fb2','#ffd84a','#ffffff'][i%3]);CI(X+8,Y-86,3.2,'#ffd84a');
    for(let i=0;i<4;i++){g.strokeStyle=['#ff8fb2','#ffd84a','#8ec9ff','#b8e08a'][i];g.lineWidth=1.2;g.beginPath();g.moveTo(X+8,Y-80);g.quadraticCurveTo(X-6+i*10+Math.sin(TIME*2+i)*3,Y-50,X-14+i*12,Y-26);g.stroke();}}
-  if(f.id==='kraft'||f.id==='lucia'){const x0=36*TS-cx,x1=60*TS-cx;g.strokeStyle='#4a4a4a';g.lineWidth=0.7;g.beginPath();g.moveTo(x0,Y-64);g.quadraticCurveTo((x0+x1)/2,Y-36,x1,Y-64);g.stroke();
-   for(let i=0;i<=16;i+=2){const tt=i/16;const px=x0+(x1-x0)*tt;const py=(1-tt)*(1-tt)*(Y-64)+2*tt*(1-tt)*(Y-36)+tt*tt*(Y-64);const c=f.id==='kraft'?['#fbd35a','#f07a6a','#7cc6f6','#b2ea80'][i/2%4]:'#fff4c4';
-    if(f.id==='kraft'){EL(px,py+6,4,4.6,c);RR(px-2,py+1,4,1.6,0.8,'#5a4a3a');CI(px-1.3,py+4.6,1,'rgba(255,255,255,.5)');}else CI(px,py+5,2.6,c);if(darkness()>0.1||f.id==='lucia')lights.push([px,py+6,22,0.75]);}
-   if(f.id==='lucia'){const X=50*TS-cx;RR(X-24,Y-13,52,5,2.5,'#8a5a34');for(let i=0;i<7;i++){const h=10+(3-Math.abs(i-3))*5;RR(X-20+i*7,Y-h-12,4,h,2,'#fbf7ee');const fy=Y-h-15+Math.sin(TIME*8+i)*0.5;g.fillStyle='#fbc84a';g.beginPath();g.moveTo(X-19.5+i*7,fy+3);g.quadraticCurveTo(X-19.5+i*7,fy-1,X-18+i*7,fy-3);g.quadraticCurveTo(X-16.5+i*7,fy-1,X-16.5+i*7,fy+3);g.fill();lights.push([X-18+i*7,Y-h-15,22,0.9]);}}}}}
+  if(f.id==='lantern'||f.id==='starlight'){const x0=36*TS-cx,x1=60*TS-cx;g.strokeStyle='#4a4a4a';g.lineWidth=0.7;g.beginPath();g.moveTo(x0,Y-64);g.quadraticCurveTo((x0+x1)/2,Y-36,x1,Y-64);g.stroke();
+   for(let i=0;i<=16;i+=2){const tt=i/16;const px=x0+(x1-x0)*tt;const py=(1-tt)*(1-tt)*(Y-64)+2*tt*(1-tt)*(Y-36)+tt*tt*(Y-64);const c=f.id==='lantern'?['#fbd35a','#f07a6a','#7cc6f6','#b2ea80'][i/2%4]:'#fff4c4';
+    if(f.id==='lantern'){EL(px,py+6,4,4.6,c);RR(px-2,py+1,4,1.6,0.8,'#5a4a3a');CI(px-1.3,py+4.6,1,'rgba(255,255,255,.5)');}else CI(px,py+5,2.6,c);if(darkness()>0.1||f.id==='starlight')lights.push([px,py+6,22,0.75]);}
+   if(f.id==='starlight'){const X=50*TS-cx;RR(X-24,Y-13,52,5,2.5,'#8a5a34');for(let i=0;i<7;i++){const h=10+(3-Math.abs(i-3))*5;RR(X-20+i*7,Y-h-12,4,h,2,'#fbf7ee');const fy=Y-h-15+Math.sin(TIME*8+i)*0.5;g.fillStyle='#fbc84a';g.beginPath();g.moveTo(X-19.5+i*7,fy+3);g.quadraticCurveTo(X-19.5+i*7,fy-1,X-18+i*7,fy-3);g.quadraticCurveTo(X-16.5+i*7,fy-1,X-16.5+i*7,fy+3);g.fill();lights.push([X-18+i*7,Y-h-15,22,0.9]);}}}}}
  for(const d of a.deco){const X=d.x*TS-cx;if(X>viewW+200||X<-260)continue;
   switch(d.k){
   case 'house':drawHouse(d,X,cy,dk,lights);break;
@@ -1782,7 +1782,7 @@ function drawEntities(a,lights){const cx=Math.round(cam.x*RS)/RS,cy=Math.round(c
    g.save();g.translate(x+7,Y);g.scale(fc,1);EL(0,0.4,7,1.2,'rgba(0,0,0,.12)');for(const lx of [-4.5,-2,3,5.4])LN(lx,-5,lx,-0.4,'#b4a692',1.6);EL(0,-7.5,7,4,'#f2ece0');CI(6,-11.5,3.2,'#f2ece0');EL(8.6,-10.4,1.8,1.4,'#f2ece0');g.strokeStyle='#9a8a76';g.lineWidth=1;g.beginPath();g.arc(5,-14,2.4,Math.PI*1.1,Math.PI*1.9);g.stroke();CI(6.8,-12,0.55,'#2a2228');EL(4,-10.5,1.6,0.8,'#e6dccc',0.6);CI(-7,-8.5,1.2,'#f2ece0');g.restore();}}
  for(const id in npcs){const n=npcs[id];if(!n.vis||n.area!==a.id)continue;const X=n.x-cx,Y=n.y-cy;if(X<-20||X>viewW+20)continue;if(dk>0.05||a.dark)lights.push([X,Y-11,30,0.8]);drawChar(g,X,Y,NPCS[id].lk,Math.floor(n.anim*4)%4,n.face);
   const news=npcHasNews(id);if(news){const b=Math.sin(TIME*4)*1.5;badge(X,Y-36+b,news===true?'!':'?',news===true?'#fbc84a':'#ffffff');}
-  if(festivalActive()&&festivalToday().id==='lucia'&&['linnea','astrid','saga','ture'].includes(id)){EL(X,Y-25.5,5,1.6,'#4f9a4f');for(const dx of [-2.6,0,2.6]){RR(X+dx-0.6,Y-29,1.2,3.6,0.6,'#fff');CI(X+dx,Y-29.8,0.8,'#fbc84a');}lights.push([X,Y-28,18,0.8]);}}
+  if(festivalActive()&&festivalToday().id==='starlight'&&['linnea','astrid','saga','ture'].includes(id)){EL(X,Y-25.5,5,1.6,'#4f9a4f');for(const dx of [-2.6,0,2.6]){RR(X+dx-0.6,Y-29,1.2,3.6,0.6,'#fff');CI(X+dx,Y-29.8,0.8,'#fbc84a');}lights.push([X,Y-28,18,0.8]);}}
  drawPlayer(cx,cy,lights,dk);
 }
 function sparkle(x,y,r){g.fillStyle='rgba(255,252,220,.95)';g.beginPath();g.moveTo(x,y-r*1.6);g.quadraticCurveTo(x,y,x+r*1.6,y);g.quadraticCurveTo(x,y,x,y+r*1.6);g.quadraticCurveTo(x,y,x-r*1.6,y);g.quadraticCurveTo(x,y,x,y-r*1.6);g.fill();}
@@ -2219,7 +2219,7 @@ function updateFishUI(inZ){const f=fishing;$('#fzone').style.left=(f.zone-f.zw/2
 function hideFishUI(){$('#fishUI').classList.add('hidden');}
 
 // ================= INPUT =================
-let usingPad=false,usingKeys=false,cutscene=false,sleeping=false,onTitle=true;
+let ghostGuard=null,usingPad=false,usingKeys=false,cutscene=false,sleeping=false,onTitle=true;
 const src={key:{},touch:{},pad:{}};
 const KEYMAP={ArrowLeft:'l',KeyA:'l',ArrowRight:'r',KeyD:'r',ArrowUp:'u',KeyW:'u',ArrowDown:'d',KeyS:'d',Space:'jump',KeyZ:'jump',KeyK:'jump',KeyC:'jump',KeyE:'use',KeyX:'use',KeyJ:'use',Enter:'use',NumpadEnter:'use'};
 function modalOpen(){return !!(panelOpen||dlg||onTitle||sleeping);}
@@ -2285,6 +2285,10 @@ function setupTouch(){
  const bind=(el,k)=>{el.addEventListener('pointerdown',e=>{e.preventDefault();try{el.setPointerCapture(e.pointerId);}catch(_){}el.classList.add('on');audioInit();
   if(modalOpen()){if(dlg){document.body.classList.add('kbnav');if(k==='use')uiConfirm();else uiBack();}return;}src.touch[k]=true;press(k);});const up=()=>{src.touch[k]=false;el.classList.remove('on');};el.addEventListener('pointerup',up);el.addEventListener('pointercancel',up);el.addEventListener('lostpointercapture',up);};
  bind($('#tA'),'jump');bind($('#tB'),'use');
+ // stop the browser from synthesizing a delayed "ghost" click after a quick tap on the on-screen controls
+ for(const el of [$('#tA'),$('#tB'),dp,$('#hotbar')])el.addEventListener('touchstart',e=>{if(e.cancelable)e.preventDefault();},{passive:false});
+ for(const el of [$('#tA'),$('#tB'),dp])el.addEventListener('pointerdown',()=>{const r=el.getBoundingClientRect();ghostGuard={t:performance.now(),r:{l:r.left-12,t:r.top-12,r:r.right+12,b:r.bottom+12}};},true);
+ window.addEventListener('click',e=>{if(!ghostGuard)return;const g=ghostGuard;if(performance.now()-g.t>800){ghostGuard=null;return;}if(e.clientX>=g.r.l&&e.clientX<=g.r.r&&e.clientY>=g.r.t&&e.clientY<=g.r.b&&!e.target.closest('#touch')){e.stopPropagation();e.preventDefault();}},true);
  $('#hotbar').addEventListener('pointerdown',e=>{const b=e.target.closest('[data-hb]');if(b){e.preventDefault();selectSlot(+b.dataset.hb);}});
  $('#bMenu').addEventListener('click',()=>{audioInit();openMenu();});$('#bFull').addEventListener('click',toggleFull);$('#tracker').addEventListener('click',()=>openMenu('quests'));
  document.addEventListener('contextmenu',e=>e.preventDefault());
