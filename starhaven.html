@@ -121,7 +121,7 @@ body.kb .f.foc{outline:3px solid var(--ac);outline-offset:2px;box-shadow:0 0 16p
 <body>
 <canvas id="c"></canvas>
 <div id="hud" class="hid">
- <div id="hl"><div class="hb" id="hinfo"><span id="hday"></span> · <span id="htime"></span><br>💰 <span id="hmoney"></span> ¢ &nbsp;⚡<span id="eb"><i></i></span></div><div class="hb hid" id="trk"></div></div>
+ <div id="hl"><div class="hb" id="hinfo"><span id="hday"></span> · <span id="htime"></span><br>💰 <span id="hmoney"></span> ¢ &nbsp;⚡<span id="eb"><i></i></span> <span id="hen" style="font-size:12px;color:var(--dim)"></span></div><div class="hb hid" id="trk"></div></div>
  <div id="hr"><button class="hbtn" id="bBag">🎒</button><button class="hbtn" id="bMenu">☰</button></div>
 </div>
 <div id="prompt" class="hid"></div>
@@ -802,6 +802,11 @@ const seedTier=()=>(S.proj.promenade?1:0)+(S.proj.cargo?1:0)+(S.proj.aquarium?1:
 const fr=id=>S.fr[id]||(S.fr[id]={p:0,t:0,g:0,ev:{},met:0,kn:{}});
 const hearts=id=>Math.min(10,Math.floor(fr(id).p/100));
 function addFr(id,n){const f=fr(id);const before=hearts(id);f.p=clamp(f.p+n,0,1000);if(hearts(id)>before&&n>0){toast('💗 '+nname(id)+': '+hearts(id)+' ♥');sfx('quest');}}
+const SHARD_TOTAL=DECK_ORDER.reduce((a,d)=>a+DECKS[d].sh.length,0);
+const nodeNeed=o=>{const N=NODES[o.n];return N.soft?N.h:Math.max(1,N.h-(S.tools.drill-1));};
+const hiveDay=o=>{const h=S.hives[o.key];return h?h.d:(S.proj.beehives||S.day);};
+const mainDone=()=>PROJECTS.filter(p=>!p.opt&&S.proj[p.id]).length,MAIN_TOTAL=PROJECTS.filter(p=>!p.opt).length;
+const pbar=(pct,col)=>`<div class="bar" style="max-width:240px"><i style="width:${clamp(pct,0,100)}%${col?';background:'+col:''}"></i></div>`;
 function heartsHTML(id){const p=fr(id).p,full=Math.floor(p/100),part=(p%100)/100;let h='';for(let i=0;i<10;i++){if(i<full)h+='<span class="hf">♥</span>';else if(i===full&&p<1000)h+=`<span class="hp" style="--p:${Math.round(part*100)}%">♥</span>`;else h+='<span class="he">♥</span>';}return`<span class="hearts">${h}</span>`;}
 const fmtTime=()=>{const h=Math.floor(S.time/60)%24,m=S.time%60;return String(h).padStart(2,'0')+':'+String(m).padStart(2,'0');};
 
@@ -1041,7 +1046,7 @@ function itemDetail(id,actions){const it=ITEMS[id];let s=`<div class="det"><div 
  const u=usedIn(id);if(u.length)s+=`<div class="rs">${T('usedin')}: ${u.slice(0,6).join(', ')}${u.length>6?'…':''}</div>`;s+=`</div><div class="ra">${actions||''}</div></div>`;return s;}
 function bodyBag(m){let h='';const ids=invIds();const sel=m.sel&&cnt(m.sel)>0?m.sel:null;
  if(sel){const it=ITEMS[sel];let a='';if(it.e)a+=B('🍴 '+T('eat'),()=>{eat(sel);refresh();},'g',false,'eat');if(it.cat==='furn')a+=B('📍 '+T('place'),()=>{closeAll();placeFurn(sel);},'w',false,'place');h+=itemDetail(sel,a);}
- else h+=`<div class="det"><div class="di">🎒</div><div class="dm"><div class="rs">${T('select')}</div><div class="rs">⚡ ${Math.floor(S.energy)}/${maxE()} · 🛋️ ${T('comfort')}: ${comfort()} · 🧬 ${S.rp} RP · 🌟 ${cnt('shard')}</div></div></div>`;
+ else h+=`<div class="det"><div class="di">🎒</div><div class="dm"><div class="rs">${T('select')}</div><div class="rs">⚡ ${Math.floor(S.energy)}/${maxE()} · 🛋️ ${T('comfort')}: ${comfort()} · 🧬 ${S.rp} RP</div><div class="rs">🌟 ${S.stats.shards||0}/${SHARD_TOTAL} · 🏺 ${ARTS.filter(a=>S.seen[a]).length}/${ARTS.length} · 🏛️ ${Object.keys(S.don).length}/${ARCH.length} · 🚀 ${mainDone()}/${MAIN_TOTAL}</div></div></div>`;
  if(!ids.length)h+=`<div class="note">${T('none')}</div>`;
  let lastCat='';const groups={};ids.forEach(id=>{(groups[ITEMS[id].cat]=groups[ITEMS[id].cat]||[]).push(id);});
  CAT_ORDER.forEach(c=>{if(!groups[c])return;h+=`<div class="sec">${tr(CATS[c])}</div>`+slotsHtml(groups[c],id=>{m.sel=id;refresh();sfx('click');if(IN.dev==='pad'||IN.dev==='kb'){const b=$('menu').querySelector('[data-k="eat"],[data-k="place"]');if(b)setFoc(b);}},sel);});
@@ -1049,7 +1054,7 @@ function bodyBag(m){let h='';const ids=invIds();const sel=m.sel&&cnt(m.sel)>0?m.
  Object.entries(TOOLS).forEach(([k,t])=>{const l=S.tools[k];h+=`<div class="row"><div class="ri">${t.ic}</div><div class="rm"><div class="rt">${tr(t.n)} ${l?T('level')+' '+l:'—'}</div><div class="rs">${tr(t.d)}</div></div></div>`;});
  const perks=['jetboots','thrusters','ergonomics','vitality','sonar','sprinklers','pocketlift'].filter(p=>S.res[p]);if(perks.length)h+=`<div class="sec">${T('perks')}</div>`+perks.map(p=>`<span class="chip">${RES[p].ic} ${tr(RES[p].n)}</span>`).join('');
  return h;}
-function bodyQuests(){let h='';const act_=QUESTS.filter(q=>qst(q.id)&&qst(q.id).s===1);
+function bodyQuests(){let h=`<div class="det"><div class="di">🚀</div><div class="dm"><div class="rt">${LANG?'Skeppet återställt':'Ship restored'}: ${mainDone()}/${MAIN_TOTAL}</div>${pbar(mainDone()/MAIN_TOTAL*100)}<div class="rs">📜 ${QUESTS.filter(q=>qst(q.id)&&qst(q.id).s===2).length}/${QUESTS.length} · 🌟 ${S.stats.shards||0}/${SHARD_TOTAL} · 🏺 ${ARTS.filter(a=>S.seen[a]).length}/${ARTS.length}</div></div></div>`;const act_=QUESTS.filter(q=>qst(q.id)&&qst(q.id).s===1);
  h+=`<div class="sec">${T('active')}</div>`;if(!act_.length)h+=`<div class="note">${T('none')}</div>`;
  act_.forEach(q=>{const c=qComplete(q);h+=`<div class="row"><div class="ri">${q.main?'⭐':'📜'}</div><div class="rm"><div class="rt">${tr(q.n)}</div>`+(q.i[0]?`<div class="rs">${tr(q.i)}</div>`:'')+q.o.map(o=>{const[a,b]=objProg(q,o);return`<div class="rs">${a>=b?'✔️':'▫️'} ${objText(o)} ${b>1?`${fmt(a)}/${fmt(b)}`:''}</div>`;}).join('')+(c?`<div class="rs" style="color:var(--ok)">✅ ${T('talkto')} ${nname(q.to||q.g)}${npcWhere(q.to||q.g)}</div>`:'')+`</div></div>`;});
  const av=QUESTS.filter(q=>qAvail(q));if(av.length){h+=`<div class="sec">${T('avail')}</div>`;av.forEach(q=>{h+=`<div class="row dim"><div class="ri">❗</div><div class="rm"><div class="rt">${tr(q.n)}</div><div class="rs">${T('talkto')} ${nname(q.g)}${npcWhere(q.g)}</div></div></div>`;});}
@@ -1057,13 +1062,13 @@ function bodyQuests(){let h='';const act_=QUESTS.filter(q=>qst(q.id)&&qst(q.id).
  const dn=QUESTS.filter(q=>qst(q.id)&&qst(q.id).s===2).length;h+=`<div class="sec">${T('done')}: ${dn}/${QUESTS.length}</div>`;
  h+=`<div class="sec">${T('stats')}</div><div class="rs">⏱️ ${T('playtime')}: ${Math.floor(S.play/3600)}h ${Math.floor(S.play/60)%60}m · `+Object.keys(STATN).map(k=>`${tr(STATN[k])}: ${fmt(S.stats[k]||0)}`).join(' · ')+`</div>`;return h;}
 function bodyResearch(){let h=`<div class="det"><div class="di">🧬</div><div class="dm"><div class="rt">${S.rp} RP</div><div class="rs">${T('rp')}: 🏛️ ${T('archive')}, 🔭 ${T('telescope')}, 💽 ${iname('datachip')}, 📜 ${T('quests')}</div></div><div class="ra">${has('datachip')?B('💽 '+T('upload'),()=>{take('datachip');S.rp+=40;sfx('coin');refresh();},'w',false,'up'):''}</div></div>`;
- RESEARCH.forEach(r=>{const done=S.res[r.id],av=resAvail(r);h+=`<div class="row ${done?'dim':''}"><div class="ri">${r.ic}</div><div class="rm"><div class="rt">${tr(r.n)} ${done?'✔️':''}</div><div class="rs">${tr(r.d)}</div>${!done&&!av?`<div class="rs">🔒 ${T('needs')}: ${r.r.filter(x=>!S.res[x]).map(x=>tr(RES[x].n)).join(', ')}</div>`:''}</div><div class="ra">${done?'':B(`${r.c} RP`,()=>{doResearch(r.id);refresh();},'g',!av||S.rp<r.c,'r:'+r.id)}</div></div>`;});return h;}
+ RESEARCH.forEach(r=>{const done=S.res[r.id],av=resAvail(r);h+=`<div class="row ${done?'dim':''}"><div class="ri">${r.ic}</div><div class="rm"><div class="rt">${tr(r.n)} ${done?'✔️':''}</div><div class="rs">${tr(r.d)}</div>${!done?`<div class="rs">🧬 ${Math.min(S.rp,r.c)}/${r.c} RP</div>`+pbar(S.rp/r.c*100,'linear-gradient(90deg,#b8a8ff,#8ab0ff)'):''}${!done&&!av?`<div class="rs">🔒 ${T('needs')}: ${r.r.filter(x=>!S.res[x]).map(x=>tr(RES[x].n)).join(', ')}</div>`:''}</div><div class="ra">${done?'':B(`${r.c} RP`,()=>{doResearch(r.id);refresh();},'g',!av||S.rp<r.c,'r:'+r.id)}</div></div>`;});return h;}
 function bodyArchive(m){const don=Object.keys(S.don).length;let h=`<div class="det"><div class="di">🏛️</div><div class="dm"><div class="rt">${T('arch')}: ${don}/${ARCH.length}</div><div class="bar"><i style="width:${don/ARCH.length*100}%"></i></div><div class="rs">${m.sel?`${S.seen[m.sel]?icon(m.sel)+' '+iname(m.sel):'❔ ???'} ${S.don[m.sel]?'· ✔️':''}`:T('donateh')}</div></div></div>`;
  CAT_ORDER.filter(c=>c!=='seed'&&c!=='misc').forEach(c=>{const ids=ARCH.filter(id=>ITEMS[id].cat===c);h+=`<div class="sec">${tr(CATS[c])} ${ids.filter(i=>S.don[i]).length}/${ids.length}</div><div class="grid">`+ids.map(id=>`<button class="sl f ${S.don[id]?'don':S.seen[id]?'':'dn'}" data-k="a:${id}" data-a="${act(()=>{m.sel=id;refresh();})}">${S.seen[id]?icon(id):'❔'}</button>`).join('')+'</div>';});return h;}
 function bodyFriends(){let h='';Object.keys(NPCS).forEach(id=>{const f=fr(id),n=NPCS[id];if(!f.met){h+=`<div class="row dim"><div class="ri">❔</div><div class="rm"><div class="rt">???</div><div class="rs">${T('notmet')}</div></div></div>`;return;}
- const hs=hearts(id);const kn=Object.keys(f.kn||{});h+=`<div class="row"><div class="ri"><img src="${portraitURL(id)}"></div><div class="rm"><div class="rt">${nname(id)} <span class="rs">· ${tr(n.role)}</span></div><div>${heartsHTML(id)} <span class="rs">${hs}/10 · ${fr(id).p%100===0&&hs===10?'💖':`${fr(id).p%100}/100`}</span></div><div class="bar" style="max-width:220px"><i style="width:${hs>=10?100:fr(id).p%100}%;background:linear-gradient(90deg,#ffbcd9,#ff8ab8)"></i></div><div class="rs">${T('loves')}: ${n.loves.map(l=>kn.includes(l)?ITEMS[l].ic:'❔').join(' ')}</div></div></div>`;});return h;}
+ const hs=hearts(id);const kn=Object.keys(f.kn||{});h+=`<div class="row"><div class="ri"><img src="${portraitURL(id)}"></div><div class="rm"><div class="rt">${nname(id)} <span class="rs">· ${tr(n.role)}</span></div><div>${heartsHTML(id)} <span class="rs">${hs}/10 · ${fr(id).p%100===0&&hs===10?'💖':`${fr(id).p%100}/100`}</span></div><div class="bar" style="max-width:220px"><i style="width:${hs>=10?100:fr(id).p%100}%;background:linear-gradient(90deg,#ffbcd9,#ff8ab8)"></i></div>${(()=>{const nx=[3,6,9].find(l=>n.hr[l]&&!f.ev[l]);if(!nx)return'';return`<div class="rs">🎁 ${hs>=nx?(LANG?'Prata för att få en gåva!':'Talk to receive a gift!'):(LANG?`Gåva vid ${nx} ♥`:`Gift at ${nx} ♥`)}</div>`;})()}<div class="rs">${T('loves')}: ${n.loves.map(l=>kn.includes(l)?ITEMS[l].ic:'❔').join(' ')}</div></div></div>`;});return h;}
 function deckRows(fromMenu){let h='';DECK_ORDER.forEach(id=>{const op=deckOpen(id),D=DECKS[id];const sh=D.sh.length,got=D.sh.filter((_,i)=>S.got[id+'_s'+i]).length;const here=G.D&&G.D.id===id;
- h+=`<div class="row ${op?'':'dim'}"><div class="ri">${op?(here?'📍':'🛗'):'🔒'}</div><div class="rm"><div class="rt">${tr(D.n)}</div><div class="rs">${op?(here?T('here'):''):T('locked')+(DECK_REQ[id]?' · '+PRJ[DECK_REQ[id]].ic+' '+tr(PRJ[DECK_REQ[id]].n):'')}${op&&S.res.cartography?` · 🌟 ${got}/${sh}`:''}</div></div><div class="ra">${op&&!here?B('➜',()=>{closeAll();travel(id);},'g',false,'d:'+id):''}</div></div>`;});return h;}
+ h+=`<div class="row ${op?'':'dim'}"><div class="ri">${op?(here?'📍':'🛗'):'🔒'}</div><div class="rm"><div class="rt">${tr(D.n)}</div><div class="rs">${op?(here?T('here'):''):T('locked')+(DECK_REQ[id]?' · '+PRJ[DECK_REQ[id]].ic+' '+tr(PRJ[DECK_REQ[id]].n):'')}${op?` · 🌟 ${got}${S.res.cartography?'/'+sh:''}`:''}</div></div><div class="ra">${op&&!here?B('➜',()=>{closeAll();travel(id);},'g',false,'d:'+id):''}</div></div>`;});return h;}
 function bodyLift(){return deckRows(1);}
 function menuElevator(){openMenu({title:'🛗 '+T('elev'),body:()=>deckRows(0)});}
 function bodySettings(){const tg=(lbl,cur,opts,fn)=>`<div class="row"><div class="rm"><div class="rt">${lbl}</div></div><div class="ra">${opts.map(([v,l])=>B(l,()=>{fn(v);saveSet();refresh();},cur===v?'g':'',false,'s:'+lbl+v)).join('')}</div></div>`;
@@ -1100,9 +1105,10 @@ function craftBody(st){const all=Object.values(RECIPES).filter(r=>r.st===st);con
  const unk=all.length-kn.length;if(unk)h+=`<div class="note">🔒 +${unk} — 🧬 ${T('research')}</div>`;return h;}
 
 /* ---- projects ---- */
+function projPct(p){let a=0,b=0;for(const[k,v]of Object.entries(p.c)){a+=Math.min(cnt(k),v)/v;b++;}if(p.m){a+=Math.min(1,S.money/p.m);b++;}if(p.rr){a+=S.res[p.rr]?1:0;b++;}return b?a/b*100:100;}
 function menuBuild(){openMenu({title:'🏗️ '+T('projects'),body:()=>{let h='';const row=p=>{const done=S.proj[p.id];const av=projAvail(p);const ok=av&&projCan(p);
   if(!done&&!av)return`<div class="row dim"><div class="ri">🔒</div><div class="rm"><div class="rt">${tr(p.n)}</div><div class="rs">${T('needs')}: ${p.r.filter(x=>!S.proj[x]).map(x=>tr(PRJ[x].n)).join(', ')}</div></div></div>`;
-  return`<div class="row ${done?'dim':''}"><div class="ri">${p.ic}</div><div class="rm"><div class="rt">${tr(p.n)} ${done?'✔️':''}</div><div class="rs">${tr(p.d)}</div>${done?'':chips(p.c)+(p.m?`<span class="chip ${S.money>=p.m?'ok':'no'}">💰 ${fmt(p.m)}</span>`:'')+(p.rr?`<span class="chip ${S.res[p.rr]?'ok':'no'}">🧬 ${tr(RES[p.rr].n)}</span>`:'')}</div><div class="ra">${done?'':B(T('build'),()=>{doProject(p.id);refresh();},'g',!ok,'p:'+p.id)}</div></div>`;};
+  return`<div class="row ${done?'dim':''}"><div class="ri">${p.ic}</div><div class="rm"><div class="rt">${tr(p.n)} ${done?'✔️':''}</div><div class="rs">${tr(p.d)}</div>${done?'':pbar(projPct(p))+chips(p.c)+(p.m?`<span class="chip ${S.money>=p.m?'ok':'no'}">💰 ${fmt(p.m)}</span>`:'')+(p.rr?`<span class="chip ${S.res[p.rr]?'ok':'no'}">🧬 ${tr(RES[p.rr].n)}</span>`:'')}</div><div class="ra">${done?'':B(T('build'),()=>{doProject(p.id);refresh();},'g',!ok,'p:'+p.id)}</div></div>`;};
   PROJECTS.filter(p=>!p.opt).forEach(p=>h+=row(p));h+=`<div class="sec">${T('optional')}</div>`;PROJECTS.filter(p=>p.opt).forEach(p=>h+=row(p));return h;}});}
 
 /* ---- seeds ---- */
@@ -1115,7 +1121,7 @@ function menuBoard(){if(S.boardDay!==S.day||!S.board.length)genBoard();openMenu(
 
 /* ---- archive donate ---- */
 function menuDonate(){openMenu({title:'🏛️ '+T('archd'),body:()=>{const ids=invIds(k=>ARCH.includes(k)&&!S.don[k]);let h=`<div class="note">${T('donateh')} · ${Object.keys(S.don).length}/${ARCH.length}</div>`;if(!ids.length)h+=`<div class="note">${T('none')}</div>`;
- ids.forEach(id=>{const rp=3+Math.floor(Math.min(ITEMS[id].p,1000)/60);h+=`<div class="row"><div class="ri">${icon(id)}</div><div class="rm"><div class="rt">${iname(id)}</div><div class="rs">🧬 +${rp} RP</div></div><div class="ra">${B(T('donate'),()=>{take(id);S.don[id]=1;S.rp+=rp;sfx('quest');questPing();refresh();},'g',false,'dn:'+id)}</div></div>`;});return h;}});}
+ ids.forEach(id=>{const rp=3+Math.floor(Math.min(ITEMS[id].p,1000)/60);h+=`<div class="row"><div class="ri">${icon(id)}</div><div class="rm"><div class="rt">${iname(id)}</div><div class="rs">🧬 +${rp} RP</div></div><div class="ra">${B(T('donate'),()=>{take(id);S.don[id]=1;S.rp+=rp;sfx('quest');toast(`🏛️ ${iname(id)} · 🧬 +${rp} RP · ${Object.keys(S.don).length}/${ARCH.length}`);questPing();refresh();},'g',false,'dn:'+id)}</div></div>`;});return h;}});}
 
 /* ---- gifts ---- */
 function menuGift(npc){openMenu({title:'🎁 '+nname(npc),body:m=>{const ids=invIds(k=>k!=='cat');return ids.length?slotsHtml(ids,id=>{closeAll();giveGift(npc,id);}):`<div class="note">${T('none')}</div>`;}});}
@@ -1195,11 +1201,11 @@ function physics(){const P=G.P,D=G.D;const lg=D.sp.lowg?0.42:1;const spd=S.res.t
 /* ---------- interactions ---------- */
 function objLabel(o){switch(o.t){case'elev':return o.e?'🚀 Starhaven':'🛗 '+T('elev');case'npc':return'💬 '+nname(o.id);
  case'plot':{const p=S.plots[o.key];if(!p||!p.c)return'🌱 '+T('planttxt');const c=CROPS[p.c];if(p.g>=c.d)return ITEMS[p.c].ic+' '+T('harvest');if(!p.w)return'💧 '+T('water');return ITEMS[p.c].ic+' ⏳'+(c.d-p.g);}
- case'node':{const N=NODES[o.n];return(N.soft?'🤲 '+T('gather'):'⛏️ '+T('mine'))+' '+N.ic;}
+ case'node':{const N=NODES[o.n];const st=S.nodes[o.key];return(N.soft?'🤲 '+T('gather'):'⛏️ '+T('mine'))+' '+N.ic+' '+((st&&st.d!==S.day?st.h:0)||0)+'/'+nodeNeed(o);}
  case'bed':return'🛏️ '+T('bed');case'stove':return'🍳 '+T('stove');case'bench':return'🔨 '+T('bench');case'smelter':return'🔥 '+T('smelter');case'build':return'🏗️ '+T('buildt');case'board':return'📋 '+T('board');
- case'console':return'🧬 '+T('console');case'archive':return'🏛️ '+T('archd');case'scope':return'🔭 '+T('scope');case'fish':return'🎣 '+T('fish');
- case'pen':{const p=S.pens[o.key];if(!p||!p.a)return'🏠 '+T('pen');const a=ANIMALS[p.a];return a.ic+' '+(p.prod?T('collect'):p.fed!==S.day?T('feed'):T('pet'));}
- case'trough':return'🌾 '+T('trough');case'hive':return'🐝 '+T('hive');case'decor':return'🧰 '+T('decor');case'furn':return ITEMS[o.id].ic+' '+iname(o.id);}return T('interact');}
+ case'console':return'🧬 '+T('console');case'archive':return'🏛️ '+T('archd');case'scope':return'🔭 '+T('scope')+(S.scopeDay===S.day?' · ✔️':S.time<1080?' · 🌙 18:00':' · ✨');case'fish':return'🎣 '+T('fish');
+ case'pen':{const p=S.pens[o.key];if(!p||!p.a)return'🏠 '+T('pen');const a=ANIMALS[p.a];return a.ic+' '+(p.prod?T('collect'):p.fed!==S.day?T('feed'):T('pet'))+' · 💗'+(p.love||0);}
+ case'trough':return'🌾 '+T('trough');case'hive':{const d=2-(S.day-hiveDay(o));return d<=0?'🍯 '+T('collect'):'🐝 '+T('hive')+' · ⏳'+d;}case'decor':return'🧰 '+T('decor');case'furn':return ITEMS[o.id].ic+' '+iname(o.id);}return T('interact');}
 const interactive=o=>o.t!=='deco'&&!(o.t==='node'&&S.nodes[o.key]&&S.nodes[o.key].d===S.day);
 function findNear(){const P=G.P,cx=P.x+P.w/2,by=P.y+P.h;let best=null,bd=1e9;for(const o of G.objs){if(!interactive(o))continue;const w=o.t==='pen'?26:o.t==='fish'?24:14;const dx=Math.abs(o.x-cx),dy=Math.abs(o.y-by);if(dx<w&&dy<14){const d=dx+dy;if(d<bd){bd=d;best=o;}}}G.near=best;}
 function interact(o){switch(o.t){
@@ -1218,7 +1224,7 @@ function talkNpc2(id,first){const f=fr(id),n=NPCS[id];const hs=hearts(id);
  if(aq){say(id,tr(aq.i),[['📜 '+T('accept'),()=>{acceptQ(aq);talkMenu(id);}],[T('later'),()=>talkMenu(id)]]);return;}
  talkMenu(id,null,first);}
 function npcLine(id){const n=NPCS[id];const pool=hearts(id)>=5?n.ln.concat(n.hi):n.ln;return tr(pick(pool));}
-function talkMenu(id,line,first){const f=fr(id);if(f.t!==S.day){f.t=S.day;addFr(id,15);}
+function talkMenu(id,line,first){const f=fr(id);if(f.t!==S.day){f.t=S.day;addFr(id,15);toast(`💬 ${nname(id)} +15 💗 (${hearts(id)}/10 ♥ · ${f.p%100}/100)`,1);}
  if(id==='nova'&&S.proj.musichall&&S.flags.concert!==S.day){S.flags.concert=S.day;S.energy=Math.min(maxE(),S.energy+25);toast('🎵 '+T('concert'));}
  const ln=line||(first?(LANG?`Hej! Jag är ${nname(id)}, ${tr(NPCS[id].role).toLowerCase()}. `:`Hi! I'm ${nname(id)}, the ${tr(NPCS[id].role).toLowerCase()}. `)+npcLine(id):npcLine(id));
  const opts=[['💬 '+T('talk'),()=>talkMenu(id,npcLine(id))],['🎁 '+T('gift'),()=>menuGift(id)]];if(SHOPS[id])opts.push(['🛍️ '+T('shop'),()=>menuShop(id)]);opts.push(['👋 '+T('bye'),null]);say(id,ln,opts);}
@@ -1238,7 +1244,7 @@ function freePens(){const keys=[];DECKS.ranch.o.forEach((a,i)=>{if(a[0]!=='pen')
 function buyAnimal(k){const a=ANIMALS[k];const fp=freePens();if(!fp.length){toast(T('nopen'));sfx('err');return;}if(S.money<a.p){toast(T('nomoney'));sfx('err');return;}S.money-=a.p;S.pens[fp[0]]={a:k,fed:0,prod:0,love:0};sfx('fanfare');toast(a.ic+' '+tr(a.n)+' 💗');questPing();rebuildObjs();refresh();}
 function usePen(o){const p=S.pens[o.key];if(!p||!p.a){say('sys',T('penempty'));return;}const a=ANIMALS[p.a];
  if(p.prod){p.prod=0;let n=1;if(a.x&&Math.random()<0.3)n++;if(S.res.husbandry&&Math.random()<0.25)n++;add(a.pr,n);sfx('pick');return;}
- if(p.fed!==S.day){if(!take('hay')){say('sys',T('nohay'));return;}p.fed=S.day;p.love=(p.love||0)+1;sfx('eat');}else sfx('quest');
+ if(p.fed!==S.day){if(!take('hay')){say('sys',T('nohay'));return;}p.fed=S.day;p.love=(p.love||0)+1;sfx('eat');toast(a.ic+' '+tr(a.n)+' 💗'+p.love,1);}else sfx('quest');
  for(let i=0;i<3;i++)G.parts.push({x:o.x+rnd(-8,8),y:o.y-16,vx:0,vy:-0.4,l:40,ch:'💗',s:7});}
 function feedAll(){let n=0;Object.values(S.pens).forEach(p=>{if(p&&p.a&&p.fed!==S.day&&take('hay')){p.fed=S.day;n++;}});if(n){toast('🧺 '+T('fedall')+': '+n);sfx('eat');}else if(!has('hay'))say('sys',T('nohay'));else toast('💗');}
 function useHive(o){const h=S.hives[o.key]||(S.hives[o.key]={d:S.proj.beehives||S.day});if(S.day-h.d>=2){add('honey',rint(1,2));h.d=S.day;sfx('pick');}else toast('🐝 '+T('hivenot'));}
@@ -1368,6 +1374,8 @@ function drawObj(c,o){const x=o.x,y=o.y,pal=G.D.pal;switch(o.t){
   E(c,'🐝',x+Math.sin(G.t*0.07+o.i)*9,y-17+Math.cos(G.t*0.09)*3,6);const h=S.hives[o.key];if(S.day-(h?h.d:(S.proj.beehives||S.day))>=2){glow(c,x,y-26,9,'#ffd070',0.4);E(c,'🍯',x,y-22,8);}break;}
  case'deco':if(o.big&&o.e==='⚛️'){glow(c,x,y-18,46,'#ff8adf',0.3+0.12*Math.sin(G.t*0.05));}shadowE(c,x,y,o.big?16:7);E(c,o.e,x,y,o.big?32:14);break;
  case'furn':{const big=o.id==='bed2'||o.id==='couch'||o.id==='piano';if(o.id==='lamp'||o.id==='candle'||o.id==='lantern')glow(c,x,y-10,22,'#ffd890',0.28);shadowE(c,x,y,big?12:7);E(c,ITEMS[o.id].ic,x,y,big?20:14);break;}}}
+function drawProg(c,o){if(o.t==='node'){const st=S.nodes[o.key];if(!st||st.d===S.day||!st.h)return;const f=st.h/nodeNeed(o),x=o.x,y=o.y-22;c.strokeStyle='rgba(20,22,58,.6)';c.lineWidth=2.6;c.beginPath();c.arc(x,y,4.5,0,TAU);c.stroke();c.strokeStyle='#ffd98a';c.lineCap='round';c.beginPath();c.arc(x,y,4.5,-Math.PI/2,-Math.PI/2+TAU*f);c.stroke();}
+ else if(o.t==='plot'){const p=S.plots[o.key];if(!p||!p.c)return;const f=p.g/CROPS[p.c].d;if(f>=1)return;rrf(c,o.x-7,o.y+1.6,14,2.4,1.2,'rgba(20,22,58,.55)');rrf(c,o.x-7,o.y+1.6,Math.max(2.4,14*f),2.4,1.2,p.w?'#8ff0b0':'#d8c890');}}
 let camX=0,camY=0;
 function vignette(c,a){const g=c.createRadialGradient(VW/2,VH/2,Math.min(VW,VH)*0.35,VW/2,VH/2,Math.max(VW,VH)*0.75);g.addColorStop(0,'rgba(10,8,40,0)');g.addColorStop(1,`rgba(10,8,40,${a})`);c.fillStyle=g;c.fillRect(0,0,VW,VH);}
 function render(){const c=cx;c.setTransform(K,0,0,K,0,0);c.imageSmoothingEnabled=true;c.imageSmoothingQuality='high';
@@ -1376,7 +1384,7 @@ function render(){const c=cx;c.setTransform(K,0,0,K,0,0);c.imageSmoothingEnabled
  if(G.cam.snap){camX=tx;camY=ty;G.cam.snap=0;}else{camX+=(tx-camX)*0.1;camY+=(ty-camY)*0.1;}const ox=camX,oy=camY;
  if(D.sp.out==='sky')drawSky(c,ox,oy);else drawSpace(c,ox,oy);
  c.save();c.translate(-ox,-oy);drawDeck(c,D,ox,oy);
- for(const o of G.objs)if(o.x>ox-60&&o.x<ox+VW+60)drawObj(c,o);
+ for(const o of G.objs)if(o.x>ox-60&&o.x<ox+VW+60){drawObj(c,o);drawProg(c,o);}
  for(const p of G.pick){const b=Math.sin(G.t*0.07+p.x)*2;glow(c,p.x,p.y+b,14,p.id==='shard'?'#fff0a0':'#bfe0ff',0.55);E(c,ITEMS[p.id].ic,p.x,p.y+b+5,10);c.fillStyle='#fff';for(let i=0;i<2;i++){const a=G.t*0.05+i*Math.PI;c.globalAlpha=0.7;circ(c,p.x+Math.cos(a)*9,p.y+b+Math.sin(a)*4,0.8);}c.globalAlpha=1;
   if(S.res.cartography&&p.id==='shard'){const lg=c.createLinearGradient(0,p.y-200,0,p.y);lg.addColorStop(0,'rgba(255,240,150,0)');lg.addColorStop(1,'rgba(255,240,150,.2)');c.fillStyle=lg;rr(c,p.x-1.5,p.y-200,3,200,1.5);c.fill();}}
  {const lk=PLOOK();drawChar(c,P.x+P.w/2,P.y+P.h,lk,P.climb?P.fr:(P.ground&&Math.abs(P.vx)>0.3?P.fr:-1),P.face,0,3);
@@ -1576,7 +1584,7 @@ function update(){G.t++;if(G.mode!=='play'||!S)return;if(G.fish){updFish();retur
  for(const p of G.parts){p.x+=p.vx;p.y+=p.vy;if(p.g)p.vy+=0.12;if(p.sw)p.x+=Math.sin(G.t*0.05+p.l*0.1)*0.35;if(p.fly){p.vx=clamp(p.vx+rnd(-.06,.06),-.5,.5);p.vy=clamp(p.vy+rnd(-.06,.06),-.4,.4);}if(p.grow)p.s+=0.05;p.l--;}G.parts=G.parts.filter(p=>p.l>0);
  if(G.t%(G.D.id==='aqua'||G.D.id==='eng'?7:12)===0&&G.parts.length<90)G.parts.push(ambient(G.D));}
 let hudT=0;
-function updHud(){if(!S)return;$('hday').textContent=T('day')+' '+S.day;$('htime').textContent=fmtTime()+(S.time>=1260?' 🌙':'');$('hmoney').textContent=fmt(S.money);$('eb').firstChild.style.width=clamp(S.energy/maxE()*100,0,100)+'%';$('eb').title=Math.floor(S.energy)+'/'+maxE();}
+function updHud(){if(!S)return;$('hday').textContent=T('day')+' '+S.day;$('htime').textContent=fmtTime()+(S.time>=1260?' 🌙':'');$('hmoney').textContent=fmt(S.money);$('eb').firstChild.style.width=clamp(S.energy/maxE()*100,0,100)+'%';$('eb').title=Math.floor(S.energy)+'/'+maxE();$('hen').textContent=Math.floor(S.energy)+'/'+maxE();}
 let lastPrompt='';
 function updPrompt(force){const el=$('prompt');let t='';if(G.mode==='play'&&G.near&&!uiOpen()&&!G.fish){const gl=IN.dev==='pad'?'Ⓑ':IN.dev==='touch'?'✋':'[E]';t=gl+' '+objLabel(G.near);}
  if(t!==lastPrompt||force){lastPrompt=t;el.textContent=t;el.classList.toggle('hid',!t);$('tB').classList.toggle('hl',!!t);}}
