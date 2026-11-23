@@ -175,7 +175,7 @@ const L={
  elev:['Lift','Hiss'],bed:['Bed','Säng'],stove:['Stove','Spis'],bench:['Workbench','Arbetsbänk'],smelter:['Smelter','Smältugn'],buildt:['Build Terminal','Byggterminal'],console:['Research Console','Forskningskonsol'],archd:['Archive Desk','Arkivdisk'],telescope:['Telescope','Teleskop'],spot:['Fishing pool','Fiskedamm'],toolbox:['Decorating kit','Inredningslåda'],
  interact:['Use','Använd'],
  help:['How to play','Hur man spelar'],
- helpt:['Move: arrows/WASD, D-pad or stick. Jump: Space / Ⓐ / ⤒. Use & talk: E or Enter / Ⓑ / ✋. Climb ladders: up/down. Menu: Esc / Start / ☰. Bag: I or Tab / Ⓨ / 🎒. In menus: arrows or D-pad to move, Enter/Ⓑ to choose, Esc/Ⓐ to go back, Q/R or LB/RB to switch tabs.','Gå: pilar/WASD, styrkors eller spak. Hoppa: Mellanslag / Ⓐ / ⤒. Använd & prata: E eller Enter / Ⓑ / ✋. Klättra: upp/ner. Meny: Esc / Start / ☰. Väska: I eller Tab / Ⓨ / 🎒. I menyer: pilar eller styrkors för att flytta, Enter/Ⓑ för att välja, Esc/Ⓐ för att gå tillbaka, Q/R eller LB/RB för att byta flik.'],
+ helpt:['Move: arrows/WASD, D-pad or stick. Jump: Space / Ⓐ / ⤒. Use & talk: E or Enter / Ⓑ / ✋. Climb ladders: up/down. Menu: Esc / Start / ☰. Bag: I or Tab / Ⓨ / 🎒. In menus: arrows or D-pad to move, Enter/Ⓑ to choose, Esc/Ⓐ to go back, Q/R or LB/RB to switch tabs, right stick or LT/RT to scroll.','Gå: pilar/WASD, styrkors eller spak. Hoppa: Mellanslag / Ⓐ / ⤒. Använd & prata: E eller Enter / Ⓑ / ✋. Klättra: upp/ner. Meny: Esc / Start / ☰. Väska: I eller Tab / Ⓨ / 🎒. I menyer: pilar eller styrkors för att flytta, Enter/Ⓑ för att välja, Esc/Ⓐ för att gå tillbaka, Q/R eller LB/RB för att byta flik, höger spak eller LT/RT för att scrolla.'],
  tip1:['Tip: Crops grow overnight on days they were watered. Sleep in your bed to start a new day.','Tips: Grödor växer under natten de dagar de vattnats. Sov i din säng för att börja en ny dag.'],
  stats:['Statistics','Statistik'],playtime:['Play time','Speltid'],
  ending:['Arrival','Ankomst'],
@@ -817,8 +817,8 @@ const qst=id=>S.quests[id];
 function qAvail(q){if(qst(q.id))return false;return (q.rq||[]).every(x=>qst(x)&&qst(x).s===2);}
 function ownCount(k){switch(k){case'animals':return Object.values(S.pens).filter(p=>p&&p.a).length;case'furn':return S.furn.filter(f=>f.d==='cabin').length;case'shards':return S.stats.shards||0;case'arts':return ARTS.filter(a=>S.seen[a]).length;case'donated':return Object.keys(S.don).length;case'visited':return Object.keys(S.visited).length;case'projects':return Object.keys(S.proj).length;}return 0;}
 function objProg(q,o){const st=qst(q.id)||{b:{},tk:{}};switch(o.t){
- case'have':return[Math.min(cnt(o.it),o.n),o.n];case'talk':return[st.tk&&st.tk[o.npc]?1:0,1];case'build':return[S.proj[o.p]?1:0,1];
- case'res':return[S.res[o.r]?1:0,1];case'stat':return[clamp((S.stats[o.k]||0)-((st.b&&st.b[o.k])||0),0,o.n),o.n];case'own':return[Math.min(ownCount(o.k),o.n),o.n];}return[0,1];}
+ case'have':return[Math.min(cnt(o.it),o.n),o.n];case'talk':return[(st.tk&&st.tk[o.npc])||(S.fr[o.npc]&&S.fr[o.npc].met)?1:0,1];case'build':return[S.proj[o.p]?1:0,1];
+ case'res':return[S.res[o.r]?1:0,1];case'stat':return[clamp(S.stats[o.k]||0,0,o.n),o.n];case'own':return[Math.min(ownCount(o.k),o.n),o.n];}return[0,1];}
 function objText(o){switch(o.t){case'have':return icon(o.it)+' '+iname(o.it);case'talk':return T('talkto')+' '+nname(o.npc);case'build':return T('buildp')+': '+PRJ[o.p].ic+' '+tr(PRJ[o.p].n);case'res':return T('researchp')+': '+tr(RES[o.r].n);case'stat':return tr(STATN[o.k]);case'own':return tr(OWNN[o.k]);}return'';}
 const qComplete=q=>q.o.every(o=>{const[a,b]=objProg(q,o);return a>=b;});
 function acceptQ(q){const b={};q.o.forEach(o=>{if(o.t==='stat')b[o.k]=S.stats[o.k]||0;});S.quests[q.id]={s:1,b,tk:{}};if(q.give==='rod'&&S.tools.rod<1){S.tools.rod=1;toast('🎣 '+tr(TOOLS.rod.n));}toast('📜 '+T('newq')+': '+tr(q.n));sfx('quest');updTracker();}
@@ -933,13 +933,13 @@ function sfx(n){const C=AU.c;if(!C||SET.sfx<=0.001)return;const t=C.currentTime+
 
 /* ================= INPUT ================= */
 const BTN=['L','R','U','D','A','B','X','Y','ST','LB','RB','OK','BK','UJ','SP'];
-const IN={k:{},p:{},t:{},cur:{},prev:{},pr:{},latch:{},dev:'kb'};
+const IN={k:{},p:{},t:{},cur:{},prev:{},pr:{},latch:{},hold:{},rsy:0,dev:'kb'};
 const KMAP={ArrowLeft:'L',a:'L',A:'L',ArrowRight:'R',d:'R',D:'R',ArrowUp:'U',w:'U',W:'U',ArrowDown:'D',s:'D',S:'D',' ':'SP',z:'SP',Z:'SP',k:'SP',e:'OK',E:'OK',Enter:'OK',j:'OK',Escape:'BK',Backspace:'BK',i:'Y',I:'Y',Tab:'Y',q:'LB',Q:'LB',r:'RB',R:'RB',PageUp:'LB',PageDown:'RB'};
 function setDev(d){if(IN.dev!==d){IN.dev=d;document.body.classList.toggle('kb',d!=='touch');updPrompt(true);}}
 addEventListener('keydown',e=>{const b=KMAP[e.key];if(b){e.preventDefault();setDev('kb');if(!IN.k[b])IN.latch[b]=1;IN.k[b]=1;if(b==='U'&&!e.repeat)IN.latch.UJ=1;}gateGo();});
 addEventListener('keyup',e=>{const b=KMAP[e.key];if(b){IN.k[b]=0;}});
-function pollPad(){const gps=navigator.getGamepads?navigator.getGamepads():[];IN.p={};for(const g of gps){if(!g||!g.connected)continue;const bt=i=>g.buttons[i]&&g.buttons[i].pressed;const ax=g.axes||[];
- const p={L:bt(14)||ax[0]<-0.45,R:bt(15)||ax[0]>0.45,U:bt(12)||ax[1]<-0.5,D:bt(13)||ax[1]>0.5,A:bt(0),B:bt(1),X:bt(2),Y:bt(3),ST:bt(9)||bt(8),LB:bt(4),RB:bt(5)};
+function pollPad(){const gps=navigator.getGamepads?navigator.getGamepads():[];IN.p={};IN.rsy=0;for(const g of gps){if(!g||!g.connected)continue;const bt=i=>g.buttons[i]&&g.buttons[i].pressed;const ax=g.axes||[];
+ IN.rsy=Math.abs(ax[3]||0)>0.25?ax[3]:(bt(7)?1:bt(6)?-1:0);const p={L:bt(14)||ax[0]<-0.45,R:bt(15)||ax[0]>0.45,U:bt(12)||ax[1]<-0.5,D:bt(13)||ax[1]>0.5,A:bt(0),B:bt(1),X:bt(2),Y:bt(3),ST:bt(9)||bt(8),LB:bt(4),RB:bt(5)};
  for(const k in p)if(p[k]){IN.p[k]=1;}if(Object.values(p).some(v=>v)){setDev('pad');gateGo();}}}
 function inputFrame(){pollPad();for(const b of BTN){const c=!!(IN.k[b]||IN.p[b]||IN.t[b]);IN.pr[b]=(c&&!IN.prev[b])||!!IN.latch[b];IN.cur[b]=c;IN.prev[b]=c;}IN.latch={};}
 // touch controls
@@ -988,7 +988,8 @@ function navMove(dx,dy){const root=navRoot();if(!root)return;const els=[...root.
  let cur=root.querySelector('.f.foc');if(!cur||!els.includes(cur)){setFoc(els[0]);return;}
  const r=cur.getBoundingClientRect(),cx=r.left+r.width/2,cy=r.top+r.height/2;let best=null,bs=1e9;
  for(const e of els){if(e===cur)continue;const q=e.getBoundingClientRect(),ex=q.left+q.width/2,ey=q.top+q.height/2;const ddx=ex-cx,ddy=ey-cy;const main=dx?ddx*dx:ddy*dy;if(main<=3)continue;const cross=dx?Math.abs(ddy):Math.abs(ddx);const s=main+cross*(dx?3:1.6);if(s<bs){bs=s;best=e;}}
- if(best){setFoc(best);sfx('move');}}
+ if(best){const sc=scroller(root);if(sc&&dy){const br=best.getBoundingClientRect(),sr=sc.getBoundingClientRect();if(dy>0&&br.top>sr.bottom+40){sc.scrollBy({top:90});return;}if(dy<0&&br.bottom<sr.top-40){sc.scrollBy({top:-90});return;}}setFoc(best);sfx('move');}else if(dy){const sc=scroller(root);if(sc)sc.scrollBy({top:dy*90});}}
+function scroller(root){if(!root)return null;if(root.id==='title')return root;return root.querySelector('.wb');}
 function navOk(){const root=navRoot();if(!root)return;const f=root.querySelector('.f.foc');if(f&&!f.disabled)f.click();}
 document.addEventListener('click',e=>{const b=e.target.closest('[data-a]');if(!b||b.disabled)return;const fn=UI.acts[b.dataset.a];if(fn){auInit();fn(b);}});
 document.addEventListener('mouseover',e=>{if(IN.dev!=='mouse')return;const b=e.target.closest('.f');if(b&&!b.classList.contains('foc'))setFoc(b,false);});
@@ -1034,7 +1035,7 @@ function bodyBag(m){let h='';const ids=invIds();const sel=m.sel&&cnt(m.sel)>0?m.
  else h+=`<div class="det"><div class="di">🎒</div><div class="dm"><div class="rs">${T('select')}</div><div class="rs">⚡ ${Math.floor(S.energy)}/${maxE()} · 🛋️ ${T('comfort')}: ${comfort()} · 🧬 ${S.rp} RP · 🌟 ${cnt('shard')}</div></div></div>`;
  if(!ids.length)h+=`<div class="note">${T('none')}</div>`;
  let lastCat='';const groups={};ids.forEach(id=>{(groups[ITEMS[id].cat]=groups[ITEMS[id].cat]||[]).push(id);});
- CAT_ORDER.forEach(c=>{if(!groups[c])return;h+=`<div class="sec">${tr(CATS[c])}</div>`+slotsHtml(groups[c],id=>{m.sel=id;refresh();sfx('click');},sel);});
+ CAT_ORDER.forEach(c=>{if(!groups[c])return;h+=`<div class="sec">${tr(CATS[c])}</div>`+slotsHtml(groups[c],id=>{m.sel=id;refresh();sfx('click');if(IN.dev==='pad'||IN.dev==='kb'){const b=$('menu').querySelector('[data-k="eat"],[data-k="place"]');if(b)setFoc(b);}},sel);});
  h+=`<div class="sec">${T('tools')}</div>`;
  Object.entries(TOOLS).forEach(([k,t])=>{const l=S.tools[k];h+=`<div class="row"><div class="ri">${t.ic}</div><div class="rm"><div class="rt">${tr(t.n)} ${l?T('level')+' '+l:'—'}</div><div class="rs">${tr(t.d)}</div></div></div>`;});
  const perks=['jetboots','thrusters','ergonomics','vitality','sonar','sprinklers','pocketlift'].filter(p=>S.res[p]);if(perks.length)h+=`<div class="sec">${T('perks')}</div>`+perks.map(p=>`<span class="chip">${RES[p].ic} ${tr(RES[p].n)}</span>`).join('');
@@ -1573,7 +1574,8 @@ function updPrompt(force){const el=$('prompt');let t='';if(G.mode==='play'&&G.ne
 // Gamepad: B = confirm / use / choose, A = jump / cancel / back. Keyboard: Enter/E/Space confirm, Esc/Backspace back.
 function handleInput(){const pr=IN.pr;if(G.mode==='boot')return;if(G.ignoreT>0){G.ignoreT--;return;}
  const ok=pr.B||pr.OK||pr.SP,no=pr.A||pr.BK;
- const nav=()=>{if(pr.U)navMove(0,-1);if(pr.D)navMove(0,1);if(pr.L)navMove(-1,0);if(pr.R)navMove(1,0);};
+ const rep=k=>{if(pr[k]){IN.hold[k]=0;return true;}if(IN.cur[k]){IN.hold[k]=(IN.hold[k]||0)+1;if(IN.hold[k]>22&&IN.hold[k]%6===0)return true;}else IN.hold[k]=0;return false;};
+ const nav=()=>{if(rep('U'))navMove(0,-1);if(rep('D'))navMove(0,1);if(rep('L'))navMove(-1,0);if(rep('R'))navMove(1,0);if(IN.rsy){const sc=scroller(navRoot());if(sc)sc.scrollTop+=IN.rsy*9;}};
  if($('credits')&&!$('credits').classList.contains('hid')){if(ok||no)$('credits').classList.add('hid');return;}
  if(DLG.cur){const d=DLG.cur;if(d.opts&&DLG.shown>=DLG.full.length){nav();if(ok)navOk();else if(no||pr.ST){const bs=$('dlg').querySelectorAll('.do .f');if(bs.length)bs[bs.length-1].click();}}
   else if(ok||no||pr.X)dlgAdvance();return;}
