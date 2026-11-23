@@ -23,3 +23,4 @@ A second, separate game in `starhaven.html`: a cozy, slow-paced, story-driven 2D
 - **Languages:** English and Svenska (title screen or Settings).
 - **Controls:** keyboard, touch (D-pad, ⤒ jump, ✋ use) and gamepad (A jump/confirm, B/X use, B back in menus, Y bag, Start menu, LB/RB tabs). Fullscreen on by default.
 - **Saving:** 3 slots, autosave every 30 seconds, plus saving when you sleep and when the tab is hidden.
+- **Look & sound:** smooth, rounded vector art (round characters, portholes, soft lighting and glows) and a gentle generative soundtrack (warm electric piano, soft pads, bells and reverb) that changes with day, night and location.
