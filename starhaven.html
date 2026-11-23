@@ -77,7 +77,7 @@ body.kb .f.foc{outline:3px solid var(--ac);outline-offset:2px;box-shadow:0 0 16p
 .det .di{font-size:44px;flex:none}
 .det .dm{flex:1;min-width:0}
 .bar{height:8px;background:rgba(10,12,40,.6);border-radius:99px;overflow:hidden;margin-top:5px}.bar i{display:block;height:100%;background:linear-gradient(90deg,#7fe0a8,#e6fb9e);border-radius:99px}
-.hearts{color:var(--pk);letter-spacing:1px;font-size:13px}
+.hearts{letter-spacing:1px;font-size:13px;white-space:nowrap}.hearts .hf{color:#ff8ab8;text-shadow:0 0 6px rgba(255,138,184,.5)}.hearts .he{color:rgba(255,188,217,.22)}.hearts .hp{background:linear-gradient(90deg,#ff8ab8 var(--p),rgba(255,188,217,.22) var(--p));-webkit-background-clip:text;background-clip:text;color:transparent}#dlg .dn .hearts{font-size:12px;margin-left:6px}
 .note{color:var(--dim);font-size:13px;margin:6px 4px}
 #dlg{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(12px + env(safe-area-inset-bottom));width:min(820px,calc(100% - 20px));z-index:25;background:linear-gradient(180deg,#2a3268,#1f2552);border:1.5px solid var(--ln);border-radius:28px;padding:14px 18px;display:flex;gap:14px;box-shadow:0 14px 44px rgba(4,4,24,.55),inset 0 1px 0 rgba(255,255,255,.08);animation:pop .25s ease-out}
 #dlg .pt{width:68px;height:68px;flex:none;border-radius:50%;background:#161b44;box-shadow:0 0 0 3px rgba(255,217,138,.35),0 4px 12px rgba(0,0,0,.35)}
@@ -801,7 +801,8 @@ const deckOpen=id=>!DECK_REQ[id]||!!S.proj[DECK_REQ[id]];
 const seedTier=()=>(S.proj.promenade?1:0)+(S.proj.cargo?1:0)+(S.proj.aquarium?1:0)+(S.proj.dome?1:0)+(S.proj.reactor?1:0);
 const fr=id=>S.fr[id]||(S.fr[id]={p:0,t:0,g:0,ev:{},met:0,kn:{}});
 const hearts=id=>Math.min(10,Math.floor(fr(id).p/100));
-function addFr(id,n){const f=fr(id);f.p=clamp(f.p+n,0,1000);}
+function addFr(id,n){const f=fr(id);const before=hearts(id);f.p=clamp(f.p+n,0,1000);if(hearts(id)>before&&n>0){toast('💗 '+nname(id)+': '+hearts(id)+' ♥');sfx('quest');}}
+function heartsHTML(id){const p=fr(id).p,full=Math.floor(p/100),part=(p%100)/100;let h='';for(let i=0;i<10;i++){if(i<full)h+='<span class="hf">♥</span>';else if(i===full&&p<1000)h+=`<span class="hp" style="--p:${Math.round(part*100)}%">♥</span>`;else h+='<span class="he">♥</span>';}return`<span class="hearts">${h}</span>`;}
 const fmtTime=()=>{const h=Math.floor(S.time/60)%24,m=S.time%60;return String(h).padStart(2,'0')+':'+String(m).padStart(2,'0');};
 
 /* ---------- recipes / research / projects ---------- */
@@ -1013,7 +1014,7 @@ function sayNpc(id,text,then){say(id,text,null,then);}
 function sayLines(sp,lines,then){lines.forEach((l,i)=>say(sp,tr(l),null,i===lines.length-1?then:null));}
 function nextDlg(){const d=DLG.q.shift();DLG.cur=d||null;const el=$('dlg');if(!d){el.classList.add('hid');return;}
  el.classList.remove('hid');UI.acts=UI.stack.length?UI.acts:{};
- el.querySelector('.dn').textContent=d.sp==='sys'||!d.sp?'':nname(d.sp);
+ el.querySelector('.dn').innerHTML=d.sp==='sys'||!d.sp?'':nname(d.sp)+(NPCS[d.sp]&&fr(d.sp).met?' '+heartsHTML(d.sp):'');
  drawPortrait(el.querySelector('.pt'),d.sp);
  DLG.full=d.text;DLG.shown=0;el.querySelector('.dt').textContent='';
  const o=el.querySelector('.do');o.innerHTML='';el.querySelector('.nx').style.display='none';}
@@ -1060,7 +1061,7 @@ function bodyResearch(){let h=`<div class="det"><div class="di">🧬</div><div c
 function bodyArchive(m){const don=Object.keys(S.don).length;let h=`<div class="det"><div class="di">🏛️</div><div class="dm"><div class="rt">${T('arch')}: ${don}/${ARCH.length}</div><div class="bar"><i style="width:${don/ARCH.length*100}%"></i></div><div class="rs">${m.sel?`${S.seen[m.sel]?icon(m.sel)+' '+iname(m.sel):'❔ ???'} ${S.don[m.sel]?'· ✔️':''}`:T('donateh')}</div></div></div>`;
  CAT_ORDER.filter(c=>c!=='seed'&&c!=='misc').forEach(c=>{const ids=ARCH.filter(id=>ITEMS[id].cat===c);h+=`<div class="sec">${tr(CATS[c])} ${ids.filter(i=>S.don[i]).length}/${ids.length}</div><div class="grid">`+ids.map(id=>`<button class="sl f ${S.don[id]?'don':S.seen[id]?'':'dn'}" data-k="a:${id}" data-a="${act(()=>{m.sel=id;refresh();})}">${S.seen[id]?icon(id):'❔'}</button>`).join('')+'</div>';});return h;}
 function bodyFriends(){let h='';Object.keys(NPCS).forEach(id=>{const f=fr(id),n=NPCS[id];if(!f.met){h+=`<div class="row dim"><div class="ri">❔</div><div class="rm"><div class="rt">???</div><div class="rs">${T('notmet')}</div></div></div>`;return;}
- const hs=hearts(id);const kn=Object.keys(f.kn||{});h+=`<div class="row"><div class="ri"><img src="${portraitURL(id)}"></div><div class="rm"><div class="rt">${nname(id)} <span class="rs">· ${tr(n.role)}</span></div><div class="hearts">${'♥'.repeat(hs)}<span style="opacity:.3">${'♥'.repeat(10-hs)}</span></div><div class="rs">${T('loves')}: ${n.loves.map(l=>kn.includes(l)?ITEMS[l].ic:'❔').join(' ')}</div></div></div>`;});return h;}
+ const hs=hearts(id);const kn=Object.keys(f.kn||{});h+=`<div class="row"><div class="ri"><img src="${portraitURL(id)}"></div><div class="rm"><div class="rt">${nname(id)} <span class="rs">· ${tr(n.role)}</span></div><div>${heartsHTML(id)} <span class="rs">${hs}/10 · ${fr(id).p%100===0&&hs===10?'💖':`${fr(id).p%100}/100`}</span></div><div class="bar" style="max-width:220px"><i style="width:${hs>=10?100:fr(id).p%100}%;background:linear-gradient(90deg,#ffbcd9,#ff8ab8)"></i></div><div class="rs">${T('loves')}: ${n.loves.map(l=>kn.includes(l)?ITEMS[l].ic:'❔').join(' ')}</div></div></div>`;});return h;}
 function deckRows(fromMenu){let h='';DECK_ORDER.forEach(id=>{const op=deckOpen(id),D=DECKS[id];const sh=D.sh.length,got=D.sh.filter((_,i)=>S.got[id+'_s'+i]).length;const here=G.D&&G.D.id===id;
  h+=`<div class="row ${op?'':'dim'}"><div class="ri">${op?(here?'📍':'🛗'):'🔒'}</div><div class="rm"><div class="rt">${tr(D.n)}</div><div class="rs">${op?(here?T('here'):''):T('locked')+(DECK_REQ[id]?' · '+PRJ[DECK_REQ[id]].ic+' '+tr(PRJ[DECK_REQ[id]].n):'')}${op&&S.res.cartography?` · 🌟 ${got}/${sh}`:''}</div></div><div class="ra">${op&&!here?B('➜',()=>{closeAll();travel(id);},'g',false,'d:'+id):''}</div></div>`;});return h;}
 function bodyLift(){return deckRows(1);}
@@ -1120,7 +1121,7 @@ function menuDonate(){openMenu({title:'🏛️ '+T('archd'),body:()=>{const ids=
 function menuGift(npc){openMenu({title:'🎁 '+nname(npc),body:m=>{const ids=invIds(k=>k!=='cat');return ids.length?slotsHtml(ids,id=>{closeAll();giveGift(npc,id);}):`<div class="note">${T('none')}</div>`;}});}
 function giveGift(npc,id){const f=fr(npc),n=NPCS[npc];if(f.g===S.day){sayNpc(npc,tr(GIFTR.again));return;}take(id);f.g=S.day;stat('gifts');
  let k='neu',pts=20;if(n.loves.includes(id)){k='love';pts=80;}else if(n.likes.includes(id)){k='like';pts=45;}else if(n.hates.includes(id)){k='hate';pts=-20;}else if(ITEMS[id].cat==='food'){k='like';pts=35;}
- if(k==='love')f.kn[id]=1;addFr(npc,pts);sfx(k==='hate'?'bad':'quest');sayNpc(npc,tr(GIFTR[k])+(k==='love'?' 💖':k==='like'?' 💗':''));}
+ if(k==='love')f.kn[id]=1;if(k==='like')f.kl=Object.assign(f.kl||{},{[id]:1});addFr(npc,pts);toast(`🎁 ${nname(npc)} ${pts>0?'+':''}${pts} 💗 (${hearts(npc)}/10 ♥ · ${fr(npc).p%100}/100)`);sfx(k==='hate'?'bad':'quest');sayNpc(npc,tr(GIFTR[k])+(k==='love'?' 💖':k==='like'?' 💗':''));}
 
 /* ---- decorate ---- */
 function menuDecor(){openMenu({title:'🧰 '+T('decor'),body:()=>{const ids=invIds(k=>ITEMS[k].cat==='furn');let h=`<div class="note">${T('decorh')} · 🛋️ ${T('comfort')}: ${comfort()} (⚡ +${Math.min(40,Math.floor(comfort()/2))})</div>`;if(!ids.length)h+=`<div class="note">${T('nofurn')}</div>`;
