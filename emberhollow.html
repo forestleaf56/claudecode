@@ -817,7 +817,7 @@ const NPC={
   h:[['I am building a bench by the lantern. For when the sun comes back. We will need somewhere to sit.','Jag bygger en bänk vid lyktan. Till när solen kommer tillbaka. Vi behöver någonstans att sitta.'],
    ['Your home is a fine piece of work. I would have done the corners differently. But fine.','Ditt hem är ett fint hantverk. Jag hade gjort hörnen annorlunda. Men fint.']],
   hg:[[['plank',30]],[['big_chest',1]],[['gear',6]]]},
- linnea:{n:['Linnea the Scholar','Lärda Linnea'],por:'👩‍🏫',x:96,y:108,shop:'linnea',pal:['#f0c8a8','#2a1a10','#4a3a7a','#2a2a4a'],loves:['old_page','moonstone','diamond','notes'],likes:['paper','amethyst','glowcap','tea'],hates:['meat','slime_gel','old_boot'],
+ linnea:{n:['Linnea the Scholar','Lärda Linnea'],por:'👩‍🏫',x:90,y:110,shop:'linnea',pal:['#f0c8a8','#2a1a10','#4a3a7a','#2a2a4a'],loves:['old_page','moonstone','diamond','notes'],likes:['paper','amethyst','glowcap','tea'],hates:['meat','slime_gel','old_boot'],
   l:[["Knowledge is light that doesn't need fuel.",'Kunskap är ljus som inte behöver bränsle.'],
    ['Study things! Rocks, fish, boots. Everything teaches something.','Studera saker! Stenar, fiskar, kängor. Allt lär oss något.'],
    ['Old pages lie scattered in ruins and deep in the mine. Read them — they remember.','Gamla sidor ligger utspridda i ruiner och djupt i gruvan. Läs dem — de minns.'],
@@ -1215,7 +1215,7 @@ function genWorld(seed){
  // village
  const put=(x,y,id,extra)=>{const o=Object.assign(mkObj(id),extra||{});z.o.set(I(x,y),o);if(!SOLIDT.has(T[I(x,y)])||true){if(T[I(x,y)]===6||T[I(x,y)]===7)setT(x,y,1);}return o;};
  const bld=(cx,by,k)=>{for(let y=by-2;y<=by;y++)for(let x=cx-1;x<=cx+1;x++){if(x===cx&&y===by)continue;z.o.set(I(x,y),{t:'part',p:I(cx,by)});if(T[I(x,y)]===6||T[I(x,y)]===7)setT(x,y,1);}put(cx,by,'bld',{k,fixed:1});setT(cx,by+1,T[I(cx,by+1)]===19?19:13);};
- bld(96,89,'hall');bld(105,92,'smith');bld(87,92,'herb');bld(105,101,'store');bld(87,101,'inn');bld(96,106,'library');bld(113,96,'carp');bld(82,105,'fisher');bld(111,108,'home');bld(94,57,'tent');
+ bld(96,89,'hall');bld(105,92,'smith');bld(87,92,'herb');bld(105,101,'store');bld(87,101,'inn');bld(90,108,'library');bld(113,96,'carp');bld(82,105,'fisher');bld(111,108,'home');bld(94,57,'tent');
  put(96,96,'great_lantern',{fixed:1});put(100,98,'board',{fixed:1});put(92,98,'well',{fixed:1});
  [[90,90],[102,90],[90,102],[102,102],[99,113],[110,103],[84,96],[108,96],[80,85],[118,108]].forEach(([x,y])=>put(x,y,'vlamp',{fixed:1}));
  put(78,78,'mine_entrance',{fixed:1});put(98,58,'campfire',{fixed:1});
@@ -1235,7 +1235,9 @@ function genWorld(seed){
   put(rx,ry,'f_page');if(R()<.5)put(rx+1,ry+1,'pillar');if(R()<.4)put(rx-1,ry,'loot_chest',{lv:2});}
  // clear tiles under NPC homes
  for(const k in NPC){const n=NPC[k];z.o.delete(I(n.x,n.y));if(SOLIDT.has(T[I(n.x,n.y)]))setT(n.x,n.y,1);}
- z.o.delete(I(96,118));z.o.delete(I(84,100));
+ z.o.delete(I(84,100));
+ let sp=null;for(let r=0;r<10&&!sp;r++)for(let dx=-r;dx<=r&&!sp;dx++){const x=96+dx,y=118;if(T[I(x,y)]===13)sp=[x,y];}if(!sp)sp=[96,118];
+ for(let y=sp[1]-1;y<=sp[1]+1;y++)for(let x=sp[0]-1;x<=sp[0]+1;x++){z.o.delete(I(x,y));if(SOLIDT.has(T[I(x,y)]))setT(x,y,13);}z.spawn=[sp[0]+.5,sp[1]+.5];
  return z;}
 function mkObj(id){const d=OB[id];const o={t:id};if(d.hp&&d.hp<999)o.hp=d.hp;if(d.harvest)o.r=1;if(d.tall)o.v=Math.floor(R()*4);else o.v=Math.floor(R()*3);return o;}
 function genMine(depth){
@@ -2094,7 +2096,7 @@ function showSplash(done){const el=$('splash'),cv2=$('splashCv');const g2=cv2.ge
 let playing=false,last=0,hudT=0,featT=0;
 function newGame(){const seed=(Math.random()*1e9)|0;G=newState(seed);OVER=genWorld(seed);R=Math.random;Z=OVER;EXP=new Uint8Array(W*H);
  [['axe_wood',1],['pick_wood',1],['hoe_wood',1],['can_basic',1],['club',1],['berries',6],['salve',2]].forEach(([i,n])=>addItem(i,n,true));
- P.x=G.x;P.y=G.y;P.dir=3;initNPCs();genBoard();startQuest('m_welcome',true);
+ G.x=OVER.spawn[0];G.y=OVER.spawn[1];P.x=G.x;P.y=G.y;P.dir=3;initNPCs();genBoard();startQuest('m_welcome',true);
  playStory(INTRO,()=>{startPlaying();toast(t('tutorialMove'),'🏮');});}
 function startPlaying(){$('title').classList.add('hidden');$('hud').classList.remove('hidden');playing=true;applyTouch();updHotbar();updTrack();updHud();setFocus(null);}
 function showTitle(){$('title').classList.remove('hidden');$('hud').classList.add('hidden');$('touch').classList.add('hidden');buildTitle();}
