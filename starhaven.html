@@ -1,0 +1,1384 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<meta name="theme-color" content="#0b1026">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>Starhaven</title>
+<style>
+:root{--bg:#0b1026;--p:#151c3d;--p2:#1f2a5a;--p3:#2a3772;--ln:#41539c;--tx:#f1f3ff;--dim:#a8b2dd;--ac:#ffd37a;--ok:#86e3ad;--no:#ff9a9a;--pk:#ffb6d5}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+html,body{margin:0;width:100%;height:100%;background:var(--bg);color:var(--tx);font-family:"Trebuchet MS","Segoe UI",system-ui,sans-serif;overflow:hidden;touch-action:none;overscroll-behavior:none}
+button{font:inherit;color:inherit;cursor:pointer}
+#c{position:fixed;left:0;top:0;width:100vw;height:100vh;display:block}
+.hid{display:none!important}
+#hud{position:fixed;left:0;right:0;top:0;z-index:5;display:flex;justify-content:space-between;align-items:flex-start;gap:8px;padding:calc(6px + env(safe-area-inset-top)) calc(8px + env(safe-area-inset-right)) 0 calc(8px + env(safe-area-inset-left));pointer-events:none}
+.hb{background:rgba(13,19,46,.82);border:2px solid var(--ln);border-radius:12px;padding:4px 10px;font-size:14px;line-height:1.4;pointer-events:auto}
+#hl{display:flex;flex-direction:column;gap:5px;align-items:flex-start}
+#hr{display:flex;gap:6px}
+.hbtn{width:44px;height:44px;border-radius:12px;background:rgba(13,19,46,.82);border:2px solid var(--ln);font-size:22px;display:flex;align-items:center;justify-content:center;pointer-events:auto;padding:0}
+#eb{display:inline-block;width:80px;height:9px;background:#28316a;border-radius:6px;overflow:hidden;vertical-align:middle;margin-left:3px}
+#eb i{display:block;height:100%;background:linear-gradient(90deg,#6fd69c,#d4f7a0);width:100%;transition:width .3s}
+#trk{font-size:12px;max-width:min(270px,46vw);color:var(--dim);cursor:pointer}
+#trk b{color:var(--ac)}
+#prompt{position:fixed;left:50%;bottom:calc(16px + env(safe-area-inset-bottom));transform:translateX(-50%);background:rgba(13,19,46,.88);border:2px solid var(--ac);border-radius:20px;padding:6px 16px;font-size:15px;z-index:6;white-space:nowrap;pointer-events:none}
+#toasts{position:fixed;right:calc(10px + env(safe-area-inset-right));top:calc(58px + env(safe-area-inset-top));z-index:30;display:flex;flex-direction:column;align-items:flex-end;gap:5px;pointer-events:none}
+.toast{background:rgba(20,28,64,.94);border:2px solid var(--ln);border-radius:10px;padding:5px 12px;font-size:14px;animation:tin .3s ease-out;max-width:70vw;transition:opacity .6s}
+.toast.out{opacity:0}
+@keyframes tin{from{transform:translateX(30px);opacity:0}to{transform:none;opacity:1}}
+.layer{position:fixed;inset:0;z-index:20;display:flex;align-items:center;justify-content:center;background:rgba(4,7,20,.55);padding:calc(6px + env(safe-area-inset-top)) calc(6px + env(safe-area-inset-right)) calc(6px + env(safe-area-inset-bottom)) calc(6px + env(safe-area-inset-left))}
+.win{background:var(--p);border:3px solid var(--ln);border-radius:18px;width:min(820px,100%);max-height:100%;display:flex;flex-direction:column;box-shadow:0 12px 50px rgba(0,0,0,.5);overflow:hidden}
+.wh{display:flex;align-items:center;gap:8px;padding:7px 8px 6px 14px;font-size:18px;font-weight:700;border-bottom:2px solid var(--p3)}
+.wh .tt{flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.wh .x{width:38px;height:38px;border-radius:10px;background:var(--p3);border:2px solid var(--ln);padding:0;font-size:18px;flex:none}
+.wh .mo{font-size:14px;color:var(--ac);white-space:nowrap}
+.tabs{display:flex;gap:4px;padding:6px 10px;overflow-x:auto;scrollbar-width:none;border-bottom:2px solid var(--p3);flex:none}
+.tabs::-webkit-scrollbar{display:none}
+.tab{background:var(--p2);border:2px solid transparent;border-radius:10px;padding:6px 10px;white-space:nowrap;font-size:14px}
+.tab.on{background:var(--p3);border-color:var(--ac);color:var(--ac)}
+.wb{overflow-y:auto;padding:10px 12px 14px;flex:1;-webkit-overflow-scrolling:touch;touch-action:pan-y}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(56px,1fr));gap:6px}
+.sl{position:relative;background:var(--p2);border:2px solid transparent;border-radius:10px;aspect-ratio:1;display:flex;align-items:center;justify-content:center;font-size:27px;padding:0;min-height:52px}
+.sl .n{position:absolute;right:4px;bottom:1px;font-size:12px;font-weight:700;text-shadow:0 1px 2px #000}
+.sl.sel{border-color:var(--ok)}
+.sl.dn{opacity:.3;filter:grayscale(1)}
+.sl.don::after{content:"✓";position:absolute;left:4px;top:1px;font-size:11px;color:var(--ok)}
+.ic{position:relative;display:inline-block;line-height:1}
+.ic small{position:absolute;right:-.3em;bottom:-.2em;font-size:.5em}
+.row{display:flex;align-items:center;gap:10px;background:var(--p2);border-radius:12px;padding:8px 10px;margin-bottom:6px;border:2px solid transparent}
+.row.dim{opacity:.55}
+.row .ri{font-size:28px;min-width:36px;text-align:center;flex:none}
+.row .ri img{width:36px;height:36px;image-rendering:pixelated;border-radius:8px;background:#0d1330}
+.row .rm{flex:1;min-width:0}
+.row .rt{font-weight:700}
+.row .rs{font-size:12.5px;color:var(--dim)}
+.row .ra{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end;flex:none}
+.btn{background:#2d3d84;border:2px solid #5468c2;border-radius:10px;padding:7px 12px;font-size:14px;white-space:nowrap}
+.btn.g{background:#2c6a55;border-color:#86e3ad}
+.btn.w{background:#7a5a1f;border-color:var(--ac)}
+.btn.r{background:#7a2f3a;border-color:#ff9a9a}
+.btn:disabled{opacity:.4}
+body.kb .f.foc{outline:3px solid var(--ac);outline-offset:1px}
+.chip{display:inline-flex;align-items:center;gap:3px;background:#11183a;border-radius:8px;padding:1px 6px;margin:2px 3px 0 0;font-size:12.5px;white-space:nowrap}
+.chip.ok{color:var(--ok)}.chip.no{color:var(--no)}
+.sec{font-size:12.5px;color:var(--ac);margin:12px 0 6px;font-weight:700;letter-spacing:.6px;text-transform:uppercase}
+.det{display:flex;gap:12px;align-items:center;background:#11183a;border-radius:12px;padding:10px;margin-bottom:10px;min-height:76px}
+.det .di{font-size:44px;flex:none}
+.det .dm{flex:1;min-width:0}
+.bar{height:7px;background:#11183a;border-radius:5px;overflow:hidden;margin-top:4px}.bar i{display:block;height:100%;background:var(--ok)}
+.hearts{color:var(--pk);letter-spacing:1px;font-size:13px}
+.note{color:var(--dim);font-size:13px;margin:6px 2px}
+#dlg{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(10px + env(safe-area-inset-bottom));width:min(820px,calc(100% - 16px));z-index:25;background:var(--p);border:3px solid var(--ln);border-radius:18px;padding:12px 14px;display:flex;gap:12px;box-shadow:0 10px 40px rgba(0,0,0,.55)}
+#dlg .pt{width:64px;height:64px;flex:none;border-radius:12px;background:#0d1330;image-rendering:pixelated}
+#dlg .dm{flex:1;min-width:0}
+#dlg .dn{color:var(--ac);font-weight:700;margin-bottom:3px}
+#dlg .dt{font-size:16px;line-height:1.42;min-height:2.8em}
+#dlg .do{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+#dlg .nx{position:absolute;right:14px;bottom:8px;color:var(--dim);font-size:13px;animation:bl 1s infinite}
+@keyframes bl{50%{opacity:.3}}
+#touch{position:fixed;inset:0;z-index:8;pointer-events:none}
+#dpad{position:absolute;left:calc(16px + env(safe-area-inset-left));bottom:calc(16px + env(safe-area-inset-bottom));width:150px;height:150px;border-radius:50%;background:rgba(255,255,255,.07);border:2px solid rgba(255,255,255,.18);pointer-events:auto}
+#dpad i{position:absolute;width:50px;height:50px;display:flex;align-items:center;justify-content:center;font-style:normal;color:rgba(255,255,255,.55);font-size:20px}
+#dpad i.on{color:#fff;text-shadow:0 0 8px #fff}
+.tb{position:absolute;pointer-events:auto;border-radius:50%;background:rgba(255,255,255,.1);border:2px solid rgba(255,255,255,.25);color:#fff;font-weight:700;display:flex;align-items:center;justify-content:center;font-size:22px}
+.tb.on{background:rgba(255,211,122,.35)}
+#tA{width:80px;height:80px;right:calc(18px + env(safe-area-inset-right));bottom:calc(24px + env(safe-area-inset-bottom))}
+#tB{width:66px;height:66px;right:calc(112px + env(safe-area-inset-right));bottom:calc(76px + env(safe-area-inset-bottom))}
+#tB.hl{border-color:var(--ac);box-shadow:0 0 16px var(--ac)}
+#title{background:transparent;flex-direction:column;overflow-y:auto;justify-content:flex-start;touch-action:pan-y}
+#title .tbox{margin:auto;display:flex;flex-direction:column;align-items:center;gap:10px;padding:16px;width:min(560px,100%)}
+#title h1{font-size:clamp(38px,9vw,70px);margin:0;letter-spacing:6px;color:#ffe9b0;text-shadow:0 0 24px #ffb84d,0 4px 0 #6a3d8a}
+#title .sub{color:var(--dim);font-size:16px;margin-top:-6px;font-style:italic}
+#title .slot{width:100%;display:flex;gap:8px;align-items:center;background:rgba(21,28,61,.9);border:2px solid var(--ln);border-radius:14px;padding:10px}
+#title .slot .sm{flex:1;text-align:left;font-size:14px}
+#title .slot .sm b{font-size:16px}
+#title .langs{display:flex;gap:8px}
+#title .hint{color:var(--dim);font-size:12px;text-align:center}
+#gate{position:fixed;inset:0;z-index:50;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:14px;background:#0b1026;cursor:pointer}
+#gate h1{font-size:clamp(36px,9vw,64px);letter-spacing:6px;margin:0;color:#ffe9b0;text-shadow:0 0 24px #ffb84d}
+#gate p{color:var(--dim);animation:bl 1.6s infinite;text-align:center;padding:0 20px}
+#fade{position:fixed;inset:0;background:#000;opacity:0;pointer-events:none;z-index:40;transition:opacity .3s}
+#credits{position:fixed;inset:0;z-index:45;display:flex;align-items:center;justify-content:center;text-align:center;background:rgba(5,8,22,.92);flex-direction:column;gap:10px;padding:20px}
+#credits h2{color:var(--ac);font-size:32px;margin:0}
+#credits p{max-width:600px;line-height:1.6;color:var(--tx)}
+</style>
+</head>
+<body>
+<canvas id="c"></canvas>
+<div id="hud" class="hid">
+ <div id="hl"><div class="hb" id="hinfo"><span id="hday"></span> · <span id="htime"></span><br>💰 <span id="hmoney"></span> ¢ &nbsp;⚡<span id="eb"><i></i></span></div><div class="hb hid" id="trk"></div></div>
+ <div id="hr"><button class="hbtn" id="bBag">🎒</button><button class="hbtn" id="bMenu">☰</button></div>
+</div>
+<div id="prompt" class="hid"></div>
+<div id="toasts"></div>
+<div id="touch" class="hid"><div id="dpad"><i style="left:48px;top:0">▲</i><i style="left:48px;bottom:0">▼</i><i style="left:0;top:48px">◀</i><i style="right:0;top:48px">▶</i></div><div class="tb" id="tA">⤒</div><div class="tb" id="tB">✋</div></div>
+<div id="menu" class="layer hid"></div>
+<div id="dlg" class="hid"><canvas class="pt" width="24" height="24"></canvas><div class="dm"><div class="dn"></div><div class="dt"></div><div class="do"></div></div><span class="nx">▼</span></div>
+<div id="title" class="layer hid"></div>
+<div id="credits" class="hid"></div>
+<div id="fade"></div>
+<div id="gate"><h1>STARHAVEN</h1><p>Tap or press any button to begin<br>Tryck på skärmen eller valfri knapp för att börja</p></div>
+<script>
+'use strict';
+/* ================= STARHAVEN — a cozy voyage home ================= */
+let LANG=0;
+const tr=a=>Array.isArray(a)?(a[LANG]!=null?a[LANG]:a[0]):(a==null?'':a);
+const L={
+ sub:['A cozy voyage home','En mysig resa hem'],
+ newg:['New game','Nytt spel'],cont:['Continue','Fortsätt'],del:['Delete','Radera'],empty:['Empty slot','Tom plats'],slot:['Slot','Plats'],
+ confdel:['Delete this save forever?','Radera sparfilen för alltid?'],yes:['Yes','Ja'],no:['No','Nej'],
+ day:['Day','Dag'],saved:['Game saved','Spelet sparat'],autosaved:['Autosaved','Autosparat'],
+ bag:['Bag','Väska'],quests:['Quests','Uppdrag'],research:['Research','Forskning'],archive:['Archive','Arkiv'],friends:['Friends','Vänner'],settings:['Settings','Inställningar'],lift:['Lift','Hiss'],
+ quit:['Save & quit to title','Spara & gå till titelskärmen'],save:['Save now','Spara nu'],
+ lang:['Language','Språk'],music:['Music','Musik'],sfx:['Sound effects','Ljudeffekter'],touchc:['Touch controls','Pekkontroller'],full:['Fullscreen','Helskärm'],auto:['Auto','Auto'],on:['On','På'],off:['Off','Av'],suit:['Suit color','Dräktfärg'],
+ talk:['Chat','Prata'],gift:['Give a gift','Ge en gåva'],shop:['Shop','Handla'],bye:['Goodbye','Hej då'],accept:['Accept','Acceptera'],later:['Maybe later','Kanske senare'],
+ buy:['Buy','Köp'],sell:['Sell','Sälj'],sellall:['Sell all','Sälj alla'],craft:['Craft','Tillverka'],cook:['Cook','Laga'],smelt:['Smelt','Smält'],build:['Build','Bygg'],
+ eat:['Eat','Ät'],place:['Place here','Placera här'],pick:['Pick up','Plocka upp'],cancel:['Cancel','Avbryt'],
+ tired:['Too tired! Eat something or get some sleep.','För trött! Ät något eller sov en stund.'],
+ nomoney:['Not enough credits','Inte tillräckligt med krediter'],nomats:['Missing materials','Material saknas'],
+ got:['Got','Fick'],newq:['New quest','Nytt uppdrag'],qdone:['Quest complete','Uppdrag klart'],
+ talkto:['Talk to','Prata med'],buildp:['Build','Bygg'],researchp:['Research','Forska'],visit:['Visit','Besök'],
+ select:['Select an item to see details.','Välj ett föremål för att se detaljer.'],
+ sellp:['Sells for','Säljs för'],energy:['Energy','Energi'],usedin:['Used in','Används i'],
+ tools:['Tools & upgrades','Verktyg & uppgraderingar'],perks:['Abilities','Förmågor'],level:['Lv','Nv'],
+ comfort:['Cabin comfort','Hyttens mysfaktor'],maxe:['Max energy','Max energi'],
+ active:['Active','Aktiva'],avail:['Available — talk to','Tillgängliga – prata med'],done:['Completed','Avklarade'],none:['Nothing here yet.','Inget här än.'],
+ board:['Request board','Förfrågningstavla'],deliver:['Deliver','Leverera'],delivered:['Delivered','Levererat'],boardn:['Daily requests refresh every morning.','Dagliga förfrågningar förnyas varje morgon.'],
+ rp:['Research points','Forskningspoäng'],doresearch:['Research','Forska'],needs:['Needs','Kräver'],upload:['Upload data chip (+40 RP)','Ladda upp datachip (+40 FP)'],
+ arch:['Archive collection','Arkivsamling'],donate:['Donate','Skänk'],donateh:['Donate one of each item to the archive for research points.','Skänk ett av varje föremål till arkivet för forskningspoäng.'],
+ hearts:['Hearts','Hjärtan'],loves:['Loves','Älskar'],notmet:['Not met yet','Inte träffats än'],
+ locked:['Locked','Låst'],here:['You are here','Du är här'],shards:['Star shards','Stjärnskärvor'],
+ projects:['Ship projects','Skeppsprojekt'],built:['Built','Byggt'],optional:['Optional upgrades','Valfria uppgraderingar'],
+ sleep:['Sleep until morning?','Sova till morgonen?'],sleepy:['Sleep','Sov'],stay:['Stay up','Vaka'],
+ morning:['Good morning! Day','God morgon! Dag'],passout:['You fell asleep from exhaustion...','Du somnade av utmattning...'],
+ plant:['Plant what?','Plantera vad?'],noseeds:['No seeds that fit this planter.','Inga frön som passar här.'],fert:['Add fertilizer','Lägg till gödsel'],
+ water:['Water','Vattna'],harvest:['Harvest','Skörda'],planttxt:['Plant','Plantera'],mine:['Mine','Bryt'],gather:['Gather','Samla'],
+ fish:['Fish','Fiska'],needrod:['You need a fishing rod. Old Sven might help.','Du behöver ett fiskespö. Gamle Sven kan hjälpa.'],
+ cast:['Waiting for a bite... (press to reel in)','Väntar på napp... (tryck för att ta upp)'],reel:['Press when the marker is in the green!','Tryck när markören är i det gröna!'],
+ caught:['You caught','Du fångade'],escaped:['It got away...','Den slank undan...'],
+ scope:['Stargaze','Skåda stjärnor'],scopeday:['The stars are too faint while the day lights are on. Come back after 18:00.','Stjärnorna syns för dåligt när dagsljuset är på. Kom tillbaka efter 18:00.'],scopedone:['You already stargazed tonight.','Du har redan skådat stjärnor ikväll.'],
+ forgecold:['The smelter is cold. Repair it via the Engineering Forge project at a Build Terminal.','Smältugnen är kall. Laga den via projektet Maskinsmedjan vid en byggterminal.'],
+ decor:['Decorate','Inred'],decorh:['Choose furniture to place where you stand.','Välj en möbel att placera där du står.'],nofurn:['You have no furniture. Buy some from Tove or craft it.','Du har inga möbler. Köp av Tove eller tillverka.'],notground:['Stand on solid ground to place furniture.','Stå på fast mark för att placera möbler.'],
+ pen:['Animal pen','Djurhage'],penempty:['An empty pen. Juno sells animals at the ranch.','En tom hage. Juno säljer djur på ranchen.'],feed:['Feed hay','Ge hö'],pet:['Pet','Klappa'],collect:['Collect','Samla in'],nohay:['You need hay. Craft it from wheat or buy from Juno.','Du behöver hö. Gör det av vete eller köp av Juno.'],fedall:['Fed animals','Matade djur'],
+ trough:['Feeding trough','Foderkrubba'],nopen:['No free pen!','Ingen ledig hage!'],hive:['Bee hive','Bikupa'],hivenot:['The bees are still busy.','Bina är fortfarande upptagna.'],
+ elev:['Lift','Hiss'],bed:['Bed','Säng'],stove:['Stove','Spis'],bench:['Workbench','Arbetsbänk'],smelter:['Smelter','Smältugn'],buildt:['Build Terminal','Byggterminal'],console:['Research Console','Forskningskonsol'],archd:['Archive Desk','Arkivdisk'],telescope:['Telescope','Teleskop'],spot:['Fishing pool','Fiskedamm'],toolbox:['Decorating kit','Inredningslåda'],
+ interact:['Use','Använd'],
+ help:['How to play','Hur man spelar'],
+ helpt:['Move: arrows/WASD, D-pad or stick. Jump: Space / Ⓐ / ⤒. Use & talk: E or Enter / Ⓑ Ⓧ / ✋. Climb ladders: up/down. Menu: Esc / Start / ☰. Bag: I or Tab / Ⓨ / 🎒. In menus: arrows or D-pad to move, Enter/Ⓐ to choose, Esc/Ⓑ to go back, Q/R or LB/RB to switch tabs.','Gå: pilar/WASD, styrkors eller spak. Hoppa: Mellanslag / Ⓐ / ⤒. Använd & prata: E eller Enter / Ⓑ Ⓧ / ✋. Klättra: upp/ner. Meny: Esc / Start / ☰. Väska: I eller Tab / Ⓨ / 🎒. I menyer: pilar eller styrkors för att flytta, Enter/Ⓐ för att välja, Esc/Ⓑ för att gå tillbaka, Q/R eller LB/RB för att byta flik.'],
+ tip1:['Tip: Crops grow overnight on days they were watered. Sleep in your bed to start a new day.','Tips: Grödor växer under natten de dagar de vattnats. Sov i din säng för att börja en ny dag.'],
+ stats:['Statistics','Statistik'],playtime:['Play time','Speltid'],
+ ending:['Arrival','Ankomst'],
+ heartgift:['gave you a gift of friendship!','gav dig en vänskapsgåva!'],
+ recipe:['Recipe learned','Recept inlärt'],resdone:['Research complete','Forskning klar'],projdone:['Project complete','Projekt klart'],unlocked:['New deck unlocked','Nytt däck upplåst'],
+ inbag:['In bag','I väskan'],free:['free','gratis'],max:['MAX','MAX'],upgrade:['Upgrade','Uppgradera'],
+ trade:['Trade','Byt'],price:['Price','Pris'],shardtrade:['Kai trades treasures for star shards 🌟','Kai byter skatter mot stjärnskärvor 🌟'],
+ nojoin:['Nothing to do here right now.','Inget att göra här just nu.'],
+ already:['already in archive','redan i arkivet'],
+ total:['Total','Totalt'],restored:['restored','återställd'],
+ cat:['The ship cat purrs happily. (+5 ⚡)','Skeppskatten spinner glatt. (+5 ⚡)'],
+ concert:['Nova plays you a song. You feel refreshed! (+25 ⚡)','Nova spelar en sång för dig. Du känner dig utvilad! (+25 ⚡)'],
+ portrait:['Rotate to landscape for the best experience','Vänd till liggande läge för bästa upplevelse'],
+};
+const T=k=>L[k]?L[k][LANG]:k;
+
+/* ---------------- ITEMS ---------------- */
+const ITEMS={};
+function I(id,ic,en,sv,cat,p,x){ITEMS[id]=Object.assign({id,ic,n:[en,sv],cat,p},x||{});}
+const CATS={crop:['Crops','Grödor'],seed:['Seeds','Frön'],food:['Food','Mat'],animal:['Animal goods','Djurprodukter'],fish:['Fish','Fisk'],ore:['Minerals','Mineraler'],mat:['Materials','Material'],furn:['Furniture','Möbler'],art:['Artifacts','Artefakter'],misc:['Treasures','Skatter']};
+const CAT_ORDER=['crop','seed','food','animal','fish','ore','mat','furn','art','misc'];
+const CROPS={};
+[['carrot','🥕','Carrot','Morot',3,0,35,15,0],['lettuce','🥬','Lettuce','Sallad',3,0,30,12,0],['potato','🥔','Potato','Potatis',4,0,45,20,0],['wheat','🌾','Wheat','Vete',4,0,25,10,0],
+['tomato','🍅','Tomato','Tomat',5,2,40,25,0],['bean','🫘','Bean','Böna',4,2,30,20,0],['bamboo','🎋','Bamboo','Bambu',5,3,30,25,0],
+['cucumber','🥒','Cucumber','Gurka',4,2,35,22,1],['garlic','🧄','Garlic','Vitlök',4,0,50,22,1],['onion','🧅','Onion','Lök',4,0,45,20,1],['strawberry','🍓','Strawberry','Jordgubbe',5,2,60,40,1],['pepper','🌶️','Chili','Chili',4,2,45,30,1],['mushroom','🍄','Mushroom','Svamp',3,0,40,25,1],
+['corn','🌽','Corn','Majs',6,3,70,40,2],['broccoli','🥦','Broccoli','Broccoli',5,0,75,35,2],['eggplant','🍆','Eggplant','Aubergine',5,0,80,40,2],['cotton','☁️','Cotton','Bomull',6,0,60,35,2],['sugarbeet','🍠','Sugar Beet','Sockerbeta',5,0,55,30,2],['rice','🍚','Rice','Ris',6,0,60,30,2],['tea','🍃','Tea Leaf','Teblad',5,2,50,40,2],['coffee','🍒','Coffee Cherry','Kaffebär',6,2,60,45,2],
+['sunflower','🌻','Sunflower','Solros',6,0,90,45,3],['tulip','🌷','Tulip','Tulpan',4,0,70,35,3],['pumpkin','🎃','Pumpkin','Pumpa',8,0,220,90,3],['melon','🍉','Melon','Melon',8,0,240,100,3],['grape','🍇','Grapes','Vindruvor',7,3,90,70,3],['blueberry','🫐','Moonberry','Månbär',6,2,85,60,3],
+['lemon','🍋','Lemon','Citron',7,3,95,70,4,1],['apple','🍎','Apple','Äpple',7,3,80,60,4,1],['peach','🍑','Peach','Persika',8,3,150,110,4,1],['avocado','🥑','Avocado','Avokado',9,0,300,130,4,1],['pineapple','🍍','Pineapple','Ananas',10,0,380,150,4,1],
+['starfruit','⭐','Starfruit','Stjärnfrukt',10,0,600,250,5,1],['lotus','🪷','Cosmic Lotus','Kosmisk lotus',12,0,1000,400,5,1]
+].forEach(([id,ic,en,sv,d,r,p,sp,t,dome])=>{CROPS[id]={id,d,r,t,dome:!!dome,ic};I(id,ic,en,sv,'crop',p,{e:Math.round(p/6)+6});I('s_'+id,'🌱',en+' Seeds','Frön: '+sv,'seed',sp,{b:ic,crop:id});});
+// minerals
+I('stone','🪨','Stone','Sten','ore',3);I('scrap','🔩','Scrap Metal','Metallskrot','ore',5);I('coal','⚫','Carbon','Kol','ore',8);
+I('copper_ore','🪨','Copper Ore','Kopparmalm','ore',12,{b:'🟠'});I('iron_ore','🪨','Iron Ore','Järnmalm','ore',18,{b:'⚪'});I('gold_ore','🪨','Gold Ore','Guldmalm','ore',40,{b:'🟡'});I('ti_ore','🪨','Titanium Ore','Titanmalm','ore',55,{b:'🔵'});
+I('ice','🧊','Ice Chunk','Isbit','ore',10);I('quartz','🔮','Prism Quartz','Prismakvarts','ore',35);I('crystal','💎','Crystal','Kristall','ore',60);I('stardust','✨','Stardust','Stjärnstoft','ore',25);I('meteorite','☄️','Meteorite','Meteorit','ore',120);I('voidpearl','🫧','Void Pearl','Tomrumspärla','ore',300);
+// materials
+I('copper_bar','🧈','Copper Bar','Kopparstång','mat',50,{b:'🟠'});I('iron_bar','🧈','Iron Bar','Järnstång','mat',75,{b:'⚪'});I('gold_bar','🧈','Gold Bar','Guldtacka','mat',160,{b:'🟡'});I('ti_bar','🧈','Titanium Bar','Titanstång','mat',220,{b:'🔵'});
+I('glass','🪟','Glass Pane','Glasruta','mat',20);I('plank','🪵','Bamboo Plank','Bambuplanka','mat',35);I('thread','🧵','Thread','Tråd','mat',30);I('cloth','🧣','Cloth','Tyg','mat',110);I('rope','🪢','Rope','Rep','mat',80);
+I('polymer','🧴','Bio-Polymer','Biopolymer','mat',60);I('gear','⚙️','Gear','Kugghjul','mat',45);I('wire','🔌','Wire','Kabel','mat',25);I('circuit','📟','Circuit Board','Kretskort','mat',160);I('battery','🔋','Battery','Batteri','mat',140);
+I('lens','🔍','Lens','Lins','mat',120);I('solar','🔆','Solar Panel','Solpanel','mat',400);I('nanopaste','🧪','Nano Paste','Nanopasta','mat',300);I('engine','🛠️','Engine Part','Motordel','mat',900);I('datachip','💽','Data Chip','Datachip','mat',250);
+I('quantum','🌀','Quantum Core','Kvantkärna','mat',3000);I('starmap','🗺️','Star Map','Stjärnkarta','mat',800);I('fertilizer','🥫','Fertilizer','Gödsel','mat',30);I('hay','🧺','Hay Bale','Höbal','mat',15);I('bait','🪱','Bait','Bete','mat',8);
+I('flour','🥣','Flour','Mjöl','mat',40);I('sugar','🧂','Sugar','Socker','mat',60);I('oil','🫒','Oil','Olja','mat',90);
+// animal goods
+I('egg','🥚','Egg','Ägg','animal',35,{e:10});I('milk','🥛','Milk','Mjölk','animal',55,{e:15});I('wool','🧶','Wool','Ull','animal',120);I('feather','🪶','Feather','Fjäder','animal',60);I('honey','🍯','Honey','Honung','animal',110,{e:20});I('truffle','🟤','Truffle','Tryffel','animal',320);
+// fish: id ic en sv price difficulty weight
+const FISH=[['guppy','🐟','Guppy','Guppy',20,1,30],['shrimp','🦐','Shrimp','Räka',30,1,25],['coral','🪸','Coral','Korall',45,1,15],['seaweed','🌿','Seaweed','Sjögräs',15,1,30],['carp','🐠','Star Carp','Stjärnkarp',45,2,20],['crab','🦀','Crab','Krabba',65,2,15],['oyster','🦪','Oyster','Ostron',85,2,12],
+['puffer','🐡','Glow Puffer','Glödpuffer',80,3,12],['squid','🦑','Squid','Kalmar',95,3,10],['jelly','🪼','Moon Jelly','Månmanet',120,3,9],['lobster','🦞','Lobster','Hummer',170,4,7],['octopus','🐙','Octopus','Bläckfisk',200,4,6],['turtle','🐢','Space Turtle','Rymdsköldpadda',280,4,5],
+['dolphin','🐬','Comet Dolphin','Kometdelfin',600,5,3,1],['shark','🦈','Nebula Shark','Nebulahaj',450,5,3],['whale','🐋','Star Whale','Stjärnval',1500,6,1,1],['boot','👢','Old Boot','Gammal stövel',2,0,12]];
+FISH.forEach(([id,ic,en,sv,p,d])=>I(id,ic,en,sv,'fish',p));
+// food
+function F(id,ic,en,sv,p,e,x){I(id,ic,en,sv,'food',p,Object.assign({e},x||{}));}
+F('friedegg','🍳','Fried Egg','Stekt ägg',60,25);F('salad','🥗','Garden Salad','Trädgårdssallad',130,35);F('bread','🍞','Bread','Bröd',110,30);F('soup','🍲','Veggie Soup','Grönsakssoppa',150,40);F('fries','🍟','Space Fries','Rymdpommes',150,35);
+F('popcorn','🍿','Popcorn','Popcorn',110,20);F('tea_cup','🍵','Green Tea','Grönt te',130,25);F('cookie','🍪','Cookie','Kaka',140,25);F('cheese','🧀','Cheese','Ost',160,20);F('pancake','🥞','Pancakes','Pannkakor',210,45);
+F('pizza','🍕','Pizza','Pizza',300,60);F('noodles','🍜','Noodle Bowl','Nudelskål',260,50);F('curry','🍛','Curry','Curry',320,65);F('taco','🌮','Taco','Taco',240,45);F('burrito','🌯','Burrito','Burrito',300,60);
+F('dumpling','🥟','Dumplings','Dumplings',260,50);F('sushi','🍣','Sushi','Sushi',280,50);F('riceball','🍙','Rice Ball','Risboll',130,30);F('stew','🥘','Hearty Stew','Mustig gryta',340,75);F('coffee_cup','☕','Coffee','Kaffe',170,40);
+F('juice','🧃','Apple Juice','Äppeljuice',200,30);F('cake','🎂','Strawberry Cake','Jordgubbstårta',480,80);F('pie','🥧','Pumpkin Pie','Pumpapaj',460,70);F('cupcake','🧁','Moonberry Cupcake','Månbärsmuffin',280,40);F('donut','🍩','Donut','Munk',200,30);
+F('icecream','🍨','Ice Cream','Glass',280,35);F('smoothie','🥤','Berry Smoothie','Bärsmoothie',270,45);F('jam','🫙','Grape Jam','Druvsylt',280,20);F('croissant','🥐','Croissant','Croissant',220,35);F('lemonade','🍹','Lemonade','Lemonad',280,35);
+F('sandwich','🥪','Honey Sandwich','Honungsmacka',230,45);F('bento','🍱','Bento Box','Bentolåda',480,90);F('starcake','🌠','Starfruit Tart','Stjärnfruktstårta',1700,150);F('elixir','🍶','Lotus Elixir','Lotuselixir',2500,100,{perm:5});
+// furniture
+function U(id,ic,en,sv,p,c){I(id,ic,en,sv,'furn',p,{c});}
+U('lamp','💡','Lamp','Lampa',120,2);U('plantpot','🪴','Potted Plant','Krukväxt',150,3);U('books','📚','Bookshelf','Bokhylla',200,3);U('chair','🪑','Chair','Stol',100,2);U('candle','🕯️','Candle','Ljus',60,2);
+U('lantern','🏮','Paper Lantern','Papperslykta',140,3);U('vase','🏺','Vase','Vas',180,3);U('mirror','🪞','Mirror','Spegel',220,3);U('clock','🕰️','Clock','Klocka',260,3);U('radio','📻','Radio','Radio',300,3);
+U('bouquet','💐','Bouquet','Bukett',160,3);U('teddy','🧸','Teddy Bear','Nallebjörn',200,3);U('painting','🖼️','Painting','Tavla',400,4);U('couch','🛋️','Couch','Soffa',600,6);U('globe','🌍','Globe','Jordglob',350,3);
+U('guitar','🎸','Guitar','Gitarr',500,4);U('tv','📺','Holo-TV','Holo-TV',800,4);U('console','🎮','Retro Console','Retrokonsol',700,5);U('rocket','🚀','Rocket Model','Raketmodell',650,4);U('bonsai','🌳','Bonsai Tree','Bonsaiträd',900,5);
+U('telescope_f','🔭','Telescope','Teleskop',1000,5);U('trophy','🏆','Trophy','Pokal',1200,5);U('piano','🎹','Piano','Piano',2000,8);U('fountain_f','⛲','Mini Fountain','Minifontän',2500,8);U('cat','🐈','Ship Cat','Skeppskatt',500,10);U('bed2','🛏️','Cozy Bed','Mysig säng',1500,8);
+// artifacts
+function A(id,ic,en,sv){I(id,ic,en,sv,'art',150);}
+A('photo','📷','Faded Photo','Blekt foto');A('musicbox','🎶','Music Box','Speldosa');A('acorn','🌰','Earth Acorn','Jordekollon');A('log','📔',"Captain's Log",'Kaptenens loggbok');A('yoyo','🪀','Old Yo-yo','Gammal jojo');A('compass','🧭','Brass Compass','Mässingskompass');
+A('medal','🏅','Old Medal','Gammal medalj');A('shell','🐚','Earth Seashell','Jordsnäcka');A('ticket','🎟️','Concert Ticket','Konsertbiljett');A('key','🗝️','Old Key','Gammal nyckel');A('mask','🎭','Theater Mask','Teatermask');A('vinyl','💿','Vinyl Record','Vinylskiva');
+A('dice','🎲','Lucky Die','Turtärning');A('crown','👑','Tin Crown','Plåtkrona');A('letter','✉️','Sealed Letter','Förseglat brev');A('fossil','🦴','Fossil','Fossil');A('snowglobe','❄️','Snow Globe','Snöglob');A('postcard','🏞️','Earth Postcard','Vykort från jorden');
+I('shard','🌟','Star Shard','Stjärnskärva','misc',100);
+const ARTS=Object.keys(ITEMS).filter(k=>ITEMS[k].cat==='art');
+const ARCH=Object.keys(ITEMS).filter(k=>ITEMS[k].cat!=='seed'&&k!=='shard');
+
+/* ---------------- RECIPES ---------------- */
+const RECIPES={};
+function R(out,st,ins,un,n){RECIPES[out]={out,st,ins,un:un||null,n:n||1};}
+// smelter
+R('copper_bar','smelt',{copper_ore:3,coal:1});R('iron_bar','smelt',{iron_ore:3,coal:1});R('glass','smelt',{stone:3},null,2);R('coal','smelt',{bamboo:2},null,1);
+R('gold_bar','smelt',{gold_ore:3,coal:1},'metallurgy');R('ti_bar','smelt',{ti_ore:3,coal:2},'metallurgy');
+// workbench
+R('plank','craft',{bamboo:1});R('thread','craft',{cotton:1},null,2);R('cloth','craft',{thread:3});R('rope','craft',{thread:2,plank:1});R('hay','craft',{wheat:2},null,3);R('bait','craft',{potato:1},null,4);
+R('polymer','craft',{corn:2});R('gear','craft',{iron_bar:1},null,2);R('wire','craft',{copper_bar:1},null,3);
+R('fertilizer','craft',{seaweed:2,coal:1},'botany2',3);
+R('circuit','craft',{wire:3,polymer:1},'electronics');R('battery','craft',{copper_bar:2,scrap:4},'electronics');R('datachip','craft',{circuit:1,crystal:1},'electronics');
+R('lens','craft',{glass:2,quartz:1},'optics');R('solar','craft',{glass:3,circuit:1,copper_bar:1},'optics');
+R('engine','craft',{ti_bar:2,gear:4,circuit:2},'metallurgy');R('nanopaste','craft',{stardust:3,crystal:1,polymer:1},'nanotech');R('quantum','craft',{nanopaste:3,meteorite:2,crystal:5,voidpearl:1},'nanotech');
+R('starmap','craft',{datachip:2,stardust:5,lens:1},'cartography');
+R('lamp','craft',{copper_bar:1,glass:1},'decor');R('plantpot','craft',{stone:3,bamboo:2},'decor');R('books','craft',{plank:4,cloth:1},'decor');R('chair','craft',{plank:3},'decor');R('candle','craft',{polymer:1,thread:1},'decor');
+R('lantern','craft',{plank:1,cloth:1},'decor');R('vase','craft',{glass:2,stone:2},'decor');R('mirror','craft',{glass:2,iron_bar:1},'decor');R('clock','craft',{gear:2,plank:2,glass:1},'decor');R('bouquet','craft',{tulip:2,sunflower:1},'decor');
+R('teddy','craft',{cloth:2,wool:1},'decor');R('couch','craft',{plank:4,cloth:3,wool:1},'decor');R('radio','craft',{circuit:1,plank:2,wire:2},'decor2');R('tv','craft',{circuit:2,glass:3,battery:1},'decor2');
+R('console','craft',{circuit:2,polymer:2,battery:1},'decor2');R('rocket','craft',{ti_bar:1,polymer:2},'decor2');R('bonsai','craft',{plantpot:1,fertilizer:5},'decor2');R('telescope_f','craft',{lens:2,iron_bar:2},'decor2');
+R('trophy','craft',{gold_bar:3},'decor2');R('piano','craft',{plank:10,gold_bar:2,wire:6},'decor2');R('fountain_f','craft',{stone:20,glass:4,gear:2},'decor2');R('bed2','craft',{plank:8,cloth:4,wool:2},'decor2');
+// stove
+R('flour','cook',{wheat:2});R('friedegg','cook',{egg:1});R('salad','cook',{lettuce:1,tomato:1,carrot:1});R('bread','cook',{flour:2});
+R('sugar','cook',{sugarbeet:1},'cooking1',2);R('oil','cook',{sunflower:1},'cooking1',2);R('soup','cook',{potato:1,carrot:1,onion:1},'cooking1');R('fries','cook',{potato:2,oil:1},'cooking1');R('popcorn','cook',{corn:1},'cooking1');
+R('tea_cup','cook',{tea:2},'cooking1');R('cookie','cook',{flour:1,sugar:1,egg:1},'cooking1');R('cheese','cook',{milk:2},'cooking1');
+R('pancake','cook',{flour:1,egg:1,milk:1},'cooking2');R('pizza','cook',{flour:1,tomato:2,cheese:1},'cooking2');R('noodles','cook',{flour:1,egg:1,mushroom:1},'cooking2');R('curry','cook',{rice:1,pepper:1,onion:1,garlic:1},'cooking2');
+R('taco','cook',{corn:1,bean:1,tomato:1},'cooking2');R('burrito','cook',{flour:1,bean:2,rice:1,pepper:1},'cooking2');R('dumpling','cook',{flour:1,broccoli:1,garlic:1},'cooking2');R('sushi','cook',{rice:1,carp:1,seaweed:1},'cooking2');
+R('riceball','cook',{rice:1,seaweed:1},'cooking2');R('stew','cook',{potato:1,carrot:1,mushroom:1,onion:1},'cooking2');R('coffee_cup','cook',{coffee:2},'cooking2');
+R('juice','cook',{apple:2},'cooking3');R('cake','cook',{flour:1,egg:1,sugar:1,strawberry:2},'cooking3');R('pie','cook',{flour:1,pumpkin:1,sugar:1},'cooking3');R('cupcake','cook',{flour:1,sugar:1,egg:1,blueberry:1},'cooking3');
+R('donut','cook',{flour:1,sugar:1,oil:1},'cooking3');R('icecream','cook',{milk:1,sugar:1,strawberry:1},'cooking3');R('smoothie','cook',{blueberry:1,strawberry:1,milk:1},'cooking3');R('jam','cook',{grape:2,sugar:1},'cooking3');
+R('croissant','cook',{flour:2,milk:1,egg:1},'cooking3');R('lemonade','cook',{lemon:2,sugar:1},'cooking3');R('sandwich','cook',{bread:1,honey:1},'cooking3');R('bento','cook',{rice:1,friedegg:1,broccoli:1,carp:1},'cooking3');
+R('starcake','cook',{flour:1,starfruit:1,sugar:2,egg:1},'cooking4');R('elixir','cook',{lotus:1,honey:2},'cooking4');
+
+/* ---------------- RESEARCH ---------------- */
+const RESEARCH=[
+ {id:'decor',ic:'🛋️',n:['Interior Design','Inredning'],d:['Craft basic furniture at a workbench.','Tillverka enkla möbler vid en arbetsbänk.'],c:15,r:[]},
+ {id:'cooking1',ic:'🍳',n:['Home Cooking','Husmanskost'],d:['Soup, fries, popcorn, tea, cookies, cheese, sugar and oil.','Soppa, pommes, popcorn, te, kakor, ost, socker och olja.'],c:20,r:[]},
+ {id:'botany1',ic:'🌱',n:['Hydroponic Tuning','Hydroponisk finjustering'],d:['Opens 6 more planters in Hydroponics.','Öppnar 6 fler odlingslådor i hydroponiken.'],c:20,r:[]},
+ {id:'electronics',ic:'🔌',n:['Electronics','Elektronik'],d:['Craft circuit boards, batteries and data chips.','Tillverka kretskort, batterier och datachip.'],c:35,r:[]},
+ {id:'sonar',ic:'🐟',n:['Fish Sonar','Fiskekolod'],d:['The catch zone is larger when fishing.','Fångstzonen blir större när du fiskar.'],c:40,r:[]},
+ {id:'ergonomics',ic:'💪',n:['Ergonomic Tools','Ergonomiska verktyg'],d:['Tools use 30% less energy.','Verktyg använder 30% mindre energi.'],c:50,r:[]},
+ {id:'metallurgy',ic:'⚒️',n:['Metallurgy','Metallurgi'],d:['Smelt gold and titanium; craft engine parts.','Smält guld och titan; tillverka motordelar.'],c:60,r:['electronics']},
+ {id:'cooking2',ic:'🍲',n:['Galley Classics','Kabyssklassiker'],d:['Pizza, curry, sushi, stew, coffee and much more.','Pizza, curry, sushi, gryta, kaffe och mycket mer.'],c:60,r:['cooking1']},
+ {id:'botany2',ic:'🌿',n:['Soil Science','Jordvetenskap'],d:['6 more planters and the fertilizer recipe.','6 fler odlingslådor och recept på gödsel.'],c:70,r:['botany1']},
+ {id:'optics',ic:'🔍',n:['Optics','Optik'],d:['Craft lenses and solar panels.','Tillverka linser och solpaneler.'],c:70,r:['electronics']},
+ {id:'jetboots',ic:'🚀',n:['Jet Boots','Jetstövlar'],d:['Jump once more in mid-air!','Hoppa en gång till i luften!'],c:80,r:['electronics']},
+ {id:'husbandry',ic:'🐄',n:['Animal Husbandry','Djurskötsel'],d:['4 more ranch pens; animals sometimes give extra.','4 fler djurhagar; djuren ger ibland extra.'],c:90,r:[]},
+ {id:'vitality',ic:'❤️',n:['Vitality','Livskraft'],d:['+30 maximum energy.','+30 maximal energi.'],c:100,r:['ergonomics']},
+ {id:'decor2',ic:'🎹',n:['Luxury Interiors','Lyxinredning'],d:['Fancy furniture: pianos, holo-TVs, fountains.','Fina möbler: piano, holo-TV, fontäner.'],c:110,r:['decor','electronics']},
+ {id:'thrusters',ic:'💨',n:['Boot Thrusters','Stövelraketer'],d:['Move faster everywhere.','Rör dig snabbare överallt.'],c:120,r:['jetboots']},
+ {id:'cartography',ic:'🗺️',n:['Cartography','Kartografi'],d:['Star maps; the lift shows star shards per deck.','Stjärnkartor; hissen visar stjärnskärvor per däck.'],c:120,r:['optics']},
+ {id:'cooking3',ic:'🎂',n:['Patisserie','Konditori'],d:['Cakes, pies, cupcakes, ice cream and more.','Tårtor, pajer, muffins, glass med mera.'],c:140,r:['cooking2']},
+ {id:'sprinklers',ic:'💦',n:['Auto-Sprinklers','Automatbevattning'],d:['Every planter is watered each morning.','Alla odlingslådor vattnas varje morgon.'],c:150,r:['botany2']},
+ {id:'pocketlift',ic:'🛗',n:['Pocket Lift','Fickhiss'],d:['Use the lift from the menu anywhere.','Använd hissen från menyn var som helst.'],c:150,r:['electronics']},
+ {id:'domegrowth',ic:'🌳',n:['Dome Expansion','Kupolutbyggnad'],d:['6 more planters in the Greenhouse Dome.','6 fler odlingslådor i växthuskupolen.'],c:180,r:['botany2']},
+ {id:'nanotech',ic:'🧪',n:['Nanotechnology','Nanoteknik'],d:['Craft nano paste and quantum cores.','Tillverka nanopasta och kvantkärnor.'],c:200,r:['metallurgy','optics']},
+ {id:'cooking4',ic:'🌠',n:['Celestial Cuisine','Himmelsk gastronomi'],d:['Legendary: Starfruit Tart and Lotus Elixir.','Legendariskt: stjärnfruktstårta och lotuselixir.'],c:300,r:['cooking3']},
+ {id:'warp',ic:'🌌',n:['Warp Theory','Varpteori'],d:['The final science needed to navigate home.','Den sista vetenskapen som behövs för att navigera hem.'],c:400,r:['nanotech','cartography']},
+];
+const RES=Object.fromEntries(RESEARCH.map(r=>[r.id,r]));
+
+/* ---------------- PROJECTS ---------------- */
+const PROJECTS=[
+ {id:'promenade',ic:'🏪',n:['Promenade Power','Promenadens kraft'],d:['Restore power to the market Promenade.','Återställ strömmen till marknadspromenaden.'],c:{scrap:20,stone:15},m:0,r:[],deck:'prom'},
+ {id:'forge',ic:'🔥',n:['Engineering Forge','Maskinsmedjan'],d:['Relight the smelter to turn ore into bars.','Tänd smältugnen för att göra tackor av malm.'],c:{scrap:25,stone:20,bamboo:8},m:200,r:['promenade']},
+ {id:'cargo',ic:'📦',n:['Cargo Lift','Lastlyften'],d:['Open the lift to the ore-rich Cargo Hold.','Öppna hissen till det malmrika lastrummet.'],c:{copper_bar:6,plank:10},m:300,r:['forge'],deck:'cargo'},
+ {id:'observatory',ic:'🔭',n:['Observatory Dome','Observatoriekupolen'],d:['Open the Observatory for research and stargazing.','Öppna observatoriet för forskning och stjärnskådning.'],c:{glass:10,copper_bar:8,iron_bar:5},m:500,r:['cargo'],deck:'obs'},
+ {id:'aquarium',ic:'🐟',n:['Aquarium Filters','Akvariefilter'],d:['Clean the water tanks of the Aquarium deck.','Rena vattentankarna på akvariedäcket.'],c:{iron_bar:10,gear:6,ice:15},m:800,r:['observatory'],deck:'aqua'},
+ {id:'ranch',ic:'🐄',n:['Ranch Habitat','Ranchhabitatet'],d:['Wake the Ranch so animals can live aboard again.','Väck ranchen så att djur kan bo ombord igen.'],c:{plank:30,iron_bar:8,hay:10,rope:5},m:1200,r:['aquarium'],deck:'ranch'},
+ {id:'dome',ic:'🌳',n:['Greenhouse Dome','Växthuskupolen'],d:['Re-glaze the dome where exotic fruit can grow.','Glasa om kupolen där exotisk frukt kan växa.'],c:{glass:30,solar:2,gold_bar:4},m:2000,r:['ranch'],deck:'dome'},
+ {id:'hangar',ic:'🚀',n:['Hangar Airlock','Hangarslussen'],d:['Open the airlock for walks on the outer hull.','Öppna slussen för promenader på ytterskrovet.'],c:{ti_bar:8,circuit:5,battery:5},m:3000,r:['dome'],deck:'hull'},
+ {id:'reactor',ic:'⚛️',n:['Reactor Stabilizer','Reaktorstabilisator'],d:['Calm the reactor heart of the ship.','Lugna skeppets reaktorhjärta.'],c:{nanopaste:4,crystal:12,engine:2},m:5000,r:['hangar'],deck:'reactor'},
+ {id:'nav',ic:'🧭',n:['Navigation Array','Navigationssystemet'],d:['Plot the final course home to Verdance. Needs Warp Theory.','Lägg in den sista kursen hem till Verdance. Kräver varpteori.'],c:{quantum:1,starmap:3,datachip:5},m:10000,r:['reactor'],rr:'warp',deck:'verdance'},
+ {id:'cabin_ext',ic:'🏠',n:['Cabin Expansion','Hyttutbyggnad'],d:['A bigger, cozier cabin: +20 max energy.','En större, mysigare hytt: +20 max energi.'],c:{plank:40,cloth:5},m:3000,r:['cargo'],opt:1},
+ {id:'musichall',ic:'🎵',n:['Music Stage','Musikscen'],d:['A stage for Nova. Daily concerts restore energy.','En scen för Nova. Dagliga konserter ger energi.'],c:{plank:25,wire:10,battery:2},m:1500,r:['observatory'],opt:1},
+ {id:'fountain',ic:'⛲',n:['Promenade Fountain','Promenadfontänen'],d:['A wishing fountain. Shops pay 10% more.','En önskefontän. Butikerna betalar 10% mer.'],c:{stone:60,glass:10,gear:4},m:5000,r:['observatory'],opt:1},
+ {id:'beehives',ic:'🐝',n:['Bee Hives','Bikupor'],d:['Three hives in the dome that make honey.','Tre bikupor i kupolen som gör honung.'],c:{plank:20,gold_bar:1,tulip:5,sunflower:5},m:2000,r:['dome'],opt:1},
+ {id:'bigtank',ic:'🐋',n:['Deep Tank','Djuptanken'],d:['A deep pool where legends swim.','En djup bassäng där legender simmar.'],c:{glass:40,ti_bar:6,coral:10},m:6000,r:['aquarium','dome'],opt:1},
+];
+const PRJ=Object.fromEntries(PROJECTS.map(p=>[p.id,p]));
+const DECK_REQ={cabin:0,bridge:0,hydro:0,eng:0,prom:'promenade',cargo:'cargo',obs:'observatory',aqua:'aquarium',ranch:'ranch',dome:'dome',hull:'hangar',reactor:'reactor',verdance:'nav'};
+
+/* ---------------- TOOLS / ANIMALS / NODES ---------------- */
+const TOOLS={
+ drill:{ic:'⛏️',n:['Laser Drill','Laserborr'],max:4,up:[0,0,{m:1000,it:{copper_bar:5}},{m:3000,it:{iron_bar:5}},{m:8000,it:{ti_bar:5}}],d:['Fewer hits per rock.','Färre slag per sten.']},
+ can:{ic:'🚿',n:['Watering Can','Vattenkanna'],max:3,up:[0,0,{m:800,it:{copper_bar:5}},{m:2500,it:{iron_bar:5}}],d:['Waters nearby planters too.','Vattnar närliggande lådor också.']},
+ rod:{ic:'🎣',n:['Fishing Rod','Fiskespö'],max:4,up:[0,{m:300},{m:1500,it:{plank:10}},{m:4000,it:{iron_bar:5}},{m:10000,it:{ti_bar:3,lens:1}}],d:['Catch rarer fish.','Fånga ovanligare fisk.']},
+};
+const ANIMALS={chicken:{ic:'🐔',n:['Chicken','Höna'],p:800,pr:'egg'},duck:{ic:'🦆',n:['Duck','Anka'],p:1200,pr:'feather'},rabbit:{ic:'🐇',n:['Rabbit','Kanin'],p:2000,pr:'wool'},goat:{ic:'🐐',n:['Goat','Get'],p:2200,pr:'milk'},cow:{ic:'🐄',n:['Cow','Ko'],p:2500,pr:'milk',x:1},sheep:{ic:'🐑',n:['Sheep','Får'],p:3000,pr:'wool',x:1},pig:{ic:'🐖',n:['Pig','Gris'],p:4000,pr:'truffle'}};
+const NODES={
+ scrap:{ic:'🔩',h:1,dr:[['scrap',2,4]],x:[['stone',.2,1]],art:.03},
+ rock:{ic:'🪨',h:2,dr:[['stone',2,4]],x:[['coal',.3,1]],art:.02},
+ coal:{ic:'⚫',h:2,dr:[['coal',2,3]]},
+ copper:{ic:'🪨',b:'🟠',h:3,dr:[['copper_ore',1,3]],x:[['stone',.3,1]]},
+ iron:{ic:'🪨',b:'⚪',h:3,dr:[['iron_ore',1,3]],x:[['stone',.3,1]]},
+ gold:{ic:'🪨',b:'🟡',h:4,dr:[['gold_ore',1,2]]},
+ ti:{ic:'🪨',b:'🔵',h:5,dr:[['ti_ore',1,2]]},
+ ice:{ic:'🧊',h:2,dr:[['ice',2,3]]},
+ quartz:{ic:'🔮',h:3,dr:[['quartz',1,2]]},
+ crystal:{ic:'💎',h:4,dr:[['crystal',1,2]],x:[['voidpearl',.08,1]]},
+ stardust:{ic:'✨',h:1,dr:[['stardust',1,3]]},
+ meteor:{ic:'☄️',h:5,dr:[['meteorite',1,1],['stardust',1,2]],x:[['voidpearl',.06,1]]},
+ tree:{ic:'🌳',h:2,soft:1,dr:[['apple',1,2],['bamboo',1,2]],x:[['peach',.3,1],['lemon',.3,1]]},
+ bush:{ic:'🌿',h:1,soft:1,dr:[['blueberry',1,2]],x:[['strawberry',.5,1]]},
+ flower:{ic:'🌼',h:1,soft:1,dr:[['tulip',1,1]],x:[['sunflower',.4,1],['cotton',.3,1]]},
+};
+const SUITS=['#4a6fd0','#d0604a','#3f9a6a','#9a5ad0','#d0a03a','#e07aa8','#40a8c0','#5a5a6a'];
+
+/* ---------------- NPCS ---------------- */
+const NPCS={
+ moss:{n:['MOSS','MOSS'],role:['Ship mind','Skeppets medvetande'],robot:1,
+  loves:['datachip','circuit','battery','quantum','solar'],likes:['wire','gear','lens','crystal','glass'],hates:['honey','soup','seaweed'],
+  hr:{3:{it:{datachip:2}},6:{rp:50},9:{it:{quantum:1}}},
+  ln:[["All systems... well, some systems nominal. Thank you for asking. You didn't ask. I'll pretend you did.","Alla system... nåja, vissa system fungerar. Tack för att du frågade. Du frågade inte. Jag låtsas att du gjorde det."],
+   ["I've grown a little moss on my casing. I've decided it suits me.","Det har vuxit lite mossa på mitt skal. Jag har bestämt att den klär mig."],
+   ["Did you know the ship hums in B flat? I find it soothing.","Visste du att skeppet surrar i tonarten B? Jag tycker att det är rogivande."],
+   ["Remember to rest, caretaker. Even stars take their time.","Kom ihåg att vila, vårdare. Även stjärnor tar sin tid."],
+   ["Donating curiosities to Elias's archive helps our research. Knowledge is a kind of fuel.","Att skänka kuriositeter till Elias arkiv hjälper vår forskning. Kunskap är ett slags bränsle."]],
+  hi:[["I've started counting your footsteps. It's my favorite sound on the ship.","Jag har börjat räkna dina fotsteg. Det är mitt favoritljud på skeppet."],
+   ["If I could dream, I think I'd dream of gardens. Thank you for growing them.","Om jag kunde drömma skulle jag nog drömma om trädgårdar. Tack för att du odlar dem."]]},
+ captain:{n:['Captain Vale','Kapten Vale'],role:['Captain','Kapten'],look:{sk:'#e9b98f',hr:'#c9c9d6',hs:3,su:'#2f4a8a',ac:'#ffd37a'},
+  loves:['coffee_cup','starmap','compass','pie'],likes:['tea_cup','bread','books','log','cake'],hates:['boot','coral'],
+  hr:{3:{m:500},6:{it:{telescope_f:1}},9:{it:{trophy:1}}},
+  ln:[["Every repair brings us a little closer to Verdance.","Varje reparation för oss lite närmare Verdance."],
+   ["I used to pace this bridge all night. Now I sleep. That's your doing.","Förr gick jag fram och tillbaka på bryggan hela natten. Nu sover jag. Det är din förtjänst."],
+   ["Coffee. I'd trade my captain's hat for a proper cup of coffee.","Kaffe. Jag skulle byta min kaptensmössa mot en ordentlig kopp kaffe."],
+   ["The stars don't hurry, and neither should we.","Stjärnorna har ingen brådska, och det ska inte vi heller ha."],
+   ["Check the request board if you want odd jobs. The crew always needs something.","Titta på förfrågningstavlan om du vill ha småjobb. Besättningen behöver alltid något."]],
+  hi:[["Between you and me, you're the finest crew member I've ever had.","Mellan oss sagt är du den bästa besättningsmedlem jag någonsin haft."],
+   ["When we land, I'm building a little house with a porch. You're invited.","När vi landar ska jag bygga ett litet hus med veranda. Du är bjuden."]]},
+ rosa:{n:['Rosa','Rosa'],role:['Botanist','Botaniker'],look:{sk:'#f3c9a8',hr:'#d0603a',hs:1,su:'#3f8a55',ac:'#ffe08a'},shop:1,
+  loves:['tulip','sunflower','bouquet','lotus','fertilizer'],likes:['carrot','tomato','strawberry','lettuce','apple','plantpot'],hates:['scrap','coal','boot'],
+  hr:{3:{it:{s_strawberry:10}},6:{it:{fertilizer:10}},9:{it:{s_lotus:2}}},
+  ln:[["Talk to your plants! They grow better. Probably. Maybe.","Prata med dina växter! De växer bättre. Förmodligen. Kanske."],
+   ["Water every day — crops only grow on days they've been watered.","Vattna varje dag – grödor växer bara de dagar de har vattnats."],
+   ["Tomatoes, beans, berries and bamboo keep producing after the first harvest!","Tomater, bönor, bär och bambu fortsätter ge skörd efter första gången!"],
+   ["I named every planter. That one's Gunilla.","Jag har döpt varje odlingslåda. Den där heter Gunilla."],
+   ["Fertilizer makes crops grow faster. Seaweed and carbon, mixed with love.","Gödsel får grödor att växa snabbare. Sjögräs och kol, blandat med kärlek."]],
+  hi:[["You have the greenest thumbs on this whole ship.","Du har de gröna fingrarna på hela skeppet."],
+   ["When we land, I want a meadow. A whole meadow! Will you help me plant it?","När vi landar vill jag ha en äng. En hel äng! Hjälper du mig att plantera den?"]]},
+ pip:{n:['Pip','Pip'],role:['Mechanic','Mekaniker'],look:{sk:'#c98d62',hr:'#2a1f1a',hs:6,su:'#c07a2a',ac:'#4a5a8a'},shop:1,
+  loves:['gear','battery','engine','pizza'],likes:['copper_bar','iron_bar','wire','circuit','scrap','coffee_cup'],hates:['seaweed','tulip','jam'],
+  hr:{3:{it:{gear:5}},6:{it:{battery:3}},9:{it:{rocket:1}}},
+  ln:[["If it's broken, I can fix it. If it's not broken, I can make it more interesting.","Om det är trasigt kan jag laga det. Om det inte är trasigt kan jag göra det mer intressant."],
+   ["Smelt ore with carbon in the smelter. Three ore, one carbon. Easy!","Smält malm med kol i smältugnen. Tre malm, ett kol. Lätt!"],
+   ["My drill upgrades let you mine with fewer hits. Just saying.","Mina borruppgraderingar låter dig bryta med färre slag. Bara så du vet."],
+   ["I once rebuilt a toaster into a satellite. It still makes toast.","Jag byggde en gång om en brödrost till en satellit. Den rostar fortfarande bröd."],
+   ["Gears are like friends. You need lots, and they should fit together.","Kugghjul är som vänner. Man behöver många, och de ska passa ihop."]],
+  hi:[["You're the only one who doesn't flinch when I say 'let's try something'.","Du är den enda som inte rycker till när jag säger 'vi testar något'."],
+   ["I made you a bolt keychain. It's... it's a bolt. But it's from me.","Jag gjorde en bultnyckelring åt dig. Det är... en bult. Men den är från mig."]]},
+ bao:{n:['Chef Bao','Kocken Bao'],role:['Chef','Kock'],look:{sk:'#e8c08a',hr:'#1a1a1a',hs:7,su:'#f0f0f0',ac:'#d04a4a'},shop:1,
+  loves:['stew','curry','garlic','pepper','sushi'],likes:['mushroom','onion','soup','noodles','dumpling','truffle','cheese'],hates:['boot','scrap','popcorn'],
+  hr:{3:{rec:'stew'},6:{it:{bento:3}},9:{rec:'starcake'}},
+  ln:[["A meal made slowly is a meal made with love.","En måltid lagad långsamt är en måltid lagad med kärlek."],
+   ["Cooked food gives far more energy than raw crops. Cook, cook, cook!","Lagad mat ger mycket mer energi än råa grödor. Laga, laga, laga!"],
+   ["Garlic. The answer is always more garlic.","Vitlök. Svaret är alltid mer vitlök."],
+   ["My grandmother's stew recipe survived three hundred years in my head.","Min mormors grytrecept har överlevt trehundra år i mitt huvud."],
+   ["Research new cuisine and you'll unlock fancier recipes.","Forska om ny matlagning så låser du upp finare recept."]],
+  hi:[["You're always welcome at my table. Always.","Du är alltid välkommen vid mitt bord. Alltid."],
+   ["I'm saving you a seat at the first harvest dinner on Verdance.","Jag sparar en plats åt dig vid den första skördemiddagen på Verdance."]]},
+ mira:{n:['Mira','Mira'],role:['Shopkeeper','Butiksägare'],look:{sk:'#f0d0b0',hr:'#f0d060',hs:2,su:'#a04a8a',ac:'#ffd37a'},shop:1,
+  loves:['gold_bar','crystal','cake','croissant'],likes:['quartz','voidpearl','honey','juice','lemonade'],hates:['stone','boot'],
+  hr:{3:{m:300},6:{it:{clock:1}},9:{it:{gold_bar:5}}},
+  ln:[["Buying, selling, browsing — all welcome at Mira's!","Köpa, sälja, titta runt – allt är välkommet hos Mira!"],
+   ["I'll buy anything you bring. Well, almost anything.","Jag köper allt du tar med dig. Nåja, nästan allt."],
+   ["Credits make the ship go round. Or is it the engines?","Krediter får skeppet att snurra. Eller är det motorerna?"],
+   ["Crystals sparkle, and sparkle sells!","Kristaller glittrar, och glitter säljer!"],
+   ["Check the board for requests. Good pay, good karma.","Kolla tavlan efter förfrågningar. Bra betalt, bra karma."]],
+  hi:[["You're my favorite customer. Don't tell the others.","Du är min favoritkund. Säg inget till de andra."],
+   ["On Verdance I'll open a real shop. With a little bell on the door!","På Verdance ska jag öppna en riktig butik. Med en liten bjällra på dörren!"]]},
+ tove:{n:['Tove','Tove'],role:['Artist & tailor','Konstnär & skräddare'],look:{sk:'#f5d5c0',hr:'#9a7ae0',hs:1,su:'#e07a9a',ac:'#7ad0e0'},shop:1,
+  loves:['cloth','painting','wool','feather'],likes:['tulip','sunflower','bouquet','quartz','thread','vase'],hates:['scrap','coal','fries'],
+  hr:{3:{it:{painting:1}},6:{it:{couch:1}},9:{it:{piano:1}}},
+  ln:[["A home isn't a home until it has a rug. Or six.","Ett hem är inte ett hem förrän det har en matta. Eller sex."],
+   ["Place furniture in your cabin — a cozy room gives you more energy!","Ställ möbler i din hytt – ett mysigt rum ger dig mer energi!"],
+   ["I'm weaving a tapestry of the whole voyage. It's very long.","Jag väver en bonad av hela resan. Den är väldigt lång."],
+   ["Cloth comes from thread, thread comes from cotton, cotton comes from patience.","Tyg kommer från tråd, tråd kommer från bomull, bomull kommer från tålamod."],
+   ["Colors are just feelings you can see.","Färger är bara känslor man kan se."]],
+  hi:[["I sketched you yesterday. You looked so peaceful.","Jag skissade dig igår. Du såg så fridfull ut."],
+   ["Let's design a house together on Verdance. Big windows.","Vi ritar ett hus tillsammans på Verdance. Stora fönster."]]},
+ nova:{n:['Nova','Nova'],role:['Musician','Musiker'],look:{sk:'#8a5a3a',hr:'#ff6ab0',hs:4,su:'#5a2a8a',ac:'#7affe0'},
+  loves:['guitar','vinyl','stardust','cupcake'],likes:['popcorn','lemonade','musicbox','radio','smoothie'],hates:['broccoli','boot'],
+  hr:{3:{it:{guitar:1}},6:{it:{vinyl:1}},9:{it:{radio:1}}},
+  ln:[["♪ La la laaa... oh! Hi! Want to hear a song about nebulas?","♪ La la laaa... åh! Hej! Vill du höra en sång om nebulosor?"],
+   ["Space is quiet, so somebody has to sing.","Rymden är tyst, så någon måste sjunga."],
+   ["Stardust sounds like tiny bells if you listen closely.","Stjärnstoft låter som små bjällror om man lyssnar noga."],
+   ["I'm writing a ballad about Pip's toaster satellite.","Jag skriver en ballad om Pips brödrostsatellit."],
+   ["Music is the best kind of fuel. After coffee.","Musik är det bästa bränslet. Efter kaffe."]],
+  hi:[["This next song is for you. Yes, you!","Nästa låt är till dig. Ja, du!"],
+   ["When I play now, the whole ship hums along. Have you noticed?","När jag spelar nu nynnar hela skeppet med. Har du märkt det?"]]},
+ ottar:{n:['Dr. Ottar','Dr. Ottar'],role:['Astronomer','Astronom'],look:{sk:'#f0c8a8',hr:'#e8e8e8',hs:5,su:'#e8e8f0',ac:'#5a7ad0'},shop:1,
+  loves:['meteorite','lens','datachip','coffee_cup'],likes:['crystal','quartz','stardust','starmap','tea_cup'],hates:['eggplant','boot'],
+  hr:{3:{rp:30},6:{it:{lens:3}},9:{rp:100}},
+  ln:[["Ah, the universe! So large, so patient, so full of homework.","Ah, universum! Så stort, så tålmodigt, så fullt av läxor."],
+   ["Use the telescope at night — every observation earns research points.","Använd teleskopet på natten – varje observation ger forskningspoäng."],
+   ["Upload data chips at my console for a nice bundle of research.","Ladda upp datachip vid min konsol för en fin bunt forskning."],
+   ["Meteorites are letters from the beginning of time.","Meteoriter är brev från tidens begynnelse."],
+   ["I've calculated the odds of a happy ending. They're excellent.","Jag har räknat på sannolikheten för ett lyckligt slut. Den är utmärkt."]],
+  hi:[["You'd make a fine scientist. You ask the right quiet questions.","Du skulle bli en utmärkt forskare. Du ställer rätt sorts stilla frågor."],
+   ["I'll name a star after you. I've already picked it. It twinkles a lot.","Jag ska döpa en stjärna efter dig. Jag har redan valt den. Den blinkar mycket."]]},
+ elias:{n:['Elias','Elias'],role:['Archivist','Arkivarie'],look:{sk:'#d8a880',hr:'#4a3a2a',hs:0,su:'#5a4a3a',ac:'#c0a060'},
+  loves:['log','letter','books','tea_cup'],likes:['photo','compass','fossil','postcard','globe','bread'],hates:['pepper','curry'],
+  hr:{3:{it:{books:1}},6:{it:{letter:1}},9:{it:{globe:1}}},
+  ln:[["Every object has a story. Bring me one of each, and we'll remember them all.","Varje föremål har en historia. Ge mig ett av varje, så minns vi dem alla."],
+   ["Donations to the archive grant research points.","Gåvor till arkivet ger forskningspoäng."],
+   ["Shh... the books are sleeping.","Shh... böckerna sover."],
+   ["Old artifacts from Earth are hidden around the ship. Look up high!","Gamla artefakter från jorden är gömda runt skeppet. Titta högt upp!"],
+   ["Tea, a good book, and the hum of the engines. Perfect.","Te, en god bok och motorernas surr. Perfekt."]],
+  hi:[["I've started a new chapter in the ship's chronicle. It's mostly about you.","Jag har börjat ett nytt kapitel i skeppets krönika. Det handlar mest om dig."],
+   ["Thank you for treating old things so gently.","Tack för att du behandlar gamla saker så varsamt."]]},
+ kai:{n:['Kai','Kai'],role:['Young explorer','Ung upptäckare'],look:{sk:'#f0c090',hr:'#f0a030',hs:4,su:'#3a8ad0',ac:'#ffdd55'},shop:1,kid:1,
+  loves:['yoyo','cookie','donut','rocket'],likes:['popcorn','icecream','juice','strawberry','shard','dice'],hates:['broccoli','onion','garlic'],
+  hr:{3:{it:{yoyo:1}},6:{it:{teddy:1}},9:{it:{console:1}}},
+  ln:[["I found a star shard behind a pipe! There are more, I just know it!","Jag hittade en stjärnskärva bakom ett rör! Det finns fler, jag bara vet det!"],
+   ["I'll trade cool stuff for star shards. Deal?","Jag byter häftiga grejer mot stjärnskärvor. Affär?"],
+   ["Shards love high places. Try jumping off the edges!","Skärvor gillar höga ställen. Testa att hoppa från kanterna!"],
+   ["When I grow up I'm gonna be a space explorer. Oh wait. I already am!","När jag blir stor ska jag bli rymdutforskare. Åh vänta. Det är jag ju redan!"],
+   ["Broccoli is a tiny tree and I refuse to eat trees.","Broccoli är ett litet träd och jag vägrar äta träd."]],
+  hi:[["You're my best friend. Like, officially. I wrote it down.","Du är min bästa vän. Typ officiellt. Jag har skrivit upp det."],
+   ["On Verdance I'm gonna climb EVERY tree. Wanna race?","På Verdance ska jag klättra i VARJE träd. Ska vi tävla?"]]},
+ sven:{n:['Old Sven','Gamle Sven'],role:['Fisher','Fiskare'],look:{sk:'#e8b890',hr:'#d8d8d8',hs:5,su:'#2a5a7a',ac:'#ffd37a'},shop:1,
+  loves:['lobster','sushi','coffee_cup','whale'],likes:['carp','guppy','bait','bread','riceball','turtle'],hates:['lettuce','salad'],
+  hr:{3:{it:{bait:10}},6:{rod:1},9:{it:{trophy:1}}},
+  ln:[["Patience, kid. The fish come to those who wait.","Tålamod, grabben. Fisken kommer till den som väntar."],
+   ["Bait helps you hook the rarer ones. Old trick.","Bete hjälper dig att få de ovanligare. Gammalt knep."],
+   ["Press when the marker's in the green. Don't rush it.","Tryck när markören är i det gröna. Stressa inte."],
+   ["There's a whale in the deep tank. I've seen it. Nobody believes me.","Det finns en val i djuptanken. Jag har sett den. Ingen tror mig."],
+   ["Back on Earth my grandfather fished in a lake called Siljan.","På jorden fiskade min farfar i en sjö som hette Siljan."]],
+  hi:[["You've got the hands of a real fisher. I'm proud of you, kid.","Du har händerna hos en riktig fiskare. Jag är stolt över dig, grabben."],
+   ["Sit with me a while. No need to talk.","Sitt med mig en stund. Vi behöver inte prata."]]},
+ juno:{n:['Juno','Juno'],role:['Rancher','Ranchägare'],look:{sk:'#b87a50',hr:'#3a2a1a',hs:1,su:'#7a9a3a',ac:'#d08a4a'},shop:1,
+  loves:['honey','apple','pancake','hay'],likes:['egg','milk','carrot','wheat','cheese'],hates:['meteorite','boot'],
+  hr:{3:{it:{hay:10}},6:{it:{bouquet:1}},9:{it:{bed2:1}}},
+  ln:[["Every animal here has a name and a favorite song.","Varje djur här har ett namn och en favoritlåt."],
+   ["Feed your animals hay each day and they'll reward you in the morning.","Ge dina djur hö varje dag så belönar de dig på morgonen."],
+   ["The trough feeds every animal at once. Very handy!","Krubban matar alla djur på en gång. Väldigt smidigt!"],
+   ["Mooooo. Sorry, I'm practicing.","Muuuu. Förlåt, jag övar."],
+   ["Hay comes from wheat. Two wheat makes three bales at a workbench.","Hö kommer från vete. Två vete blir tre höbalar vid en arbetsbänk."]],
+  hi:[["The chickens follow you around now. That's the highest honor.","Hönsen följer efter dig nu. Det är den största äran."],
+   ["I'll teach you to milk a cow with your eyes closed. It's a gift.","Jag ska lära dig mjölka en ko med slutna ögon. Det är en gåva."]]},
+};
+const GIFTR={love:["I love this! Thank you so much!","Jag älskar det här! Tack så mycket!"],like:["Oh, how nice! Thank you.","Åh, vad fint! Tack."],neu:["Thanks, that's kind of you.","Tack, vad snällt av dig."],hate:["Oh... um. I'll... find a place for it.","Åh... ehm. Jag ska... hitta en plats för det."],again:["You've already given me something today. Thank you!","Du har redan gett mig något idag. Tack!"]};
+
+/* ---------------- SHOPS ---------------- */
+const SHOPS={
+ rosa:{n:["Rosa's Seed Stall","Rosas fröstånd"],seeds:1,items:['fertilizer']},
+ pip:{n:["Pip's Parts","Pips reservdelar"],items:['copper_ore','coal','wire','gear','glass','plank','iron_ore'],tools:['drill','can']},
+ bao:{n:["Bao's Café","Baos kafé"],items:['flour','sugar','oil','egg','milk','rice','bread','salad','soup','coffee_cup','tea_cup']},
+ mira:{n:["Mira's General Store","Miras lanthandel"],items:['hay','bait','plank','thread','polymer','stone','scrap','fertilizer','candle','cloth']},
+ tove:{n:["Tove's Studio","Toves ateljé"],items:['lamp','plantpot','chair','candle','lantern','vase','books','mirror','clock','bouquet','teddy','painting','couch','globe','guitar']},
+ sven:{n:["Sven's Tackle","Svens fiskebod"],items:['bait','seaweed'],tools:['rod']},
+ juno:{n:["Juno's Ranch Shop","Junos ranchbutik"],items:['hay'],animals:1},
+ kai:{n:["Kai's Treasure Trades","Kais skattbyten"],trade:[['crystal',2],['meteorite',3],['voidpearl',8],['s_starfruit',4],['s_lotus',8],['lantern',3],['rocket',10],['gold_bar',3]]},
+ ottar:{n:["Observatory Supplies","Observatoriets förråd"],items:['quartz','stardust','lens','datachip','crystal']},
+};
+
+/* ---------------- QUESTS ---------------- */
+// o: objectives  {t:'have'|'talk'|'build'|'res'|'stat'|'own'}
+const STATN={harvest:['Harvest crops','Skörda grödor'],cook:['Cook dishes','Laga maträtter'],fish:['Catch fish','Fånga fisk'],sold:['Credits earned by selling','Krediter från försäljning'],research:['Complete research','Slutför forskning'],scope:['Stargaze at night','Skåda stjärnor på natten'],domeharvest:['Harvest dome crops','Skörda kupolgrödor'],craft:['Craft items','Tillverka föremål'],mined:['Mine or gather','Bryt eller samla'],board:['Board requests done','Klara förfrågningar'],gifts:['Gifts given','Gåvor givna']};
+const OWNN={animals:['Animals owned','Ägda djur'],furn:['Furniture placed in cabin','Möbler i hytten'],shards:['Star shards found','Hittade stjärnskärvor'],arts:['Artifacts found','Hittade artefakter'],donated:['Items in archive','Föremål i arkivet'],visited:['Decks visited','Besökta däck'],projects:['Ship projects built','Byggda skeppsprojekt']};
+const QUESTS=[
+ {id:'m1',g:'moss',to:'captain',main:1,n:['Wake Up','Vakna'],
+  i:['',''],d:["Ah, our caretaker is awake! Welcome aboard the Starhaven. I'm Captain Vale. We're in rough shape, but we're alive — and now we have you. Our first worry is food. Rosa in Hydroponics could use your help. Take these seeds.","Ah, vår vårdare är vaken! Välkommen ombord på Starhaven. Jag är kapten Vale. Vi är i dåligt skick, men vi lever – och nu har vi dig. Vår första oro är mat. Rosa i hydroponiken behöver din hjälp. Ta de här fröna."],
+  o:[{t:'talk',npc:'captain'}],rw:{m:200,it:{s_carrot:6,s_lettuce:4}}},
+ {id:'m2',g:'rosa',main:1,n:['Green Fingers','Gröna fingrar'],rq:['m1'],
+  i:["Oh! A new pair of hands! Plant seeds in the planters, water them each day, and they grow while you sleep. Harvest five crops and show me!","Åh! Ett nytt par händer! Plantera frön i lådorna, vattna dem varje dag, så växer de medan du sover. Skörda fem grödor och visa mig!"],
+  d:["Look at that! Real, living food. The crew will cry happy tears. Take these seeds too — bamboo is very useful.","Titta! Riktig, levande mat. Besättningen kommer att gråta glädjetårar. Ta de här fröna också – bambu är väldigt användbart."],
+  o:[{t:'stat',k:'harvest',n:5}],rw:{m:150,it:{s_potato:5,s_wheat:5,s_bamboo:4},fr:{rosa:50}}},
+ {id:'m3',g:'pip',main:1,n:['Scrap and Sparks','Skrot och gnistor'],rq:['m1'],
+  i:["Hey, you're the caretaker? I'm Pip, I keep this bucket of bolts flying. The Promenade has been dark for decades. Gather scrap and stone with your drill, then build 'Promenade Power' at a Build Terminal!","Hej, du är vårdaren? Jag är Pip, jag håller den här skrothögen flygande. Promenaden har varit mörk i årtionden. Samla skrot och sten med din borr och bygg sedan 'Promenadens kraft' vid en byggterminal!"],
+  d:["The Promenade lights are back! Listen... is that music? Go see who's opening shop!","Promenadens ljus är tillbaka! Lyssna... är det musik? Gå och se vem som öppnar butik!"],
+  o:[{t:'build',p:'promenade'}],rw:{m:300}},
+ {id:'m4',g:'captain',main:1,n:['Market Day','Marknadsdag'],rq:['m3'],
+  i:["With the Promenade lit, the crew can trade again. Go and greet our shopkeepers — Mira, Chef Bao, Tove and Nova.","Nu när Promenaden är tänd kan besättningen handla igen. Gå och hälsa på våra handlare – Mira, kocken Bao, Tove och Nova."],
+  d:["A ship is only as strong as its friendships. Well done, caretaker.","Ett skepp är bara så starkt som sina vänskaper. Bra gjort, vårdare."],
+  o:[{t:'talk',npc:'mira'},{t:'talk',npc:'bao'},{t:'talk',npc:'tove'},{t:'talk',npc:'nova'}],rw:{m:400}},
+ {id:'m5',g:'bao',main:1,n:['A Warm Meal','Ett varmt mål'],rq:['m4'],
+  i:["You look hungry! Cooking turns crops into meals that restore lots of energy. Use a stove — there's one in your cabin and one in my café. Cook three dishes!","Du ser hungrig ut! Matlagning gör grödor till måltider som ger mycket energi. Använd en spis – det finns en i din hytt och en i mitt kafé. Laga tre rätter!"],
+  d:["Mmm! You have the touch. Here, take two of my recipes.","Mmm! Du har handlaget. Här, ta två av mina recept."],
+  o:[{t:'stat',k:'cook',n:3}],rw:{m:200,rec:['soup','fries','oil'],fr:{bao:60}}},
+ {id:'m6',g:'pip',main:1,n:['Fire in the Forge','Eld i smedjan'],rq:['m3'],
+  i:["The smelter in Engineering is cold. Fix the forge and we can smelt ore into metal bars. Bring scrap, stone and bamboo to a Build Terminal.","Smältugnen i maskinrummet är kall. Laga smedjan så kan vi smälta malm till metalltackor. Ta med skrot, sten och bambu till en byggterminal."],
+  d:["She's roaring! Here's some copper ore and carbon to get you started. There's lots more ore down in Cargo.","Hon dånar! Här är lite kopparmalm och kol att börja med. Det finns mycket mer malm nere i lastrummet."],
+  o:[{t:'build',p:'forge'}],rw:{m:300,it:{copper_ore:12,coal:6}}},
+ {id:'m7',g:'pip',main:1,n:['Down to Cargo','Ner till lastrummet'],rq:['m6'],
+  i:["The cargo lift needs copper bars and bamboo planks. Smelt copper ore with carbon at the smelter, and craft planks at a workbench.","Lastlyften behöver kopparstänger och bambuplankor. Smält kopparmalm med kol i smältugnen och tillverka plankor vid en arbetsbänk."],
+  d:["The cargo hold is open! It's full of ore, and... I think Kai's been sneaking down there.","Lastrummet är öppet! Det är fullt av malm, och... jag tror att Kai har smugit sig ner dit."],
+  o:[{t:'build',p:'cargo'}],rw:{m:400}},
+ {id:'m8',g:'captain',main:1,n:['Eyes on the Stars','Ögon mot stjärnorna'],rq:['m7'],
+  i:["Our navigation charts are centuries old. We need the Observatory. Build its dome — glass, copper and iron.","Våra navigationskartor är århundraden gamla. Vi behöver observatoriet. Bygg dess kupol – glas, koppar och järn."],
+  d:["The dome is open. Dr. Ottar has waited decades for this moment.","Kupolen är öppen. Dr. Ottar har väntat i årtionden på det här ögonblicket."],
+  o:[{t:'build',p:'observatory'}],rw:{m:500,rp:20}},
+ {id:'m9',g:'ottar',main:1,n:['First Discoveries','Första upptäckterna'],rq:['m8'],
+  i:["Splendid! Research points come from donating new things to Elias's archive, stargazing at night and uploading data chips. Complete two research projects from the menu!","Utmärkt! Forskningspoäng får du genom att skänka nya saker till Elias arkiv, skåda stjärnor på natten och ladda upp datachip. Slutför två forskningsprojekt från menyn!"],
+  d:["Science! Glorious, cozy science.","Vetenskap! Härlig, mysig vetenskap."],
+  o:[{t:'stat',k:'research',n:2}],rw:{rp:30,m:300}},
+ {id:'m10',g:'captain',main:1,n:['Water of Life','Livets vatten'],rq:['m9'],
+  i:["The Aquarium deck recycles our water — and it holds old Sven's fish. Its filters need iron, gears and ice.","Akvariedäcket renar vårt vatten – och där bor gamle Svens fiskar. Filtren behöver järn, kugghjul och is."],
+  d:["Fresh water flows again. Sven will be overjoyed.","Färskt vatten flödar igen. Sven kommer att bli överlycklig."],
+  o:[{t:'build',p:'aquarium'}],rw:{m:600}},
+ {id:'m11',g:'sven',main:1,n:['Gone Fishing','Ut och fiska'],rq:['m10'],give:'rod',
+  i:["Heh. Another landlubber. Here, take my old rod. Cast at a pool and press when the marker is in the green. Catch me five fish!","Heh. Ännu en landkrabba. Här, ta mitt gamla spö. Kasta vid en damm och tryck när markören är i det gröna. Fånga fem fiskar åt mig!"],
+  d:["Not bad, kid. Not bad at all. Have some bait.","Inte illa, grabben. Inte illa alls. Ta lite bete."],
+  o:[{t:'stat',k:'fish',n:5}],rw:{m:300,it:{bait:10}}},
+ {id:'m12',g:'captain',main:1,n:['Home on the Range','Hem på prärien'],rq:['m11'],
+  i:["We kept animals once — the Ranch sleeps behind sealed doors. Build it, and our rancher Juno can come home.","Vi hade djur en gång – ranchen sover bakom förseglade dörrar. Bygg den, så kan vår ranchägare Juno komma hem."],
+  d:["Juno is already there, singing to the hay bales.","Juno är redan där och sjunger för höbalarna."],
+  o:[{t:'build',p:'ranch'}],rw:{m:700}},
+ {id:'m13',g:'juno',main:1,n:["Juno's Flock","Junos flock"],rq:['m12'],
+  i:["Welcome to my ranch! Animals need hay and love. Buy two animals from me, feed them, and they'll give you gifts every morning!","Välkommen till min ranch! Djur behöver hö och kärlek. Köp två djur av mig, mata dem, så ger de dig gåvor varje morgon!"],
+  d:["Look at them! They adore you already.","Titta på dem! De älskar dig redan."],
+  o:[{t:'own',k:'animals',n:2}],rw:{m:400,it:{hay:10}}},
+ {id:'m14',g:'rosa',main:1,n:['Glass Garden','Glasträdgården'],rq:['m13'],
+  i:["There's a greenhouse dome at the top of the ship where exotic fruit once grew. It needs glass, solar panels and gold. Please?","Högst upp på skeppet finns en växthuskupol där exotisk frukt en gång växte. Den behöver glas, solpaneler och guld. Snälla?"],
+  d:["The dome! Light from the reactor lamps! I can sell you exotic seeds now.","Kupolen! Ljus från reaktorlamporna! Nu kan jag sälja exotiska frön till dig."],
+  o:[{t:'build',p:'dome'}],rw:{m:800,it:{s_lemon:3,s_apple:3}}},
+ {id:'m15',g:'rosa',main:1,n:['Exotic Harvest','Exotisk skörd'],rq:['m14'],
+  i:["Dome crops only grow under the dome glass. Harvest three of them!","Kupolgrödor växer bara under kupolens glas. Skörda tre av dem!"],
+  d:["Fruit! In space! Here's my lemonade recipe.","Frukt! I rymden! Här är mitt lemonadrecept."],
+  o:[{t:'stat',k:'domeharvest',n:3}],rw:{m:600,rec:['lemonade','sugar','juice']}},
+ {id:'m16',g:'captain',main:1,n:['Breath of Space','Rymdens andetag'],rq:['m15'],
+  i:["To reach home we'll need materials only found outside: stardust and meteorites drifting by the hull. Build the Hangar Airlock.","För att nå hem behöver vi material som bara finns utanför: stjärnstoft och meteoriter som driver förbi skrovet. Bygg hangarslussen."],
+  d:["Suit up, caretaker. The gravity outside is light — mind your step.","Klä på dig rymddräkten, vårdare. Gravitationen där ute är svag – se dig för."],
+  o:[{t:'build',p:'hangar'}],rw:{m:900}},
+ {id:'m17',g:'ottar',main:1,n:['Spacewalk','Rymdpromenad'],rq:['m16'],
+  i:["Bring me meteorites and stardust from the hull — I must study them for the warp equations!","Ta med meteoriter och stjärnstoft från skrovet – jag måste studera dem för varpekvationerna!"],
+  d:["Marvelous! These hold the secret of our final jump.","Fantastiskt! De bär på hemligheten bakom vårt sista hopp."],
+  o:[{t:'have',it:'meteorite',n:3},{t:'have',it:'stardust',n:10}],rw:{rp:60,m:500}},
+ {id:'m18',g:'pip',main:1,n:['Heart of the Ship','Skeppets hjärta'],rq:['m17'],
+  i:["The reactor is unstable — we can't make the final jump without stabilizing it. Nano paste, crystals and engine parts!","Reaktorn är instabil – vi kan inte göra det sista hoppet utan att stabilisera den. Nanopasta, kristaller och motordelar!"],
+  d:["Listen to her hum... she's healthy again.","Lyssna på henne surra... hon är frisk igen."],
+  o:[{t:'build',p:'reactor'}],rw:{m:1200}},
+ {id:'m19',g:'ottar',main:1,n:['Warp Theory','Varpteori'],rq:['m18'],
+  i:["One last piece of science: Warp Theory. Research it, and we can calculate the route home.","En sista bit vetenskap: varpteori. Forska fram den, så kan vi beräkna vägen hem."],
+  d:["Eureka! The equations sing!","Heureka! Ekvationerna sjunger!"],
+  o:[{t:'res',r:'warp'}],rw:{m:800}},
+ {id:'m20',g:'captain',main:1,n:['Course for Home','Kurs mot hemmet'],rq:['m19'],
+  i:["This is it. Build the Navigation Array and we set course for Verdance — a green world, our new home.","Nu är det dags. Bygg navigationssystemet så sätter vi kurs mot Verdance – en grön värld, vårt nya hem."],
+  d:["Caretaker... thank you. All hands, prepare for the jump!","Vårdare... tack. Alla man, förbered er för hoppet!"],
+  o:[{t:'build',p:'nav'}],rw:{m:3000}},
+ {id:'m21',g:'captain',main:1,n:['First Feast','Första festen'],rq:['m20'],
+  i:["We've arrived! Let's celebrate our first night on Verdance with a feast. Bring a stew, a pie, a cake and a pizza!","Vi är framme! Låt oss fira vår första natt på Verdance med en fest. Ta med en gryta, en paj, en tårta och en pizza!"],
+  d:["To the caretaker! To friends! To home!","För vårdaren! För vänner! För hemmet!"],
+  o:[{t:'have',it:'stew',n:1},{t:'have',it:'pie',n:1},{t:'have',it:'cake',n:1},{t:'have',it:'pizza',n:1}],rw:{m:5000,it:{trophy:1}}},
+ // ---- side quests
+ {id:'s_cat',g:'captain',n:['A Stray in the Vents','En fripassagerare i ventilerna'],rq:['m11'],
+  i:["I keep hearing meowing in the vents... Could you bring three guppies? Maybe our little stowaway will come out.","Jag hör hela tiden jamande i ventilerna... Kan du ta med tre guppyer? Kanske kommer vår lilla fripassagerare fram."],
+  d:["There she is! She's chosen you. Take her home to your cabin.","Där är hon! Hon har valt dig. Ta med henne hem till din hytt."],o:[{t:'have',it:'guppy',n:3}],rw:{it:{cat:1},fr:{captain:80}}},
+ {id:'s_capt2',g:'captain',n:["Captain's Coffee","Kaptenens kaffe"],rq:['m9'],
+  i:["I've dreamed of real coffee for decades. Could you brew me three cups?","Jag har drömt om riktigt kaffe i årtionden. Kan du brygga tre koppar åt mig?"],
+  d:["Oh... oh, that's the stuff. Thank you.","Åh... åh, det är rätta grejen. Tack."],o:[{t:'have',it:'coffee_cup',n:3}],rw:{m:800,fr:{captain:100}}},
+ {id:'s_capt3',g:'captain',n:['Shipshape','Skeppsskick'],rq:['m20'],
+  i:["Let's leave the old girl in perfect shape. Complete every ship project, optional ones too.","Låt oss lämna den gamla damen i perfekt skick. Slutför alla skeppsprojekt, även de valfria."],
+  d:["Every system shining. The Starhaven has never looked better.","Varje system skiner. Starhaven har aldrig sett bättre ut."],o:[{t:'own',k:'projects',n:15}],rw:{m:10000,it:{fountain_f:1}}},
+ {id:'s_rosa1',g:'rosa',n:['Tulips for Rosa','Tulpaner till Rosa'],rq:['m10'],
+  i:["My mother grew tulips back on Earth. Could you grow three for me?","Min mamma odlade tulpaner på jorden. Kan du odla tre åt mig?"],
+  d:["They're perfect... just like hers. Thank you.","De är perfekta... precis som hennes. Tack."],o:[{t:'have',it:'tulip',n:3}],rw:{m:300,fr:{rosa:100},it:{s_sunflower:5}}},
+ {id:'s_rosa2',g:'rosa',n:['Giant Pumpkins','Jättepumpor'],rq:['s_rosa1'],
+  i:["I want to carve pumpkin lanterns for the crew! Bring me two pumpkins.","Jag vill skära pumpalyktor åt besättningen! Ta med två pumpor."],
+  d:["Ooh, they're huge! Here's fertilizer for your troubles.","Åh, vad stora! Här är gödsel för besväret."],o:[{t:'have',it:'pumpkin',n:2}],rw:{m:600,it:{fertilizer:10}}},
+ {id:'s_pip1',g:'pip',n:['Gear Head','Kuggskalle'],rq:['m6'],
+  i:["I'm building a clockwork cat. Don't ask. I need eight gears.","Jag bygger en urverkskatt. Fråga inte. Jag behöver åtta kugghjul."],
+  d:["Tick tock, perfect! The cat will be glorious.","Tick tack, perfekt! Katten blir magnifik."],o:[{t:'have',it:'gear',n:8}],rw:{m:400,fr:{pip:100}}},
+ {id:'s_pip2',g:'pip',n:['Power Bank','Kraftbank'],rq:['s_pip1','m9'],
+  i:["The backup lights need batteries. Three should do it!","Reservljuset behöver batterier. Tre borde räcka!"],
+  d:["Let there be light! Again!","Varde ljus! Igen!"],o:[{t:'have',it:'battery',n:3}],rw:{m:900,fr:{pip:80}}},
+ {id:'s_bao1',g:'bao',n:['Signature Soup','Signatursoppa'],rq:['m5'],
+  i:["I'm judging a soup contest with myself. Bring me two veggie soups!","Jag håller en soppävling med mig själv. Ta med två grönsakssoppor!"],
+  d:["Delicious! You win. I mean, I win. We both win!","Utsökt! Du vinner. Jag menar, jag vinner. Vi vinner båda!"],o:[{t:'have',it:'soup',n:2}],rw:{m:350,fr:{bao:80}}},
+ {id:'s_bao2',g:'bao',n:['Spice of Life','Livets krydda'],rq:['s_bao1','m9'],
+  i:["I crave something spicy. A curry, please!","Jag längtar efter något starkt. En curry, tack!"],
+  d:["Hah! It burns! Wonderful!","Hah! Det bränns! Underbart!"],o:[{t:'have',it:'curry',n:1}],rw:{m:500,it:{s_pepper:6}}},
+ {id:'s_bao3',g:'bao',n:['Sweet Dreams','Söta drömmar'],rq:['s_bao2'],
+  i:["For the crew's birthday party, I need a strawberry cake.","Till besättningens födelsedagskalas behöver jag en jordgubbstårta."],
+  d:["It's beautiful! Take these bento boxes, made with love.","Den är vacker! Ta de här bentolådorna, gjorda med kärlek."],o:[{t:'have',it:'cake',n:1}],rw:{m:800,it:{bento:2}}},
+ {id:'s_mira1',g:'mira',n:['Fresh Produce','Färska grönsaker'],rq:['m4'],
+  i:["My shelves are empty! Ten potatoes and ten carrots, please.","Mina hyllor är tomma! Tio potatisar och tio morötter, tack."],
+  d:["Fresh stock! Customers will line up for this.","Nya varor! Kunderna kommer att stå i kö för det här."],o:[{t:'have',it:'potato',n:10},{t:'have',it:'carrot',n:10}],rw:{m:600,fr:{mira:80}}},
+ {id:'s_mira2',g:'mira',n:['Big Spender','Storsäljare'],rq:['s_mira1'],
+  i:["Let's get the economy moving! Earn 5000 credits from selling.","Låt oss få fart på ekonomin! Tjäna 5000 krediter på försäljning."],
+  d:["Look at you, trade master! Here's a bonus.","Titta på dig, handelsmästare! Här är en bonus."],o:[{t:'stat',k:'sold',n:5000}],rw:{m:1000,it:{gold_bar:2}}},
+ {id:'s_tove1',g:'tove',n:['Fabric Run','Tygjakt'],rq:['m7'],
+  i:["I'm out of fabric for my tapestry. Three cloth, please!","Jag har slut på tyg till min bonad. Tre tyg, tack!"],
+  d:["Soft and lovely. Take this painting I made.","Mjukt och fint. Ta den här tavlan jag har gjort."],o:[{t:'have',it:'cloth',n:3}],rw:{it:{painting:1},fr:{tove:80}}},
+ {id:'s_tove2',g:'tove',n:['Home Sweet Home','Hem ljuva hem'],rq:['s_tove1'],
+  i:["Your cabin looks so bare! Place five pieces of furniture there.","Din hytt ser så kal ut! Placera fem möbler där."],
+  d:["Now that's a home! Here's a couch to finish it.","Nu är det ett hem! Här är en soffa som pricken över i."],o:[{t:'own',k:'furn',n:5}],rw:{it:{couch:1},m:300}},
+ {id:'s_nova1',g:'nova',n:['Snacks for the Band','Snacks till bandet'],rq:['m7'],
+  i:["Rehearsals make me hungry! Three bowls of popcorn?","Repetitioner gör mig hungrig! Tre skålar popcorn?"],
+  d:["Crunchy! The band thanks you.","Knaprigt! Bandet tackar dig."],o:[{t:'have',it:'popcorn',n:3}],rw:{m:400,fr:{nova:80}}},
+ {id:'s_nova2',g:'nova',n:['Stardust Melody','Stjärnstoftsmelodi'],rq:['m16'],
+  i:["I want to put real stardust in my shaker. Eight, please!","Jag vill ha riktigt stjärnstoft i min shaker. Åtta, tack!"],
+  d:["Listen... shhhk shhk. It sounds like the cosmos! Take my old guitar.","Lyssna... shhhk shhk. Det låter som kosmos! Ta min gamla gitarr."],o:[{t:'have',it:'stardust',n:8}],rw:{it:{guitar:1}}},
+ {id:'s_nova3',g:'nova',n:['Glow Show','Glödshow'],rq:['s_nova1','m11'],
+  i:["For a light show I need two glow puffers and two crystals!","Till en ljusshow behöver jag två glödpuffrar och två kristaller!"],
+  d:["The show was magical! Take this radio.","Showen var magisk! Ta den här radion."],o:[{t:'have',it:'puffer',n:2},{t:'have',it:'crystal',n:2}],rw:{m:700,it:{radio:1}}},
+ {id:'s_ottar1',g:'ottar',n:['Stargazer','Stjärnskådare'],rq:['m9'],
+  i:["Use my telescope on three different nights.","Använd mitt teleskop tre olika nätter."],
+  d:["You have the patience of an astronomer.","Du har en astronoms tålamod."],o:[{t:'stat',k:'scope',n:3}],rw:{rp:40}},
+ {id:'s_ottar2',g:'ottar',n:['Crystal Study','Kristallstudie'],rq:['s_ottar1'],
+  i:["Crystals focus starlight. Bring me six for study.","Kristaller fokuserar stjärnljus. Ta med sex för studier."],
+  d:["Prismatic! Splendid.","Prismatiskt! Utmärkt."],o:[{t:'have',it:'crystal',n:6}],rw:{rp:50,m:400}},
+ {id:'s_ottar3',g:'ottar',n:['Data Hoard','Dataskatt'],rq:['s_ottar2'],
+  i:["Three data chips for my star catalog, please.","Tre datachip till min stjärnkatalog, tack."],
+  d:["A thousand new stars catalogued!","Tusen nya stjärnor katalogiserade!"],o:[{t:'have',it:'datachip',n:3}],rw:{rp:100}},
+ {id:'s_elias1',g:'elias',n:['Archivist I','Arkivarie I'],rq:['m8'],
+  i:["Help me rebuild the archive. Donate fifteen different items at my desk.","Hjälp mig återuppbygga arkivet. Skänk femton olika föremål vid min disk."],
+  d:["The shelves are filling up. Take this bookshelf.","Hyllorna fylls. Ta den här bokhyllan."],o:[{t:'own',k:'donated',n:15}],rw:{m:500,it:{books:1}}},
+ {id:'s_elias2',g:'elias',n:['Archivist II','Arkivarie II'],rq:['s_elias1'],
+  i:["Fifty items in the archive. A true collection!","Femtio föremål i arkivet. En riktig samling!"],
+  d:["Remarkable. History lives again.","Anmärkningsvärt. Historien lever igen."],o:[{t:'own',k:'donated',n:50}],rw:{m:1500,rp:50}},
+ {id:'s_elias3',g:'elias',n:['Archivist III','Arkivarie III'],rq:['s_elias2'],
+  i:["One hundred and twenty items. The greatest archive in the galaxy!","Hundratjugo föremål. Galaxens största arkiv!"],
+  d:["You have preserved our whole world. Thank you.","Du har bevarat hela vår värld. Tack."],o:[{t:'own',k:'donated',n:120}],rw:{m:5000,rp:100,it:{globe:1}}},
+ {id:'s_elias4',g:'elias',n:['Lost Histories','Förlorade historier'],rq:['m8'],
+  i:["Earth artifacts are hidden all over the ship. Find six of them.","Artefakter från jorden är gömda över hela skeppet. Hitta sex av dem."],
+  d:["Each one a little window to home.","Var och en ett litet fönster mot hemmet."],o:[{t:'own',k:'arts',n:6}],rw:{m:1000,rp:30}},
+ {id:'s_kai1',g:'kai',n:['Shard Seeker','Skärvsökare'],rq:['m7'],
+  i:["Let's be shard hunters! Find five star shards. They glow!","Vi blir skärvjägare! Hitta fem stjärnskärvor. De lyser!"],
+  d:["Whoa, you're good at this! Take my teddy.","Wow, du är bra på det här! Ta min nalle."],o:[{t:'own',k:'shards',n:5}],rw:{m:300,it:{teddy:1}}},
+ {id:'s_kai2',g:'kai',n:['Shard Hoarder','Skärvsamlare'],rq:['s_kai1'],
+  i:["Fifteen shards! I bet you can't! (I bet you can.)","Femton skärvor! Jag slår vad om att du inte klarar det! (Jag slår vad om att du gör det.)"],
+  d:["You CAN! Here, my rocket model.","Du KAN! Här, min raketmodell."],o:[{t:'own',k:'shards',n:15}],rw:{m:1000,it:{rocket:1}}},
+ {id:'s_kai3',g:'kai',n:['Shard Legend','Skärvlegend'],rq:['s_kai2'],
+  i:["Thirty-five shards. Legendary explorer status!","Trettiofem skärvor. Legendarisk upptäckarstatus!"],
+  d:["You're a LEGEND! Take my game console!","Du är en LEGEND! Ta min spelkonsol!"],o:[{t:'own',k:'shards',n:35}],rw:{m:3000,it:{console:1}}},
+ {id:'s_sven1',g:'sven',n:['The Big One','Den stora'],rq:['m11'],
+  i:["Bring me a lobster. I want to see if you've got what it takes.","Ta med en hummer. Jag vill se om du har det som krävs."],
+  d:["That's a beauty. You've got it, kid.","En riktig skönhet. Du har det, grabben."],o:[{t:'have',it:'lobster',n:1}],rw:{m:500,it:{bait:20}}},
+ {id:'s_sven2',g:'sven',n:['Seaweed Salad','Sjögrässallad'],rq:['m11'],
+  i:["My grandmother's seaweed salad. I need five seaweed.","Min mormors sjögrässallad. Jag behöver fem sjögräs."],
+  d:["Smells like the sea. Like home.","Det doftar hav. Som hemma."],o:[{t:'have',it:'seaweed',n:5}],rw:{m:250,fr:{sven:80}}},
+ {id:'s_sven3',g:'sven',n:['Legend of the Deep','Djupets legend'],rq:['s_sven1'],
+  i:["The Star Whale. In the deep tank. Catch it and prove I'm not crazy.","Stjärnvalen. I djuptanken. Fånga den och bevisa att jag inte är galen."],
+  d:["I KNEW it! I knew it! Thank you, kid.","Jag VISSTE det! Jag visste det! Tack, grabben."],o:[{t:'have',it:'whale',n:1}],rw:{m:5000,it:{trophy:1}}},
+ {id:'s_juno1',g:'juno',n:['Egg Basket','Äggkorg'],rq:['m13'],
+  i:["I'm baking for the whole crew! Ten eggs, please.","Jag bakar åt hela besättningen! Tio ägg, tack."],
+  d:["Perfect, every one of them!","Perfekta, vartenda ett!"],o:[{t:'have',it:'egg',n:10}],rw:{m:500,fr:{juno:80}}},
+ {id:'s_juno2',g:'juno',n:['Woolly Blanket','Ullfilt'],rq:['s_juno1'],
+  i:["I'm knitting blankets for cold nights. Five wool?","Jag stickar filtar för kalla nätter. Fem ull?"],
+  d:["So warm! Take this cozy bed.","Så varmt! Ta den här mysiga sängen."],o:[{t:'have',it:'wool',n:5}],rw:{it:{bed2:1}}},
+ {id:'s_juno3',g:'juno',n:['Sweet as Honey','Söt som honung'],rq:['m14'],
+  i:["Honey for my tea! Three jars, please.","Honung till mitt te! Tre burkar, tack."],
+  d:["Golden and sweet. Thank you!","Gyllene och söt. Tack!"],o:[{t:'have',it:'honey',n:3}],rw:{m:800,fr:{juno:80}}},
+ {id:'s_moss1',g:'moss',n:['Know Your Ship','Känn ditt skepp'],rq:['m7'],
+  i:["A caretaker should know every corner. Visit six different decks.","En vårdare ska känna varje vrå. Besök sex olika däck."],
+  d:["You walk the ship like you were born here.","Du går på skeppet som om du var född här."],o:[{t:'own',k:'visited',n:6}],rw:{m:300,rp:30}},
+ {id:'s_moss2',g:'moss',n:['Data Snack','Datasnacks'],rq:['m9'],
+  i:["Could you bring me two data chips? I'm... peckish.","Kan du ta med två datachip? Jag är... lite sugen."],
+  d:["Delicious bytes. Thank you, caretaker.","Utsökta byte. Tack, vårdare."],o:[{t:'have',it:'datachip',n:2}],rw:{rp:60,fr:{moss:100}}},
+];
+const QS=Object.fromEntries(QUESTS.map(q=>[q.id,q]));
+
+/* ---------------- DECKS ---------------- */
+const TS=16, DH=24, LV=[21,15,9];
+const PAL={
+ cabin:{w:'#3b2f4a',wd:'#2c2338',f:'#6b4f3a',ft:'#c9935f',a:'#ffcf8a'},
+ bridge:{w:'#25335f',wd:'#1a2448',f:'#3a4a7a',ft:'#8fa6e8',a:'#7fd8ff'},
+ hydro:{w:'#1f4a3f',wd:'#163830',f:'#3d5f4a',ft:'#7fc59a',a:'#b6ff9a'},
+ eng:{w:'#4a3a2a',wd:'#382b1f',f:'#5c5248',ft:'#d0a060',a:'#ffb35a'},
+ prom:{w:'#4a2a4f',wd:'#371f3b',f:'#5a4a6a',ft:'#e8a8d8',a:'#ffd37a'},
+ cargo:{w:'#33363f',wd:'#25272e',f:'#4a4d57',ft:'#a8aec0',a:'#ffcf5a'},
+ obs:{w:'#1d2050',wd:'#14163a',f:'#2d3170',ft:'#a4a8ff',a:'#d0b0ff'},
+ aqua:{w:'#183d55',wd:'#102c3f',f:'#25566e',ft:'#7fd0e8',a:'#7ff0ff'},
+ ranch:{w:'#5a4a2a',wd:'#46391f',f:'#6a5532',ft:'#e0bb72',a:'#ffe08a'},
+ dome:{w:'#2a5a3a',wd:'#1f462c',f:'#3f6a3a',ft:'#a8e07a',a:'#fff09a'},
+ hull:{w:'#000',wd:'#000',f:'#59607a',ft:'#c0c8e4',a:'#7fd8ff'},
+ reactor:{w:'#3a1f3a',wd:'#2a142a',f:'#4a2f4f',ft:'#ff8adf',a:'#ff7ad0'},
+ verdance:{w:'#000',wd:'#000',f:'#6b4a2f',ft:'#6fcf5a',a:'#ffffff'},
+};
+function rowOf(t,x0,l,n,step,ex){const a=[];for(let i=0;i<n;i++)a.push([t,x0+i*step,l,ex]);return a;}
+const N=(n,x,l)=>['node',x,l,{n}];
+const DECKS={
+ cabin:{n:['Your Cabin','Din hytt'],w:40,f1:[[14,38]],ld:[[16,0,1]],
+  o:[['elev',37,0],['bed',4,0],['stove',9,0],['bench',12,0],['decor',22,0]],sh:[[30,11]],ar:[['photo',24,9]]},
+ bridge:{n:['Bridge','Bryggan'],w:60,f1:[[1,25],[32,58]],f2:[[20,40]],ld:[[6,0,1],[50,0,1],[24,1,2],[36,1,2]],
+  o:[['elev',3,0],['npc',15,0,{id:'moss'}],['npc',30,0,{id:'captain'}],['board',40,0],['build',46,0],['deco',10,0,{e:'🖥️'}],['deco',21,0,{e:'🎛️'}],['deco',30,2,{e:'💺'}],N('rock',55,1),N('copper',44,1),N('scrap',12,1),N('rock',38,2)],
+  sh:[[28,5],[57,12]],ar:[['log',33,5]]},
+ hydro:{n:['Hydroponics','Hydroponiken'],w:90,f1:[[1,40],[46,88]],f2:[[30,70]],ld:[[8,0,1],[60,0,1],[34,1,2],[66,1,2]],
+  o:[['elev',3,0],['npc',30,0,{id:'rosa'}],...rowOf('plot',10,0,8,2),...rowOf('plot',12,1,6,2,{rq:'r:botany1'}),...rowOf('plot',48,1,6,2,{rq:'r:botany2'}),N('scrap',72,0),N('scrap',82,0),N('scrap',50,2),N('rock',62,2),['deco',36,0,{e:'🚰'}],['deco',75,1,{e:'🪴'}]],
+  sh:[[85,18],[43,12],[68,6]],ar:[['acorn',75,6]]},
+ eng:{n:['Engineering','Maskinrummet'],w:90,f1:[[1,50],[56,88]],f2:[[40,88]],ld:[[10,0,1],[70,0,1],[45,1,2],[80,1,2]],
+  o:[['elev',3,0],['npc',20,0,{id:'pip'}],['bench',26,0],['smelter',32,0],['build',38,0],N('scrap',58,0),N('scrap',64,0),N('rock',76,0),N('rock',84,0),N('scrap',15,1),N('scrap',30,1),N('rock',40,1),N('coal',60,2),N('copper',66,2),N('rock',50,2),N('scrap',86,2),['deco',48,0,{e:'🧯'}]],
+  sh:[[53,12],[87,5],[30,12]],ar:[['yoyo',62,3]]},
+ prom:{n:['Promenade','Promenaden'],w:110,f1:[[1,30],[36,75],[80,108]],f2:[[20,60],[70,100]],ld:[[12,0,1],[50,0,1],[95,0,1],[25,1,2],[55,1,2],[85,1,2]],
+  o:[['elev',3,0],['npc',18,0,{id:'mira'}],['board',28,0],['npc',40,0,{id:'bao'}],['stove',45,0],['npc',62,0,{id:'tove'}],['npc',40,1,{id:'nova'}],['deco',44,1,{e:'🎤'}],['deco',47,1,{e:'🎹',rq:'p:musichall'}],['deco',75,0,{e:'⛲',rq:'p:fountain',big:1}],['deco',8,0,{e:'🪴'}],['deco',34,0,{e:'🍽️'}],['deco',90,0,{e:'🎪'}],['deco',102,0,{e:'🪑'}],['deco',66,2,{e:'🏮'}]],
+  sh:[[33,12],[77,12],[105,5],[64,5]],ar:[['ticket',40,3]]},
+ cargo:{n:['Cargo Hold','Lastrummet'],w:130,f1:[[1,20],[26,60],[66,100],[106,128]],f2:[[10,50],[56,95],[100,128]],ld:[[15,0,1],[40,0,1],[90,0,1],[115,0,1],[18,1,2],[45,1,2],[80,1,2],[120,1,2]],pl:[[22,18,3],[62,12,3],[102,18,3]],
+  o:[['elev',3,0],['npc',32,0,{id:'kai'}],N('rock',8,0),N('copper',24,0),N('copper',36,0),N('copper',52,0),N('iron',70,0),N('iron',84,0),N('rock',98,0),N('coal',110,0),N('scrap',125,0),N('copper',30,1),N('iron',50,1),N('quartz',75,1),N('coal',96,1),N('ice',112,1),N('gold',125,2),N('gold',105,2),N('crystal',60,2),N('ti',70,2),N('ti',90,2),N('ice',30,2),N('ice',85,2),N('coal',12,2),N('iron',40,2),['deco',58,0,{e:'📦'}],['deco',104,0,{e:'📦'}]],
+  sh:[[23,16],[63,10],[103,16],[127,4],[48,4]],ar:[['compass',53,6],['dice',110,3]]},
+ obs:{n:['Observatory','Observatoriet'],w:70,f1:[[1,30],[40,68]],f2:[[15,55]],ld:[[25,0,1],[45,0,1],[20,1,2],[50,1,2]],
+  o:[['elev',3,0],['npc',12,0,{id:'ottar'}],['console',18,0],['npc',55,0,{id:'elias'}],['archive',61,0],['scope',35,2],['deco',8,1,{e:'📚'}],['deco',62,1,{e:'🪐'}]],
+  sh:[[35,12],[66,11],[10,5]],ar:[['letter',38,3]]},
+ aqua:{n:['Aquarium','Akvariet'],w:90,f1:[[1,35],[45,88]],f2:[[20,70]],ld:[[30,0,1],[70,0,1],[25,1,2],[65,1,2]],
+  o:[['elev',3,0],['npc',10,0,{id:'sven'}],['fish',18,0],['fish',42,0],['fish',58,0],['fish',52,1,{deep:1,rq:'p:bigtank'}],N('ice',80,0),N('ice',50,2),['deco',76,1,{e:'🐠'}],['deco',35,2,{e:'🪸'}]],
+  sh:[[38,12],[86,11],[44,4]],ar:[['shell',78,11],['vinyl',60,3]]},
+ ranch:{n:['Ranch','Ranchen'],w:90,f1:[[1,40],[50,88]],f2:[[30,88]],ld:[[35,0,1],[60,0,1],[38,1,2],[86,1,2]],
+  o:[['elev',3,0],['npc',9,0,{id:'juno'}],['trough',44,0],...[16,22,28,66,72,78].map(x=>['pen',x,0]),...[54,64,70,76].map(x=>['pen',x,1,{rq:'r:husbandry'}]),['deco',50,2,{e:'🌾'}],['deco',60,2,{e:'🚜'}]],
+  sh:[[45,12],[87,11],[55,4]],ar:[['fossil',33,5]]},
+ dome:{n:['Greenhouse Dome','Växthuskupolen'],w:80,f1:[[1,30],[40,78]],f2:[[15,65]],ld:[[25,0,1],[45,0,1],[20,1,2],[60,1,2]],
+  o:[['elev',3,0],...rowOf('plot',8,0,8,2,{dome:1}),...rowOf('plot',48,1,6,2,{dome:1,rq:'r:domegrowth'}),...[30,35,40].map(x=>['hive',x,2,{rq:'p:beehives'}]),N('tree',70,0),N('bush',76,0),N('flower',35,0),N('flower',64,1),['deco',28,1,{e:'🌴'}]],
+  sh:[[35,12],[76,11],[42,4]],ar:[['postcard',8,4]]},
+ hull:{n:['Outer Hull','Ytterskrovet'],w:140,out:'space',lowg:1,f1:[[1,15],[22,40],[48,70],[78,95],[102,120],[126,138]],f2:[[30,50],[85,105],[120,138]],ld:[[10,0,1],[60,0,1],[110,0,1],[35,1,2],[90,1,2],[130,1,2]],
+  o:[['elev',3,0],N('stardust',20,0),N('stardust',45,0),N('stardust',75,0),N('stardust',100,0),N('stardust',132,0),N('meteor',30,1),N('meteor',65,1),N('meteor',115,1),N('ti',92,1),N('ti',40,2),N('crystal',100,2),N('stardust',136,2),N('gold',12,1),N('meteor',125,0),['deco',55,0,{e:'📡'}]],
+  sh:[[18,10],[75,4],[100,4],[137,3],[55,8]],ar:[['crown',124,3]]},
+ reactor:{n:['Reactor Core','Reaktorkärnan'],w:120,f1:[[1,30],[38,70],[78,118]],f2:[[15,45],[55,85],[95,118]],ld:[[20,0,1],[60,0,1],[100,0,1],[25,1,2],[65,1,2],[105,1,2]],
+  o:[['elev',3,0],['deco',50,0,{e:'⚛️',big:1}],N('crystal',30,0),N('crystal',42,0),N('ti',70,0),N('ti',88,0),N('gold',112,0),N('crystal',44,1),N('quartz',80,1),N('ti',115,1),N('crystal',75,2),N('gold',40,2),N('quartz',100,2),N('meteor',10,0)],
+  sh:[[34,12],[74,12],[50,3],[117,5]],ar:[['key',90,3],['mask',10,5]]},
+ verdance:{n:['Verdance','Verdance'],w:140,out:'sky',f1:[[10,30],[50,80],[100,130]],f2:[[60,75]],ld:[[20,0,1],[65,0,1],[115,0,1],[70,1,2]],
+  o:[['elev',3,0,{e:'🚀'}],...rowOf('plot',84,0,8,2,{any:1}),N('tree',15,0),N('tree',40,0),N('tree',120,0),N('tree',55,1),N('flower',25,0),N('flower',60,0),N('flower',75,0),N('flower',105,0),N('flower',135,0),N('bush',45,0),N('bush',128,0),N('rock',8,0),N('bush',110,1),['npc',34,0,{id:'captain',alt:1}]],
+  sh:[[25,12],[70,4],[110,12],[138,17]],ar:[['musicbox',72,3],['snowglobe',125,12],['medal',35,10]]},
+};
+const DECK_ORDER=['cabin','bridge','hydro','eng','prom','cargo','obs','aqua','ranch','dome','hull','reactor','verdance'];
+
+/* ================= CORE ================= */
+const $=id=>document.getElementById(id);
+const rnd=(a,b)=>a+Math.random()*(b-a);
+const rint=(a,b)=>Math.floor(a+Math.random()*(b-a+1));
+const pick=a=>a[Math.floor(Math.random()*a.length)];
+const clamp=(v,a,b)=>v<a?a:v>b?b:v;
+const fmt=n=>Math.floor(n).toLocaleString(LANG?'sv-SE':'en-US');
+const icon=id=>{const it=ITEMS[id];if(!it)return'❔';return it.b?`<span class="ic">${it.ic}<small>${it.b}</small></span>`:`<span class="ic">${it.ic}</span>`;};
+const iname=id=>ITEMS[id]?tr(ITEMS[id].n):id;
+const nname=id=>NPCS[id]?tr(NPCS[id].n):'';
+const SET={lang:0,music:0.6,sfx:0.8,touch:'auto',fs:1};
+try{Object.assign(SET,JSON.parse(localStorage.getItem('starhaven_set')||'{}'));}catch(e){}
+LANG=SET.lang||0;
+const saveSet=()=>{try{localStorage.setItem('starhaven_set',JSON.stringify(SET));}catch(e){}};
+
+let S=null; // save state
+const G={mode:'boot',P:null,D:null,objs:[],near:null,cam:{x:0,y:0},parts:[],fish:null,t:0,tAcc:0,fading:0,pick:[]};
+
+function newState(slot){return{v:1,slot,day:1,time:420,money:150,energy:100,inv:{s_carrot:4,s_lettuce:2,bread:2},seen:{},tools:{drill:1,can:1,rod:0},res:{},rp:0,proj:{},known:{},quests:{},fr:{},plots:{},nodes:{},pens:{},hives:{},got:{},don:{},furn:[],stats:{},board:[],boardDay:0,visited:{cabin:1},deck:'cabin',px:6*TS,py:null,permE:0,flags:{},suit:0,play:0,scopeDay:0};}
+const stat=(k,n=1)=>{S.stats[k]=(S.stats[k]||0)+n;};
+const cnt=id=>S.inv[id]||0;
+const has=(id,n=1)=>cnt(id)>=n;
+function add(id,n=1,quiet){if(!ITEMS[id]||n<=0)return;S.inv[id]=cnt(id)+n;const first=!S.seen[id];S.seen[id]=1;if(!quiet)toast(`+${n} ${ITEMS[id].ic} ${iname(id)}${first?' ✨':''}`);questPing();}
+function take(id,n=1){if(!has(id,n))return false;S.inv[id]-=n;if(S.inv[id]<=0)delete S.inv[id];return true;}
+const hasAll=c=>Object.entries(c).every(([k,v])=>has(k,v));
+const takeAll=c=>Object.entries(c).forEach(([k,v])=>take(k,v));
+function addMoney(m){S.money+=m;}
+function maxE(){return 100+(S.res.vitality?30:0)+(S.proj.cabin_ext?20:0)+(S.permE||0)+Math.min(40,Math.floor(comfort()/2));}
+function comfort(){return S.furn.filter(f=>f.d==='cabin').reduce((a,f)=>a+(ITEMS[f.id].c||0),0);}
+function useE(n){n=S.res.ergonomics?n*0.7:n;if(S.energy<n){toast('😴 '+T('tired'));sfx('err');return false;}S.energy-=n;return true;}
+function eat(id){const it=ITEMS[id];if(!it||!it.e||!take(id))return;S.energy=Math.min(maxE(),S.energy+it.e);if(it.perm){S.permE=(S.permE||0)+it.perm;toast('✨ +'+it.perm+' '+T('maxe'));}sfx('eat');toast(`${it.ic} +${it.e} ⚡`);}
+const deckOpen=id=>!DECK_REQ[id]||!!S.proj[DECK_REQ[id]];
+const seedTier=()=>(S.proj.promenade?1:0)+(S.proj.cargo?1:0)+(S.proj.aquarium?1:0)+(S.proj.dome?1:0)+(S.proj.reactor?1:0);
+const fr=id=>S.fr[id]||(S.fr[id]={p:0,t:0,g:0,ev:{},met:0,kn:{}});
+const hearts=id=>Math.min(10,Math.floor(fr(id).p/100));
+function addFr(id,n){const f=fr(id);f.p=clamp(f.p+n,0,1000);}
+const fmtTime=()=>{const h=Math.floor(S.time/60)%24,m=S.time%60;return String(h).padStart(2,'0')+':'+String(m).padStart(2,'0');};
+
+/* ---------- recipes / research / projects ---------- */
+const known=r=>!r.un?true:(S.known[r.out]||(RES[r.un]&&S.res[r.un]));
+function canCraft(r,n=1){return Object.entries(r.ins).every(([k,v])=>has(k,v*n));}
+function craft(r,n=1){if(!canCraft(r,n)){sfx('err');toast(T('nomats'));return;}Object.entries(r.ins).forEach(([k,v])=>take(k,v*n));add(r.out,r.n*n);stat(r.st==='cook'?'cook':'craft',n);sfx('craft');}
+const resAvail=r=>!S.res[r.id]&&r.r.every(x=>S.res[x]);
+function doResearch(id){const r=RES[id];if(!resAvail(r)||S.rp<r.c){sfx('err');return;}S.rp-=r.c;S.res[id]=1;stat('research');sfx('fanfare');toast('🧬 '+T('resdone')+': '+tr(r.n));if(id==='botany1'||id==='botany2'||id==='domegrowth'||id==='husbandry')rebuildObjs();questPing();}
+const projAvail=p=>!S.proj[p.id]&&p.r.every(x=>S.proj[x]);
+const projCan=p=>hasAll(p.c)&&S.money>=p.m&&(!p.rr||S.res[p.rr]);
+function doProject(id){const p=PRJ[id];if(!projAvail(p)||!projCan(p)){sfx('err');toast(T('nomats'));return;}takeAll(p.c);S.money-=p.m;S.proj[id]=S.day;sfx('fanfare');toast(p.ic+' '+T('projdone')+': '+tr(p.n));
+ if(p.deck)setTimeout(()=>toast('🛗 '+T('unlocked')+': '+tr(DECKS[p.deck].n)),700);
+ if(id==='beehives')Object.keys(S.hives).forEach(k=>S.hives[k].d=S.day);
+ rebuildObjs();questPing();}
+
+/* ---------- quests ---------- */
+const qst=id=>S.quests[id];
+function qAvail(q){if(qst(q.id))return false;return (q.rq||[]).every(x=>qst(x)&&qst(x).s===2);}
+function ownCount(k){switch(k){case'animals':return Object.values(S.pens).filter(p=>p&&p.a).length;case'furn':return S.furn.filter(f=>f.d==='cabin').length;case'shards':return S.stats.shards||0;case'arts':return ARTS.filter(a=>S.seen[a]).length;case'donated':return Object.keys(S.don).length;case'visited':return Object.keys(S.visited).length;case'projects':return Object.keys(S.proj).length;}return 0;}
+function objProg(q,o){const st=qst(q.id)||{b:{},tk:{}};switch(o.t){
+ case'have':return[Math.min(cnt(o.it),o.n),o.n];case'talk':return[st.tk&&st.tk[o.npc]?1:0,1];case'build':return[S.proj[o.p]?1:0,1];
+ case'res':return[S.res[o.r]?1:0,1];case'stat':return[clamp((S.stats[o.k]||0)-((st.b&&st.b[o.k])||0),0,o.n),o.n];case'own':return[Math.min(ownCount(o.k),o.n),o.n];}return[0,1];}
+function objText(o){switch(o.t){case'have':return icon(o.it)+' '+iname(o.it);case'talk':return T('talkto')+' '+nname(o.npc);case'build':return T('buildp')+': '+PRJ[o.p].ic+' '+tr(PRJ[o.p].n);case'res':return T('researchp')+': '+tr(RES[o.r].n);case'stat':return tr(STATN[o.k]);case'own':return tr(OWNN[o.k]);}return'';}
+const qComplete=q=>q.o.every(o=>{const[a,b]=objProg(q,o);return a>=b;});
+function acceptQ(q){const b={};q.o.forEach(o=>{if(o.t==='stat')b[o.k]=S.stats[o.k]||0;});S.quests[q.id]={s:1,b,tk:{}};if(q.give==='rod'&&S.tools.rod<1){S.tools.rod=1;toast('🎣 '+tr(TOOLS.rod.n));}toast('📜 '+T('newq')+': '+tr(q.n));sfx('quest');updTracker();}
+function giveRw(rw){if(!rw)return;if(rw.m){addMoney(rw.m);toast('💰 +'+fmt(rw.m)+' ¢');}if(rw.rp){S.rp+=rw.rp;toast('🧬 +'+rw.rp+' RP');}
+ if(rw.it)Object.entries(rw.it).forEach(([k,v])=>add(k,v));if(rw.rec)rw.rec.forEach(r=>{S.known[r]=1;toast('📖 '+T('recipe')+': '+iname(r));});
+ if(rw.fr)Object.entries(rw.fr).forEach(([k,v])=>addFr(k,v));if(rw.rod&&S.tools.rod<4){S.tools.rod++;toast('🎣 '+tr(TOOLS.rod.n)+' '+T('level')+S.tools.rod);}}
+function turnIn(q,then){q.o.forEach(o=>{if(o.t==='have')take(o.it,o.n);});S.quests[q.id].s=2;sayNpc(q.to||q.g,tr(q.d),()=>{giveRw(q.rw);sfx('fanfare');toast('✅ '+T('qdone')+': '+tr(q.n));updTracker();onQuestDone(q.id);if(q.id!=='m20')then&&then();});}
+let qpT=0;function questPing(){qpT=1;}
+function updTracker(){const el=$('trk');if(!S){return;}const act=QUESTS.filter(q=>qst(q.id)&&qst(q.id).s===1);const q=act.find(q=>q.main)||act[0];
+ if(!q){const av=QUESTS.find(q=>q.main&&qAvail(q));if(av){el.innerHTML=`<b>📜 ${tr(av.n)}</b><br>❗ ${T('talkto')} ${nname(av.g)}`;el.classList.remove('hid');}else el.classList.add('hid');return;}
+ const c=qComplete(q);el.innerHTML=`<b>📜 ${tr(q.n)}</b>`+(c?`<br>✅ ${T('talkto')} ${nname(q.to||q.g)}`:q.o.map(o=>{const[a,b]=objProg(q,o);return`<br>${a>=b?'✔️':'•'} ${objText(o)} ${b>1?a+'/'+b:''}`;}).join(''));el.classList.remove('hid');}
+function npcMark(id){for(const q of QUESTS){const s=qst(q.id);if(s&&s.s===1&&(q.to||q.g)===id&&qComplete(q))return'?';}for(const q of QUESTS){if(q.g===id&&qAvail(q)&&!q.auto)return'!';}return'';}
+function onQuestDone(id){if(id==='m20')setTimeout(ending,600);if(id==='m21')setTimeout(credits,800);}
+
+/* ---------- board ---------- */
+function genBoard(){const pool=[];const tier=seedTier();Object.values(CROPS).forEach(c=>{if(c.t<=tier&&(!c.dome||S.proj.dome))pool.push(c.id);});
+ ['stone','scrap','coal'].forEach(x=>pool.push(x));if(S.proj.cargo)pool.push('copper_ore','iron_ore','ice','quartz','copper_bar','iron_bar','gear','plank','glass');
+ if(S.proj.aquarium)FISH.slice(0,10).forEach(f=>pool.push(f[0]));if(S.proj.ranch)pool.push('egg','milk','wool','feather');
+ Object.values(RECIPES).forEach(r=>{if(r.st==='cook'&&known(r)&&ITEMS[r.out].cat==='food')pool.push(r.out);});
+ const npcs=Object.keys(NPCS).filter(k=>fr(k).met);if(!npcs.length)npcs.push('captain');
+ S.board=[0,1,2].map(()=>{const it=pick(pool);const p=ITEMS[it].p;const n=clamp(Math.round(240/p),1,12);return{it,n,npc:pick(npcs),done:0};});S.boardDay=S.day;}
+function deliverBoard(i){const b=S.board[i];if(!b||b.done||!take(b.it,b.n)){sfx('err');return;}b.done=1;const m=Math.round(ITEMS[b.it].p*b.n*1.8+40);addMoney(m);addFr(b.npc,40);S.rp+=S.proj.observatory?3:0;stat('board');sfx('coin');toast('💰 +'+fmt(m)+' ¢ · 💗 '+nname(b.npc));}
+
+/* ---------- time & days ---------- */
+function tickMinute(){S.time++;if(S.time%15===0)S.energy=Math.min(maxE(),S.energy+1);if(S.time>=1560)sleep(true);}
+function sleep(passed){if(G.sleeping)return;G.sleeping=1;fadeTo(()=>{newDay(passed);if(passed){enterDeck('cabin',5*TS+8);}G.sleeping=0;});}
+function newDay(passed){
+ const prevDay=S.day;S.day++;S.time=360;
+ // crops
+ Object.entries(S.plots).forEach(([k,p])=>{if(!p||!p.c)return;const c=CROPS[p.c];if(p.w){p.g+=1;if(p.f&&Math.random()<0.5)p.g+=1;}p.w=0;if(p.g>c.d)p.g=c.d;});
+ if(S.res.sprinklers)Object.values(S.plots).forEach(p=>{if(p&&p.c)p.w=1;});
+ // animals
+ Object.values(S.pens).forEach(p=>{if(p&&p.a&&p.fed===prevDay){p.prod=1;}});
+ const me=maxE();S.energy=passed?Math.round(me*0.6):me;
+ genBoard();
+ save(true);
+ setTimeout(()=>{toast('☀️ '+T('morning')+' '+S.day);if(passed)toast('😵 '+T('passout'));if(S.day===2)toast('💡 '+T('tip1'));},400);
+ rebuildObjs();}
+
+/* ---------- save / load ---------- */
+const SKEY='starhaven_slot_';
+function save(silent){if(!S)return;try{localStorage.setItem(SKEY+S.slot,JSON.stringify(S));if(!silent)toast('💾 '+T('saved'));}catch(e){toast('⚠️ save failed');}}
+function loadSlot(n){try{const s=JSON.parse(localStorage.getItem(SKEY+n)||'null');return s;}catch(e){return null;}}
+setInterval(()=>{if(G.mode==='play'&&S&&!G.sleeping){if(G.P){S.px=G.P.x;S.py=G.P.y;}save(true);toast('💾 '+T('autosaved'));}},30000);
+document.addEventListener('visibilitychange',()=>{if(document.hidden&&G.mode==='play'&&S){if(G.P){S.px=G.P.x;S.py=G.P.y;}save(true);}});
+
+/* ================= AUDIO ================= */
+const AU={c:null};
+function auInit(){if(AU.c)return;try{const C=new(window.AudioContext||window.webkitAudioContext)();AU.c=C;AU.m=C.createGain();AU.m.connect(C.destination);
+ AU.mus=C.createGain();AU.mus.gain.value=SET.music*0.5;AU.fx=C.createGain();AU.fx.gain.value=SET.sfx*0.6;
+ const dl=C.createDelay(1);dl.delayTime.value=0.42;const fb=C.createGain();fb.gain.value=0.35;const lp=C.createBiquadFilter();lp.type='lowpass';lp.frequency.value=2200;
+ AU.mus.connect(AU.m);AU.dly=C.createGain();AU.dly.connect(dl);dl.connect(lp);lp.connect(fb);fb.connect(dl);lp.connect(AU.m);AU.fx.connect(AU.m);
+ AU.next=C.currentTime+0.2;AU.step=0;setInterval(musicTick,80);}catch(e){}}
+function auVol(){if(!AU.c)return;AU.mus.gain.value=SET.music*0.5;AU.fx.gain.value=SET.sfx*0.6;}
+const mtof=m=>440*Math.pow(2,(m-69)/12);
+function note(m,t,d,type,g,dest,att){const C=AU.c;const o=C.createOscillator(),e=C.createGain();o.type=type;o.frequency.value=mtof(m);e.gain.setValueAtTime(0,t);e.gain.linearRampToValueAtTime(g,t+(att||0.01));e.gain.exponentialRampToValueAtTime(0.0001,t+d);o.connect(e);e.connect(dest||AU.mus);o.start(t);o.stop(t+d+0.05);return e;}
+const PROG_DAY=[[53,57,60,64],[52,55,59,62],[50,53,57,60],[48,52,55,59],[45,48,52,55],[50,53,57,60],[43,47,50,53],[48,52,55,59]];
+const PROG_NIGHT=[[45,48,52,55],[41,45,48,52],[43,47,50,55],[40,43,47,50]];
+const PENT=[60,62,64,67,69,72,74,76,79,81];
+function musicTick(){const C=AU.c;if(!C||SET.music<=0.001)return;const beat=60/(G.mode==='play'&&S&&(S.time>1200||S.time<400)?60:70);
+ while(AU.next<C.currentTime+0.4){const t=AU.next,s=AU.step;const night=S&&(S.time>1200);const prog=night?PROG_NIGHT:PROG_DAY;const ch=prog[Math.floor(s/16)%prog.length];
+  if(s%16===0){ch.forEach((m,i)=>{const e=note(m,t+i*0.05,beat*8.5,'triangle',0.035,AU.mus,1.2);});note(ch[0]-12,t,beat*4,'sine',0.07);}
+  if(s%16===8)note(ch[0]-12,t,beat*4,'sine',0.06);
+  if(s%2===0&&Math.random()<(night?0.22:0.38)){const pool=PENT.filter(p=>ch.some(c=>(p-c)%12===0)||Math.random()<0.4);const m=pick(pool.length?pool:PENT)+(night?-12:0);const g=note(m,t,beat*2.2,'sine',0.05,AU.mus);try{g.connect(AU.dly);}catch(e){}}
+  if(s%32===28&&Math.random()<0.5){note(pick(PENT)+12,t,beat*3,'sine',0.025,AU.dly);}
+  AU.next+=beat/2;AU.step++;}}
+function sfx(n){const C=AU.c;if(!C||SET.sfx<=0.001)return;const t=C.currentTime;const F=AU.fx;
+ switch(n){case'jump':{const o=C.createOscillator(),g=C.createGain();o.type='sine';o.frequency.setValueAtTime(330,t);o.frequency.exponentialRampToValueAtTime(620,t+0.12);g.gain.setValueAtTime(0.12,t);g.gain.exponentialRampToValueAtTime(0.001,t+0.15);o.connect(g);g.connect(F);o.start(t);o.stop(t+0.16);break;}
+  case'pick':note(84,t,0.12,'sine',0.12,F);note(88,t+0.07,0.18,'sine',0.12,F);break;
+  case'coin':note(88,t,0.1,'square',0.05,F);note(93,t+0.07,0.25,'square',0.05,F);break;
+  case'craft':[72,76,79,84].forEach((m,i)=>note(m,t+i*0.06,0.3,'triangle',0.1,F));break;
+  case'fanfare':[67,72,76,79,84].forEach((m,i)=>note(m,t+i*0.09,0.5,'triangle',0.1,F));break;
+  case'quest':[72,79].forEach((m,i)=>note(m,t+i*0.1,0.4,'sine',0.12,F));break;
+  case'hit':{const b=C.createBuffer(1,C.sampleRate*0.08,C.sampleRate),d=b.getChannelData(0);for(let i=0;i<d.length;i++)d[i]=(Math.random()*2-1)*(1-i/d.length);const s=C.createBufferSource();s.buffer=b;const f=C.createBiquadFilter();f.type='bandpass';f.frequency.value=900;const g=C.createGain();g.gain.value=0.35;s.connect(f);f.connect(g);g.connect(F);s.start(t);note(50,t,0.1,'square',0.04,F);break;}
+  case'water':{const b=C.createBuffer(1,C.sampleRate*0.3,C.sampleRate),d=b.getChannelData(0);for(let i=0;i<d.length;i++)d[i]=(Math.random()*2-1)*Math.sin(i/d.length*Math.PI);const s=C.createBufferSource();s.buffer=b;const f=C.createBiquadFilter();f.type='lowpass';f.frequency.value=1400;const g=C.createGain();g.gain.value=0.2;s.connect(f);f.connect(g);g.connect(F);s.start(t);break;}
+  case'click':note(79,t,0.05,'sine',0.05,F);break;
+  case'move':note(74,t,0.04,'sine',0.03,F);break;
+  case'err':note(45,t,0.15,'square',0.04,F);note(44,t+0.08,0.15,'square',0.04,F);break;
+  case'eat':note(60,t,0.08,'sine',0.1,F);note(64,t+0.08,0.08,'sine',0.1,F);note(67,t+0.16,0.15,'sine',0.1,F);break;
+  case'talk':note(70+rint(0,5),t,0.06,'triangle',0.05,F);break;
+  case'good':note(81,t,0.12,'sine',0.12,F);break;
+  case'bad':note(52,t,0.18,'triangle',0.1,F);break;
+  case'catch':[72,76,79,84,88].forEach((m,i)=>note(m,t+i*0.05,0.3,'sine',0.1,F));break;
+  case'door':note(55,t,0.3,'sine',0.08,F);note(62,t+0.15,0.4,'sine',0.08,F);break;
+  case'shard':[84,88,91,96].forEach((m,i)=>note(m,t+i*0.07,0.4,'sine',0.09,F));break;
+ }}
+
+/* ================= INPUT ================= */
+const BTN=['L','R','U','D','A','B','X','Y','ST','LB','RB','OK','BK','UJ'];
+const IN={k:{},p:{},t:{},cur:{},prev:{},pr:{},latch:{},dev:'kb'};
+const KMAP={ArrowLeft:'L',a:'L',A:'L',ArrowRight:'R',d:'R',D:'R',ArrowUp:'U',w:'U',W:'U',ArrowDown:'D',s:'D',S:'D',' ':'A',z:'A',Z:'A',k:'A',e:'OK',E:'OK',Enter:'OK',j:'OK',Escape:'BK',Backspace:'BK',i:'Y',I:'Y',Tab:'Y',q:'LB',Q:'LB',r:'RB',R:'RB',PageUp:'LB',PageDown:'RB'};
+function setDev(d){if(IN.dev!==d){IN.dev=d;document.body.classList.toggle('kb',d!=='touch');updPrompt(true);}}
+addEventListener('keydown',e=>{const b=KMAP[e.key];if(b){e.preventDefault();setDev('kb');if(!IN.k[b])IN.latch[b]=1;IN.k[b]=1;if(b==='U'&&!e.repeat)IN.latch.UJ=1;}gateGo();});
+addEventListener('keyup',e=>{const b=KMAP[e.key];if(b){IN.k[b]=0;}});
+function pollPad(){const gps=navigator.getGamepads?navigator.getGamepads():[];IN.p={};for(const g of gps){if(!g||!g.connected)continue;const bt=i=>g.buttons[i]&&g.buttons[i].pressed;const ax=g.axes||[];
+ const p={L:bt(14)||ax[0]<-0.45,R:bt(15)||ax[0]>0.45,U:bt(12)||ax[1]<-0.5,D:bt(13)||ax[1]>0.5,A:bt(0),B:bt(1),X:bt(2),Y:bt(3),ST:bt(9)||bt(8),LB:bt(4),RB:bt(5)};
+ for(const k in p)if(p[k]){IN.p[k]=1;}if(Object.values(p).some(v=>v)){setDev('pad');gateGo();}}}
+function inputFrame(){pollPad();for(const b of BTN){const c=!!(IN.k[b]||IN.p[b]||IN.t[b]);IN.pr[b]=(c&&!IN.prev[b])||!!IN.latch[b];IN.cur[b]=c;IN.prev[b]=c;}IN.latch={};}
+// touch controls
+function touchSetup(){const dp=$('dpad');const arr=dp.querySelectorAll('i');
+ const upd=(e)=>{e.preventDefault();setDev('touch');let L=0,R=0,U=0,D=0;const r=dp.getBoundingClientRect();const cx=r.left+r.width/2,cy=r.top+r.height/2;
+  for(const t of e.touches){if(t.target!==dp&&!dp.contains(t.target))continue;const dx=t.clientX-cx,dy=t.clientY-cy;if(Math.hypot(dx,dy)<14)continue;const a=Math.atan2(dy,dx);
+   if(Math.abs(dx)>r.width*0.14)(dx<0?L=1:R=1);if(dy<-r.height*0.2)U=1;if(dy>r.height*0.2)D=1;}
+  IN.t.L=L;IN.t.R=R;IN.t.U=U;IN.t.D=D;arr[0].classList.toggle('on',!!U);arr[1].classList.toggle('on',!!D);arr[2].classList.toggle('on',!!L);arr[3].classList.toggle('on',!!R);};
+ ['touchstart','touchmove','touchend','touchcancel'].forEach(ev=>dp.addEventListener(ev,upd,{passive:false}));
+ const bind=(id,b)=>{const el=$(id);el.addEventListener('touchstart',e=>{e.preventDefault();setDev('touch');IN.t[b]=1;IN.latch[b]=1;el.classList.add('on');},{passive:false});
+  const off=e=>{e.preventDefault();IN.t[b]=0;el.classList.remove('on');};el.addEventListener('touchend',off,{passive:false});el.addEventListener('touchcancel',off,{passive:false});
+  el.addEventListener('mousedown',()=>{IN.latch[b]=1;});};
+ bind('tA','A');bind('tB','B');
+ addEventListener('touchstart',()=>{setDev('touch');updTouchVis();},{passive:true});
+ addEventListener('mousedown',()=>{if(IN.dev==='touch')return;setDev('mouse');});}
+const isTouch=()=>('ontouchstart' in window)||navigator.maxTouchPoints>0;
+function updTouchVis(){const show=G.mode==='play'&&(SET.touch==='on'||(SET.touch==='auto'&&(IN.dev==='touch'||(isTouch()&&IN.dev!=='pad'&&IN.dev!=='kb'))));$('touch').classList.toggle('hid',!show);}
+
+/* ================= UI FRAMEWORK ================= */
+const UI={stack:[],acts:{},aid:0,base:0};
+function pruneActs(){if(UI.aid-UI.base>4000){UI.acts={};UI.base=UI.aid;}}
+function act(fn){const id=++UI.aid;UI.acts[id]=fn;return id;}
+function B(label,fn,cls='',dis=false,key=''){return`<button class="btn f ${cls}" ${dis?'disabled':''} ${key?`data-k="${key}"`:''} data-a="${act(fn)}">${label}</button>`;}
+const topM=()=>UI.stack[UI.stack.length-1];
+function openMenu(m){UI.stack.push(m);m.tab=m.tab||(m.tabs&&m.tabs[0][0]);renderMenu(false);sfx('click');}
+function closeMenu(){UI.stack.pop();if(UI.stack.length)renderMenu(false);else{$('menu').classList.add('hid');$('menu').innerHTML='';}}
+function closeAll(){UI.stack=[];$('menu').classList.add('hid');$('menu').innerHTML='';}
+function back(){const m=topM();if(m&&m.onBack)m.onBack();else closeMenu();sfx('click');}
+const uiOpen=()=>UI.stack.length>0||!!DLG.cur||G.mode!=='play';
+function refresh(){if(UI.stack.length)renderMenu(true);updHud();}
+function renderMenu(keep){const m=topM();const root=$('menu');if(!m)return;
+ let fk=null,fi=0,sc=0;if(keep){const f=root.querySelector('.f.foc');if(f){fk=f.dataset.k||null;fi=[...root.querySelectorAll('.f')].indexOf(f);}const wb=root.querySelector('.wb');sc=wb?wb.scrollTop:0;}
+ pruneActs();
+ if(m.tabs&&m.tabsFn)m.tabs=m.tabsFn();
+ let h=`<div class="win"><div class="wh"><span class="tt">${typeof m.title==='function'?m.title():m.title}</span><span class="mo">💰 ${fmt(S?S.money:0)} ¢</span><button class="x f" data-k="x" data-a="${act(back)}">✕</button></div>`;
+ if(m.tabs)h+='<div class="tabs">'+m.tabs.map(([k,l])=>`<button class="tab f ${m.tab===k?'on':''}" data-k="t:${k}" data-a="${act(()=>{m.tab=k;m.sel=null;renderMenu(false);sfx('move');})}">${l}</button>`).join('')+'</div>';
+ h+=`<div class="wb">${m.body(m)}</div></div>`;
+ root.innerHTML=h;root.classList.remove('hid');
+ const els=[...root.querySelectorAll('.f')];let el=null;
+ if(keep){if(fk)el=root.querySelector(`.f[data-k="${CSS.escape(fk)}"]`);if(!el)el=els[Math.min(fi,els.length-1)];const wb=root.querySelector('.wb');if(wb)wb.scrollTop=sc;}
+ else{el=root.querySelector('.wb .f')||root.querySelector('.tab.on')||els[0];}
+ if(el)setFoc(el,!keep);}
+function setFoc(el,scroll=true){document.querySelectorAll('.f.foc').forEach(e=>e.classList.remove('foc'));if(!el)return;el.classList.add('foc');if(scroll&&IN.dev!=='touch'&&IN.dev!=='mouse')el.scrollIntoView({block:'nearest',inline:'nearest'});}
+function navRoot(){if(G.mode==='title'&&!UI.stack.length&&!DLG.cur)return $('title');if(DLG.cur)return $('dlg');if(UI.stack.length)return $('menu');return null;}
+function navMove(dx,dy){const root=navRoot();if(!root)return;const els=[...root.querySelectorAll('.f')].filter(e=>e.offsetParent!==null);if(!els.length)return;
+ let cur=root.querySelector('.f.foc');if(!cur||!els.includes(cur)){setFoc(els[0]);return;}
+ const r=cur.getBoundingClientRect(),cx=r.left+r.width/2,cy=r.top+r.height/2;let best=null,bs=1e9;
+ for(const e of els){if(e===cur)continue;const q=e.getBoundingClientRect(),ex=q.left+q.width/2,ey=q.top+q.height/2;const ddx=ex-cx,ddy=ey-cy;const main=dx?ddx*dx:ddy*dy;if(main<=3)continue;const cross=dx?Math.abs(ddy):Math.abs(ddx);const s=main+cross*(dx?3:1.6);if(s<bs){bs=s;best=e;}}
+ if(best){setFoc(best);sfx('move');}}
+function navOk(){const root=navRoot();if(!root)return;const f=root.querySelector('.f.foc');if(f&&!f.disabled)f.click();}
+document.addEventListener('click',e=>{const b=e.target.closest('[data-a]');if(!b||b.disabled)return;const fn=UI.acts[b.dataset.a];if(fn){auInit();fn(b);}});
+document.addEventListener('mouseover',e=>{if(IN.dev!=='mouse')return;const b=e.target.closest('.f');if(b&&!b.classList.contains('foc'))setFoc(b,false);});
+function menuTab(d){const m=topM();if(!m||!m.tabs)return;const i=m.tabs.findIndex(t=>t[0]===m.tab);const n=m.tabs[(i+d+m.tabs.length)%m.tabs.length];m.tab=n[0];m.sel=null;renderMenu(false);const t=$('menu').querySelector('.tab.on');if(t){setFoc(t);t.scrollIntoView({block:'nearest',inline:'nearest'});}sfx('move');}
+
+/* ---------- toasts ---------- */
+function toast(msg){const box=$('toasts');const d=document.createElement('div');d.className='toast';d.textContent=msg;box.appendChild(d);while(box.children.length>5)box.firstChild.remove();setTimeout(()=>d.classList.add('out'),2800);setTimeout(()=>d.remove(),3500);}
+
+/* ---------- dialogue ---------- */
+const DLG={q:[],cur:null,shown:0,full:''};
+function say(sp,text,opts,then){DLG.q.push({sp,text,opts,then});if(!DLG.cur)nextDlg();}
+function sayNpc(id,text,then){say(id,text,null,then);}
+function sayLines(sp,lines,then){lines.forEach((l,i)=>say(sp,tr(l),null,i===lines.length-1?then:null));}
+function nextDlg(){const d=DLG.q.shift();DLG.cur=d||null;const el=$('dlg');if(!d){el.classList.add('hid');return;}
+ el.classList.remove('hid');UI.acts=UI.stack.length?UI.acts:{};
+ el.querySelector('.dn').textContent=d.sp==='sys'||!d.sp?'':nname(d.sp);
+ drawPortrait(el.querySelector('.pt'),d.sp);
+ DLG.full=d.text;DLG.shown=0;el.querySelector('.dt').textContent='';
+ const o=el.querySelector('.do');o.innerHTML='';el.querySelector('.nx').style.display='none';}
+function dlgTick(){const d=DLG.cur;if(!d)return;if(DLG.shown<DLG.full.length){DLG.shown=Math.min(DLG.full.length,DLG.shown+2);$('dlg').querySelector('.dt').textContent=DLG.full.slice(0,DLG.shown);if(G.t%5===0&&d.sp&&d.sp!=='sys')sfx('talk');if(DLG.shown>=DLG.full.length)dlgDone();}}
+function dlgDone(){const d=DLG.cur;const el=$('dlg');const o=el.querySelector('.do');
+ if(d.opts){o.innerHTML=d.opts.map(([l,fn],i)=>`<button class="btn f ${i===0?'g':''}" data-a="${act(()=>{DLG.cur=null;const qd=DLG.q.length;nextDlg();fn&&fn();})}">${l}</button>`).join('');setFoc(o.querySelector('.f'));}
+ else el.querySelector('.nx').style.display='block';}
+function dlgAdvance(){const d=DLG.cur;if(!d)return;if(DLG.shown<DLG.full.length){DLG.shown=DLG.full.length;$('dlg').querySelector('.dt').textContent=DLG.full;dlgDone();return;}if(d.opts)return;const th=d.then;nextDlg();th&&th();}
+$('dlg').addEventListener('click',e=>{if(e.target.closest('[data-a]'))return;dlgAdvance();});
+function confirmBox(text,yes,no){say('sys',text,[[T('yes'),yes],[T('no'),no||null]]);}
+
+/* ================= MENUS ================= */
+const slotsHtml=(ids,selFn,selId,extra)=>'<div class="grid">'+ids.map(id=>`<button class="sl f ${selId===id?'sel':''} ${extra?extra(id):''}" data-k="i:${id}" data-a="${act(()=>selFn(id))}">${icon(id)}${cnt(id)>1?`<span class="n">${cnt(id)}</span>`:''}</button>`).join('')+'</div>';
+const byCat=(a,b)=>CAT_ORDER.indexOf(ITEMS[a].cat)-CAT_ORDER.indexOf(ITEMS[b].cat)||ITEMS[a].p-ITEMS[b].p;
+const invIds=f=>Object.keys(S.inv).filter(k=>S.inv[k]>0&&ITEMS[k]&&(!f||f(k))).sort(byCat);
+const sellPrice=id=>{const it=ITEMS[id];let p=it.cat==='seed'?Math.floor(it.p/2):it.p;if(S.proj.fountain)p=Math.ceil(p*1.1);return p;};
+const chips=c=>Object.entries(c).map(([k,v])=>`<span class="chip ${has(k,v)?'ok':'no'}">${icon(k)} ${cnt(k)}/${v}</span>`).join('');
+const usedIn=id=>Object.values(RECIPES).filter(r=>r.ins[id]&&known(r)).map(r=>ITEMS[r.out].ic+' '+iname(r.out));
+
+function menuPause(tab){openMenu({id:'pause',title:()=>`${T('day')} ${S.day} · ${fmtTime()}`,tabsFn:pauseTabs,tabs:pauseTabs(),tab:tab||'bag',body:pauseBody});}
+function pauseTabs(){const t=[['bag','🎒 '+T('bag')],['quests','📜 '+T('quests')]];if(S.proj.observatory)t.push(['research','🧬 '+T('research')]);t.push(['archive','🏛️ '+T('archive')],['friends','💗 '+T('friends')]);if(S.res.pocketlift)t.push(['lift','🛗 '+T('lift')]);t.push(['settings','⚙️ '+T('settings')]);return t;}
+function pauseBody(m){switch(m.tab){case'bag':return bodyBag(m);case'quests':return bodyQuests();case'research':return bodyResearch();case'archive':return bodyArchive(m);case'friends':return bodyFriends();case'lift':return bodyLift();case'settings':return bodySettings();}return'';}
+function itemDetail(id,actions){const it=ITEMS[id];let s=`<div class="det"><div class="di">${icon(id)}</div><div class="dm"><div class="rt">${iname(id)}</div><div class="rs">${tr(CATS[it.cat])} · ${T('sellp')} ${fmt(sellPrice(id))} ¢${it.e?` · ⚡ +${it.e}`:''}${it.c?` · 🛋️ +${it.c}`:''}${it.crop?` · ⏳ ${CROPS[it.crop].d} ${T('day').toLowerCase()}${CROPS[it.crop].dome?' · 🌳':''}`:''}</div>`;
+ const u=usedIn(id);if(u.length)s+=`<div class="rs">${T('usedin')}: ${u.slice(0,6).join(', ')}${u.length>6?'…':''}</div>`;s+=`</div><div class="ra">${actions||''}</div></div>`;return s;}
+function bodyBag(m){let h='';const ids=invIds();const sel=m.sel&&cnt(m.sel)>0?m.sel:null;
+ if(sel){const it=ITEMS[sel];let a='';if(it.e)a+=B('🍴 '+T('eat'),()=>{eat(sel);refresh();},'g',false,'eat');if(it.cat==='furn')a+=B('📍 '+T('place'),()=>{closeAll();placeFurn(sel);},'w',false,'place');h+=itemDetail(sel,a);}
+ else h+=`<div class="det"><div class="di">🎒</div><div class="dm"><div class="rs">${T('select')}</div><div class="rs">⚡ ${Math.floor(S.energy)}/${maxE()} · 🛋️ ${T('comfort')}: ${comfort()} · 🧬 ${S.rp} RP · 🌟 ${cnt('shard')}</div></div></div>`;
+ if(!ids.length)h+=`<div class="note">${T('none')}</div>`;
+ let lastCat='';const groups={};ids.forEach(id=>{(groups[ITEMS[id].cat]=groups[ITEMS[id].cat]||[]).push(id);});
+ CAT_ORDER.forEach(c=>{if(!groups[c])return;h+=`<div class="sec">${tr(CATS[c])}</div>`+slotsHtml(groups[c],id=>{m.sel=id;refresh();sfx('click');},sel);});
+ h+=`<div class="sec">${T('tools')}</div>`;
+ Object.entries(TOOLS).forEach(([k,t])=>{const l=S.tools[k];h+=`<div class="row"><div class="ri">${t.ic}</div><div class="rm"><div class="rt">${tr(t.n)} ${l?T('level')+' '+l:'—'}</div><div class="rs">${tr(t.d)}</div></div></div>`;});
+ const perks=['jetboots','thrusters','ergonomics','vitality','sonar','sprinklers','pocketlift'].filter(p=>S.res[p]);if(perks.length)h+=`<div class="sec">${T('perks')}</div>`+perks.map(p=>`<span class="chip">${RES[p].ic} ${tr(RES[p].n)}</span>`).join('');
+ return h;}
+function bodyQuests(){let h='';const act_=QUESTS.filter(q=>qst(q.id)&&qst(q.id).s===1);
+ h+=`<div class="sec">${T('active')}</div>`;if(!act_.length)h+=`<div class="note">${T('none')}</div>`;
+ act_.forEach(q=>{const c=qComplete(q);h+=`<div class="row"><div class="ri">${q.main?'⭐':'📜'}</div><div class="rm"><div class="rt">${tr(q.n)}</div>`+(q.i[0]?`<div class="rs">${tr(q.i)}</div>`:'')+q.o.map(o=>{const[a,b]=objProg(q,o);return`<div class="rs">${a>=b?'✔️':'▫️'} ${objText(o)} ${b>1?`${fmt(a)}/${fmt(b)}`:''}</div>`;}).join('')+(c?`<div class="rs" style="color:var(--ok)">✅ ${T('talkto')} ${nname(q.to||q.g)}</div>`:'')+`</div></div>`;});
+ const av=QUESTS.filter(q=>qAvail(q));if(av.length){h+=`<div class="sec">${T('avail')}</div>`;av.forEach(q=>{h+=`<div class="row dim"><div class="ri">❗</div><div class="rm"><div class="rt">${tr(q.n)}</div><div class="rs">${T('talkto')} ${nname(q.g)}</div></div></div>`;});}
+ if(S.board.length){h+=`<div class="sec">📋 ${T('board')}</div>`;S.board.forEach(b=>{h+=`<div class="row ${b.done?'dim':''}"><div class="ri">${icon(b.it)}</div><div class="rm"><div class="rt">${iname(b.it)} ×${b.n}</div><div class="rs">${nname(b.npc)} · ${cnt(b.it)}/${b.n} ${b.done?'· ✔️':''}</div></div></div>`;});}
+ const dn=QUESTS.filter(q=>qst(q.id)&&qst(q.id).s===2).length;h+=`<div class="sec">${T('done')}: ${dn}/${QUESTS.length}</div>`;
+ h+=`<div class="sec">${T('stats')}</div><div class="rs">⏱️ ${T('playtime')}: ${Math.floor(S.play/3600)}h ${Math.floor(S.play/60)%60}m · `+Object.keys(STATN).map(k=>`${tr(STATN[k])}: ${fmt(S.stats[k]||0)}`).join(' · ')+`</div>`;return h;}
+function bodyResearch(){let h=`<div class="det"><div class="di">🧬</div><div class="dm"><div class="rt">${S.rp} RP</div><div class="rs">${T('rp')}: 🏛️ ${T('archive')}, 🔭 ${T('telescope')}, 💽 ${iname('datachip')}, 📜 ${T('quests')}</div></div><div class="ra">${has('datachip')?B('💽 '+T('upload'),()=>{take('datachip');S.rp+=40;sfx('coin');refresh();},'w',false,'up'):''}</div></div>`;
+ RESEARCH.forEach(r=>{const done=S.res[r.id],av=resAvail(r);h+=`<div class="row ${done?'dim':''}"><div class="ri">${r.ic}</div><div class="rm"><div class="rt">${tr(r.n)} ${done?'✔️':''}</div><div class="rs">${tr(r.d)}</div>${!done&&!av?`<div class="rs">🔒 ${T('needs')}: ${r.r.filter(x=>!S.res[x]).map(x=>tr(RES[x].n)).join(', ')}</div>`:''}</div><div class="ra">${done?'':B(`${r.c} RP`,()=>{doResearch(r.id);refresh();},'g',!av||S.rp<r.c,'r:'+r.id)}</div></div>`;});return h;}
+function bodyArchive(m){const don=Object.keys(S.don).length;let h=`<div class="det"><div class="di">🏛️</div><div class="dm"><div class="rt">${T('arch')}: ${don}/${ARCH.length}</div><div class="bar"><i style="width:${don/ARCH.length*100}%"></i></div><div class="rs">${m.sel?`${S.seen[m.sel]?icon(m.sel)+' '+iname(m.sel):'❔ ???'} ${S.don[m.sel]?'· ✔️':''}`:T('donateh')}</div></div></div>`;
+ CAT_ORDER.filter(c=>c!=='seed'&&c!=='misc').forEach(c=>{const ids=ARCH.filter(id=>ITEMS[id].cat===c);h+=`<div class="sec">${tr(CATS[c])} ${ids.filter(i=>S.don[i]).length}/${ids.length}</div><div class="grid">`+ids.map(id=>`<button class="sl f ${S.don[id]?'don':S.seen[id]?'':'dn'}" data-k="a:${id}" data-a="${act(()=>{m.sel=id;refresh();})}">${S.seen[id]?icon(id):'❔'}</button>`).join('')+'</div>';});return h;}
+function bodyFriends(){let h='';Object.keys(NPCS).forEach(id=>{const f=fr(id),n=NPCS[id];if(!f.met){h+=`<div class="row dim"><div class="ri">❔</div><div class="rm"><div class="rt">???</div><div class="rs">${T('notmet')}</div></div></div>`;return;}
+ const hs=hearts(id);const kn=Object.keys(f.kn||{});h+=`<div class="row"><div class="ri"><img src="${portraitURL(id)}"></div><div class="rm"><div class="rt">${nname(id)} <span class="rs">· ${tr(n.role)}</span></div><div class="hearts">${'♥'.repeat(hs)}<span style="opacity:.3">${'♥'.repeat(10-hs)}</span></div><div class="rs">${T('loves')}: ${n.loves.map(l=>kn.includes(l)?ITEMS[l].ic:'❔').join(' ')}</div></div></div>`;});return h;}
+function deckRows(fromMenu){let h='';DECK_ORDER.forEach(id=>{const op=deckOpen(id),D=DECKS[id];const sh=D.sh.length,got=D.sh.filter((_,i)=>S.got[id+'_s'+i]).length;const here=G.D&&G.D.id===id;
+ h+=`<div class="row ${op?'':'dim'}"><div class="ri">${op?(here?'📍':'🛗'):'🔒'}</div><div class="rm"><div class="rt">${tr(D.n)}</div><div class="rs">${op?(here?T('here'):''):T('locked')+(DECK_REQ[id]?' · '+PRJ[DECK_REQ[id]].ic+' '+tr(PRJ[DECK_REQ[id]].n):'')}${op&&S.res.cartography?` · 🌟 ${got}/${sh}`:''}</div></div><div class="ra">${op&&!here?B('➜',()=>{closeAll();travel(id);},'g',false,'d:'+id):''}</div></div>`;});return h;}
+function bodyLift(){return deckRows(1);}
+function menuElevator(){openMenu({title:'🛗 '+T('elev'),body:()=>deckRows(0)});}
+function bodySettings(){const tg=(lbl,cur,opts,fn)=>`<div class="row"><div class="rm"><div class="rt">${lbl}</div></div><div class="ra">${opts.map(([v,l])=>B(l,()=>{fn(v);saveSet();refresh();},cur===v?'g':'',false,'s:'+lbl+v)).join('')}</div></div>`;
+ let h=tg('🌐 '+T('lang'),LANG,[[0,'English'],[1,'Svenska']],v=>{LANG=SET.lang=v;updHud();updTracker();})
+ +tg('🎵 '+T('music'),SET.music,[[0,T('off')],[0.3,'30%'],[0.6,'60%'],[1,'100%']],v=>{SET.music=v;auVol();})
+ +tg('🔊 '+T('sfx'),SET.sfx,[[0,T('off')],[0.4,'40%'],[0.8,'80%'],[1,'100%']],v=>{SET.sfx=v;auVol();})
+ +tg('📱 '+T('touchc'),SET.touch,[['auto',T('auto')],['on',T('on')],['off',T('off')]],v=>{SET.touch=v;updTouchVis();})
+ +tg('⛶ '+T('full'),SET.fs,[[1,T('on')],[0,T('off')]],v=>{SET.fs=v;if(v)goFull();else if(document.fullscreenElement)document.exitFullscreen().catch(()=>{});})
+ +`<div class="row"><div class="rm"><div class="rt">👕 ${T('suit')}</div></div><div class="ra">${SUITS.map((c,i)=>`<button class="btn f" data-k="suit${i}" style="background:${c};border-color:${S.suit===i?'#fff':c};width:34px;height:34px;padding:0" data-a="${act(()=>{S.suit=i;refresh();})}"></button>`).join('')}</div></div>`
+ +`<div class="row"><div class="rm"><div class="rt">💾</div></div><div class="ra">${B(T('save'),()=>{S.px=G.P.x;S.py=G.P.y;save();},'g',false,'sv')}${B(T('quit'),()=>{S.px=G.P.x;S.py=G.P.y;save();closeAll();showTitle();},'w',false,'qt')}</div></div>`
+ +`<div class="sec">${T('help')}</div><div class="note">${T('helpt')}</div><div class="note">${T('tip1')}</div>`;return h;}
+
+/* ---- shop ---- */
+function buyPrice(id){const it=ITEMS[id];return it.cat==='seed'?it.p:it.p*2;}
+function menuShop(sid){const sh=SHOPS[sid];openMenu({title:'🛍️ '+tr(sh.n),tabs:[['buy','🛒 '+T('buy')],['sell','💰 '+T('sell')]],body:m=>m.tab==='buy'?shopBuy(sid):shopSell(m)});}
+function shopRow(id,price,fn,fn5,extra){return`<div class="row"><div class="ri">${icon(id)}</div><div class="rm"><div class="rt">${iname(id)}</div><div class="rs">${extra||''}${fmt(price)} ¢ · ${T('inbag')}: ${cnt(id)}</div></div><div class="ra">${B(T('buy'),fn,'g',S.money<price,'b:'+id)}${fn5?B('×5',fn5,'',S.money<price*5,'b5:'+id):''}</div></div>`;}
+function buy(id,n,price){if(S.money<price*n){sfx('err');toast(T('nomoney'));return;}S.money-=price*n;add(id,n);sfx('coin');refresh();}
+function shopBuy(sid){const sh=SHOPS[sid];let h='';
+ if(sh.trade){h+=`<div class="note">${T('shardtrade')} · 🌟 ${cnt('shard')}</div>`;sh.trade.forEach(([id,c])=>{h+=`<div class="row"><div class="ri">${icon(id)}</div><div class="rm"><div class="rt">${iname(id)}</div><div class="rs">🌟 ${c} · ${T('inbag')}: ${cnt(id)}</div></div><div class="ra">${B(T('trade'),()=>{if(!take('shard',c)){sfx('err');return;}add(id,1);sfx('coin');refresh();},'g',!has('shard',c),'tr:'+id)}</div></div>`;});return h;}
+ if(sh.tools)sh.tools.forEach(k=>{const t=TOOLS[k],l=S.tools[k];if(l>=t.max){h+=`<div class="row dim"><div class="ri">${t.ic}</div><div class="rm"><div class="rt">${tr(t.n)} ${T('level')} ${l}</div><div class="rs">${T('max')}</div></div></div>`;return;}const u=t.up[l+1];const ok=S.money>=u.m&&(!u.it||hasAll(u.it));
+  h+=`<div class="row"><div class="ri">${t.ic}</div><div class="rm"><div class="rt">${T('upgrade')}: ${tr(t.n)} ${T('level')} ${l+1}</div><div class="rs">${tr(t.d)} · ${fmt(u.m)} ¢</div>${u.it?chips(u.it):''}</div><div class="ra">${B(T('upgrade'),()=>{if(!ok){sfx('err');return;}S.money-=u.m;if(u.it)takeAll(u.it);S.tools[k]++;sfx('fanfare');toast(t.ic+' '+tr(t.n)+' '+T('level')+' '+S.tools[k]);refresh();},'w',!ok,'up:'+k)}</div></div>`;});
+ if(sh.animals){const free=freePens().length;h+=`<div class="note">🏠 ${T('pen')}: ${free}</div>`;Object.entries(ANIMALS).forEach(([k,a])=>{h+=`<div class="row"><div class="ri">${a.ic}</div><div class="rm"><div class="rt">${tr(a.n)}</div><div class="rs">${fmt(a.p)} ¢ · ${ITEMS[a.pr].ic} ${iname(a.pr)}</div></div><div class="ra">${B(T('buy'),()=>buyAnimal(k),'g',S.money<a.p||!free,'an:'+k)}</div></div>`;});}
+ if(sh.seeds){const tier=seedTier();Object.values(CROPS).filter(c=>c.t<=tier).forEach(c=>{const id='s_'+c.id;h+=shopRow(id,buyPrice(id),()=>buy(id,1,buyPrice(id)),()=>buy(id,5,buyPrice(id)),`⏳${c.d}${c.r?' ♻️'+c.r:''}${c.dome?' 🌳':''} · `);});}
+ (sh.items||[]).forEach(id=>{h+=shopRow(id,buyPrice(id),()=>buy(id,1,buyPrice(id)),()=>buy(id,5,buyPrice(id)));});return h;}
+function shopSell(m){const ids=invIds(k=>k!=='cat');let h='';if(!ids.length)return`<div class="note">${T('none')}</div>`;
+ ids.forEach(id=>{const p=sellPrice(id);h+=`<div class="row"><div class="ri">${icon(id)}</div><div class="rm"><div class="rt">${iname(id)} ×${cnt(id)}</div><div class="rs">${fmt(p)} ¢</div></div><div class="ra">${B(T('sell'),()=>sell(id,1),'',false,'s1:'+id)}${cnt(id)>1?B(T('sellall'),()=>sell(id,cnt(id)),'w',false,'sa:'+id):''}</div></div>`;});return h;}
+function sell(id,n){n=Math.min(n,cnt(id));if(n<=0)return;take(id,n);const m=sellPrice(id)*n;addMoney(m);stat('sold',m);sfx('coin');questPing();refresh();}
+
+/* ---- crafting ---- */
+function menuCraft(st){const title={craft:'🔨 '+T('bench'),cook:'🍳 '+T('stove'),smelt:'🔥 '+T('smelter')}[st];openMenu({title,body:()=>craftBody(st)});}
+function craftBody(st){const all=Object.values(RECIPES).filter(r=>r.st===st);const kn=all.filter(known);let h='';
+ kn.sort((a,b)=>(canCraft(b)?1:0)-(canCraft(a)?1:0));
+ kn.forEach(r=>{const ok=canCraft(r);const it=ITEMS[r.out];h+=`<div class="row ${ok?'':'dim'}"><div class="ri">${icon(r.out)}</div><div class="rm"><div class="rt">${iname(r.out)}${r.n>1?' ×'+r.n:''} <span class="rs">${it.e?'⚡'+it.e:''} ${T('inbag')}: ${cnt(r.out)}</span></div><div>${chips(r.ins)}</div></div><div class="ra">${B({craft:T('craft'),cook:T('cook'),smelt:T('smelt')}[st],()=>{craft(r,1);refresh();},'g',!ok,'c:'+r.out)}${B('×5',()=>{craft(r,5);refresh();},'',!canCraft(r,5),'c5:'+r.out)}</div></div>`;});
+ const unk=all.length-kn.length;if(unk)h+=`<div class="note">🔒 +${unk} — 🧬 ${T('research')}</div>`;return h;}
+
+/* ---- projects ---- */
+function menuBuild(){openMenu({title:'🏗️ '+T('projects'),body:()=>{let h='';const row=p=>{const done=S.proj[p.id];const av=projAvail(p);const ok=av&&projCan(p);
+  if(!done&&!av)return`<div class="row dim"><div class="ri">🔒</div><div class="rm"><div class="rt">${tr(p.n)}</div><div class="rs">${T('needs')}: ${p.r.filter(x=>!S.proj[x]).map(x=>tr(PRJ[x].n)).join(', ')}</div></div></div>`;
+  return`<div class="row ${done?'dim':''}"><div class="ri">${p.ic}</div><div class="rm"><div class="rt">${tr(p.n)} ${done?'✔️':''}</div><div class="rs">${tr(p.d)}</div>${done?'':chips(p.c)+(p.m?`<span class="chip ${S.money>=p.m?'ok':'no'}">💰 ${fmt(p.m)}</span>`:'')+(p.rr?`<span class="chip ${S.res[p.rr]?'ok':'no'}">🧬 ${tr(RES[p.rr].n)}</span>`:'')}</div><div class="ra">${done?'':B(T('build'),()=>{doProject(p.id);refresh();},'g',!ok,'p:'+p.id)}</div></div>`;};
+  PROJECTS.filter(p=>!p.opt).forEach(p=>h+=row(p));h+=`<div class="sec">${T('optional')}</div>`;PROJECTS.filter(p=>p.opt).forEach(p=>h+=row(p));return h;}});}
+
+/* ---- seeds ---- */
+function menuSeeds(o){const p=S.plots[o.key];openMenu({title:'🌱 '+T('plant'),body:()=>{const ids=invIds(k=>ITEMS[k].cat==='seed'&&seedFits(o,ITEMS[k].crop));let h='';
+ if(!ids.length)h+=`<div class="note">${T('noseeds')}</div>`;
+ ids.forEach(id=>{const c=CROPS[ITEMS[id].crop];h+=`<div class="row"><div class="ri">${icon(id)}</div><div class="rm"><div class="rt">${iname(id)} ×${cnt(id)}</div><div class="rs">⏳ ${c.d} · ${ITEMS[c.id].ic} ${fmt(ITEMS[c.id].p)} ¢${c.r?' · ♻️ '+c.r:''}</div></div><div class="ra">${B(T('planttxt'),()=>{plantSeed(o,id);closeMenu();},'g',false,'pl:'+id)}</div></div>`;});return h;}});}
+
+/* ---- board ---- */
+function menuBoard(){if(S.boardDay!==S.day||!S.board.length)genBoard();openMenu({title:'📋 '+T('board'),body:()=>{let h=`<div class="note">${T('boardn')}</div>`;S.board.forEach((b,i)=>{const r=Math.round(ITEMS[b.it].p*b.n*1.8+40);h+=`<div class="row ${b.done?'dim':''}"><div class="ri">${icon(b.it)}</div><div class="rm"><div class="rt">${iname(b.it)} ×${b.n}</div><div class="rs">${nname(b.npc)} · 💰 ${fmt(r)} ¢ · ${T('inbag')}: ${cnt(b.it)}</div></div><div class="ra">${b.done?'✔️':B(T('deliver'),()=>{deliverBoard(i);refresh();},'g',!has(b.it,b.n),'bd'+i)}</div></div>`;});return h;}});}
+
+/* ---- archive donate ---- */
+function menuDonate(){openMenu({title:'🏛️ '+T('archd'),body:()=>{const ids=invIds(k=>ARCH.includes(k)&&!S.don[k]);let h=`<div class="note">${T('donateh')} · ${Object.keys(S.don).length}/${ARCH.length}</div>`;if(!ids.length)h+=`<div class="note">${T('none')}</div>`;
+ ids.forEach(id=>{const rp=3+Math.floor(Math.min(ITEMS[id].p,1000)/60);h+=`<div class="row"><div class="ri">${icon(id)}</div><div class="rm"><div class="rt">${iname(id)}</div><div class="rs">🧬 +${rp} RP</div></div><div class="ra">${B(T('donate'),()=>{take(id);S.don[id]=1;S.rp+=rp;sfx('quest');questPing();refresh();},'g',false,'dn:'+id)}</div></div>`;});return h;}});}
+
+/* ---- gifts ---- */
+function menuGift(npc){openMenu({title:'🎁 '+nname(npc),body:m=>{const ids=invIds(k=>k!=='cat');return ids.length?slotsHtml(ids,id=>{closeAll();giveGift(npc,id);}):`<div class="note">${T('none')}</div>`;}});}
+function giveGift(npc,id){const f=fr(npc),n=NPCS[npc];if(f.g===S.day){sayNpc(npc,tr(GIFTR.again));return;}take(id);f.g=S.day;stat('gifts');
+ let k='neu',pts=20;if(n.loves.includes(id)){k='love';pts=80;}else if(n.likes.includes(id)){k='like';pts=45;}else if(n.hates.includes(id)){k='hate';pts=-20;}else if(ITEMS[id].cat==='food'){k='like';pts=35;}
+ if(k==='love')f.kn[id]=1;addFr(npc,pts);sfx(k==='hate'?'bad':'quest');sayNpc(npc,tr(GIFTR[k])+(k==='love'?' 💖':k==='like'?' 💗':''));}
+
+/* ---- decorate ---- */
+function menuDecor(){openMenu({title:'🧰 '+T('decor'),body:()=>{const ids=invIds(k=>ITEMS[k].cat==='furn');let h=`<div class="note">${T('decorh')} · 🛋️ ${T('comfort')}: ${comfort()} (⚡ +${Math.min(40,Math.floor(comfort()/2))})</div>`;if(!ids.length)h+=`<div class="note">${T('nofurn')}</div>`;
+ ids.forEach(id=>{h+=`<div class="row"><div class="ri">${icon(id)}</div><div class="rm"><div class="rt">${iname(id)} ×${cnt(id)}</div><div class="rs">🛋️ +${ITEMS[id].c}</div></div><div class="ra">${B(T('place'),()=>{closeAll();placeFurn(id);},'g',false,'pf:'+id)}</div></div>`;});return h;}});}
+
+/* ---- title ---- */
+function showTitle(){G.mode='title';$('hud').classList.add('hid');$('prompt').classList.add('hid');updTouchVis();S=null;G.D=null;renderTitle();}
+function renderTitle(){pruneActs();const t=$('title');let h=`<div class="tbox"><h1>STARHAVEN</h1><div class="sub">${T('sub')}</div>`;
+ for(let i=1;i<=3;i++){const s=loadSlot(i);h+=`<div class="slot"><div class="sm"><b>${T('slot')} ${i}</b><br>${s?`${T('day')} ${s.day} · 💰 ${fmt(s.money)} ¢ · 📜 ${Object.values(s.quests||{}).filter(q=>q.s===2).length} · 🛗 ${tr(DECKS[s.deck]?DECKS[s.deck].n:'')}`:T('empty')}</div>${s?B('▶ '+T('cont'),()=>startGame(i,false),'g',false,'c'+i)+B('🗑️',()=>confirmBox(T('confdel'),()=>{localStorage.removeItem(SKEY+i);renderTitle();}),'r',false,'d'+i):B('✨ '+T('newg'),()=>startGame(i,true),'g',false,'n'+i)}</div>`;}
+ h+=`<div class="langs">${B('🇬🇧 English',()=>{LANG=SET.lang=0;saveSet();renderTitle();},LANG===0?'w':'',false,'l0')}${B('🇸🇪 Svenska',()=>{LANG=SET.lang=1;saveSet();renderTitle();},LANG===1?'w':'',false,'l1')}${B('⛶',()=>{SET.fs=1;saveSet();goFull();},'',false,'fs')}</div><div class="hint">${T('helpt')}</div></div>`;
+ t.innerHTML=h;t.classList.remove('hid');const f=t.querySelector('.slot .f');setFoc(f);}
+
+/* ================= WORLD ================= */
+function srand(seed){return()=>{seed|=0;seed=seed+0x6D2B79F5|0;let t=Math.imul(seed^seed>>>15,1|seed);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;};}
+function hashS(s){let h=2166136261;for(const ch of s)h=Math.imul(h^ch.charCodeAt(0),16777619);return h>>>0;}
+function buildDeck(id){const sp=DECKS[id];const w=sp.w;const t=new Uint8Array(w*DH);const set=(x,y,v)=>{if(x>=0&&x<w&&y>=0&&y<DH)t[y*w+x]=v;};
+ for(let x=0;x<w;x++){set(x,0,1);set(x,1,1);for(let y=LV[0];y<DH;y++)set(x,y,1);}for(let y=0;y<DH;y++){set(0,y,1);set(w-1,y,1);}
+ (sp.f1||[]).forEach(([a,b])=>{for(let x=a;x<=b;x++)set(x,LV[1],1);});(sp.f2||[]).forEach(([a,b])=>{for(let x=a;x<=b;x++)set(x,LV[2],1);});
+ (sp.pl||[]).forEach(([x,y,n])=>{for(let i=0;i<n;i++)set(x+i,y,2);});
+ (sp.ld||[]).forEach(([x,a,b])=>{for(let y=LV[b];y<LV[a];y++)set(x,y,y===LV[b]?4:3);});
+ const D={id,sp,w,t,pal:PAL[id]};D.pre=preDeck(D);return D;}
+function tileAt(tx,ty){const D=G.D;if(tx<0||tx>=D.w||ty<0||ty>=DH)return 1;return D.t[ty*D.w+tx];}
+function preDeck(D){const sp=D.sp,pal=D.pal,W=D.w*TS,H=DH*TS;const cv=document.createElement('canvas');cv.width=W;cv.height=H;const c=cv.getContext('2d');const rng=srand(hashS(D.id));
+ if(!sp.out){c.fillStyle=pal.w;c.fillRect(0,0,W,H);c.fillStyle=pal.wd;for(let x=0;x<W;x+=48)c.fillRect(x,0,2,H);
+  for(const r of [5,12,18]){c.fillStyle='rgba(0,0,0,.12)';c.fillRect(0,r*TS,W,1);}
+  if(D.id==='dome'){for(let x=TS;x<W-2*TS;x+=TS*4){c.fillStyle=pal.ft;c.fillRect(x,2*TS,TS*4,6*TS+2);c.clearRect(x+3,2*TS,TS*4-6,6*TS-1);}
+   for(let x=TS;x<W-2*TS;x+=TS*8){c.fillStyle=pal.ft;c.fillRect(x+3,11*TS,TS*6,3*TS);c.clearRect(x+5,11*TS+2,TS*6-4,3*TS-4);}}
+  else for(const[a,b]of[[3,6],[11,13],[17,19]]){let x=4+Math.floor(rng()*6);while(x<D.w-6){if(rng()<0.55){const ww=2+Math.floor(rng()*3);const wy=a*TS+4,wh=(b-a+1)*TS-8;c.fillStyle=pal.ft;c.fillRect(x*TS-2,wy-2,ww*TS+4,wh+4);c.clearRect(x*TS,wy,ww*TS,wh);c.fillRect(x*TS+ww*TS/2-1,wy,2,wh);x+=ww+4+Math.floor(rng()*8);}else x+=3+Math.floor(rng()*6);}}
+  for(const r of LV){c.fillStyle=pal.wd;c.fillRect(0,r*TS-8,W,8);c.globalAlpha=.4;c.fillStyle=pal.a;c.fillRect(0,r*TS-9,W,1);c.globalAlpha=1;}
+  for(const r of[2,10,16])for(let x=24;x<W;x+=80){const g=c.createRadialGradient(x+6,r*TS+2,1,x+6,r*TS+2,34);g.addColorStop(0,pal.a+'40');g.addColorStop(1,pal.a+'00');c.fillStyle=g;c.fillRect(x-30,r*TS,72,36);c.fillStyle=pal.a;c.fillRect(x,r*TS,12,2);}
+  c.fillStyle=pal.wd;c.fillRect(0,2*TS+4,W,4);c.fillStyle='rgba(255,255,255,.08)';c.fillRect(0,2*TS+4,W,1);}
+ for(let y=0;y<DH;y++)for(let x=0;x<D.w;x++){const t=D.t[y*D.w+x];const px=x*TS,py=y*TS;
+  if(t===1){const edge=y<2||x===0||x===D.w-1;if(sp.out&&edge)continue;const top=y>0&&D.t[(y-1)*D.w+x]!==1;
+   if(sp.out==='sky'){c.fillStyle=y>LV[0]?'#5a3d26':'#6b4a2f';c.fillRect(px,py,TS,TS);if(top){c.fillStyle='#4fae43';c.fillRect(px,py,TS,5);c.fillStyle='#7fdc5f';c.fillRect(px,py,TS,2);if(rng()<.5)c.fillRect(px+Math.floor(rng()*13),py-2,1,2);}if(rng()<.15){c.fillStyle='rgba(0,0,0,.15)';c.fillRect(px+Math.floor(rng()*12),py+7+Math.floor(rng()*6),3,2);}}
+   else{c.fillStyle=edge?pal.wd:pal.f;c.fillRect(px,py,TS,TS);if(top){c.fillStyle=pal.ft;c.fillRect(px,py,TS,3);c.fillStyle='rgba(0,0,0,.25)';c.fillRect(px,py+3,TS,1);}c.fillStyle='rgba(0,0,0,.18)';c.fillRect(px+TS-1,py+(top?4:0),1,TS-(top?4:0));if(!edge&&(x+y)%3===0){c.fillStyle='rgba(255,255,255,.08)';c.fillRect(px+3,py+8,2,2);}}}
+  else if(t===2){c.fillStyle=pal.ft;c.fillRect(px,py,TS,3);c.fillStyle=pal.f;c.fillRect(px,py+3,TS,2);}
+  else if(t===3||t===4){if(t===4){c.fillStyle=pal.f;c.fillRect(px,py,TS,3);c.fillStyle=pal.ft;c.fillRect(px,py,TS,1);}c.fillStyle=sp.out==='sky'?'#3f8f3a':'#c8b27a';c.fillRect(px+2,py,2,TS);c.fillRect(px+12,py,2,TS);for(let i=0;i<2;i++)c.fillRect(px+2,py+5+i*8,12,2);}}
+ return cv;}
+function objVisible(o){if(!o.rq)return true;const[k,v]=o.rq.split(':');return k==='r'?!!S.res[v]:!!S.proj[v];}
+function rebuildObjs(){if(!G.D)return;const D=G.D;G.objs=[];
+ D.sp.o.forEach((a,i)=>{const[t,x,l,ex]=a;const o=Object.assign({t,i,key:D.id+'_'+i,x:x*TS+TS/2,y:LV[l]*TS,l},ex||{});o.hx=o.x;o.face=1;o.wt=0;o.tx=o.x;if(objVisible(o))G.objs.push(o);});
+ S.furn.forEach((f,i)=>{if(f.d===D.id)G.objs.push({t:'furn',fi:i,id:f.id,x:f.x,y:f.y,key:'f'+i});});
+ G.pick=[];D.sp.sh.forEach(([x,y],i)=>{const k=D.id+'_s'+i;if(!S.got[k])G.pick.push({k,id:'shard',x:x*TS+8,y:y*TS+8});});
+ D.sp.ar.forEach(([id,x,y],i)=>{const k=D.id+'_a'+i;if(!S.got[k])G.pick.push({k,id,x:x*TS+8,y:y*TS+8});});}
+function enterDeck(id,px,py){G.D=buildDeck(id);S.deck=id;const first=!S.visited[id];S.visited[id]=1;rebuildObjs();
+ if(!G.P)G.P={w:10,h:24,vx:0,vy:0,face:1,fr:0,climb:false,ground:false,dj:false,jb:0,co:0,drop:0,step:0};const P=G.P;
+ const el=G.objs.find(o=>o.t==='elev');P.x=px!=null?px:(el?el.x:5*TS)-P.w/2;P.y=py!=null?py:LV[0]*TS-P.h;P.vx=P.vy=0;P.climb=false;
+ if(P.x<TS||P.x>(G.D.w-1)*TS-P.w)P.x=5*TS;
+ G.parts=[];G.cam.snap=1;toast('📍 '+tr(DECKS[id].n));if(first)questPing();updHud();}
+function travel(id){sfx('door');fadeTo(()=>enterDeck(id));}
+function fadeTo(fn){G.fading=1;$('fade').style.opacity=1;setTimeout(()=>{try{fn();}catch(e){console.error(e);}$('fade').style.opacity=0;setTimeout(()=>G.fading=0,200);},330);}
+
+/* ---------- physics ---------- */
+const GRAV=0.32,JUMP=5.9,JUMP2=5.3;
+function isLad(t){return t===3||t===4;}
+function ladAt(x,y){return isLad(tileAt(Math.floor(x/TS),Math.floor(y/TS)));}
+function canClimbUp(){const P=G.P,cx=P.x+P.w/2;return ladAt(cx,P.y+P.h-1)||ladAt(cx,P.y+P.h/2);}
+function physics(){const P=G.P,D=G.D;const lg=D.sp.lowg?0.42:1;const spd=S.res.thrusters?2.2:1.55;
+ const ax=(IN.cur.R?1:0)-(IN.cur.L?1:0);const cx=P.x+P.w/2,tx=Math.floor(cx/TS);
+ if(P.jb>0)P.jb--;if(P.drop>0)P.drop--;
+ if(!P.climb){
+  if(IN.cur.U&&canClimbUp()&&!(P.jb>0&&IN.dev!=='pad'&&!IN.cur.U)){P.climb=true;P.jb=0;}
+  else if(IN.cur.D&&P.ground&&ladAt(cx,P.y+P.h+2)){P.climb=true;P.y+=2;}}
+ if(P.climb){P.vx=0;P.x+=((tx*TS+TS/2)-cx)*0.4;let vy=((IN.cur.D?1:0)-(IN.cur.U?1:0))*1.4;P.vy=vy;
+  if(P.jb>0&&!IN.cur.U){P.climb=false;P.vy=-4.2;P.jb=0;P.ground=false;}
+  else if(ax&&!vy){P.climb=false;}
+  else{P.y+=vy;P.fr+=vy?0.15:0;
+   if(vy>0){const b=P.y+P.h;const t=tileAt(tx,Math.floor(b/TS));if(t===1){P.y=Math.floor(b/TS)*TS-P.h;P.climb=false;P.ground=true;}}
+   if(!ladAt(P.x+P.w/2,P.y+P.h-1)&&!ladAt(P.x+P.w/2,P.y+P.h/2)){P.climb=false;if(vy<0)P.vy=0;}
+   return;}}
+ const tv=ax*spd;P.vx+=(tv-P.vx)*(P.ground?0.3:0.15);if(ax)P.face=ax;
+ if(P.ground){P.co=6;P.dj=false;}else if(P.co>0)P.co--;
+ if(P.jb>0){if(P.co>0){P.vy=-JUMP*(D.sp.lowg?0.82:1);P.co=0;P.jb=0;P.ground=false;sfx('jump');}
+  else if(S.res.jetboots&&!P.dj){P.vy=-JUMP2*(D.sp.lowg?0.8:1);P.dj=true;P.jb=0;sfx('jump');for(let i=0;i<8;i++)G.parts.push({x:P.x+P.w/2,y:P.y+P.h,vx:rnd(-1,1),vy:rnd(0.5,1.5),l:20,c:'#ffb347',s:2});}}
+ if(IN.cur.D&&P.ground&&!ladAt(cx,P.y+P.h+2)&&tileAt(tx,Math.floor((P.y+P.h+1)/TS))===2)P.drop=10;
+ if(!IN.cur.A&&!IN.cur.U&&P.vy<-2)P.vy+=GRAV*lg*0.8;
+ P.vy=Math.min(P.vy+GRAV*lg,D.sp.lowg?4:7);
+ P.x+=P.vx;
+ if(P.vx>0){const tx2=Math.floor((P.x+P.w)/TS);for(let ty=Math.floor(P.y/TS);ty<=Math.floor((P.y+P.h-0.01)/TS);ty++)if(tileAt(tx2,ty)===1){P.x=tx2*TS-P.w;P.vx=0;break;}}
+ else if(P.vx<0){const tx2=Math.floor(P.x/TS);for(let ty=Math.floor(P.y/TS);ty<=Math.floor((P.y+P.h-0.01)/TS);ty++)if(tileAt(tx2,ty)===1){P.x=(tx2+1)*TS;P.vx=0;break;}}
+ const oldB=P.y+P.h;P.y+=P.vy;const wasG=P.ground;P.ground=false;
+ if(P.vy>=0){const b=P.y+P.h,ty=Math.floor(b/TS);for(let x2=Math.floor(P.x/TS);x2<=Math.floor((P.x+P.w-0.01)/TS);x2++){const t=tileAt(x2,ty);if(t===1||((t===2||t===4)&&oldB<=ty*TS+0.5&&!(P.drop>0&&t===2))){P.y=ty*TS-P.h;if(!wasG&&P.vy>3){for(let i=0;i<4;i++)G.parts.push({x:P.x+P.w/2,y:P.y+P.h,vx:rnd(-1,1),vy:rnd(-0.6,-0.1),l:14,c:'rgba(255,255,255,.5)',s:1});}P.vy=0;P.ground=true;break;}}}
+ else{const ty=Math.floor(P.y/TS);for(let x2=Math.floor(P.x/TS);x2<=Math.floor((P.x+P.w-0.01)/TS);x2++)if(tileAt(x2,ty)===1){P.y=(ty+1)*TS;P.vy=0;break;}}
+ if(P.ground&&Math.abs(P.vx)>0.3)P.fr+=Math.abs(P.vx)*0.09;else if(P.ground)P.fr=0;
+ if(P.y>DH*TS){P.y=LV[0]*TS-P.h-2;P.vy=0;}}
+
+/* ---------- interactions ---------- */
+function objLabel(o){switch(o.t){case'elev':return o.e?'🚀 Starhaven':'🛗 '+T('elev');case'npc':return'💬 '+nname(o.id);
+ case'plot':{const p=S.plots[o.key];if(!p||!p.c)return'🌱 '+T('planttxt');const c=CROPS[p.c];if(p.g>=c.d)return ITEMS[p.c].ic+' '+T('harvest');if(!p.w)return'💧 '+T('water');return ITEMS[p.c].ic+' ⏳'+(c.d-p.g);}
+ case'node':{const N=NODES[o.n];return(N.soft?'🤲 '+T('gather'):'⛏️ '+T('mine'))+' '+N.ic;}
+ case'bed':return'🛏️ '+T('bed');case'stove':return'🍳 '+T('stove');case'bench':return'🔨 '+T('bench');case'smelter':return'🔥 '+T('smelter');case'build':return'🏗️ '+T('buildt');case'board':return'📋 '+T('board');
+ case'console':return'🧬 '+T('console');case'archive':return'🏛️ '+T('archd');case'scope':return'🔭 '+T('scope');case'fish':return'🎣 '+T('fish');
+ case'pen':{const p=S.pens[o.key];if(!p||!p.a)return'🏠 '+T('pen');const a=ANIMALS[p.a];return a.ic+' '+(p.prod?T('collect'):p.fed!==S.day?T('feed'):T('pet'));}
+ case'trough':return'🌾 '+T('trough');case'hive':return'🐝 '+T('hive');case'decor':return'🧰 '+T('decor');case'furn':return ITEMS[o.id].ic+' '+iname(o.id);}return T('interact');}
+const interactive=o=>o.t!=='deco'&&!(o.t==='node'&&S.nodes[o.key]&&S.nodes[o.key].d===S.day);
+function findNear(){const P=G.P,cx=P.x+P.w/2,by=P.y+P.h;let best=null,bd=1e9;for(const o of G.objs){if(!interactive(o))continue;const w=o.t==='pen'?26:o.t==='fish'?24:14;const dx=Math.abs(o.x-cx),dy=Math.abs(o.y-by);if(dx<w&&dy<14){const d=dx+dy;if(d<bd){bd=d;best=o;}}}G.near=best;}
+function interact(o){switch(o.t){
+ case'elev':menuElevator();break;case'npc':talkNpc(o.id);break;case'plot':usePlot(o);break;case'node':mineNode(o);break;
+ case'bed':confirmBox(T('sleep'),()=>sleep(false));break;case'stove':menuCraft('cook');break;case'bench':menuCraft('craft');break;
+ case'smelter':if(!S.proj.forge)say('sys',T('forgecold'));else menuCraft('smelt');break;case'build':menuBuild();break;case'board':menuBoard();break;
+ case'console':menuPause('research');break;case'archive':menuDonate();break;case'scope':useScope();break;case'fish':startFish(o);break;
+ case'pen':usePen(o);break;case'trough':feedAll();break;case'hive':useHive(o);break;case'decor':menuDecor();break;case'furn':useFurn(o);break;}}
+function talkNpc(id){const f=fr(id);const first=!f.met;f.met=1;
+ QUESTS.forEach(q=>{const s=qst(q.id);if(s&&s.s===1)q.o.forEach(o=>{if(o.t==='talk'&&o.npc===id&&!s.tk[id]){s.tk[id]=1;questPing();}});});
+ const tq=QUESTS.find(q=>{const s=qst(q.id);return s&&s.s===1&&(q.to||q.g)===id&&qComplete(q);});
+ if(tq){turnIn(tq,()=>talkNpc2(id,first));return;}talkNpc2(id,first);}
+function talkNpc2(id,first){const f=fr(id),n=NPCS[id];const hs=hearts(id);
+ for(const lv of[3,6,9]){if(hs>=lv&&!f.ev[lv]&&n.hr[lv]){f.ev[lv]=1;const rw=n.hr[lv];sayNpc(id,tr(n.hi[lv===9?1:0])+' 💝',()=>{toast('💝 '+nname(id)+' '+T('heartgift'));if(rw.rec){S.known[rw.rec]=1;toast('📖 '+T('recipe')+': '+iname(rw.rec));}else giveRw(rw);talkNpc2(id);});return;}}
+ const aq=QUESTS.find(q=>q.g===id&&qAvail(q)&&q.i[0]);
+ if(aq){say(id,tr(aq.i),[['📜 '+T('accept'),()=>{acceptQ(aq);talkMenu(id);}],[T('later'),()=>talkMenu(id)]]);return;}
+ talkMenu(id,null,first);}
+function npcLine(id){const n=NPCS[id];const pool=hearts(id)>=5?n.ln.concat(n.hi):n.ln;return tr(pick(pool));}
+function talkMenu(id,line,first){const f=fr(id);if(f.t!==S.day){f.t=S.day;addFr(id,15);}
+ if(id==='nova'&&S.proj.musichall&&S.flags.concert!==S.day){S.flags.concert=S.day;S.energy=Math.min(maxE(),S.energy+25);toast('🎵 '+T('concert'));}
+ const ln=line||(first?(LANG?`Hej! Jag är ${nname(id)}, ${tr(NPCS[id].role).toLowerCase()}. `:`Hi! I'm ${nname(id)}, the ${tr(NPCS[id].role).toLowerCase()}. `)+npcLine(id):npcLine(id));
+ const opts=[['💬 '+T('talk'),()=>talkMenu(id,npcLine(id))],['🎁 '+T('gift'),()=>menuGift(id)]];if(SHOPS[id])opts.push(['🛍️ '+T('shop'),()=>menuShop(id)]);opts.push(['👋 '+T('bye'),null]);say(id,ln,opts);}
+function plotState(o){return S.plots[o.key]||(S.plots[o.key]={c:null,g:0,w:0,f:0});}
+function seedFits(o,crop){return o.any||o.dome||!CROPS[crop].dome;}
+function plantSeed(o,id){const p=plotState(o);if(p.c||!take(id))return;p.c=ITEMS[id].crop;p.g=0;p.f=0;sfx('pick');burst(o.x,o.y-4,'#8fd16a',6);}
+function usePlot(o){const p=plotState(o);if(!p.c){menuSeeds(o);return;}const c=CROPS[p.c];
+ if(p.g>=c.d){const n=1+(Math.random()<(p.f?0.35:0.12)?1:0);add(p.c,n);stat('harvest',n);if(c.dome)stat('domeharvest',n);sfx('pick');burst(o.x,o.y-8,'#b8f58a',10);if(c.r)p.g=c.d-c.r;else{p.c=null;p.g=0;p.f=0;}return;}
+ if(!p.w){if(!useE(1))return;const rng=(S.tools.can-1)*2*TS+4;G.objs.filter(q=>q.t==='plot'&&q.l===o.l&&Math.abs(q.x-o.x)<=rng).forEach(q=>{const s=plotState(q);if(s.c&&!s.w){s.w=1;for(let i=0;i<5;i++)G.parts.push({x:q.x+rnd(-5,5),y:q.y-14,vx:rnd(-.3,.3),vy:rnd(.5,1.2),l:20,c:'#7fd0ff',s:2});}});sfx('water');return;}
+ if(!p.f&&has('fertilizer')){confirmBox(T('fert')+'? 🥫',()=>{take('fertilizer');p.f=1;sfx('pick');});return;}
+ toast(ITEMS[p.c].ic+' '+iname(p.c)+' · ⏳ '+(c.d-p.g)+' · 💧✔️');}
+function mineNode(o){const N=NODES[o.n];const st=S.nodes[o.key]||(S.nodes[o.key]={d:0,h:0});if(st.d===S.day)return;if(!useE(N.soft?1:2))return;
+ st.h++;o.shake=8;sfx('hit');for(let i=0;i<4;i++)G.parts.push({x:o.x,y:o.y-8,vx:rnd(-1.5,1.5),vy:rnd(-2,-0.5),l:22,c:N.soft?'#8fd16a':'#c9c0b0',s:2,g:1});
+ const need=N.soft?N.h:Math.max(1,N.h-(S.tools.drill-1));
+ if(st.h>=need){st.h=0;st.d=S.day;N.dr.forEach(([id,a,b])=>add(id,rint(a,b)));(N.x||[]).forEach(([id,ch,n])=>{if(Math.random()<ch)add(id,n);});if(N.art&&Math.random()<N.art)add(pick(ARTS),1);stat('mined');burst(o.x,o.y-8,'#ffe9a0',10);sfx('pick');}}
+function freePens(){const keys=[];DECKS.ranch.o.forEach((a,i)=>{if(a[0]!=='pen')return;const rq=a[3]&&a[3].rq;if(rq&&!S.res[rq.split(':')[1]])return;const k='ranch_'+i;if(!S.pens[k]||!S.pens[k].a)keys.push(k);});return keys;}
+function buyAnimal(k){const a=ANIMALS[k];const fp=freePens();if(!fp.length){toast(T('nopen'));sfx('err');return;}if(S.money<a.p){toast(T('nomoney'));sfx('err');return;}S.money-=a.p;S.pens[fp[0]]={a:k,fed:0,prod:0,love:0};sfx('fanfare');toast(a.ic+' '+tr(a.n)+' 💗');questPing();rebuildObjs();refresh();}
+function usePen(o){const p=S.pens[o.key];if(!p||!p.a){say('sys',T('penempty'));return;}const a=ANIMALS[p.a];
+ if(p.prod){p.prod=0;let n=1;if(a.x&&Math.random()<0.3)n++;if(S.res.husbandry&&Math.random()<0.25)n++;add(a.pr,n);sfx('pick');return;}
+ if(p.fed!==S.day){if(!take('hay')){say('sys',T('nohay'));return;}p.fed=S.day;p.love=(p.love||0)+1;sfx('eat');}else sfx('quest');
+ for(let i=0;i<3;i++)G.parts.push({x:o.x+rnd(-8,8),y:o.y-16,vx:0,vy:-0.4,l:40,ch:'💗',s:7});}
+function feedAll(){let n=0;Object.values(S.pens).forEach(p=>{if(p&&p.a&&p.fed!==S.day&&take('hay')){p.fed=S.day;n++;}});if(n){toast('🧺 '+T('fedall')+': '+n);sfx('eat');}else if(!has('hay'))say('sys',T('nohay'));else toast('💗');}
+function useHive(o){const h=S.hives[o.key]||(S.hives[o.key]={d:S.proj.beehives||S.day});if(S.day-h.d>=2){add('honey',rint(1,2));h.d=S.day;sfx('pick');}else toast('🐝 '+T('hivenot'));}
+function useScope(){if(S.time<1080){say('sys',T('scopeday'));return;}if(S.scopeDay===S.day){say('sys',T('scopedone'));return;}S.scopeDay=S.day;const rp=8+rint(0,8);S.rp+=rp;stat('scope');toast('🔭 +'+rp+' RP');if(Math.random()<0.35)add('stardust',rint(1,2));sfx('shard');questPing();}
+function placeFurn(id){const P=G.P;if(!P.ground||P.climb){toast(T('notground'));return;}if(!take(id))return;S.furn.push({id,d:G.D.id,x:Math.round(P.x+P.w/2),y:Math.round(P.y+P.h)});rebuildObjs();sfx('pick');questPing();}
+function useFurn(o){const f=S.furn[o.fi];if(!f)return;if(f.id==='cat'&&S.flags.cat!==S.day){S.flags.cat=S.day;S.energy=Math.min(maxE(),S.energy+5);toast(T('cat'));sfx('quest');for(let i=0;i<3;i++)G.parts.push({x:o.x+rnd(-6,6),y:o.y-14,vx:0,vy:-0.4,l:40,ch:'💗',s:7});return;}
+ say('sys',ITEMS[f.id].ic+' '+iname(f.id),[[T('pick'),()=>{S.furn.splice(o.fi,1);add(f.id,1,true);rebuildObjs();sfx('pick');}],[T('cancel'),null]]);}
+function burst(x,y,c,n=8){for(let i=0;i<n;i++)G.parts.push({x,y,vx:rnd(-1.5,1.5),vy:rnd(-2,-0.3),l:rint(18,34),c,s:2,g:1});}
+
+/* ---------- fishing ---------- */
+function startFish(o){if(S.tools.rod<1){say('sys',T('needrod'));return;}if(!useE(3))return;G.fish={ph:0,t:rint(70,170),o};sfx('water');}
+function chooseFish(deep){const maxD=[0,3,4,5,6][S.tools.rod];const bait=take('bait');let pool=FISH.filter(f=>f[5]<=maxD&&(!f[7]||(S.proj.bigtank&&(deep||f[0]==='dolphin'))));if(deep)pool=pool.filter(f=>f[5]>=2||f[0]==='boot');
+ const ws=pool.map(f=>f[6]*(bait&&f[5]>=3?2.5:1)*(deep&&f[5]>=4?2:1));let r=Math.random()*ws.reduce((a,b)=>a+b,0);for(let i=0;i<pool.length;i++){r-=ws[i];if(r<=0)return pool[i];}return pool[0];}
+function updFish(){const f=G.fish;if(f.ph===0){if(--f.t<=0){const fi=chooseFish(f.o.deep);f.fi=fi;const d=fi[5];f.ph=1;f.pos=0;f.dir=1;f.spd=0.011+d*0.0035;f.zw=clamp(0.3-d*0.03+(S.res.sonar?0.07:0)+S.tools.rod*0.015,0.1,0.45);f.zc=rnd(f.zw/2,1-f.zw/2);f.hits=0;f.miss=0;sfx('good');}}
+ else if(f.ph===1){f.pos+=f.dir*f.spd;if(f.pos>1){f.pos=1;f.dir=-1;}if(f.pos<0){f.pos=0;f.dir=1;}}
+ else if(f.ph===2){if(--f.t<=0)G.fish=null;}}
+function fishPress(){const f=G.fish;if(!f)return;if(f.ph===0){G.fish=null;return;}if(f.ph===2){G.fish=null;return;}
+ if(Math.abs(f.pos-f.zc)<=f.zw/2){f.hits++;sfx('good');f.zc=rnd(f.zw/2,1-f.zw/2);f.spd*=1.07;if(f.hits>=3){f.ph=2;f.t=110;f.ok=1;add(f.fi[0],1);if(f.fi[0]!=='boot')stat('fish');sfx('catch');}}
+ else{f.miss++;sfx('bad');if(f.miss>=3){f.ph=2;f.t=90;f.ok=0;}}}
+
+/* ---------- story ---------- */
+function intro(){sayLines('moss',[["Caretaker... can you hear me? This is MOSS, the mind of this ship. You've been asleep for a very long time.","Vårdare... hör du mig? Det här är MOSS, skeppets medvetande. Du har sovit väldigt länge."],
+ ["The Starhaven has drifted between the stars for three hundred years. Most systems went quiet to save power.","Starhaven har drivit mellan stjärnorna i trehundra år. De flesta system tystnade för att spara kraft."],
+ ["A few crew members are awake now, and they need someone with gentle hands and patience. Someone like you.","Några besättningsmedlemmar är vakna nu, och de behöver någon med varsamma händer och tålamod. Någon som du."],
+ ["Take your time. There is no rush out here — only stars, and a home waiting at the end of the journey.","Ta den tid du behöver. Här ute finns ingen brådska – bara stjärnor, och ett hem som väntar vid resans slut."],
+ ["When you're ready, take the lift to the Bridge. Captain Vale is waiting. Oh — and eat that bread in your bag if you get tired.","När du är redo, ta hissen till bryggan. Kapten Vale väntar. Åh – och ät brödet i din väska om du blir trött."]],()=>{acceptQ(QS.m1);toast('🎮 '+T('helpt').split('.')[0]);});}
+function ending(){sayLines('captain',[["All hands, this is your captain. Engage the warp drive.","Alla man, det här är er kapten. Starta varpmotorn."]],()=>{sayLines('moss',[["Warp field stable. Course locked. Next stop... home.","Varpfältet är stabilt. Kursen är låst. Nästa stopp... hemma."]],()=>{
+ const f=$('fade');f.style.background='#fff';fadeTo(()=>{enterDeck('verdance');setTimeout(()=>{f.style.background='#000';},800);
+  sayLines('moss',[["...Caretaker? We've arrived. Look around you.","...Vårdare? Vi är framme. Se dig omkring."]],()=>sayLines('captain',[["Verdance. Green as Rosa's dreams. We made it — because of you.","Verdance. Grön som Rosas drömmar. Vi klarade det – tack vare dig."],["The shuttle can take you back up to the Starhaven anytime. Your cabin, the gardens, the crew — they're all still there.","Skytteln kan ta dig tillbaka upp till Starhaven när som helst. Din hytt, trädgårdarna, besättningen – allt finns kvar."]]));});});});}
+function credits(){const c=$('credits');c.innerHTML=`<h2>🌟 Starhaven 🌟</h2><p>${LANG?'Besättningen på Starhaven fann ett hem på Verdance. Men det finns fortfarande vänskaper att fördjupa, ett arkiv att fylla, skärvor att hitta och trädgårdar att odla. Din resa fortsätter.':'The crew of the Starhaven found a home on Verdance. But there are still friendships to deepen, an archive to complete, shards to find and gardens to grow. Your voyage continues.'}</p><p>💗 ${LANG?'Tack för att du spelade':'Thank you for playing'} 💗</p><button class="btn g f" data-a="${act(()=>{c.classList.add('hid');})}">${T('cont')}</button>`;c.classList.remove('hid');setFoc(c.querySelector('.f'));}
+
+/* ================= RENDER ================= */
+const cv=$('c'),cx=cv.getContext('2d');let K=2,VW=400,VH=300;
+function resize(){const dpr=Math.min(3,window.devicePixelRatio||1);cv.width=Math.round(innerWidth*dpr);cv.height=Math.round(innerHeight*dpr);K=Math.max(1,Math.round(Math.min(cv.height/(17*TS),cv.width/(22*TS))));VW=cv.width/K;VH=cv.height/K;for(const k in EC)delete EC[k];G.cam.snap=1;}
+addEventListener('resize',resize);
+const EC={};
+function emo(ch,sz){const k=ch+'|'+sz;let e=EC[k];if(!e){const px=Math.ceil(sz*K*1.3);e=document.createElement('canvas');e.width=e.height=px;const x=e.getContext('2d');x.font=`${Math.round(sz*K)}px "Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji",sans-serif`;x.textAlign='center';x.textBaseline='middle';x.fillText(ch,px/2,px/2+sz*K*0.07);EC[k]=e;}return e;}
+function E(c,ch,x,y,sz,a,flip){const e=emo(ch,sz);const w=e.width/K;if(a!=null)c.globalAlpha=a;if(flip){c.save();c.translate(x,0);c.scale(-1,1);c.drawImage(e,-w/2,y-w+sz*0.15,w,w);c.restore();}else c.drawImage(e,x-w/2,y-w+sz*0.15,w,w);if(a!=null)c.globalAlpha=1;}
+function label(c,t,x,y,col){c.font='bold 7px "Trebuchet MS",sans-serif';const w=c.measureText(t).width+8;c.fillStyle='rgba(10,14,40,.78)';rr(c,x-w/2,y-10,w,11,4);c.fill();c.fillStyle=col||'#fff';c.textAlign='center';c.textBaseline='middle';c.fillText(t,x,y-4.5);}
+function rr(c,x,y,w,h,r){c.beginPath();c.moveTo(x+r,y);c.arcTo(x+w,y,x+w,y+h,r);c.arcTo(x+w,y+h,x,y+h,r);c.arcTo(x,y+h,x,y,r);c.arcTo(x,y,x+w,y,r);c.closePath();}
+const STARS=[];for(let i=0;i<260;i++)STARS.push({x:Math.random()*1400,y:Math.random()*700,s:Math.random()<0.12?2:1,p:0.04+Math.random()*0.22,tw:Math.random()*6,c:pick(['#fff','#fff','#ffe9c4','#c4d8ff','#ffd0f0'])});
+function drawSpace(c,camx,camy){const g=c.createLinearGradient(0,0,0,VH);g.addColorStop(0,'#060918');g.addColorStop(1,'#151a40');c.fillStyle=g;c.fillRect(0,0,VW,VH);
+ const nx=-(camx*0.03)%900;for(const [ox,oy,r,col] of [[220,90,170,'rgba(140,80,220,0.16)'],[640,260,200,'rgba(60,150,220,0.13)'],[880,120,140,'rgba(230,110,170,0.10)']])for(const k of[0,900]){const x=nx+ox+k,y=oy-camy*0.02;const rg=c.createRadialGradient(x,y,0,x,y,r);rg.addColorStop(0,col);rg.addColorStop(1,'rgba(0,0,0,0)');c.fillStyle=rg;c.fillRect(x-r,y-r,r*2,r*2);}
+ for(const s of STARS){const x=((s.x-camx*s.p)%1400+1400)%1400,y=((s.y-camy*s.p*0.4)%700+700)%700;if(x>VW||y>VH)continue;c.globalAlpha=0.45+0.55*Math.abs(Math.sin(G.t*0.02+s.tw));c.fillStyle=s.c;c.fillRect(Math.floor(x),Math.floor(y),s.s,s.s);}c.globalAlpha=1;
+ const prog=S?PROJECTS.filter(p=>!p.opt&&S.proj[p.id]).length:2;const r=7+prog*3.5;const px=VW*0.78-camx*0.015,py=VH*0.28-camy*0.01;
+ const pg=c.createRadialGradient(px-r*0.4,py-r*0.4,r*0.1,px,py,r);pg.addColorStop(0,'#bff5c8');pg.addColorStop(0.5,'#4fb37a');pg.addColorStop(1,'#1d4f6a');c.fillStyle=pg;c.beginPath();c.arc(px,py,r,0,7);c.fill();
+ const ag=c.createRadialGradient(px,py,r,px,py,r*1.5);ag.addColorStop(0,'rgba(140,230,255,.35)');ag.addColorStop(1,'rgba(140,230,255,0)');c.fillStyle=ag;c.beginPath();c.arc(px,py,r*1.5,0,7);c.fill();}
+function drawSky(c,camx,camy){const t=S.time;let top='#6ec3f0',bot='#d8f2ff';if(t>=1080&&t<1200){top='#f08a6a';bot='#ffd9a0';}else if(t>=1200||t<390){top='#0a1030';bot='#2a2f6a';}
+ const g=c.createLinearGradient(0,0,0,VH);g.addColorStop(0,top);g.addColorStop(1,bot);c.fillStyle=g;c.fillRect(0,0,VW,VH);
+ if(t>=1200||t<390){for(const s of STARS){if(s.y>400)continue;const x=((s.x-camx*s.p*0.3)%1400+1400)%1400;if(x>VW)continue;c.globalAlpha=0.6;c.fillStyle='#fff';c.fillRect(x,s.y*0.5,1,1);}c.globalAlpha=1;}
+ else{c.fillStyle='#fff6c0';c.beginPath();c.arc(VW*0.8-camx*0.01,40,14,0,7);c.fill();}
+ for(let i=0;i<6;i++){const x=((i*260+G.t*0.08-camx*0.2)%1560+1560)%1560-100,y=30+i*17-camy*0.1;c.fillStyle='rgba(255,255,255,.75)';c.beginPath();c.ellipse(x,y,30,8,0,0,7);c.ellipse(x+18,y-5,18,8,0,0,7);c.fill();}
+ for(const[p,col,h]of[[0.15,'#5f9fbf',120],[0.3,'#4f9a6a',80]]){c.fillStyle=col;c.beginPath();c.moveTo(0,VH);for(let x=0;x<=VW;x+=8){const wx=x+camx*p;c.lineTo(x,VH-h-Math.sin(wx*0.01)*20-Math.sin(wx*0.023)*12+camy*0.1*(p));}c.lineTo(VW,VH);c.fill();}}
+function nightA(){const t=S.time;if(t<420)return 0.32*(1-(t-360)/60);if(t<1080)return 0;if(t<1260)return(t-1080)/180*0.36;return 0.36+Math.min(0.12,(t-1260)/300*0.12);}
+const PLOOK=()=>({sk:'#f1c7a0',hr:'#5a3a2a',hs:0,su:SUITS[S?S.suit:0],ac:'#ffd37a'});
+function drawChar(c,x,y,lk,fr,face,small){x=Math.round(x);y=Math.round(y);const f=face<0;const R=(dx,dy,w,h,col)=>{c.fillStyle=col;c.fillRect(f?x-dx-w:x+dx,y+dy,w,h);};
+ const walk=fr>=0,st=walk?Math.floor(fr)%4:0;const lg=walk?[0,1,0,-1][st]:0;const bob=walk&&st%2?-1:0;
+ R(-4,-7,3,7,'#2a2f4a');R(1,-7,3,7,'#2a2f4a');if(lg>0){R(-4,-7,3,6,'#2a2f4a');R(-5,-2,4,2,'#1a1a24');R(1,-2,4,2,'#1a1a24');}else if(lg<0){R(-5,-2,4,2,'#1a1a24');R(2,-2,4,2,'#1a1a24');}else{R(-5,-2,4,2,'#1a1a24');R(1,-2,4,2,'#1a1a24');}
+ R(-5,-16+bob,10,10,lk.su);R(-5,-9+bob,10,2,lk.ac);R(-1,-16+bob,2,2,lk.ac);
+ const as=walk?[0,1,0,-1][st]:0;R(-7,-15+bob+as,2,7,lk.su);R(5,-15+bob-as,2,7,lk.su);R(-7,-9+bob+as,2,2,lk.sk);R(5,-9+bob-as,2,2,lk.sk);
+ const hy=-25+bob;R(-4,hy,8,9,lk.sk);R(0,hy+4,1,2,'#1b1b2b');R(2,hy+4,1,2,'#1b1b2b');R(3,hy+6,1,1,'#f39aa0');R(-2,hy+6,1,1,'#f39aa0');
+ const hr=lk.hr;switch(lk.hs){case 0:R(-4,hy-1,8,3,hr);R(-4,hy+2,2,3,hr);break;case 1:R(-5,hy-1,9,3,hr);R(-5,hy+2,3,8,hr);break;case 2:R(-4,hy-1,8,3,hr);R(-4,hy+2,2,3,hr);R(-4,hy-4,4,3,hr);break;
+  case 3:R(-4,hy+2,2,3,hr);R(-5,hy-3,10,4,'#1f2a55');R(-5,hy,11,1,'#1f2a55');R(0,hy-2,2,1,'#ffd37a');break;case 4:R(-4,hy-1,8,3,hr);R(-3,hy-3,2,2,hr);R(1,hy-3,2,2,hr);R(-5,hy,2,2,hr);break;
+  case 5:R(-4,hy-1,8,1,hr);R(-4,hy,2,3,hr);R(-1,hy+7,6,2,hr);break;case 6:R(-4,hy-1,8,3,hr);R(-4,hy+2,2,3,hr);R(-4,hy+1,8,1,lk.ac);break;case 7:R(-4,hy-6,8,6,'#ffffff');R(-5,hy-1,10,2,'#e8e8f0');R(-4,hy+1,2,3,hr);break;}}
+function drawMoss(c,x,y){const b=Math.sin(G.t*0.05)*2;const cy=y-16+b;const g=c.createRadialGradient(x,cy,1,x,cy,14);g.addColorStop(0,'rgba(140,255,170,.5)');g.addColorStop(1,'rgba(140,255,170,0)');c.fillStyle=g;c.fillRect(x-14,cy-14,28,28);
+ c.fillStyle='#2f6f5a';c.beginPath();c.arc(x,cy,7,0,7);c.fill();c.fillStyle='#8ff0b0';c.beginPath();c.arc(x,cy,5.5,0,7);c.fill();c.fillStyle='#183a30';const bl=(G.t%180)<6;c.fillRect(x-3,cy-1,2,bl?1:2);c.fillRect(x+1,cy-1,2,bl?1:2);
+ c.fillStyle='#5fbf4a';c.fillRect(x-1,cy-10,2,4);c.fillRect(x+1,cy-11,3,2);c.fillStyle='#3a5a8a';c.fillRect(x-4,y-2,8,2);}
+function drawPortrait(cvs,sp){const c=cvs.getContext('2d');c.clearRect(0,0,24,24);c.fillStyle='#0d1330';c.fillRect(0,0,24,24);
+ if(!sp||sp==='sys'){c.fillStyle='#ffd37a';c.fillRect(11,5,2,14);c.fillRect(5,11,14,2);c.fillStyle='#fff';c.fillRect(11,11,2,2);return;}
+ const n=NPCS[sp];if(!n)return;if(n.robot){drawMoss(c,12,30);return;}drawChar(c,12,37,n.look,-1,1);}
+const PURL={};function portraitURL(id){if(!PURL[id]){const cv2=document.createElement('canvas');cv2.width=cv2.height=24;drawPortrait(cv2,id);PURL[id]=cv2.toDataURL();}return PURL[id];}
+function drawStation(c,o,ic,col){const x=o.x,y=o.y;c.fillStyle=col||'#353b5e';c.fillRect(x-10,y-14,20,14);c.fillStyle=G.D.pal.ft;c.fillRect(x-10,y-14,20,2);c.fillStyle='rgba(0,0,0,.25)';c.fillRect(x-10,y-2,20,2);E(c,ic,x,y-13,12);}
+function drawObj(c,o){const x=o.x,y=o.y,pal=G.D.pal;switch(o.t){
+ case'elev':if(o.e){E(c,'🚀',x,y,26);break;}c.fillStyle='#141831';c.fillRect(x-13,y-32,26,32);c.fillStyle=pal.a;c.fillRect(x-13,y-32,26,2);c.fillRect(x-13,y-32,2,32);c.fillRect(x+11,y-32,2,32);c.fillStyle='#3a4270';c.fillRect(x-10,y-29,9,29);c.fillRect(x+1,y-29,9,29);c.fillStyle=(G.t>>5)%2?pal.a:'#fff';c.fillRect(x-2,y-38,4,3);break;
+ case'npc':{const n=NPCS[o.id];if(n.robot)drawMoss(c,x,y);else drawChar(c,x,y,n.look,o.walk?o.fr:-1,o.face);const mk=npcMark(o.id);if(mk){const by=y-(n.robot?36:38)+Math.sin(G.t*0.08)*1.5;c.fillStyle=mk==='?'?'#86e3ad':'#ffd37a';c.beginPath();c.arc(x,by,5,0,7);c.fill();c.fillStyle='#1a1f3a';c.font='bold 8px sans-serif';c.textAlign='center';c.textBaseline='middle';c.fillText(mk==='?'?'?':'!',x,by+0.5);}break;}
+ case'plot':{const p=S.plots[o.key];c.fillStyle=p&&p.w?'#3a2618':'#6a4a32';c.fillRect(x-7,y-5,14,5);c.fillStyle=o.dome?'#7a9a5a':pal.ft;c.fillRect(x-8,y-6,16,2);c.fillStyle='rgba(0,0,0,.3)';c.fillRect(x-7,y-1,14,1);
+  if(p&&p.c){const cr=CROPS[p.c],fr=p.g/cr.d;const sw=Math.sin(G.t*0.04+o.i)*0.6;if(fr>=1)E(c,cr.ic,x+sw,y-4+Math.sin(G.t*0.08+o.i),12);else if(fr<0.34)E(c,'🌱',x,y-4,8);else if(fr<0.67)E(c,'🌿',x+sw,y-4,10);else{E(c,'🌿',x+sw,y-4,12);E(c,cr.ic,x+3,y-9,6);}
+   if(!p.w&&fr<1)E(c,'💧',x+6,y-14,6,0.6+0.4*Math.sin(G.t*0.1));if(p.f)c.fillStyle='#d8c070',c.fillRect(x-6,y-4,2,1);}break;}
+ case'node':{const st=S.nodes[o.key];if(st&&st.d===S.day){c.fillStyle='rgba(0,0,0,.2)';c.fillRect(x-5,y-2,10,2);break;}const N=NODES[o.n];const sh=o.shake>0?(o.shake--%2?1:-1):0;E(c,N.ic,x+sh,y,N.soft?16:14);if(N.b)E(c,N.b,x+5+sh,y-1,6);if(o.n==='stardust'||o.n==='crystal')E(c,'✨',x+6,y-12,5,0.5+0.5*Math.sin(G.t*0.1+o.i));break;}
+ case'bed':E(c,'🛏️',x,y,22);break;case'stove':drawStation(c,o,'🍳','#5a3a3a');break;case'bench':drawStation(c,o,'🔨','#5a4a32');break;
+ case'smelter':drawStation(c,o,S.proj.forge?'🔥':'🧊','#3a3030');if(S.proj.forge&&G.t%6===0)G.parts.push({x:x+rnd(-3,3),y:y-22,vx:rnd(-.2,.2),vy:-0.5,l:30,c:'rgba(255,170,80,.6)',s:1});break;
+ case'build':drawStation(c,o,'🏗️','#2a3a5a');break;case'board':c.fillStyle='#6a4a2a';c.fillRect(x-1,y-12,2,12);c.fillStyle='#c8a26a';c.fillRect(x-11,y-26,22,15);c.fillStyle='#f4ecd8';for(let i=0;i<3;i++)c.fillRect(x-9+i*7,y-24+(i%2),5,6);E(c,'📌',x,y-24,6);break;
+ case'console':drawStation(c,o,'🧬','#24305a');break;case'archive':drawStation(c,o,'🏛️','#4a3a2a');break;case'trough':drawStation(c,o,'🌾','#6a4a2a');break;case'decor':E(c,'🧰',x,y,14);break;
+ case'scope':E(c,'🔭',x,y,26);break;
+ case'fish':{const w=o.deep?30:22;c.fillStyle='#10283c';c.fillRect(x-w,y-12,w*2,12);c.fillStyle=o.deep?'rgba(40,90,200,.75)':'rgba(70,180,240,.6)';c.fillRect(x-w+2,y-9,w*2-4,9);c.fillStyle='rgba(255,255,255,.5)';for(let i=0;i<4;i++){const wx=x-w+4+((G.t*0.3+i*13)%(w*2-8));c.fillRect(wx,y-9,3,1);}
+  c.fillStyle='rgba(10,30,60,.5)';const fx=x+Math.sin(G.t*0.02+o.i)*(w-8);c.fillRect(fx-3,y-5,6,2);c.fillStyle=pal.ft;c.fillRect(x-w,y-12,w*2,2);break;}
+ case'pen':{const p=S.pens[o.key];c.fillStyle='#8a6a3a';for(const dx of[-28,-14,0,14,28])c.fillRect(x+dx-1,y-12,2,12);c.fillRect(x-28,y-10,56,2);c.fillRect(x-28,y-5,56,2);
+  if(p&&p.a){const a=ANIMALS[p.a];const ax=Math.sin(G.t*0.006+o.i*2)*16;const fl=Math.cos(G.t*0.006+o.i*2)>0;E(c,a.ic,x+ax,y-1+(G.t%60<30?0:-0.5),15,null,fl);if(p.prod)E(c,ITEMS[a.pr].ic,x,y-26+Math.sin(G.t*0.1),9);else if(p.fed!==S.day)E(c,'🌾',x+18,y-22,7,0.6);}break;}
+ case'hive':{c.fillStyle='#c8963a';c.fillRect(x-7,y-14,14,14);c.fillStyle='#a8762a';c.fillRect(x-7,y-10,14,2);c.fillRect(x-7,y-5,14,2);c.fillStyle='#3a2a1a';c.fillRect(x-2,y-3,4,3);E(c,'🐝',x+Math.sin(G.t*0.07+o.i)*9,y-16+Math.cos(G.t*0.09)*3,6);const h=S.hives[o.key];if(S.day-(h?h.d:(S.proj.beehives||S.day))>=2)E(c,'🍯',x,y-26,8);break;}
+ case'deco':E(c,o.e,x,y,o.big?32:14);if(o.big&&o.e==='⚛️'){const g=c.createRadialGradient(x,y-16,2,x,y-16,40);g.addColorStop(0,`rgba(255,120,220,${0.3+0.15*Math.sin(G.t*0.05)})`);g.addColorStop(1,'rgba(255,120,220,0)');c.fillStyle=g;c.fillRect(x-40,y-56,80,80);}break;
+ case'furn':E(c,ITEMS[o.id].ic,x,y,o.id==='bed2'||o.id==='couch'||o.id==='piano'?20:14);break;}}
+let camX=0,camY=0;
+function render(){const c=cx;c.setTransform(1,0,0,1,0,0);c.imageSmoothingEnabled=false;c.setTransform(K,0,0,K,0,0);c.imageSmoothingEnabled=false;
+ if(G.mode!=='play'||!G.D){drawSpace(c,G.t*0.6,0);return;}
+ const D=G.D,P=G.P,dw=D.w*TS,dh=DH*TS;let tx=P.x+P.w/2-VW/2,ty=P.y+P.h/2-VH/2-10;tx=dw<VW?(dw-VW)/2:clamp(tx,0,dw-VW);ty=dh<VH?(dh-VH)/2:clamp(ty,0,dh-VH);
+ if(G.cam.snap){camX=tx;camY=ty;G.cam.snap=0;}else{camX+=(tx-camX)*0.12;camY+=(ty-camY)*0.12;}
+ const ox=Math.round(camX*K)/K,oy=Math.round(camY*K)/K;
+ if(D.sp.out==='sky')drawSky(c,ox,oy);else drawSpace(c,ox,oy);
+ c.save();c.translate(-ox,-oy);c.drawImage(D.pre,0,0);
+ for(const o of G.objs)if(o.x>ox-60&&o.x<ox+VW+60)drawObj(c,o);
+ for(const p of G.pick){const b=Math.sin(G.t*0.07+p.x)*2;const g=c.createRadialGradient(p.x,p.y+b,1,p.x,p.y+b,12);g.addColorStop(0,p.id==='shard'?'rgba(255,240,150,.55)':'rgba(180,220,255,.5)');g.addColorStop(1,'rgba(0,0,0,0)');c.fillStyle=g;c.fillRect(p.x-12,p.y+b-12,24,24);E(c,ITEMS[p.id].ic,p.x,p.y+b+5,10);if(S.res.cartography&&p.id==='shard'){c.fillStyle='rgba(255,240,150,.12)';c.fillRect(p.x-1,p.y-200,2,200);}}
+ // player
+ if(!G.fishHide){const lk=PLOOK();drawChar(c,P.x+P.w/2,P.y+P.h,lk,P.climb?P.fr:(P.ground&&Math.abs(P.vx)>0.3?P.fr:-1),P.face);
+  if(D.sp.out==='space'){c.strokeStyle='rgba(200,240,255,.7)';c.lineWidth=1;c.beginPath();c.arc(P.x+P.w/2,P.y+P.h-20,7,0,7);c.stroke();c.fillStyle='rgba(200,240,255,.12)';c.fill();}
+  if(!P.ground&&!P.climb&&P.dj&&P.vy<0)E(c,'🔥',P.x+P.w/2,P.y+P.h+6,6);}
+ if(G.fish){const f=G.fish,o=f.o;c.strokeStyle='rgba(255,255,255,.6)';c.lineWidth=0.5;c.beginPath();c.moveTo(P.x+P.w/2+P.face*6,P.y+4);c.lineTo(o.x,o.y-8);c.stroke();c.fillStyle=f.ph===1&&G.t%20<10?'#ff6a6a':'#fff';c.fillRect(o.x-1,o.y-9+Math.sin(G.t*0.1),2,2);}
+ for(const p of G.parts){if(p.ch)E(c,p.ch,p.x,p.y,p.s,Math.min(1,p.l/15));else{c.globalAlpha=Math.min(1,p.l/12);c.fillStyle=p.c;c.fillRect(p.x,p.y,p.s,p.s);}}c.globalAlpha=1;
+ // labels
+ if(G.near&&!uiOpen()){const o=G.near;const ty2=o.t==='npc'?o.y-(npcMark(o.id)?46:36):o.t==='elev'?o.y-40:o.y-22;label(c,o.t==='npc'?nname(o.id):objLabel(o),o.x,ty2,'#ffe9b0');}
+ c.restore();
+ const na=nightA()*(D.sp.out?1:0.6);if(na>0){c.fillStyle=`rgba(14,18,60,${na})`;c.fillRect(0,0,VW,VH);}
+ if(G.fish)drawFishUI(c);}
+function drawFishUI(c){const f=G.fish;const w=Math.min(200,VW-24),x0=(VW-w)/2,y0=Math.max(30,VH*0.2);c.fillStyle='rgba(13,19,46,.92)';rr(c,x0-8,y0-16,w+16,f.ph===1?48:34,8);c.fill();c.strokeStyle='#41539c';c.lineWidth=1;c.stroke();
+ c.font='bold 7px "Trebuchet MS",sans-serif';c.textAlign='center';c.textBaseline='middle';c.fillStyle='#fff';
+ if(f.ph===0){c.fillText('🎣 '+T('cast'),VW/2,y0);}
+ else if(f.ph===1){c.fillText(T('reel'),VW/2,y0-8);c.fillStyle='#11183a';c.fillRect(x0,y0,w,10);c.fillStyle='#4fbf7a';c.fillRect(x0+(f.zc-f.zw/2)*w,y0,f.zw*w,10);c.fillStyle='#ffd37a';c.fillRect(x0+f.pos*w-1,y0-2,3,14);
+  c.fillStyle='#fff';c.fillText('✔'.repeat(f.hits)+'·'.repeat(3-f.hits)+'   '+'✖'.repeat(f.miss),VW/2,y0+20);}
+ else{if(f.ok){E(c,f.fi[1],VW/2-30,y0+6,12);c.fillStyle='#86e3ad';c.fillText(T('caught')+' '+iname(f.fi[0])+'!',VW/2+8,y0);}else{c.fillStyle='#ff9a9a';c.fillText(T('escaped'),VW/2,y0);}}}
+
+/* ================= UPDATE / LOOP ================= */
+function updNPCs(){const P=G.P,pcx=P.x+P.w/2;for(const o of G.objs){if(o.t!=='npc'||NPCS[o.id].robot)continue;const near=Math.abs(o.x-pcx)<40&&Math.abs(o.y-(P.y+P.h))<20;
+ if(near){o.walk=0;o.face=pcx<o.x?-1:1;continue;}if(--o.wt<=0){o.wt=rint(120,360);o.tx=o.hx+rint(-18,18);}const d=o.tx-o.x;if(Math.abs(d)>1){o.x+=Math.sign(d)*0.35;o.face=Math.sign(d);o.walk=1;o.fr=(o.fr||0)+0.08;}else o.walk=0;}}
+function checkPick(){const P=G.P;for(const p of G.pick){if(p.got)continue;if(Math.abs(P.x+P.w/2-p.x)<11&&Math.abs(P.y+P.h/2-p.y)<18){p.got=1;S.got[p.k]=1;add(p.id,1);if(p.id==='shard')stat('shards');sfx('shard');burst(p.x,p.y,'#ffe680',16);questPing();}}G.pick=G.pick.filter(p=>!p.got);}
+const QN={};
+function update(){G.t++;if(G.mode!=='play'||!S)return;if(G.fish){updFish();return;}if(uiOpen()||G.fading)return;
+ if(++G.tAcc>=36){G.tAcc=0;tickMinute();}S.play+=1/60;
+ physics();updNPCs();checkPick();findNear();
+ for(const p of G.parts){p.x+=p.vx;p.y+=p.vy;if(p.g)p.vy+=0.12;p.l--;}G.parts=G.parts.filter(p=>p.l>0);
+ if(G.t%14===0&&G.parts.length<80){const D=G.D;G.parts.push({x:camX+Math.random()*VW,y:camY+Math.random()*VH,vx:rnd(-.1,.1),vy:rnd(-.15,-.03),l:120,c:D.sp.out==='sky'||D.id==='dome'?'rgba(255,255,160,.7)':'rgba(255,255,255,.25)',s:1});}}
+let hudT=0;
+function updHud(){if(!S)return;$('hday').textContent=T('day')+' '+S.day;$('htime').textContent=fmtTime()+(S.time>=1260?' 🌙':'');$('hmoney').textContent=fmt(S.money);$('eb').firstChild.style.width=clamp(S.energy/maxE()*100,0,100)+'%';$('eb').title=Math.floor(S.energy)+'/'+maxE();}
+let lastPrompt='';
+function updPrompt(force){const el=$('prompt');let t='';if(G.mode==='play'&&G.near&&!uiOpen()&&!G.fish){const gl=IN.dev==='pad'?'Ⓑ':IN.dev==='touch'?'✋':'[E]';t=gl+' '+objLabel(G.near);}
+ if(t!==lastPrompt||force){lastPrompt=t;el.textContent=t;el.classList.toggle('hid',!t);$('tB').classList.toggle('hl',!!t);}}
+function handleInput(){const pr=IN.pr;if(G.mode==='boot')return;
+ if($('credits')&&!$('credits').classList.contains('hid')){if(pr.A||pr.OK||pr.B)$('credits').classList.add('hid');return;}
+ if(DLG.cur){const d=DLG.cur;if(d.opts&&DLG.shown>=DLG.full.length){if(pr.U)navMove(0,-1);if(pr.D)navMove(0,1);if(pr.L)navMove(-1,0);if(pr.R)navMove(1,0);if(pr.A||pr.OK)navOk();if(pr.B||pr.BK){const bs=$('dlg').querySelectorAll('.do .f');if(bs.length)bs[bs.length-1].click();}}
+  else if(pr.A||pr.B||pr.OK||pr.X||pr.BK)dlgAdvance();return;}
+ if(UI.stack.length||G.mode==='title'){if(pr.U)navMove(0,-1);if(pr.D)navMove(0,1);if(pr.L)navMove(-1,0);if(pr.R)navMove(1,0);if(pr.A||pr.OK)navOk();
+  if(UI.stack.length){if(pr.ST||(pr.Y&&topM().id==='pause'))closeAll();else if(pr.B||pr.BK)back();if(pr.LB)menuTab(-1);if(pr.RB)menuTab(1);}return;}
+ if(G.mode!=='play')return;
+ if(G.fish){if(pr.A||pr.B||pr.X||pr.OK)fishPress();if(pr.BK||pr.ST)G.fish=null;return;}
+ if(G.fading)return;
+ if((pr.B||pr.X||pr.OK)&&G.near){interact(G.near);return;}
+ if(pr.ST||pr.BK){menuPause();return;}if(pr.Y){menuPause('bag');return;}
+ if(pr.A)G.P.jb=8;if(pr.UJ&&IN.dev!=='pad'&&!canClimbUp()&&!G.P.climb)G.P.jb=8;}
+let last=performance.now(),acc=0;
+function frame(now){requestAnimationFrame(frame);const dt=Math.min(100,now-last);last=now;acc+=dt;inputFrame();try{handleInput();}catch(e){console.error(e);}
+ let n=0;while(acc>=16.667&&n<6){try{update();}catch(e){console.error(e);}acc-=16.667;n++;}if(n>=6)acc=0;
+ dlgTick();if(qpT&&G.t%15===0&&S){qpT=0;updTracker();for(const q of QUESTS){const s=qst(q.id);if(s&&s.s===1&&!QN[q.id]&&qComplete(q)){QN[q.id]=1;toast('✅ '+tr(q.n)+' → '+nname(q.to||q.g));sfx('quest');}}}
+ if(++hudT%10===0)updHud();updPrompt();try{render();}catch(e){console.error(e);}}
+
+/* ================= BOOT ================= */
+function goFull(){const el=document.documentElement;if(document.fullscreenElement||document.webkitFullscreenElement)return;const rq=el.requestFullscreen||el.webkitRequestFullscreen;if(!rq)return;try{const p=rq.call(el,{navigationUI:'hide'});if(p&&p.then)p.then(()=>{try{screen.orientation.lock('landscape').catch(()=>{});}catch(e){}}).catch(()=>{});}catch(e){}}
+function gateGo(){if(G.mode!=='boot')return;$('gate').remove();auInit();if(SET.fs)goFull();showTitle();}
+$('gate').addEventListener('pointerup',()=>gateGo());
+function startGame(slot,isNew){const ld=isNew?null:loadSlot(slot);S=Object.assign(newState(slot),ld||{});if(SET.fs)goFull();$('title').classList.add('hid');closeAll();G.P=null;G.fish=null;G.mode='play';for(const k in QN)delete QN[k];
+ if(S.boardDay!==S.day||!S.board.length)genBoard();enterDeck(S.deck,isNew?6*TS:S.px,isNew?null:S.py);
+ QUESTS.forEach(q=>{const s=qst(q.id);if(s&&s.s===1&&qComplete(q))QN[q.id]=1;});
+ $('hud').classList.remove('hid');updTouchVis();updHud();updTracker();if(isNew)setTimeout(intro,500);}
+$('bBag').addEventListener('click',()=>{if(G.mode==='play'&&!uiOpen())menuPause('bag');});
+$('bMenu').addEventListener('click',()=>{if(G.mode==='play'&&!uiOpen())menuPause();});
+$('trk').addEventListener('click',()=>{if(G.mode==='play'&&!uiOpen())menuPause('quests');});
+QS.m1.auto=1;
+IN.dev=isTouch()?'touch':'kb';document.body.classList.toggle('kb',IN.dev!=='touch');
+touchSetup();resize();requestAnimationFrame(frame);
+
+</script>
+</body>
+</html>

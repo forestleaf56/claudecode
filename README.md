@@ -10,3 +10,16 @@ A cozy, story-driven 2D platformer RPG set in the sleepy Swedish harbor village 
 - **Languages:** Svenska and English (switch on the title screen or in Settings).
 - **Controls:** keyboard, touch (on-screen D-pad and buttons) and gamepad. Gamepad: A jump / back, B use & talk / confirm, Y menu, LB/RB cycle items. Keyboard: E confirm, Space back. Touch: ✋ confirm, ⤒ back. Fullscreen is on by default (entered on your first tap/click; toggle in Settings).
 - **Saving:** autosaves to browser storage every 30 seconds, when you sleep, and when the tab is hidden; "Save & exit" in the menu returns to the title screen. Saves can be exported/imported as text in Settings.
+
+---
+
+# Starhaven · Stjärnhamn
+
+A second, separate game in `starhaven.html`: a cozy, slow-paced, story-driven 2D platformer RPG aboard a drifting generation spaceship. Open `starhaven.html` in any modern browser.
+
+- **Story:** You wake as the ship's caretaker. Restore 10 ship systems deck by deck, research Warp Theory and steer the crew home to the green planet Verdance (21 main quests + 35 side quests, ending + post-game).
+- **13 decks:** Cabin, Bridge, Hydroponics, Engineering, Promenade, Cargo Hold, Observatory, Aquarium, Ranch, Greenhouse Dome, Outer Hull (low gravity), Reactor Core, and the planet Verdance. Multi-level layouts with ladders, platforms, hidden star shards and Earth artifacts.
+- **Systems:** farming (35 crops, regrowing crops, fertilizer, dome-only exotics), mining and gathering, smelting, crafting, cooking (34 dishes), 23 research projects, 15 ship building projects, furniture placement with cabin comfort, animals, bee hives, fishing minigame (17 catches), shops, daily request board, 200+ items, a 170-item archive collection, and 13 crew members with friendship hearts, gift tastes and heart rewards.
+- **Languages:** English and Svenska (title screen or Settings).
+- **Controls:** keyboard, touch (D-pad, ⤒ jump, ✋ use) and gamepad (A jump/confirm, B/X use, B back in menus, Y bag, Start menu, LB/RB tabs). Fullscreen on by default.
+- **Saving:** 3 slots, autosave every 30 seconds, plus saving when you sleep and when the tab is hidden.
