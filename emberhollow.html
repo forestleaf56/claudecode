@@ -52,10 +52,10 @@ button{font:inherit;color:inherit;cursor:pointer;border:none;background:none}
 .tb:active,.tb.on{background:#ff9a3c55}
 #tA{width:74px;height:74px;right:calc(max(14px,env(safe-area-inset-right)) + 4px);bottom:calc(max(14px,env(safe-area-inset-bottom)) + 120px);font-weight:bold}
 #tX{width:66px;height:66px;right:calc(max(14px,env(safe-area-inset-right)) + 86px);bottom:calc(max(14px,env(safe-area-inset-bottom)) + 70px)}
-#tInv{width:46px;height:46px;right:calc(max(14px,env(safe-area-inset-right)) + 168px);bottom:calc(max(14px,env(safe-area-inset-bottom)) + 150px);font-size:20px}
-#tMenu{width:42px;height:42px;right:max(10px,env(safe-area-inset-right));top:calc(max(8px,env(safe-area-inset-top)) + 72px);font-size:18px}
-#tMap{width:42px;height:42px;right:calc(max(10px,env(safe-area-inset-right)) + 48px);top:calc(max(8px,env(safe-area-inset-top)) + 70px);font-size:18px}
-#tCraft{width:46px;height:46px;right:calc(max(14px,env(safe-area-inset-right)) + 220px);bottom:calc(max(14px,env(safe-area-inset-bottom)) + 150px);font-size:20px}
+#tInv{width:42px;height:42px;right:calc(max(10px,env(safe-area-inset-right)) + 96px);top:calc(max(8px,env(safe-area-inset-top)) + 84px);font-size:18px}
+#tMenu{width:42px;height:42px;right:max(10px,env(safe-area-inset-right));top:calc(max(8px,env(safe-area-inset-top)) + 84px);font-size:18px}
+#tMap{width:42px;height:42px;right:calc(max(10px,env(safe-area-inset-right)) + 48px);top:calc(max(8px,env(safe-area-inset-top)) + 84px);font-size:18px}
+#tCraft{width:42px;height:42px;right:calc(max(10px,env(safe-area-inset-right)) + 144px);top:calc(max(8px,env(safe-area-inset-top)) + 84px);font-size:18px}
 /* panels */
 .layer{position:fixed;inset:0;z-index:20;display:flex;align-items:center;justify-content:center;background:#000a}
 .panel{background:var(--panel);border:2px solid var(--line);border-radius:14px;box-shadow:0 10px 40px #000;width:min(96vw,900px);height:min(92vh,640px);display:flex;flex-direction:column;overflow:hidden;position:relative}
@@ -122,7 +122,7 @@ button{font:inherit;color:inherit;cursor:pointer;border:none;background:none}
 .mapwrap canvas{max-width:100%;max-height:calc(min(92vh,640px) - 110px);image-rendering:pixelated;border:1px solid var(--line);border-radius:6px;background:#000}
 .lore{font-family:Georgia,serif;line-height:1.5;font-size:14px}
 .bar.low i{animation:pulse 1s infinite}
-@media (orientation:portrait){body.touchui #tA{bottom:calc(max(14px,env(safe-area-inset-bottom)) + 140px)}body.touchui #tX{bottom:calc(max(14px,env(safe-area-inset-bottom)) + 96px)}body.touchui #tInv,body.touchui #tCraft{bottom:calc(max(14px,env(safe-area-inset-bottom)) + 226px)}body.touchui #tInv{right:calc(max(14px,env(safe-area-inset-right)) + 10px)}body.touchui #tCraft{right:calc(max(14px,env(safe-area-inset-right)) + 64px)}body.touchui #prompt{bottom:calc(max(8px,env(safe-area-inset-bottom)) + 60px)}}
+@media (orientation:portrait){body.touchui #tA{bottom:calc(max(14px,env(safe-area-inset-bottom)) + 140px)}body.touchui #tX{bottom:calc(max(14px,env(safe-area-inset-bottom)) + 96px)}body.touchui #prompt{bottom:calc(max(8px,env(safe-area-inset-bottom)) + 60px)}}
 #splash{position:fixed;inset:0;z-index:80;display:flex;align-items:center;justify-content:center;background:radial-gradient(circle at 50% 42%,#fff8ea 0%,#f8e6c8 55%,#efd3aa 100%);opacity:1;transition:opacity .6s ease}
 #splash.out{opacity:0}
 #splashCv{width:min(78vmin,440px);height:min(78vmin,440px);opacity:0;transform:scale(.94);transition:opacity .9s ease,transform 1.2s ease}
@@ -1158,8 +1158,8 @@ function charDraw(c,px,py,s,pal,dir,fr,opts){// px,py = feet center in screen px
  if(opts&&opts.cape)R2(4,8+bob,8,5,opts.cape);
  R2(3,8+bob,1,4,shirt);R2(12,8+bob,1,4,shirt);R2(3,12+bob,1,1,skin);R2(12,12+bob,1,1,skin);
  R2(5,2+bob,6,6,skin);
- if(dir===3){R2(5,1+bob,6,5,hair);}else{R2(5,1+bob,6,2,hair);
-  if(dir===0){R2(4,2+bob,1,4,hair);R2(11,2+bob,1,4,hair);R2(6,5+bob,1,1,'#1a1010');R2(9,5+bob,1,1,'#1a1010');}
+ if(dir===3){R2(4,1+bob,8,7,hair);R2(5,1+bob,6,1,shade(hair,1.25));R2(4,7+bob,8,1,shade(hair,.75));}else{R2(5,1+bob,6,2,hair);
+  if(dir===0){R2(4,2+bob,1,4,hair);R2(11,2+bob,1,4,hair);R2(6,4+bob,1,2,'#1a1010');R2(9,4+bob,1,2,'#1a1010');R2(7,7+bob,2,1,'#b87060');R2(5,6+bob,1,1,'#e89080');R2(10,6+bob,1,1,'#e89080');}
   else if(dir===1){R2(9,2+bob,3,4,hair);R2(6,5+bob,1,1,'#1a1010');}else{R2(4,2+bob,3,4,hair);R2(9,5+bob,1,1,'#1a1010');}}
  if(opts&&opts.hat)R2(4,0+bob,8,2,opts.hat);
 }
@@ -1557,10 +1557,10 @@ function endFish(ok,msg){const f=FISH;FISH=null;if(ok){if(addItem(f.fish,1)){dro
 
 /* ---------- NPCs runtime ---------- */
 function initNPCs(){for(const k in NPC){const n=NPC[k];NP[k]={x:n.x+.5,y:n.y+.5,hx:n.x+.5,hy:n.y+.5,dir:0,fr:0,ft:0,tx:n.x+.5,ty:n.y+.5,wait:rnd(1,4),zone:'over'};}pet=null;}
-function updNPCs(dt){if(Z!==OVER)return;for(const k in NP){const n=NP[k];n.wait-=dt;const d=dist(n.x,n.y,n.tx,n.ty);
- if(d>.1&&n.wait<=0){const sp=1.3*dt;const nx=n.x+(n.tx-n.x)/d*sp,ny=n.y+(n.ty-n.y)/d*sp;if(boxFree(OVER,nx,ny,.25)&&dist(nx,ny,P.x,P.y)>.7){n.x=nx;n.y=ny;n.dir=Math.abs(n.tx-n.x)>Math.abs(n.ty-n.y)?(n.tx>n.x?2:1):(n.ty>n.y?0:3);n.ft+=dt;if(n.ft>.18){n.ft=0;n.fr++;}}else{n.tx=n.x;n.ty=n.y;}}
- else if(n.wait<=0){n.wait=rnd(2,6);const night=isNight();const r=night?.8:3;n.tx=n.hx+rnd(-r,r);n.ty=n.hy+rnd(-r*.6,r*.8);n.fr=0;}
- if(dist(n.x,n.y,P.x,P.y)<2.5&&!dlgOpen()){n.dir=Math.abs(P.x-n.x)>Math.abs(P.y-n.y)?(P.x>n.x?2:1):(P.y>n.y?0:3);}}
+function updNPCs(dt){if(Z!==OVER)return;for(const k in NP){const n=NP[k];n.wait-=dt;n.mv=false;const d=dist(n.x,n.y,n.tx,n.ty);
+ if(d>.1&&n.wait<=0){const sp=1.3*dt;const nx=n.x+(n.tx-n.x)/d*sp,ny=n.y+(n.ty-n.y)/d*sp;if(boxFree(OVER,nx,ny,.25)&&dist(nx,ny,P.x,P.y)>.7){n.x=nx;n.y=ny;n.mv=true;n.dir=Math.abs(n.tx-n.x)>Math.abs(n.ty-n.y)?(n.tx>n.x?2:1):(n.ty>n.y?0:3);n.ft+=dt;if(n.ft>.18){n.ft=0;n.fr++;}}else{n.tx=n.x;n.ty=n.y;}}
+ else if(n.wait<=0){n.wait=rnd(2,6);n.fr=0;const night=isNight();const r=night?.8:3;n.tx=n.hx+rnd(-r,r);n.ty=n.hy+rnd(-r*.6,r*.8);n.fr=0;}
+ if(!n.mv&&dist(n.x,n.y,P.x,P.y)<2.5){n.dir=Math.abs(P.x-n.x)>Math.abs(P.y-n.y)?(P.x>n.x?2:1):(P.y>n.y?0:3);}}
  // cat
  if(!pet&&(G.flags.pet||qActive('s_cat')||G.qdone.s_cat)){pet={x:84.5,y:100.5,fr:0,ft:0,dir:0};if(G.flags.pet){pet.x=P.x;pet.y=P.y+1;}}
 }
@@ -1613,7 +1613,7 @@ function updDrops(dt){for(const d of Z.drops){d.t+=dt;if(d.z>0||d.vz>0){d.vz-=12
 
 /* ---------- player update ---------- */
 function updPlayer(dt){let [mx,my]=moveVec();const ml=Math.hypot(mx,my);if(ml>1){mx/=ml;my/=ml;}
- P.moving=ml>.15;if(P.moving&&!P.swing){if(Math.abs(mx)>Math.abs(my))P.dir=mx>0?2:1;else P.dir=my>0?0:3;}
+ P.moving=ml>.15;if(P.moving){if(Math.abs(mx)>Math.abs(my))P.dir=mx>0?2:1;else P.dir=my>0?0:3;}
  const sp=4.3*speedMul()*(P.swing>0?.5:1);let vx=mx*sp+P.kx,vy=my*sp+P.ky;P.kx*=Math.pow(.001,dt);P.ky*=Math.pow(.001,dt);
  const r=.28;const nx=P.x+vx*dt,ny=P.y+vy*dt;if(boxFree(Z,nx,P.y,r))P.x=nx;else if(Math.abs(vx)>.1){/* corner slide */const fy=Math.floor(P.y)+.5;if(Math.abs(P.y-fy)<.35&&boxFree(Z,nx,fy,r))P.y+=(fy-P.y)*.3;}
  if(boxFree(Z,P.x,ny,r))P.y=ny;else if(Math.abs(vy)>.1){const fx=Math.floor(P.x)+.5;if(Math.abs(P.x-fx)<.35&&boxFree(Z,fx,ny,r))P.x+=(fx-P.x)*.3;}
