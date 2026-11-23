@@ -175,7 +175,7 @@ const L={
  elev:['Lift','Hiss'],bed:['Bed','Säng'],stove:['Stove','Spis'],bench:['Workbench','Arbetsbänk'],smelter:['Smelter','Smältugn'],buildt:['Build Terminal','Byggterminal'],console:['Research Console','Forskningskonsol'],archd:['Archive Desk','Arkivdisk'],telescope:['Telescope','Teleskop'],spot:['Fishing pool','Fiskedamm'],toolbox:['Decorating kit','Inredningslåda'],
  interact:['Use','Använd'],
  help:['How to play','Hur man spelar'],
- helpt:['Move: arrows/WASD, D-pad or stick. Jump: Space / Ⓐ / ⤒. Use & talk: E or Enter / Ⓑ Ⓧ / ✋. Climb ladders: up/down. Menu: Esc / Start / ☰. Bag: I or Tab / Ⓨ / 🎒. In menus: arrows or D-pad to move, Enter/Ⓐ to choose, Esc/Ⓑ to go back, Q/R or LB/RB to switch tabs.','Gå: pilar/WASD, styrkors eller spak. Hoppa: Mellanslag / Ⓐ / ⤒. Använd & prata: E eller Enter / Ⓑ Ⓧ / ✋. Klättra: upp/ner. Meny: Esc / Start / ☰. Väska: I eller Tab / Ⓨ / 🎒. I menyer: pilar eller styrkors för att flytta, Enter/Ⓐ för att välja, Esc/Ⓑ för att gå tillbaka, Q/R eller LB/RB för att byta flik.'],
+ helpt:['Move: arrows/WASD, D-pad or stick. Jump: Space / Ⓐ / ⤒. Use & talk: E or Enter / Ⓑ / ✋. Climb ladders: up/down. Menu: Esc / Start / ☰. Bag: I or Tab / Ⓨ / 🎒. In menus: arrows or D-pad to move, Enter/Ⓑ to choose, Esc/Ⓐ to go back, Q/R or LB/RB to switch tabs.','Gå: pilar/WASD, styrkors eller spak. Hoppa: Mellanslag / Ⓐ / ⤒. Använd & prata: E eller Enter / Ⓑ / ✋. Klättra: upp/ner. Meny: Esc / Start / ☰. Väska: I eller Tab / Ⓨ / 🎒. I menyer: pilar eller styrkors för att flytta, Enter/Ⓑ för att välja, Esc/Ⓐ för att gå tillbaka, Q/R eller LB/RB för att byta flik.'],
  tip1:['Tip: Crops grow overnight on days they were watered. Sleep in your bed to start a new day.','Tips: Grödor växer under natten de dagar de vattnats. Sov i din säng för att börja en ny dag.'],
  stats:['Statistics','Statistik'],playtime:['Play time','Speltid'],
  ending:['Arrival','Ankomst'],
@@ -932,9 +932,9 @@ function sfx(n){const C=AU.c;if(!C||SET.sfx<=0.001)return;const t=C.currentTime+
   case'shard':[84,88,91,96].forEach((m,i)=>bell(m,t+i*0.08,0.05,1.2,F));break;}}
 
 /* ================= INPUT ================= */
-const BTN=['L','R','U','D','A','B','X','Y','ST','LB','RB','OK','BK','UJ'];
+const BTN=['L','R','U','D','A','B','X','Y','ST','LB','RB','OK','BK','UJ','SP'];
 const IN={k:{},p:{},t:{},cur:{},prev:{},pr:{},latch:{},dev:'kb'};
-const KMAP={ArrowLeft:'L',a:'L',A:'L',ArrowRight:'R',d:'R',D:'R',ArrowUp:'U',w:'U',W:'U',ArrowDown:'D',s:'D',S:'D',' ':'A',z:'A',Z:'A',k:'A',e:'OK',E:'OK',Enter:'OK',j:'OK',Escape:'BK',Backspace:'BK',i:'Y',I:'Y',Tab:'Y',q:'LB',Q:'LB',r:'RB',R:'RB',PageUp:'LB',PageDown:'RB'};
+const KMAP={ArrowLeft:'L',a:'L',A:'L',ArrowRight:'R',d:'R',D:'R',ArrowUp:'U',w:'U',W:'U',ArrowDown:'D',s:'D',S:'D',' ':'SP',z:'SP',Z:'SP',k:'SP',e:'OK',E:'OK',Enter:'OK',j:'OK',Escape:'BK',Backspace:'BK',i:'Y',I:'Y',Tab:'Y',q:'LB',Q:'LB',r:'RB',R:'RB',PageUp:'LB',PageDown:'RB'};
 function setDev(d){if(IN.dev!==d){IN.dev=d;document.body.classList.toggle('kb',d!=='touch');updPrompt(true);}}
 addEventListener('keydown',e=>{const b=KMAP[e.key];if(b){e.preventDefault();setDev('kb');if(!IN.k[b])IN.latch[b]=1;IN.k[b]=1;if(b==='U'&&!e.repeat)IN.latch.UJ=1;}gateGo();});
 addEventListener('keyup',e=>{const b=KMAP[e.key];if(b){IN.k[b]=0;}});
@@ -1171,7 +1171,7 @@ function physics(){const P=G.P,D=G.D;const lg=D.sp.lowg?0.42:1;const spd=S.res.t
  if(P.jb>0){if(P.co>0){P.vy=-JUMP*(D.sp.lowg?0.82:1);P.co=0;P.jb=0;P.ground=false;sfx('jump');}
   else if(S.res.jetboots&&!P.dj){P.vy=-JUMP2*(D.sp.lowg?0.8:1);P.dj=true;P.jb=0;sfx('jump');for(let i=0;i<8;i++)G.parts.push({x:P.x+P.w/2,y:P.y+P.h,vx:rnd(-1,1),vy:rnd(0.5,1.5),l:20,c:'#ffb347',s:2});}}
  if(IN.cur.D&&P.ground&&!ladAt(cx,P.y+P.h+2)&&tileAt(tx,Math.floor((P.y+P.h+1)/TS))===2)P.drop=10;
- if(!IN.cur.A&&!IN.cur.U&&P.vy<-2)P.vy+=GRAV*lg*0.8;
+ if(!IN.cur.A&&!IN.cur.SP&&!IN.cur.U&&P.vy<-2)P.vy+=GRAV*lg*0.8;
  P.vy=Math.min(P.vy+GRAV*lg,D.sp.lowg?4:7);
  P.x+=P.vx;
  if(P.vx>0){const tx2=Math.floor((P.x+P.w)/TS);for(let ty=Math.floor(P.y/TS);ty<=Math.floor((P.y+P.h-0.01)/TS);ty++)if(tileAt(tx2,ty)===1){P.x=tx2*TS-P.w;P.vx=0;break;}}
@@ -1570,18 +1570,21 @@ function updHud(){if(!S)return;$('hday').textContent=T('day')+' '+S.day;$('htime
 let lastPrompt='';
 function updPrompt(force){const el=$('prompt');let t='';if(G.mode==='play'&&G.near&&!uiOpen()&&!G.fish){const gl=IN.dev==='pad'?'Ⓑ':IN.dev==='touch'?'✋':'[E]';t=gl+' '+objLabel(G.near);}
  if(t!==lastPrompt||force){lastPrompt=t;el.textContent=t;el.classList.toggle('hid',!t);$('tB').classList.toggle('hl',!!t);}}
+// Gamepad: B = confirm / use / choose, A = jump / cancel / back. Keyboard: Enter/E/Space confirm, Esc/Backspace back.
 function handleInput(){const pr=IN.pr;if(G.mode==='boot')return;if(G.ignoreT>0){G.ignoreT--;return;}
- if($('credits')&&!$('credits').classList.contains('hid')){if(pr.A||pr.OK||pr.B)$('credits').classList.add('hid');return;}
- if(DLG.cur){const d=DLG.cur;if(d.opts&&DLG.shown>=DLG.full.length){if(pr.U)navMove(0,-1);if(pr.D)navMove(0,1);if(pr.L)navMove(-1,0);if(pr.R)navMove(1,0);if(pr.A||pr.OK)navOk();if(pr.B||pr.BK){const bs=$('dlg').querySelectorAll('.do .f');if(bs.length)bs[bs.length-1].click();}}
-  else if(pr.A||pr.B||pr.OK||pr.X||pr.BK)dlgAdvance();return;}
- if(UI.stack.length||G.mode==='title'){if(pr.U)navMove(0,-1);if(pr.D)navMove(0,1);if(pr.L)navMove(-1,0);if(pr.R)navMove(1,0);if(pr.A||pr.OK)navOk();
-  if(UI.stack.length){if(pr.ST||(pr.Y&&topM().id==='pause'))closeAll();else if(pr.B||pr.BK)back();if(pr.LB)menuTab(-1);if(pr.RB)menuTab(1);}return;}
+ const ok=pr.B||pr.OK||pr.SP,no=pr.A||pr.BK;
+ const nav=()=>{if(pr.U)navMove(0,-1);if(pr.D)navMove(0,1);if(pr.L)navMove(-1,0);if(pr.R)navMove(1,0);};
+ if($('credits')&&!$('credits').classList.contains('hid')){if(ok||no)$('credits').classList.add('hid');return;}
+ if(DLG.cur){const d=DLG.cur;if(d.opts&&DLG.shown>=DLG.full.length){nav();if(ok)navOk();else if(no||pr.ST){const bs=$('dlg').querySelectorAll('.do .f');if(bs.length)bs[bs.length-1].click();}}
+  else if(ok||no||pr.X)dlgAdvance();return;}
+ if(UI.stack.length||G.mode==='title'){nav();if(ok)navOk();
+  if(UI.stack.length){if(pr.ST||(pr.Y&&topM().id==='pause'))closeAll();else if(no)back();if(pr.LB)menuTab(-1);if(pr.RB)menuTab(1);}return;}
  if(G.mode!=='play')return;
- if(G.fish){if(pr.A||pr.B||pr.X||pr.OK)fishPress();if(pr.BK||pr.ST)G.fish=null;return;}
+ if(G.fish){if(ok||pr.X)fishPress();else if(no||pr.ST)G.fish=null;return;}
  if(G.fading)return;
  if((pr.B||pr.X||pr.OK)&&G.near){interact(G.near);return;}
  if(pr.ST||pr.BK){menuPause();return;}if(pr.Y){menuPause('bag');return;}
- if(pr.A)G.P.jb=8;if(pr.UJ&&IN.dev!=='pad'&&!canClimbUp()&&!G.P.climb)G.P.jb=8;}
+ if(pr.A||pr.SP)G.P.jb=8;if(pr.UJ&&IN.dev!=='pad'&&!canClimbUp()&&!G.P.climb)G.P.jb=8;}
 let last=performance.now(),acc=0;
 function frame(now){requestAnimationFrame(frame);const dt=Math.min(100,now-last);last=now;acc+=dt;inputFrame();try{handleInput();}catch(e){console.error(e);}
  let n=0;while(acc>=16.667&&n<6){try{update();}catch(e){console.error(e);}acc-=16.667;n++;}if(n>=6)acc=0;
