@@ -23,4 +23,5 @@ A funny-animal 2D pinball game in a single file: open `pinball.html` in any mode
 - **Long-term:** endless per-table mission chains (17 mission types, scaling difficulty, 16 rank titles), player levels/XP, treats currency, shop with 10 upgrades and 16 ball skins, 36-animal album with fun facts (bronze/silver/gold), 43 achievements, 3 daily challenges with streaks, statistics.
 - **Languages:** Svenska and English.
 - **Controls:** touch (left/right half = flippers, hold & release right side to launch, 📳 nudge), keyboard (Z/← and M/→, Space launch, N nudge, Esc pause) and gamepad in game and menus (LB/RB flippers, A launch, Y nudge, Start pause; D-pad/stick + A/B in menus). Fullscreen by default (entered on first tap).
+- **Splash:** opens with the same 10-second animated Cozy Forest splash screen as Hamnljus.
 - **Saving:** autosaves every 30 seconds (and when the tab is hidden), including the game in progress, which can be continued from the title screen.
