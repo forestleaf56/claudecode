@@ -15,13 +15,15 @@ A cozy, story-driven 2D platformer RPG set in the sleepy Swedish harbor village 
 
 # Djurflipper · Critter Pinball
 
-A funny-animal 2D pinball game in a single file: open `pinball.html` in any modern browser (mobile-first, portrait).
+A funny-animal 2D pinball game in a single file: open `pinball.html` in any modern browser (mobile-first, portrait and landscape).
 
-- **6 tables:** The Farm, The Jungle, The Arctic, The Ocean, The Savanna and Space Zoo, each with its own animals, layout, physics quirk (icy bounces, ocean currents, a space gravity well), roaming "rascal" critter and music. Unlock the next table with 1★ on the previous one; 18 stars in total.
+- **12 tables:** The Farm, The Jungle, The Arctic, The Ocean, The Savanna, Space Zoo, The Forest, The Desert, The Outback, Bug Garden, Dino Valley and Spooky Night, each with its own animals, layout, roaming "rascal" critter, music and physics quirk (icy bounces, ocean currents, desert wind, a space gravity well, dino earthquakes, pitch-dark night where only the balls light the way). Unlock the next table with 1★ on the previous one; 36 stars in total.
+- **Table gadgets:** spinning windmills, teleport portals, peekaboo critters popping out of holes (whack them!), wandering bumpers on rails and an upper mini flipper, mixed differently on every table.
 - **Playfield:** animal bumpers with googly-eyed flippers and slingshots, 3 paw rollover lanes (bonus multiplier, skill shot), snack drop-target bank, animal "herd" targets, the Den (3-ball lock → multiball, jackpots, super jackpots), left orbit loop with spinner, hurry-ups, stampede (x3) and zoo party (x5) modes, ball saver, tilt.
 - **22 power-ups:** multiball, beaver ball save, x2/x3 points, elephant ball, mouse ball, turtle slow-mo, kangaroo bounce, beaver dam post, frog kickbacks, golden bumpers, chili ball, giraffe flippers, feeding time, balloon gravity, magnet, mystery and more.
-- **Long-term:** endless per-table mission chains (17 mission types, scaling difficulty, 16 rank titles), player levels/XP, treats currency, shop with 10 upgrades and 16 ball skins, 36-animal album with fun facts (bronze/silver/gold), 43 achievements, 3 daily challenges with streaks, statistics.
+- **Long-term:** endless per-table mission chains (23 mission types, picked to match each table's gadgets, scaling difficulty, 16 rank titles), player levels/XP, treats currency, shop with 10 upgrades and 16 ball skins, 72-animal album with fun facts (bronze/silver/gold), 52 achievements, 3 daily challenges with streaks, statistics.
 - **Languages:** Svenska and English.
+- **Landscape:** on a phone turned sideways the camera follows the ball, with score, mission and power-ups in side panels.
 - **Controls:** touch (left/right half = flippers, hold & release right side to launch, 📳 nudge), keyboard (Z/← and M/→, Space launch, N nudge, Esc pause) and gamepad in game and menus (LB/RB flippers, A launch, Y nudge, Start pause; D-pad/stick + A/B in menus). Fullscreen by default (entered on first tap).
 - **Splash:** opens with the same 10-second animated Cozy Forest splash screen as Hamnljus.
 - **Saving:** autosaves every 30 seconds (and when the tab is hidden), including the game in progress, which can be continued from the title screen.

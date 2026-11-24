@@ -52,7 +52,14 @@ table.st{width:100%;border-collapse:collapse;font-size:16px;text-align:left}tabl
 #toast{position:absolute;left:50%;top:22%;transform:translateX(-50%);background:#000b;border:2px solid #ffcf4a;border-radius:14px;padding:6px 14px;font-size:16px;opacity:0;transition:opacity .3s;pointer-events:none;z-index:9;white-space:nowrap}
 #toast.show{opacity:1}
 .splash{cursor:pointer}
-.blink{animation:bl 1.2s infinite}@keyframes bl{50%{opacity:.35}}
+.blink{animation:bl 1.2s infinite}
+@media (orientation:landscape) and (max-height:560px){
+ .panel{width:min(760px,100%);padding:10px 14px 12px}
+ .panel h1{font-size:28px}.panel h2{font-size:22px;margin:2px 0 6px}.logo{font-size:34px;margin:0}
+ .sub{font-size:14px;margin:0 0 6px}.btn{font-size:16px;padding:7px 10px;margin:5px 0}
+ .topbar{font-size:14px;margin-bottom:4px}.grid{grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:8px}
+ .card .big{font-size:26px}
+}@keyframes bl{50%{opacity:.35}}
 #splash{position:fixed;inset:0;z-index:80;display:flex;align-items:center;justify-content:center;background:radial-gradient(circle at 50% 42%,#fff8ea 0%,#f8e6c8 55%,#efd3aa 100%);opacity:1;transition:opacity .6s ease}
 #splash.out{opacity:0}
 #splashCv{width:min(78vmin,440px);height:min(78vmin,440px);opacity:0;transform:scale(.94);transition:opacity .9s ease,transform 1.2s ease}
@@ -88,7 +95,7 @@ sv:{
  play:'▶ Spela',cont:'⏩ Fortsätt sparat spel',tables:'Välj bord',shop:'🍬 Affären',album:'📒 Djuralbum',ach:'🏆 Prestationer',stats:'📊 Statistik',settings:'⚙️ Inställningar',howto:'❓ Hur man spelar',daily:'📅 Dagens utmaningar',back:'⬅ Tillbaka',
  lang:'Språk',sfx:'Ljudeffekter',music:'Musik',vib:'Vibration',fs:'Helskärm',on:'På',off:'Av',reset:'Radera alla framsteg',resetQ:'Säker? Tryck igen för att radera ALLT.',
  paused:'Paus',resume:'▶ Fortsätt',restart:'↻ Starta om',quit:'🏠 Spara & avsluta',over:'Spelet slut!',score:'Poäng',best:'Rekord',newBest:'NYTT REKORD!',coinsE:'Godis',xpE:'Erfarenhet',again:'↻ Spela igen',menu:'🏠 Meny',
- locked:'Låst',unlockReq:'Lås upp: 1★ på {0}',stars:'Stjärnor',ball:'BOLL',saved:'💾 Sparat',level:'Nivå',rank:'Uppdragsrang',mission:'UPPDRAG',mDone:'UPPDRAG KLART!',mFail:'För långsamt! Nytt uppdrag.',mNew:'Djuren vill göra något annat! Nytt uppdrag.',
+ locked:'Låst',unlockReq:'Lås upp: 1★ på {0}',stars:'Stjärnor',ball:'BOLL',saved:'💾 Sparat',level:'Nivå',rank:'Uppdragsrang',mission:'UPPDRAG',mDone:'UPPDRAG KLART!',mFail:'För långsamt! Nytt uppdrag.',quake:'JORDSKALV!',ouch:'AJ!',mNew:'Djuren vill göra något annat! Nytt uppdrag.',
  buy:'Köp',owned:'Ägd',equip:'Välj',equipped:'✔ Vald',max:'MAX',poor:'Inte nog med godis! 🍬',upg:'Uppgraderingar',skins:'Bollar',
  bonus:'BOLLBONUS',total:'TOTALT',skill:'SKICKLIGHETSSKOTT!',mb:'MULTIBOLL!',jp:'JACKPOT!',sjp:'SUPERJACKPOT!',xb:'EXTRABOLL!',saveMsg:'Bävern räddade bollen!',tilt:'TILT!',tiltW:'Försiktigt med knuffarna!',loop:'LOOP!',lanes:'ALLA BANOR! Bonus x{0}',herd:'FLOCKEN SAMLAD!',drops:'MATBANKEN TÖMD!',lock:'BOLL LÅST {0}/3',lockLit:'LÅS TÄNT!',stamp:'DJURRUSNING!',party:'ZOOFEST!',hurry:'SKYNDA! Träffa {0}!',hurryGot:'FÅNGAD!',replay:'GRATISBOLL!',combo:'KOMBO x{0}!',
  nudge:'Knuff',launchHint:'Håll & släpp för att skjuta',bumpN:'Djurstudsar',targN:'Mål',lanesN:'Banor',critN:'Busdjur',loopN:'Loopar',missN:'Uppdrag',mult:'Multiplikator',
@@ -108,7 +115,9 @@ sv:{
 <p>🦆 <b>Busdjuret</b> springer runt på bordet – träffa det för stora poäng!</p>
 <p>🫧 <b>Powerups</b> dyker upp i bubblor. Fånga dem med bollen!</p>
 <p>📜 <b>Uppdrag</b> ger poäng, godis och powerups. Var 5:e ger DJURRUSNING, var 10:e ZOOFEST!</p>
-<p>🍬 <b>Godis</b> används i affären till uppgraderingar och roliga bollar. Samla djur i albumet, klara dagens utmaningar och lås upp alla 6 bord!</p>
+<p>🌀 <b>Extra prylar:</b> Borden har olika specialsaker: väderkvarnar som snurrar, portaler (in i den ena – ut ur den andra), kurragömma-djur som tittar upp ur hål, vandrande studsare och en liten extra flipper (styrs med höger knapp). Öknen blåser, Dinodalen har jordskalv och Spöknatten är kolsvart!</p>
+<p>🔄 <b>Liggande läge:</b> Vrid mobilen så följer kameran bollen, med poäng och uppdrag på sidorna.</p>
+<p>🍬 <b>Godis</b> används i affären till uppgraderingar och roliga bollar. Samla djur i albumet, klara dagens utmaningar och lås upp alla 12 bord!</p>
 <p>💾 Spelet sparas automatiskt var 30:e sekund.</p>`,
 },
 en:{
@@ -116,7 +125,7 @@ en:{
  play:'▶ Play',cont:'⏩ Continue saved game',tables:'Choose table',shop:'🍬 Shop',album:'📒 Animal Album',ach:'🏆 Achievements',stats:'📊 Statistics',settings:'⚙️ Settings',howto:'❓ How to play',daily:'📅 Daily challenges',back:'⬅ Back',
  lang:'Language',sfx:'Sound effects',music:'Music',vib:'Vibration',fs:'Fullscreen',on:'On',off:'Off',reset:'Erase all progress',resetQ:'Sure? Press again to erase EVERYTHING.',
  paused:'Paused',resume:'▶ Resume',restart:'↻ Restart',quit:'🏠 Save & quit',over:'Game over!',score:'Score',best:'Best',newBest:'NEW HIGH SCORE!',coinsE:'Treats',xpE:'Experience',again:'↻ Play again',menu:'🏠 Menu',
- locked:'Locked',unlockReq:'Unlock: 1★ on {0}',stars:'Stars',ball:'BALL',saved:'💾 Saved',level:'Level',rank:'Mission rank',mission:'MISSION',mDone:'MISSION COMPLETE!',mFail:'Too slow! New mission.',mNew:'The animals got bored! New mission.',
+ locked:'Locked',unlockReq:'Unlock: 1★ on {0}',stars:'Stars',ball:'BALL',saved:'💾 Saved',level:'Level',rank:'Mission rank',mission:'MISSION',mDone:'MISSION COMPLETE!',mFail:'Too slow! New mission.',quake:'EARTHQUAKE!',ouch:'OUCH!',mNew:'The animals got bored! New mission.',
  buy:'Buy',owned:'Owned',equip:'Equip',equipped:'✔ Equipped',max:'MAX',poor:'Not enough treats! 🍬',upg:'Upgrades',skins:'Balls',
  bonus:'BALL BONUS',total:'TOTAL',skill:'SKILL SHOT!',mb:'MULTIBALL!',jp:'JACKPOT!',sjp:'SUPER JACKPOT!',xb:'EXTRA BALL!',saveMsg:'The beaver saved your ball!',tilt:'TILT!',tiltW:'Careful with the nudging!',loop:'LOOP!',lanes:'ALL LANES! Bonus x{0}',herd:'HERD GATHERED!',drops:'SNACK BANK CLEARED!',lock:'BALL LOCKED {0}/3',lockLit:'LOCK IS LIT!',stamp:'STAMPEDE!',party:'ZOO PARTY!',hurry:'HURRY! Hit the {0}!',hurryGot:'CAUGHT IT!',replay:'REPLAY!',combo:'COMBO x{0}!',
  nudge:'Nudge',launchHint:'Hold & release to launch',bumpN:'Critter bounces',targN:'Targets',lanesN:'Lanes',critN:'Rascals',loopN:'Loops',missN:'Missions',mult:'Multiplier',
@@ -136,7 +145,9 @@ en:{
 <p>🦆 <b>The rascal</b> runs around the table – hit it for big points!</p>
 <p>🫧 <b>Power-ups</b> appear in bubbles. Catch them with the ball!</p>
 <p>📜 <b>Missions</b> give points, treats and power-ups. Every 5th starts a STAMPEDE, every 10th a ZOO PARTY!</p>
-<p>🍬 <b>Treats</b> buy upgrades and funny balls in the shop. Collect animals in the album, finish daily challenges and unlock all 6 tables!</p>
+<p>🌀 <b>Gadgets:</b> Tables have different special toys: spinning windmills, portals (in one – out the other), peekaboo critters popping out of holes, wandering bumpers and a mini flipper (controlled with the right button). The Desert is windy, Dino Valley has earthquakes and Spooky Night is pitch dark!</p>
+<p>🔄 <b>Landscape:</b> Turn your phone sideways and the camera follows the ball, with score and missions on the sides.</p>
+<p>🍬 <b>Treats</b> buy upgrades and funny balls in the shop. Collect animals in the album, finish daily challenges and unlock all 12 tables!</p>
 <p>💾 The game autosaves every 30 seconds.</p>`,
 }};
 let LANG='sv';
@@ -181,6 +192,42 @@ const AN={
 '🦄':{n:{sv:'Rymdenhörning',en:'Space unicorn'},s:{sv:'✨PLING!✨',en:'✨PLING!✨'},v:'sparkle',f:{sv:'Rymdenhörningar drivs helt av regnbågar. Tror vi.',en:'Space unicorns run entirely on rainbows. We think.'}},
 '🐛':{n:{sv:'Månmask',en:'Moon worm'},s:{sv:'MUMS!',en:'MUNCH!'},v:'squeak',f:{sv:'Månmaskar äter ost. Därför har månen hål.',en:"Moon worms eat cheese. That's why the moon has holes."}},
 '🦖':{n:{sv:'Rymd-T-rex',en:'Space Rex'},s:{sv:'RAAARGH!',en:'RAAARGH!'},v:'roar',f:{sv:'T-rex hade korta armar men kunde ändå trycka på flipperknappar. Kanske.',en:'T. rex had short arms but could still press flipper buttons. Maybe.'}},
+'🦔':{n:{sv:'Igelkott',en:'Hedgehog'},s:{sv:'SNUFF!',en:'SNUFF!'},v:'squeak',f:{sv:'En igelkott har ungefär 5 000–7 000 taggar.',en:'A hedgehog has about 5,000–7,000 spines.'}},
+'🐿️':{n:{sv:'Ekorre',en:'Squirrel'},s:{sv:'TJICK-TJICK!',en:'CHITTER!'},v:'chirp',f:{sv:'Ekorrar glömmer var de gömt många nötter – och planterar på så sätt nya träd.',en:'Squirrels forget where they hid many nuts – and plant new trees that way.'}},
+'🐻':{n:{sv:'Björn',en:'Bear'},s:{sv:'GRRRR!',en:'GRRRR!'},v:'roar',f:{sv:'Björnar kan lukta mat flera kilometer bort.',en:'Bears can smell food several kilometres away.'}},
+'🦡':{n:{sv:'Grävling',en:'Badger'},s:{sv:'GRYMT!',en:'GRUMBLE!'},v:'grunt',f:{sv:'Grävlingar bor i stora underjordiska gryt som kan vara hundratals år gamla.',en:'Badgers live in big underground setts that can be hundreds of years old.'}},
+'🦫':{n:{sv:'Bäver',en:'Beaver'},s:{sv:'KLASK!',en:'SPLAT!'},v:'click',f:{sv:'Bäverns tänder slutar aldrig växa.',en:"A beaver's teeth never stop growing."}},
+'🐇':{n:{sv:'Kanin',en:'Rabbit'},s:{sv:'HOPP HOPP!',en:'HOP HOP!'},v:'squeak',f:{sv:'Kaniner kan hoppa nästan en meter högt.',en:'Rabbits can jump almost a metre high.'}},
+'🐫':{n:{sv:'Kamel',en:'Camel'},s:{sv:'BLÄÄRGH!',en:'BLARGH!'},v:'grunt',f:{sv:'Kamelens puckel är fylld med fett, inte vatten.',en:"A camel's hump is full of fat, not water."}},
+'🦂':{n:{sv:'Skorpion',en:'Scorpion'},s:{sv:'KLICK!',en:'CLICK!'},v:'click',f:{sv:'Skorpioner lyser i UV-ljus.',en:'Scorpions glow under UV light.'}},
+'🦅':{n:{sv:'Örn',en:'Eagle'},s:{sv:'KRIIIIE!',en:'SCREECH!'},v:'tweet',f:{sv:'Örnar ser ungefär 4–5 gånger skarpare än människor.',en:'Eagles see about 4–5 times sharper than humans.'}},
+'🐆':{n:{sv:'Gepard',en:'Cheetah'},s:{sv:'PURRR!',en:'PURRR!'},v:'purr',f:{sv:'Geparden är världens snabbaste landdjur.',en:'The cheetah is the fastest land animal in the world.'}},
+'🦙':{n:{sv:'Lama',en:'Llama'},s:{sv:'PTUI!',en:'PTOO!'},v:'spit',f:{sv:'Lamor spottar mest på varandra, sällan på människor.',en:'Llamas mostly spit at each other, rarely at people.'}},
+'🐁':{n:{sv:'Ökenmus',en:'Desert mouse'},s:{sv:'PIP!',en:'SQUEAK!'},v:'squeak',f:{sv:'Vissa ökengnagare klarar sig nästan helt utan att dricka.',en:'Some desert rodents can survive almost without drinking.'}},
+'🦘':{n:{sv:'Känguru',en:'Kangaroo'},s:{sv:'BOING!',en:'BOING!'},v:'bloop',f:{sv:'Kängurur kan inte gå baklänges.',en:"Kangaroos can't walk backwards."}},
+'🐨':{n:{sv:'Koala',en:'Koala'},s:{sv:'ZZZ...',en:'ZZZ...'},v:'snore',f:{sv:'Koalor sover upp till 20 timmar om dygnet.',en:'Koalas sleep up to 20 hours a day.'}},
+'🐊':{n:{sv:'Krokodil',en:'Crocodile'},s:{sv:'SNAPP!',en:'SNAP!'},v:'chomp',f:{sv:'Krokodiler kan inte räcka ut tungan.',en:"Crocodiles can't stick out their tongues."}},
+'🦢':{n:{sv:'Svart svan',en:'Black swan'},s:{sv:'HONK!',en:'HONK!'},v:'honk',f:{sv:'Svarta svanar kommer från Australien.',en:'Black swans come from Australia.'}},
+'🦎':{n:{sv:'Ödla',en:'Lizard'},s:{sv:'TSSS!',en:'TSSS!'},v:'hiss',f:{sv:'Vissa ödlor kan tappa svansen och få en ny.',en:'Some lizards can drop their tail and grow a new one.'}},
+'🦤':{n:{sv:'Dront',en:'Dodo'},s:{sv:'DODO!',en:'DODO!'},v:'honk',f:{sv:'Dronten dog ut på 1600-talet. Den här är lite vilse.',en:'The dodo died out in the 1600s. This one is a bit lost.'}},
+'🐝':{n:{sv:'Bi',en:'Bee'},s:{sv:'BZZZ!',en:'BZZZ!'},v:'buzz',f:{sv:'Bin dansar för att berätta var blommorna finns.',en:'Bees dance to tell each other where the flowers are.'}},
+'🦋':{n:{sv:'Fjäril',en:'Butterfly'},s:{sv:'✨FLADDER!✨',en:'✨FLUTTER!✨'},v:'sparkle',f:{sv:'Fjärilar smakar med fötterna.',en:'Butterflies taste with their feet.'}},
+'🐞':{n:{sv:'Nyckelpiga',en:'Ladybug'},s:{sv:'PIIP!',en:'BEEP!'},v:'squeak',f:{sv:'En nyckelpiga kan äta tusentals bladlöss under sitt liv.',en:'A ladybug can eat thousands of aphids in its lifetime.'}},
+'🐜':{n:{sv:'Myra',en:'Ant'},s:{sv:'HEJ HEJ!',en:'HUP HUP!'},v:'click',f:{sv:'Myror kan bära många gånger sin egen vikt.',en:'Ants can carry many times their own weight.'}},
+'🐌':{n:{sv:'Snigel',en:'Snail'},s:{sv:'...sakta...',en:'...slowly...'},v:'snore',f:{sv:'Sniglar kan sova i flera år när det är torrt.',en:'Snails can sleep for years when it is dry.'}},
+'🦗':{n:{sv:'Syrsa',en:'Cricket'},s:{sv:'CRI-CRI!',en:'CHIRP!'},v:'chirp',f:{sv:'Syrsor hör med öron som sitter på benen.',en:'Crickets hear with ears on their legs.'}},
+'🦕':{n:{sv:'Långhalsdino',en:'Long-neck dino'},s:{sv:'VHOOOMP!',en:'WHOOOMP!'},v:'whale',f:{sv:'De största långhalsdinosaurierna var över 30 meter långa.',en:'The biggest long-necked dinosaurs were over 30 metres long.'}},
+'🐉':{n:{sv:'Drake',en:'Dragon'},s:{sv:'FRÄÄÄS!',en:'FWOOSH!'},v:'roar',f:{sv:'Drakar finns inte. Men säg inte det till den här.',en:"Dragons aren't real. But don't tell this one."}},
+'🦣':{n:{sv:'Mammut',en:'Mammoth'},s:{sv:'TRUUUT!',en:'TROOOT!'},v:'trumpet',f:{sv:'De sista mammutarna levde för bara cirka 4 000 år sedan.',en:'The last mammoths lived only about 4,000 years ago.'}},
+'🦬':{n:{sv:'Bisonoxe',en:'Bison'},s:{sv:'MUUÖÖH!',en:'MRRROOH!'},v:'moo',f:{sv:'Bisonoxar kan springa i 55 km/h.',en:'Bison can run at 55 km/h.'}},
+'🦃':{n:{sv:'Kalkon',en:'Turkey'},s:{sv:'KLUCK-KLUCK!',en:'GOBBLE!'},v:'gobble',f:{sv:'Fåglar härstammar från dinosaurier – kalkonen också!',en:'Birds descend from dinosaurs – the turkey too!'}},
+'🥚':{n:{sv:'Dinoägg',en:'Dino egg'},s:{sv:'KNACK!',en:'CRACK!'},v:'click',f:{sv:'Vissa dinosaurieägg var större än en fotboll.',en:'Some dinosaur eggs were bigger than a football.'}},
+'🦇':{n:{sv:'Fladdermus',en:'Bat'},s:{sv:'IIIIK!',en:'EEEEK!'},v:'squeak',f:{sv:'Fladdermöss "ser" med hjälp av ekon.',en:'Bats "see" with echoes.'}},
+'🐈‍⬛':{n:{sv:'Svart katt',en:'Black cat'},s:{sv:'MJAAU!',en:'MEOW!'},v:'meow',f:{sv:'Svarta katter betyder tur i bland annat Storbritannien och Japan.',en:'Black cats mean good luck in places like Britain and Japan.'}},
+'🕷️':{n:{sv:'Spindel',en:'Spider'},s:{sv:'TIPP-TAPP!',en:'TIP-TAP!'},v:'click',f:{sv:'Spindeltråd är starkare än stål av samma tjocklek.',en:'Spider silk is stronger than steel of the same thickness.'}},
+'🐺':{n:{sv:'Varg',en:'Wolf'},s:{sv:'AUUUUU!',en:'AWOOOO!'},v:'howl',f:{sv:'Vargar ylar för att hitta varandra.',en:'Wolves howl to find each other.'}},
+'🐀':{n:{sv:'Råtta',en:'Rat'},s:{sv:'PIIIP!',en:'SQUEAK!'},v:'squeak',f:{sv:'Råttor skrattar när de blir kittlade.',en:'Rats laugh when they are tickled.'}},
+'👻':{n:{sv:'Spöke',en:'Ghost'},s:{sv:'BUUU!',en:'BOOO!'},v:'boo',f:{sv:'Spöken är inga djur. Men det här vägrar lyssna.',en:"Ghosts aren't animals. But this one refuses to listen."}},
 '🛸':{n:{sv:'UFO',en:'UFO'},s:{sv:'VIIIUUU!',en:'WOOOOO!'},v:'ufo',f:{sv:'Ingen vet vem som kör UFO:t. Troligen en ko.',en:'Nobody knows who drives the UFO. Probably a cow.'}},
 };
 
@@ -189,39 +236,81 @@ const TABLES=[
 {id:'farm',e:'🚜',n:{sv:'Bondgården',en:'The Farm'},
  col:{bg1:'#6fae46',bg2:'#2f6a26',wall:'#9a6232',wall2:'#e0a55a',acc:'#ffd34d',flip:'#ff7a45',bump:'#ffffff',lane:'#ffe27a'},
  animals:['🐄','🐖','🐔','🐑','🐴'],critter:'🦆',snacks:['🥕','🌽','🍎','🥬'],deco:['🌻','🌾','🌼','🍀'],
- bumpers:[[200,235,27],[320,235,27],[260,318,27]],drop:[110,470,168,548],herd:[410,470,352,548],saucer:[400,365],eject:[-0.55,1],
+ bumpers:[[200,235,27],[320,235,27],[260,318,27]],drop:[110,470,168,548],herd:[410,470,352,548],saucer:[400,365],eject:[-0.55,1],mill:[260,440,34,2.0],moles:[[135,405],[260,525]],
  cpath:{type:'line',y:600,x1:135,x2:385,sp:80},grav:1450,wallE:0.38,stars:[150000,500000,1500000],
  music:{bpm:120,root:60,scale:[0,2,4,7,9],seed:11}},
 {id:'jungle',e:'🌴',n:{sv:'Djungeln',en:'The Jungle'},
  col:{bg1:'#1f8a5a',bg2:'#0b3d27',wall:'#6b3f1d',wall2:'#c98b4a',acc:'#ffef5a',flip:'#ffb020',bump:'#fff6c8',lane:'#b8ff6a'},
  animals:['🐒','🦜','🐅','🐍','🐘'],critter:'🦥',snacks:['🍌','🥭','🍍','🥥'],deco:['🌿','🍃','🌺','🍄'],
- bumpers:[[185,240,24],[335,240,24],[228,322,24],[312,322,24]],posts:[[128,395,13],[392,395,13]],drop:[410,478,352,556],herd:[110,478,168,556],saucer:[262,420],eject:[0.6,1],
+ bumpers:[[185,240,24],[335,240,24],[228,322,24],[312,322,24]],posts:[[128,395,13],[392,395,13]],drop:[410,478,352,556],herd:[110,478,168,556],saucer:[262,420],eject:[0.6,1],mini:true,mover:{y:482,x1:190,x2:330,r:16,sp:1.1},
  cpath:{type:'sine',y:600,x1:150,x2:370,sp:40,amp:22},grav:1500,wallE:0.38,stars:[200000,650000,2000000],
  music:{bpm:132,root:57,scale:[0,3,5,7,10],seed:23}},
 {id:'arctic',e:'❄️',n:{sv:'Arktis',en:'The Arctic'},
  col:{bg1:'#8fd3f5',bg2:'#2b6fa8',wall:'#e8f6ff',wall2:'#ffffff',acc:'#7ff0ff',flip:'#4aa8ff',bump:'#ffffff',lane:'#c4f6ff'},
  animals:['🐧','🦭','🦊','🦉','🦌'],critter:'🐻‍❄️',snacks:['🐟','🦐','🍤','🧊'],deco:['❄️','⛄','🌨️','🧊'],
- bumpers:[[260,232,27],[190,318,27],[330,318,27]],drop:[410,470,352,548],herd:[110,470,168,548],saucer:[125,330],eject:[0.55,1],
- cpath:{type:'line',y:598,x1:130,x2:390,sp:150},grav:1450,wallE:0.6,bumpKick:620,stars:[250000,800000,2500000],
+ bumpers:[[260,232,27],[190,318,27],[330,318,27]],drop:[410,470,352,548],herd:[110,470,168,548],saucer:[125,330],eject:[0.55,1],portals:[[118,212],[402,212]],mill:[260,445,34,-2.2],
+ cpath:{type:'line',y:598,x1:130,x2:390,sp:150},grav:1450,wallE:0.6,amb:'rgba(255,255,255,.55)',bumpKick:620,stars:[250000,800000,2500000],
  music:{bpm:108,root:64,scale:[0,2,4,7,11],seed:37}},
 {id:'ocean',e:'🌊',n:{sv:'Havet',en:'The Ocean'},
  col:{bg1:'#1d7bc4',bg2:'#0a2d5e',wall:'#f2d49b',wall2:'#fff0c8',acc:'#5ff7e0',flip:'#ff6f91',bump:'#c9fff6',lane:'#7dfbff'},
  animals:['🐙','🦀','🐠','🐳','🦈'],critter:'🐢',snacks:['🦐','🐚','🌿','🍤'],deco:['🫧','🐚','🌿','⭐'],
- bumpers:[[205,245,26],[315,245,26],[160,340,22],[360,340,22]],drop:[110,478,168,556],herd:[410,478,352,556],saucer:[260,345],eject:[-0.6,1],
+ bumpers:[[205,245,26],[315,245,26],[160,340,22],[360,340,22]],drop:[110,478,168,556],herd:[410,478,352,556],saucer:[260,345],eject:[-0.6,1],moles:[[140,415],[380,415],[260,455]],mini:true,
  cpath:{type:'circle',cx:260,cy:560,r:62,sp:0.9},grav:1400,wallE:0.38,current:true,stars:[300000,1000000,3000000],
  music:{bpm:100,root:55,scale:[0,2,3,7,9],seed:41}},
 {id:'savanna',e:'🌅',n:{sv:'Savannen',en:'The Savanna'},
  col:{bg1:'#e8a948',bg2:'#8a4a1a',wall:'#5c3214',wall2:'#c07a3a',acc:'#ffe35a',flip:'#d9452b',bump:'#fff1d0',lane:'#ffd27a'},
  animals:['🦁','🦒','🦓','🦛','🦏'],critter:'🦩',snacks:['🍉','🌿','🍈','🥜'],deco:['🌵','🌾','☀️','🪨'],
- bumpers:[[190,232,20],[260,214,20],[330,232,20],[222,302,20],[298,302,20]],drop:[410,470,352,548],herd:[110,470,168,548],saucer:[400,360],eject:[-0.55,1],
+ bumpers:[[190,232,20],[260,214,20],[330,232,20],[222,302,20],[298,302,20]],drop:[410,470,352,548],herd:[110,470,168,548],saucer:[400,360],eject:[-0.55,1],mover:{y:420,x1:175,x2:345,r:15,sp:1.4},moles:[[130,410]],
  cpath:{type:'eight',cx:260,cy:575,rx:110,ry:28,sp:0.8},grav:1500,wallE:0.4,stars:[350000,1200000,3500000],
  music:{bpm:126,root:62,scale:[0,2,5,7,9],seed:53}},
 {id:'space',e:'🚀',n:{sv:'Rymdzoo',en:'Space Zoo'},
  col:{bg1:'#3b1f78',bg2:'#07051c',wall:'#9a7cff',wall2:'#e2d8ff',acc:'#ff5af0',flip:'#5affc8',bump:'#e8e0ff',lane:'#ff9cf3'},
  animals:['👽','🐕','🦄','🐛','🦖'],critter:'🛸',snacks:['🧀','🌮','🍕','🍩'],deco:['⭐','🪐','✨','🌙'],
- bumpers:[[195,240,26],[325,240,26]],posts:[[150,380,11],[370,380,11]],drop:[110,470,168,548],herd:[410,470,352,548],saucer:[260,335],eject:[0.5,1],well:[260,335,120],
- cpath:{type:'circle',cx:260,cy:565,r:85,sp:1.2},grav:1150,wallE:0.42,stars:[400000,1500000,4500000],
+ bumpers:[[195,240,26],[325,240,26]],posts:[[150,380,11],[370,380,11]],drop:[110,470,168,548],herd:[410,470,352,548],saucer:[260,335],eject:[0.5,1],well:[260,335,120],portals:[[118,212],[402,212]],mover:{y:470,x1:180,x2:340,r:16,sp:1.0},
+ cpath:{type:'circle',cx:260,cy:565,r:85,sp:1.2},grav:1150,amb:'rgba(255,255,255,.4)',wallE:0.42,stars:[400000,1500000,4500000],
  music:{bpm:116,root:58,scale:[0,3,5,6,7,10],seed:67}},
+{id:'forest',e:'🌲',n:{sv:'Skogen',en:'The Forest'},
+ col:{bg1:'#4f8a3a',bg2:'#1d3b18',wall:'#5a3a1e',wall2:'#b07a42',acc:'#ffb84d',flip:'#e0662e',bump:'#ffeacc',lane:'#ffd27a'},
+ animals:['🦔','🐿️','🐻','🦡','🦫'],critter:'🐇',snacks:['🍄','🫐','🌰','🍓'],deco:['🌲','🍂','🍄','🌿'],
+ bumpers:[[195,235,26],[325,235,26],[260,312,24]],drop:[110,470,168,548],herd:[410,470,352,548],saucer:[400,365],eject:[-0.55,1],
+ moles:[[135,405],[260,525]],mini:true,amb:'rgba(255,160,60,.55)',
+ cpath:{type:'line',y:600,x1:140,x2:380,sp:110},grav:1450,wallE:0.4,stars:[450000,1700000,5000000],
+ music:{bpm:112,root:59,scale:[0,2,4,5,7,9],seed:71}},
+{id:'desert',e:'🏜️',n:{sv:'Öknen',en:'The Desert'},
+ col:{bg1:'#f0c36a',bg2:'#a8622a',wall:'#7a4520',wall2:'#e8b070',acc:'#fff06a',flip:'#2fa4c8',bump:'#fff4d6',lane:'#ffe08a'},
+ animals:['🐫','🦂','🦅','🐆','🦙'],critter:'🐁',snacks:['🌵','🥥','🍯','🍇'],deco:['🌵','☀️','🏜️','🪨'],
+ bumpers:[[190,250,25],[330,250,25]],posts:[[260,305,14]],drop:[410,470,352,548],herd:[110,470,168,548],saucer:[125,335],eject:[0.55,1],
+ portals:[[118,212],[402,212]],mover:{y:445,x1:175,x2:345,r:17,sp:1.3},current:70,amb:'rgba(255,230,160,.5)',
+ cpath:{type:'sine',y:600,x1:150,x2:370,sp:90,amp:18},grav:1480,wallE:0.4,stars:[500000,1900000,5500000],
+ music:{bpm:104,root:57,scale:[0,1,4,5,7,8,10],seed:79}},
+{id:'outback',e:'🦘',n:{sv:'Australien',en:'The Outback'},
+ col:{bg1:'#d9763a',bg2:'#6a2410',wall:'#3b1a0c',wall2:'#c46a36',acc:'#ffe066',flip:'#3aa0e8',bump:'#ffe9d6',lane:'#ffd06a'},
+ animals:['🦘','🐨','🐊','🦢','🦎'],critter:'🦤',snacks:['🌿','🍃','🥝','🍯'],deco:['🪃','🌵','🪨','☀️'],
+ bumpers:[[260,212,22],[198,278,22],[322,278,22],[260,344,22]],drop:[110,478,168,556],herd:[410,478,352,556],saucer:[405,375],eject:[-0.55,1],
+ moles:[[135,405],[260,440]],portals:[[118,212],[402,212]],startRoo:2,
+ cpath:{type:'eight',cx:260,cy:592,rx:120,ry:24,sp:0.9},grav:1450,wallE:0.42,stars:[550000,2100000,6000000],
+ music:{bpm:124,root:62,scale:[0,2,4,7,9],seed:83}},
+{id:'bugs',e:'🌼',n:{sv:'Insektsträdgården',en:'Bug Garden'},
+ col:{bg1:'#9ad16a',bg2:'#3d7a2a',wall:'#e85a8a',wall2:'#ffc2d6',acc:'#fff27a',flip:'#a45aff',bump:'#fffbe6',lane:'#ffe6f2'},
+ animals:['🐝','🦋','🐞','🐜','🐌'],critter:'🦗',snacks:['🌸','🍯','🌼','🍓'],deco:['🌸','🌼','🌷','🍀'],
+ bumpers:[[200,228,19],[320,228,19],[260,268,19],[205,318,19],[315,318,19]],drop:[410,470,352,548],herd:[110,470,168,548],saucer:[125,335],eject:[0.55,1],
+ mill:[260,452,36,2.4],mini:true,amb:'rgba(255,230,120,.6)',
+ cpath:{type:'circle',cx:260,cy:580,r:80,sp:1.1},grav:1350,wallE:0.45,stars:[600000,2300000,6500000],
+ music:{bpm:138,root:65,scale:[0,2,4,7,9,11],seed:89}},
+{id:'dino',e:'🌋',n:{sv:'Dinodalen',en:'Dino Valley'},
+ col:{bg1:'#7bb35a',bg2:'#36521f',wall:'#5b4a3a',wall2:'#a8957a',acc:'#ff9a3c',flip:'#e94b3c',bump:'#f4ecd8',lane:'#ffcf7a'},
+ animals:['🦕','🐉','🦣','🦬','🦃'],critter:'🥚',snacks:['🍖','🌿','🍈','🦴'],deco:['🌋','🦴','🌿','🪨'],
+ bumpers:[[190,245,29],[330,245,29],[260,330,25]],drop:[110,470,168,548],herd:[410,470,352,548],saucer:[400,370],eject:[-0.55,1],
+ mover:{y:442,x1:160,x2:340,r:17,sp:0.9},moles:[[135,405]],quake:true,
+ cpath:{type:'line',y:600,x1:140,x2:380,sp:45},grav:1550,wallE:0.38,stars:[650000,2500000,7000000],
+ music:{bpm:96,root:52,scale:[0,3,5,7,10],seed:97}},
+{id:'spooky',e:'🎃',n:{sv:'Spöknatten',en:'Spooky Night'},
+ col:{bg1:'#3a2a5a',bg2:'#0e0818',wall:'#6a5a8a',wall2:'#c8b8f0',acc:'#ff8a1e',flip:'#7ad03a',bump:'#f0e8ff',lane:'#ffb050'},
+ animals:['🦇','🐈‍⬛','🕷️','🐺','🐀'],critter:'👻',snacks:['🎃','🍬','🍭','🍫'],deco:['🎃','🕸️','🌙','🕯️'],
+ bumpers:[[205,240,25],[315,240,25]],posts:[[260,300,12]],drop:[110,470,168,548],herd:[410,470,352,548],saucer:[260,410],eject:[0.55,1],
+ portals:[[118,212],[402,212]],moles:[[140,405],[380,405]],dark:true,ghost:true,amb:'rgba(200,180,255,.35)',
+ cpath:{type:'circle',cx:260,cy:572,r:90,sp:1.0},grav:1450,wallE:0.4,stars:[700000,2800000,8000000],
+ music:{bpm:110,root:57,scale:[0,1,3,5,6,8,10],seed:101}},
 ];
 
 // Power-ups
@@ -269,6 +358,12 @@ const MT=[
 {id:'tbump',ev:'bumper',b:8,time:20,s:{sv:'Kittla djuren {n} gånger på {t} s!',en:'Tickle the animals {n} times in {t} s!'}},
 {id:'tcrit',ev:'critter',b:1,time:25,s:{sv:'Bonka busdjuret {n} gång(er) på {t} s!',en:'Bonk the rascal {n} time(s) in {t} s!'}},
 {id:'ttarg',ev:'target',b:4,time:25,s:{sv:'Träffa {n} mål på {t} s!',en:'Hit {n} targets in {t} s!'}},
+{id:'mole',ev:'mole',b:3,need:'moles',s:{sv:'Bonka {n} kurragömma-djur',en:'Bonk {n} peekaboo critters'}},
+{id:'tmole',ev:'mole',b:2,time:25,need:'moles',s:{sv:'Bonka {n} kurragömma-djur på {t} s!',en:'Bonk {n} peekaboo critters in {t} s!'}},
+{id:'portal',ev:'portal',b:2,need:'portals',s:{sv:'Res genom portalerna {n} gånger',en:'Travel through the portals {n} times'}},
+{id:'mill',ev:'mill',b:6,need:'mill',s:{sv:'Träffa väderkvarnen {n} gånger',en:'Hit the windmill {n} times'}},
+{id:'mover',ev:'mover',b:4,need:'mover',s:{sv:'Träffa den vandrande studsaren {n} gånger',en:'Hit the wandering bumper {n} times'}},
+{id:'mini',ev:'mini',b:3,need:'mini',s:{sv:'Skjut med lilla flippern {n} gånger',en:'Shoot with the mini flipper {n} times'}},
 {id:'tsling',ev:'sling',b:6,time:20,s:{sv:'Studsa på slangbellorna {n} gånger på {t} s!',en:'Hit the slingshots {n} times in {t} s!'}},
 ];
 const RANKS={sv:['Hönsvakt','Hagpraktikant','Matare','Djurskötare','Kattviskare','Bondgårdsboss','Djurdoktor','Safariguide','Pingvinpolis','Hajtämjare','Djurviskare','Zoodirektör','Dr. Djurlittle','Djurkung','Legendarisk flippare','Djurgud'],
@@ -357,16 +452,24 @@ const ACH=[
 ['xb10','❤️',80,{sv:'Extra allt',en:'Extra Everything'},{sv:'Vinn 10 extrabollar',en:'Win 10 extra balls'},S=>S.xballs>=10],
 ['tables','🗺️',300,{sv:'Världsresenär',en:'Globetrotter'},{sv:'Lås upp alla bord',en:'Unlock all tables'},S=>S.unlocked>=TABLES.length],
 ['star9','⭐',150,{sv:'Stjärnelev',en:'Star Student'},{sv:'Samla 9 stjärnor',en:'Collect 9 stars'},S=>S.stars>=9],
-['star18','🌟',500,{sv:'Superstjärna',en:'Superstar'},{sv:'Samla alla 18 stjärnor',en:'Collect all 18 stars'},S=>S.stars>=18],
+['star18','🌟',500,{sv:'Superstjärna',en:'Superstar'},{sv:'Samla alla stjärnor',en:'Collect all the stars'},S=>S.stars>=TABLES.length*3],
+['star18b','✨',250,{sv:'Stjärnregn',en:'Star Shower'},{sv:'Samla 18 stjärnor',en:'Collect 18 stars'},S=>S.stars>=18],
 ['lv10','🎓',100,{sv:'Erfaren',en:'Seasoned'},{sv:'Nå nivå 10',en:'Reach level 10'},S=>S.level>=10],
 ['lv30','👴',300,{sv:'Veteran',en:'Veteran'},{sv:'Nå nivå 30',en:'Reach level 30'},S=>S.level>=30],
 ['hour','⏰',100,{sv:'En timme senare...',en:'One Hour Later...'},{sv:'Spela i en timme totalt',en:'Play for one hour in total'},S=>S.playSec>=3600],
 ['alb15','📒',100,{sv:'Samlare',en:'Collector'},{sv:'15 djur i albumet',en:'15 animals in the album'},S=>S.album>=15],
-['alb36','🚢',500,{sv:'Noaks ark',en:"Noah's Ark"},{sv:'Alla 36 djur i albumet',en:'All 36 animals in the album'},S=>S.album>=36],
+['alb36','🚢',500,{sv:'Noaks ark',en:"Noah's Ark"},{sv:'Alla djur i albumet',en:'All animals in the album'},S=>S.album>=Object.keys(AN).length],
+['alb40','🦒',200,{sv:'Djurparksexpert',en:'Zoo Expert'},{sv:'40 djur i albumet',en:'40 animals in the album'},S=>S.album>=40],
 ['skin','😎',30,{sv:'Snyggboll',en:'Fancy Ball'},{sv:'Köp en ny boll',en:'Buy a new ball'},S=>S.skins>=2],
 ['upmax','🔧',100,{sv:'Maxad',en:'Maxed Out'},{sv:'Maxa en uppgradering',en:'Max out an upgrade'},S=>S.upMax>=1],
 ['d1','📅',40,{sv:'Dagens hjälte',en:'Hero of the Day'},{sv:'Klara alla dagens utmaningar',en:'Complete all daily challenges'},S=>S.dailyAll>=1],
 ['streak7','🔥',200,{sv:'Veckovana',en:'Weekly Habit'},{sv:'7 dagars svit',en:'7 day streak'},S=>S.streak>=7],
+['mole50','🔨',80,{sv:'Mullvadsklubba',en:'Whack Master'},{sv:'Bonka 50 kurragömma-djur',en:'Bonk 50 peekaboo critters'},S=>S.moles>=50],
+['port50','🌀',80,{sv:'Maskhålsresenär',en:'Wormhole Rider'},{sv:'Res genom portaler 50 gånger',en:'Use portals 50 times'},S=>S.portals>=50],
+['mill100','🌬️',80,{sv:'Don Quijote',en:'Don Quixote'},{sv:'Träffa väderkvarnar 100 gånger',en:'Hit windmills 100 times'},S=>S.mills>=100],
+['mini50','🤏',80,{sv:'Liten men naggande god',en:'Small but Mighty'},{sv:'50 skott med lilla flippern',en:'50 mini flipper shots'},S=>S.minis>=50],
+['quake10','🌋',80,{sv:'Skakigt värre',en:'All Shook Up'},{sv:'Överlev 10 jordskalv',en:'Survive 10 earthquakes'},S=>S.quakes>=10],
+['dark','🔦',120,{sv:'Inte mörkrädd',en:'Not Afraid of the Dark'},{sv:'500 000 poäng i Spöknatten',en:'500,000 points on Spooky Night'},S=>P.tb.spooky&&P.tb.spooky.best>=5e5],
 ['rank30','👑',300,{sv:'Djurkung',en:'King of Beasts'},{sv:'Uppdragsrang 30 på ett bord',en:'Mission rank 30 on a table'},S=>S.maxRank>=30],
 ];
 const ALBUM_REQ=[25,150,600]; // hits for bronze/silver/gold
@@ -506,6 +609,14 @@ const VOICE={
  woof:()=>osc('square',350,180,0.12,0.18),
  sparkle:()=>[0,0.06,0.12,0.18].forEach((d,i)=>osc('triangle',1200*Math.pow(1.26,i),0,0.15,0.11,d)),
  ufo:()=>osc('sine',400,1200,0.6,0.14,0,sfxG,9),
+ chirp:()=>[0,0.05,0.1].forEach(d=>osc('sine',3000,3300,0.04,0.12,d)),
+ buzz:()=>osc('sawtooth',180,210,0.4,0.09,0,sfxG,30),
+ gobble:()=>[0,1,2,3,4].forEach(i=>osc('square',520,320,0.05,0.1,i*0.06)),
+ meow:()=>{osc('sawtooth',500,820,0.15,0.11);osc('sawtooth',820,420,0.3,0.11,0.15);},
+ howl:()=>{osc('sine',300,700,0.4,0.2);osc('sine',700,450,0.7,0.2,0.4,sfxG,5);},
+ boo:()=>osc('sine',220,140,0.8,0.22,0,sfxG,6),
+ spit:()=>nz(0.15,0.3,2500),
+ purr:()=>osc('sawtooth',60,55,0.5,0.15,0,sfxG,25),
 };
 const voiceCD={};
 function animalSound(e){const a=AN[e];if(!a)return sfx.bump();const now=performance.now();if(voiceCD[a.v]&&now-voiceCD[a.v]<160)return sfx.bump();voiceCD[a.v]=now;(VOICE[a.v]||sfx.bump)();}
@@ -590,6 +701,11 @@ function buildTable(def){
   T.spinner={y:410,ang:0,spd:0};
   T.post={x:260,y:912,r:9};
   T.flippers=[mkFlip(180,862,false),mkFlip(340,862,true)];
+  T.mills=def.mill?[(()=>{const[x,y,len,w]=def.mill;const arm=a=>({x,y,len,r0:7,r1:6,a,w});return{x,y,len,w,a:0,flash:0,arms:[arm(0),arm(Math.PI)]};})()]:[];
+  T.mini=def.mini?{x:494,y:450,right:true,len:50,r0:8,r1:5.5,rest:Math.PI-0.45,up:Math.PI+0.55,a:Math.PI-0.45,w:0,on:false}:null;
+  T.moles=(def.moles||[]).map(m=>({x:m[0],y:m[1],r:16,e:0.5,up:0,rise:0,cd:rand(2,6),em:pick(def.animals),hitT:0}));
+  T.portals=(def.portals||[]).map(q=>({x:q[0],y:q[1],r:15}));
+  if(def.mover){const m=def.mover;T.circles.push({x:(m.x1+m.x2)/2,y:m.y,r:m.r,kind:'bumper',i:9,e:0.4,kick:480,pulse:0,e2:def.animals[4],mover:m,vx:0,mt:0});}
   return T;
 }
 function mkFlip(x,y,right){const rest=right?Math.PI-0.52:0.52;return{x,y,right,len:68,r0:10,r1:6.5,rest,up:right?Math.PI+0.45:-0.45,a:rest,w:0,on:false};}
@@ -633,14 +749,14 @@ function updateFlipper(f,h){
   const step=Math.sign(d)*Math.min(Math.abs(d),sp*h);f.a+=step;f.w=step/h;
 }
 let ballUid=1;
-function newBall(x,y){return{x,y,vx:0,vy:0,r:11,inLane:true,held:false,ins:new Set(),spin:0,id:ballUid++,idle:0,saucerCD:0,spinCD:0,loopT:0,loopFrom:null,launchT:0,trail:[]};}
+function newBall(x,y){return{x,y,vx:0,vy:0,r:11,inLane:true,held:false,ins:new Set(),spin:0,id:ballUid++,idle:0,saucerCD:0,spinCD:0,millCD:0,miniCD:0,portCD:0,loopT:0,loopFrom:null,launchT:0,trail:[]};}
 function ballRadius(){return G.pw.big>0?16:G.pw.tiny>0?7.5:11;}
 function stepBall(b,h){
   if(b.held)return;
   const def=G.def,T=G.T;
   const g=G.grav*(G.pw.balloon>0?0.45:1);
   b.vy+=g*h;
-  if(def.current&&!b.inLane)b.vx+=Math.sin(G.time*0.6)*110*h;
+  if(def.current&&!b.inLane)b.vx+=Math.sin(G.time*0.6)*(def.current===true?110:def.current)*h;
   if(def.well&&!b.inLane){const dx=def.well[0]-b.x,dy=def.well[1]-b.y,d=Math.hypot(dx,dy);if(d<def.well[2]&&d>4){const f=900*(1-d/def.well[2]);b.vx+=dx/d*f*h;b.vy+=dy/d*f*h;}}
   if(G.pw.magnet>0&&!b.inLane&&G.crit.daze<=0){const dx=G.crit.x-b.x,dy=G.crit.y-b.y,d=Math.hypot(dx,dy);if(d<260&&d>5){b.vx+=dx/d*1500*h;b.vy+=dy/d*1500*h;}}
   const sp=Math.hypot(b.vx,b.vy),mx=G.pw.chili>0?3000:2600;if(sp>mx){b.vx*=mx/sp;b.vy*=mx/sp;}
@@ -651,11 +767,15 @@ function stepBall(b,h){
     if(!s.on)continue;if(s.kind==='gate'&&b.inLane)continue;if(s.kind==='oneway'&&(b.vy<0||b.x>88))continue;
     const imp=colSeg(b,s);if(imp)onSegHit(b,s,imp);
   }
-  for(const c of T.circles){const imp=colCirc(b,c);if(imp)onCircHit(b,c,imp);}
+  for(const c of T.circles){const imp=colCirc(b,c,c.vx||0,0);if(imp)onCircHit(b,c,imp);}
   if(G.pw.post>0){const imp=colCirc(b,{x:T.post.x,y:T.post.y,r:T.post.r,e:0.5});if(imp>200&&Math.random()<0.5)sfx.post();}
   const C=G.crit;
   {const imp=colCirc(b,{x:C.x,y:C.y,r:C.r,e:0.55},C.vx,C.vy);if(imp)onCritterHit(b,imp);}
   for(const f of T.flippers)colFlip(b,f);
+  if(T.mini&&colFlip(b,T.mini)&&Math.abs(T.mini.w)>2&&b.miniCD<=0){b.miniCD=0.5;addScore(100,b.x,b.y-20,false);ev('mini');hitCombo();}
+  for(const m of T.mills)for(const a of m.arms)if(colFlip(b,a)&&b.millCD<=0){b.millCD=0.35;m.flash=1;addScore(150,m.x,m.y-45);ev('mill');hitCombo();sfx.post();}
+  for(const m of T.moles)if(m.rise>0.5&&m.up>0){const imp=colCirc(b,m);if(imp)onMole(b,m);}
+  if(T.portals.length===2&&b.portCD<=0&&!b.inLane){for(let i=0;i<2;i++){const q=T.portals[i];if((b.x-q.x)**2+(b.y-q.y)**2<q.r*q.r){const o=T.portals[1-i];b.x=o.x;b.y=o.y;b.portCD=1.0;b.trail=[];b.ins.clear();onPortal(q,o);break;}}}
   // spinner (left orbit lane)
   if(b.x>20&&b.x<70&&(py0-T.spinner.y)*(b.y-T.spinner.y)<=0&&b.spinCD<=0){b.spinCD=0.15;onSpinner(b);}
   // sensors
@@ -704,7 +824,7 @@ function hitCombo(){
 }
 function ev(name,amt=1){
   if(G.cnt[name]!=null)G.cnt[name]+=amt;
-  const map={bumper:'bumpers',sling:'slings',critter:'critters',target:'targets',mission:'missions',pickup:'powerups',multiball:'multiballs',jackpot:'jackpots',loop:'loops',spin:'spins',skill:'skillShots',save:'saves',drain:'drains',tilt:'tilts',stampede:'stampedes',party:'parties',xball:'xballs',saucer:'dens',lanes:'lanesDone',drops:'dropBanks',herd:'herds',food:'foods'};
+  const map={bumper:'bumpers',sling:'slings',critter:'critters',target:'targets',mission:'missions',pickup:'powerups',mole:'moles',portal:'portals',mill:'mills',mover:'movers',mini:'minis',quake:'quakes',multiball:'multiballs',jackpot:'jackpots',loop:'loops',spin:'spins',skill:'skillShots',save:'saves',drain:'drains',tilt:'tilts',stampede:'stampedes',party:'parties',xball:'xballs',saucer:'dens',lanes:'lanesDone',drops:'dropBanks',herd:'herds',food:'foods'};
   if(map[name])st(map[name],amt);
   if(G.mission&&G.mission.ev===name&&G.mission.ev!=='combo')missionProg(amt);
   dailyEv(name,amt);
@@ -730,7 +850,7 @@ function onCircHit(b,c,imp){
   if(c.kind==='bumper'){
     const kick=c.kick*(G.pw.chili>0?1.2:1);b.vx+=CN.x*kick;b.vy+=CN.y*kick;c.pulse=1;
     const m=(G.pw.gold>0?5:1)*(G.pw.big>0?3:1);addScore(100*m,c.x,c.y-c.r-8,true,G.pw.gold>0?'#ffd700':'#fff');
-    animalSound(c.e2);if(Math.random()<0.45)bubble(c.x,c.y-c.r-18,L(AN[c.e2].s));
+    if(c.mover)ev('mover');animalSound(c.e2);if(Math.random()<0.45)bubble(c.x,c.y-c.r-18,L(AN[c.e2].s));
     burst(c.x+CN.x*c.r,c.y+CN.y*c.r,G.def.col.acc,6);G.shake=Math.max(G.shake,2);
     ev('bumper');hitCombo();albumHit(c.e2);if(G.mb)G.jpVal+=250;vib(8);
   }else if(c.kind==='post'){b.vx+=CN.x*c.kick;b.vy+=CN.y*c.kick;c.pulse=1;sfx.post();addScore(50,c.x,c.y-20,false);hitCombo();}
@@ -744,6 +864,8 @@ function onCritterHit(b,imp){
   ev('critter');hitCombo();albumHit(G.def.critter);G.shake=6;vib(25);
   if(G.hurry){const v=G.hurry.v;addScore(v,260,460,true,'#ff6');msg(t('hurryGot'),'#ff6',fmt(Math.round(v*scoreMult())));G.hurry=null;sfx.jackpot();}
 }
+function onMole(b,m){m.up=0;m.cd=rand(2,5);m.hitT=0.6;addScore(1500,m.x,m.y-34,true,'#ffd27a');animalSound(m.em);bubble(m.x,m.y-46,t('ouch'));albumHit(m.em);ev('mole');hitCombo();burst(m.x,m.y,'#c9a06a',10);vib(15);}
+function onPortal(a,o){addScore(750,o.x,o.y-28,true,'#9ff');ev('portal');hitCombo();osc('sine',300,1500,0.25,0.14);burst(a.x,a.y,'#4ac8ff',10);burst(o.x,o.y,'#ff9a3c',10);floatText(o.x,o.y+28,'WHOOSH!','#ffd',14);}
 function albumHit(e){P.album[e]=(P.album[e]||0)+1;}
 function onLane(i){
   if(G.skillOn&&i===G.skillLane&&G.skillArmed){G.skillOn=false;addScore(10000+1000*Math.min(G.rank,20),G.T.lanes[i].x,170,true,'#7dfcff');msg(t('skill'),'#7dfcff');ev('skill');sfx.jackpot();}
@@ -820,7 +942,7 @@ function startParty(){G.mode.party=30;msg(t('party'),'#ff5af0','x5 🎉');ev('pa
 /* Missions */
 function missionTpl(m){return MT.find(x=>x.id===m.id);}
 function newMission(){
-  const rk=G.rank;let tpl;do{tpl=pick(MT);}while(G.mission&&tpl.id===G.mission.id);
+  const rk=G.rank;const pool=MT.filter(m=>!m.need||G.def[m.need]);let tpl;do{tpl=pick(pool);}while(G.mission&&tpl.id===G.mission.id);
   const sc=1+rk*0.12;let n=Math.max(1,Math.round(tpl.b*sc));
   if(tpl.ev==='points')n=Math.round(tpl.b*sc*(1+rk*0.08)/1000)*1000;
   if(tpl.ev==='combo')n=Math.min(40,Math.round(tpl.b+rk*0.6));
@@ -860,7 +982,7 @@ function startBall(){
   G.tilted=false;G.tiltM=0;G.state='play';G.bonusX=Math.max(G.bonusX||1,1+upg('bonusx'));
   G.cnt={bumper:0,target:0,lane:0,critter:0,loop:0,mission:0,sling:0,spin:0};
   G.pw={};G.mode={stamp:0,party:0};G.hurry=null;G.mb=false;G.loopStreak=0;
-  G.saveArm=8+3*upg('save');G.saveT=0;G.skillLane=rint(0,2);G.skillOn=true;G.skillArmed=false;G.firstLaunch=true;
+  G.saveArm=8+3*upg('save');if(G.def.startRoo)G.ch.roo=Math.max(G.ch.roo,G.def.startRoo);G.saveT=0;G.skillLane=rint(0,2);G.skillOn=true;G.skillArmed=false;G.firstLaunch=true;
   G.plunge=0;spawnLaneBall();
   msg(t('ballN',G.ballNum,G.ballsTotal),'#fff',quip('start'));
   const sc=[0,0.33,0.66,1][upg('start')];if(Math.random()<sc)later(1.5,()=>applyPU(randPU('xball').id));
@@ -920,7 +1042,7 @@ function startGame(ti,snap){
   }
   if(!G.mission)newMission();
   updateCritter(0);
-  setMusic(def.music);makeStatic();hideUI();showHudBtns(true);
+  VIEW.camY=H-VIEW.LH;setMusic(def.music);makeStatic();hideUI();showHudBtns(true);
   startBall();if(snap)G.bonusX=Math.max(snap.bonusX||1,G.bonusX);
   saveP();
 }
@@ -956,7 +1078,7 @@ function updateCritter(dt){
 }
 function spawnPickup(){
   const T=G.T;let x,y,ok=false;
-  for(let k=0;k<20&&!ok;k++){x=rand(100,420);y=rand(190,570);ok=T.circles.every(c=>Math.hypot(c.x-x,c.y-y)>c.r+34)&&Math.hypot(T.saucer.x-x,T.saucer.y-y)>50;}
+  for(let k=0;k<20&&!ok;k++){x=rand(100,420);y=rand(190,570);ok=T.circles.every(c=>Math.hypot(c.x-x,c.y-y)>c.r+34)&&T.moles.every(m=>Math.hypot(m.x-x,m.y-y)>45)&&T.portals.every(q=>Math.hypot(q.x-x,q.y-y)>45)&&T.mills.every(m=>Math.hypot(m.x-x,m.y-y)>m.len+25)&&Math.hypot(T.saucer.x-x,T.saucer.y-y)>50;}
   const p=randPU();G.pickups.push({x,y,id:p.id,e:p.e,t:0,life:16,ph:rand(0,6)});
 }
 function update(dt){
@@ -971,7 +1093,7 @@ function update(dt){
   const f0=T.flippers[0],f1=T.flippers[1];
   if(Lp&&!f0.on){sfx.flip();if(!G.skillOn){G.laneLit.push(G.laneLit.shift());}}
   if(Rp&&!f1.on){sfx.flip();if(!G.skillOn){G.laneLit.unshift(G.laneLit.pop());}}
-  f0.on=Lp;f1.on=Rp;
+  f0.on=Lp;f1.on=Rp;if(T.mini)T.mini.on=Rp;
   const fl=G.pw.giraffe>0?84:68;f0.len=f1.len=fl;
   // plunger
   const ready=G.balls.find(b=>b.inLane&&b.y>880&&Math.abs(b.vy)<60);
@@ -983,15 +1105,20 @@ function update(dt){
   // physics
   const SUB=10,h=gdt/SUB;
   for(let s=0;s<SUB;s++){
-    updateFlipper(f0,h);updateFlipper(f1,h);
+    updateFlipper(f0,h);updateFlipper(f1,h);if(T.mini)updateFlipper(T.mini,h);
+    for(const m of T.mills){m.a+=m.w*h;m.arms[0].a=m.a;m.arms[1].a=m.a+Math.PI;}
     for(let i=G.balls.length-1;i>=0;i--)stepBall(G.balls[i],h);
     if(G.balls.length>1)ballBall();
   }
   updateCritter(gdt);
+  for(const c of T.circles)if(c.mover&&gdt>0){c.mt+=gdt;const m=c.mover,nx=(m.x1+m.x2)/2+Math.sin(c.mt*m.sp)*(m.x2-m.x1)/2;c.vx=(nx-c.x)/gdt;c.x=nx;}
+  for(const m of T.moles){m.hitT-=dt;if(m.up>0){m.up-=dt;m.rise=Math.min(1,m.rise+dt*5);if(m.up<=0)m.cd=rand(2,5);}else{m.rise=Math.max(0,m.rise-dt*5);m.cd-=dt;if(m.cd<=0){m.up=rand(2.5,4);m.em=pick(G.def.animals);}}}
+  for(const m of T.mills)m.flash=Math.max(0,m.flash-dt*4);
+  if(G.def.quake&&G.balls.some(b=>!b.inLane&&!b.held)){G.quakeT=(G.quakeT??22)-dt;if(G.quakeT<=0){G.quakeT=rand(20,30);msg(t('quake'),'#ff9a3c','🦕💥');G.shake=16;for(const b of G.balls)if(!b.held&&!b.inLane){b.vx+=rand(-1,1)*260;b.vy-=360;}addScore(2500,260,500);ev('quake');VOICE.roar();vib(90);}}
   // ball bookkeeping
   for(let i=G.balls.length-1;i>=0;i--){
     const b=G.balls[i];
-    b.saucerCD-=dt;b.spinCD-=dt;b.loopT-=dt;b.launchT-=dt;
+    b.saucerCD-=dt;b.spinCD-=dt;b.millCD-=dt;b.miniCD-=dt;b.portCD-=dt;b.loopT-=dt;b.launchT-=dt;
     if(b.loopT<=0)b.loopFrom=null;
     b.trail.push(b.x,b.y);if(b.trail.length>16)b.trail.splice(0,2);
     if(!b.held&&!b.inLane&&b.y<800&&Math.hypot(b.vx,b.vy)<12){b.idle+=dt;if(b.idle>2.5){b.vy=-700;b.vx=rand(-200,200);b.idle=0;}}else b.idle=0;
@@ -1038,14 +1165,15 @@ function updateFx(dt){
   for(let i=G.bubbles.length-1;i>=0;i--){const p=G.bubbles[i];p.t+=dt;if(p.t>1.1)G.bubbles.splice(i,1);}
   if(G.msgs.length){G.msgs[0].t+=dt;if(G.msgs[0].t>G.msgs[0].d)G.msgs.shift();}
   G.shake=Math.max(0,G.shake-dt*30);G.slingEye=Math.max(0,G.slingEye-dt*3);
-  if(G.def.current||G.def.id==='ocean'){if(Math.random()<dt*4)G.ambient.push({x:rand(30,490),y:990,v:rand(30,80),r:rand(2,6)});}
-  if(G.def.id==='arctic'||G.def.id==='space'){if(Math.random()<dt*5)G.ambient.push({x:rand(30,490),y:-5,v:-rand(20,60),r:rand(1,3)});}
+  if(G.def.id==='ocean'){if(Math.random()<dt*4)G.ambient.push({x:rand(30,490),y:990,v:rand(30,80),r:rand(2,6)});}
+  if(G.def.amb){if(Math.random()<dt*5)G.ambient.push({x:rand(30,490),y:-5,v:-rand(25,60),r:rand(1.2,3.2),c:G.def.amb});}
   for(let i=G.ambient.length-1;i>=0;i--){const a=G.ambient[i];a.y-=a.v*dt;a.x+=Math.sin(G.time+i)*10*dt;if(a.y<-10||a.y>1000)G.ambient.splice(i,1);}
 }
 
 /* ===================== RENDERING ===================== */
 const cv=$('#cv'),ctx=cv.getContext('2d');
 let SCALE=1,RES=1,staticCv=null;
+const VIEW={cam:false,LW:540,LH:1080,ox:0,camY:0};
 const EMOJI_FONT='"Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji","Twemoji Mozilla",sans-serif';
 let emojiCache=new Map();
 function emo(ch,size){
@@ -1064,15 +1192,16 @@ function fitText(txt,x,y,maxW,size,weight=700,stroke=0,col='#fff',c2=ctx){
   c2.fillStyle=col;c2.fillText(txt,x,y);
 }
 function resize(){
-  const vw=window.innerWidth,vh=window.innerHeight;SCALE=Math.min(vw/W,vh/H);
-  const dpr=Math.min(2,window.devicePixelRatio||1);RES=SCALE*dpr;
-  cv.style.width=Math.floor(W*SCALE)+'px';cv.style.height=Math.floor(H*SCALE)+'px';
-  cv.width=Math.round(W*RES);cv.height=Math.round(H*RES);emojiCache=new Map();
+  const vw=window.innerWidth,vh=window.innerHeight;const dpr=Math.min(2,window.devicePixelRatio||1);
+  VIEW.cam=vw>vh*1.15&&vh<560;
+  if(VIEW.cam){SCALE=Math.min(vh/620,vw*0.6/W);VIEW.LW=vw/SCALE;VIEW.LH=vh/SCALE;VIEW.ox=(VIEW.LW-W)/2;VIEW.camY=clamp(VIEW.camY||H,HUD-30,H-VIEW.LH);cv.style.width=vw+'px';cv.style.height=vh+'px';}
+  else{SCALE=Math.min(vw/W,vh/H);VIEW.LW=W;VIEW.LH=H;VIEW.ox=0;VIEW.camY=0;cv.style.width=Math.floor(W*SCALE)+'px';cv.style.height=Math.floor(H*SCALE)+'px';}
+  RES=SCALE*dpr;cv.width=Math.round(VIEW.LW*RES);cv.height=Math.round(VIEW.LH*RES);emojiCache=new Map();
   if(G)makeStatic();positionHud();
 }
 function tablePath(x){x.beginPath();x.moveTo(20,290);x.arc(275,290,255,Math.PI,Math.PI*2);x.lineTo(530,1000);x.lineTo(20,1000);x.closePath();}
 function makeStatic(){
-  const def=G.def,c=def.col;staticCv=document.createElement('canvas');staticCv.width=cv.width;staticCv.height=cv.height;
+  const def=G.def,c=def.col;staticCv=document.createElement('canvas');staticCv.width=Math.round(W*RES);staticCv.height=Math.round(H*RES);
   const x=staticCv.getContext('2d');x.setTransform(RES,0,0,RES,0,0);
   x.fillStyle='#0c0820';x.fillRect(0,0,W,H);
   x.translate(0,HUD);
@@ -1094,6 +1223,7 @@ function makeStatic(){
   for(const m of [0,1]){const X=v=>m?520-v:v;x.beginPath();x.moveTo(X(95),655);x.lineTo(X(95),745);x.lineTo(X(160),795);x.closePath();
     const sg=x.createLinearGradient(X(95),655,X(160),795);sg.addColorStop(0,c.flip);sg.addColorStop(1,shade(c.flip,-40));x.fillStyle=sg;x.fill();}
   // walls
+  if(def.mover){const m=def.mover;x.strokeStyle='rgba(0,0,0,.3)';x.lineWidth=8;x.lineCap='round';x.beginPath();x.moveTo(m.x1,m.y);x.lineTo(m.x2,m.y);x.stroke();x.strokeStyle='rgba(255,255,255,.25)';x.lineWidth=2;x.stroke();}
   for(const s of G.T.segs){if(['drop','herd','plunger'].includes(s.kind))continue;drawWall(x,s,c);}
   // outer border glow
   x.lineWidth=3;x.strokeStyle=c.acc+'88';tablePath(x);x.stroke();
@@ -1110,8 +1240,8 @@ function drawWall(x,s,c){
 const floaters=[];
 function drawMenuBg(dt){
   ctx.setTransform(RES,0,0,RES,0,0);
-  const g=ctx.createLinearGradient(0,0,0,H);g.addColorStop(0,'#3a1f7a');g.addColorStop(1,'#120a2a');ctx.fillStyle=g;ctx.fillRect(0,0,W,H);
-  if(floaters.length<18&&Math.random()<0.05){const all=Object.keys(AN);floaters.push({x:rand(20,520),y:H+30,v:rand(30,80),e:pick(all),s:rand(28,56),r:rand(-1,1)});}
+  const LW=VIEW.LW,LH=VIEW.LH;const g=ctx.createLinearGradient(0,0,0,LH);g.addColorStop(0,'#3a1f7a');g.addColorStop(1,'#120a2a');ctx.fillStyle=g;ctx.fillRect(0,0,LW,LH);
+  if(floaters.length<18&&Math.random()<0.05){const all=Object.keys(AN);floaters.push({x:rand(20,LW-20),y:LH+30,v:rand(30,80),e:pick(all),s:rand(28,56),r:rand(-1,1)});}
   for(let i=floaters.length-1;i>=0;i--){const f=floaters[i];f.y-=f.v*dt;f.r+=dt*0.3;if(f.y<-60){floaters.splice(i,1);continue;}
     ctx.save();ctx.globalAlpha=0.35;ctx.translate(f.x+Math.sin(f.y/60)*20,f.y);ctx.rotate(Math.sin(f.r)*0.4);drawEmo(0,0,f.e,f.s);ctx.restore();}
 }
@@ -1119,11 +1249,64 @@ function render(dt){
   ctx.setTransform(1,0,0,1,0,0);
   if(!G||!staticCv){drawMenuBg(dt);return;}
   let sx=0,sy=0;if(G.shake>0&&G.active){sx=rand(-1,1)*G.shake*0.5;sy=rand(-1,1)*G.shake*0.5;}
+  if(VIEW.cam)updateCam(dt);
+  const ox=VIEW.ox,oy=VIEW.cam?-VIEW.camY:0;
   ctx.fillStyle='#0c0820';ctx.fillRect(0,0,cv.width,cv.height);
-  ctx.drawImage(staticCv,sx*RES,sy*RES);
+  ctx.drawImage(staticCv,Math.round((ox+sx)*RES),Math.round((oy+sy)*RES));
   ctx.setTransform(RES,0,0,RES,0,0);
-  ctx.save();ctx.translate(sx,HUD+sy);drawDyn();ctx.restore();
-  drawHUD();
+  ctx.save();ctx.translate(ox+sx,oy+HUD+sy);drawDyn();ctx.restore();
+  if(VIEW.cam)drawSideHUD();else drawHUD();
+}
+function updateCam(dt){
+  const VH=VIEW.LH;let ty=H-VH;
+  if(G.state==='play'){let my=-1e9;for(const b of G.balls)if(!b.inLane||b.y<880)my=Math.max(my,b.y);if(my>-1e9)ty=my+HUD-VH*0.6;}
+  ty=clamp(ty,HUD-30,H-VH);VIEW.camY+=(ty-VIEW.camY)*Math.min(1,dt*5);
+}
+let darkCv=null;
+function drawDark(){
+  if(!darkCv){darkCv=document.createElement('canvas');darkCv.width=270;darkCv.height=500;}
+  const d=darkCv.getContext('2d');d.globalCompositeOperation='source-over';d.clearRect(0,0,270,500);
+  const flash=Math.sin(G.time*0.7)>0.995;d.fillStyle=flash?'rgba(4,0,16,.15)':'rgba(4,0,16,.72)';d.fillRect(0,0,270,500);
+  d.globalCompositeOperation='destination-out';
+  const lights=G.balls.map(b=>[b.x,b.y,120]).concat([[260,885,140],[G.T.saucer.x,G.T.saucer.y,50]]);
+  for(const[x,y,r]of lights){const g=d.createRadialGradient(x/2,y/2,0,x/2,y/2,r/2);g.addColorStop(0,'rgba(0,0,0,1)');g.addColorStop(0.55,'rgba(0,0,0,.85)');g.addColorStop(1,'rgba(0,0,0,0)');d.fillStyle=g;d.beginPath();d.arc(x/2,y/2,r/2,0,Math.PI*2);d.fill();}
+  ctx.drawImage(darkCv,0,0,540,1000);
+}
+function wrapLines(txt,maxW,font){ctx.font=font;const words=txt.split(' ');const lines=[];let cur='';for(const w of words){const tt=cur?cur+' '+w:w;if(ctx.measureText(tt).width>maxW&&cur){lines.push(cur);cur=w;}else cur=tt;}if(cur)lines.push(cur);return lines;}
+function hudItems(){
+  const l=[],r=[];
+  for(const p of PU)if(p.dur&&G.pw[p.id]>0)l.push([p.e,Math.ceil(G.pw[p.id])+'s']);
+  if(G.mode.stamp>0)l.push(['🐃',Math.ceil(G.mode.stamp)+'s','#ff9a3c']);
+  if(G.mode.party>0)l.push(['🥳',Math.ceil(G.mode.party)+'s','#ff5af0']);
+  if(G.saveT>0)l.push(['🦫',Math.ceil(G.saveT)+'s','#9fe3ff']);
+  r.push(['🔒',G.lockLit?'LIT':G.locks+'/3',G.lockLit?'#7df':'#fff']);
+  if(G.combo>=3)r.push(['⚡','x'+G.combo,'#7dfcff']);
+  if(G.ch.kick>0)r.push(['🐸','x'+G.ch.kick]);
+  if(G.ch.roo>0)r.push(['🦘','x'+G.ch.roo]);
+  if(G.hurry)r.push(['⏰',Math.ceil(G.hurry.t)+'s','#ff6']);
+  return{l,r};
+}
+function drawSideHUD(){
+  ctx.setTransform(RES,0,0,RES,0,0);ctx.textBaseline='middle';ctx.textAlign='center';
+  const pw=VIEW.ox,LH=VIEW.LH,rx0=VIEW.ox+W;if(pw<80)return;
+  for(const x0 of [0,rx0]){const g=ctx.createLinearGradient(0,0,0,LH);g.addColorStop(0,'#2a1660');g.addColorStop(1,'#120830');ctx.fillStyle=g;ctx.fillRect(x0,0,pw+1,LH);}
+  ctx.fillStyle=G.def.col.acc;ctx.fillRect(pw-3,0,3,LH);ctx.fillRect(rx0,0,3,LH);
+  const lx=pw/2,mw=pw-36;let y=92;
+  fitText(G.def.e+' '+L(G.def.n),lx,y,mw,22,600,0,'#cbb8ff');y+=50;
+  fitText(fmt(G.score),lx,y,mw,56,700,5,'#fff');y+=52;
+  fitText(t('ball')+' '+Math.min(G.ballNum,G.ballsTotal)+'/'+G.ballsTotal+'   ·   BONUS x'+G.bonusX,lx,y,mw,22,700,0,'#ffe27a');y+=36;
+  const m=G.mission;const bx=18,bw=pw-36;
+  if(m){const tm=m.tl>0?'  ⏱'+Math.ceil(m.tl)+'s':'';const lines=wrapLines('📜 '+missionText(m)+tm,bw-24,'600 22px Fredoka,sans-serif').slice(0,4);
+    const bh=24+lines.length*28+26;ctx.fillStyle='rgba(0,0,0,.4)';rrect(bx,y,bw,bh,14);ctx.fill();
+    ctx.textAlign='left';lines.forEach((ln,i)=>fitText(ln,bx+12,y+24+i*28,bw-24,22,600,0,m.tl>0&&m.tl<6?'#ff8':'#fff'));ctx.textAlign='center';
+    const p=Math.min(1,m.p/m.n),py=y+bh-22;ctx.fillStyle='rgba(0,0,0,.5)';rrect(bx+12,py,bw-24,12,6);ctx.fill();ctx.fillStyle='#5ce06a';rrect(bx+12,py,Math.max(12,(bw-24)*p),12,6);ctx.fill();
+    fitText(fmt(Math.min(m.p,m.n))+'/'+fmt(m.n),lx,py-10,bw,15,700,3,'#fff');y+=bh+30;}
+  fitText(t('rank')+' '+G.rank+' · '+rankName(G.rank),lx,y,mw,18,600,0,'#9fe3ff');
+  // right panel
+  const rcx=rx0+pw/2,{l,r}=hudItems();const items=r.concat(l);const cols=Math.max(1,Math.min(3,Math.floor((pw-20)/86)));const cw=(pw-20)/cols;
+  fitText(t('powerups'),rcx,92,pw-40,22,700,0,'#cbb8ff');
+  items.slice(0,cols*5).forEach((it,i)=>{const cx=rx0+10+cw*(i%cols)+cw/2,cy=150+Math.floor(i/cols)*86;ctx.fillStyle='rgba(0,0,0,.45)';circ(cx,cy,32);drawEmo(cx,cy-6,it[0],34);if(it[1])fitText(it[1],cx,cy+24,70,17,700,3,it[2]||'#fff');});
+  if(G.hurry)fitText('⏰ '+fmt(G.hurry.v*scoreMult()),rcx,LH-80,pw-30,26,700,4,'#ff6');
 }
 function nearestBall(x,y){let best=null,bd=1e9;for(const b of G.balls){const d=(b.x-x)**2+(b.y-y)**2;if(d<bd){bd=d;best=b;}}return best;}
 function googly(x,y,r,tx,ty){
@@ -1135,7 +1318,7 @@ function drawDyn(){
   const T=G.T,def=G.def,c=def.col,tm=G.time;
   ctx.textAlign='center';ctx.textBaseline='middle';
   // ambient
-  ctx.fillStyle='rgba(255,255,255,.35)';for(const a of G.ambient)circ(a.x,a.y,a.r);
+  for(const a of G.ambient){ctx.fillStyle=a.c||'rgba(255,255,255,.35)';circ(a.x,a.y,a.r);}
   // party rainbow walls overlay
   if(G.mode.party>0||G.mode.stamp>0){ctx.save();ctx.lineWidth=5;ctx.strokeStyle=G.mode.party>0?`hsl(${(tm*200)%360},90%,60%)`:`rgba(255,140,40,${0.5+0.5*Math.sin(tm*12)})`;tablePath(ctx);ctx.stroke();ctx.restore();}
   // gravity well
@@ -1182,6 +1365,16 @@ function drawDyn(){
     if(s.flash>0){ctx.strokeStyle=`rgba(255,255,255,${s.flash})`;ctx.lineWidth=10;ctx.lineCap='round';ctx.beginPath();ctx.moveTo(s.ax,s.ay);ctx.lineTo(s.bx,s.by);ctx.stroke();}
     const ex=i?520-115:115,ey=735;const nb=nearestBall(ex,ey);googly(ex,ey,7+G.slingEye*2,nb&&nb.x,nb&&nb.y);
   });
+  // portals
+  T.portals.forEach((q,i)=>{const col=i?'#ff9a3c':'#4ac8ff',sp=i?-3:3;ctx.fillStyle='rgba(0,0,0,.45)';circ(q.x,q.y,q.r+2);
+    for(let k=0;k<3;k++){ctx.strokeStyle=col;ctx.globalAlpha=0.95-k*0.25;ctx.lineWidth=3;ctx.beginPath();ctx.arc(q.x,q.y,q.r+1-k*5,tm*sp+k*2,tm*sp+k*2+Math.PI*1.3);ctx.stroke();}ctx.globalAlpha=1;});
+  // peekaboo holes
+  for(const m of T.moles){ctx.fillStyle='rgba(50,25,5,.8)';ctx.beginPath();ctx.ellipse(m.x,m.y+8,19,7,0,0,Math.PI*2);ctx.fill();ctx.strokeStyle='rgba(0,0,0,.4)';ctx.lineWidth=2;ctx.stroke();
+    if(m.rise>0){ctx.save();ctx.beginPath();ctx.rect(m.x-30,m.y-50,60,58);ctx.clip();drawEmo(m.x,m.y+10-m.rise*18,m.em,28);ctx.restore();}
+    if(m.hitT>0)drawEmo(m.x+12,m.y-22,'💥',18);}
+  // windmills
+  for(const m of T.mills){for(const a of m.arms){const tx=a.x+Math.cos(a.a)*a.len,ty=a.y+Math.sin(a.a)*a.len;ctx.fillStyle=m.flash>0?'#fff':c.wall2;flipPath(a,tx,ty);ctx.fill();ctx.strokeStyle='rgba(0,0,0,.55)';ctx.lineWidth=2;ctx.stroke();}
+    ctx.fillStyle=c.wall;circ(m.x,m.y,9);ctx.fillStyle=c.acc;circ(m.x,m.y,4);}
   // foods
   for(const f of G.foods){const a=f.life-f.t<3&&Math.sin(tm*20)>0?0.4:1;ctx.globalAlpha=a;drawEmo(f.x,f.y+Math.sin(tm*3+f.ph)*4,f.e,24);ctx.globalAlpha=1;}
   // pickups
@@ -1192,7 +1385,7 @@ function drawDyn(){
   {const C=G.crit;ctx.save();ctx.translate(C.x,C.y);
    if(C.daze>0){ctx.rotate(Math.sin(tm*10)*0.5);}
    else ctx.translate(0,-Math.abs(Math.sin(tm*8))*3);
-   ctx.scale(C.dir>0?-1:1,1);drawEmo(0,0,def.critter,40);ctx.restore();
+   if(def.ghost)ctx.globalAlpha=0.5+0.4*Math.sin(tm*2.2);ctx.scale(C.dir>0?-1:1,1);drawEmo(0,0,def.critter,40);ctx.restore();
    if(C.daze>0)for(let i=0;i<3;i++){const a=tm*5+i*2.1;drawEmo(C.x+Math.cos(a)*24,C.y-22+Math.sin(a)*6,'💫',12);}
    if(G.hurry&&Math.sin(tm*12)>-0.3)fitText('⏰ '+fmt(G.hurry.v*scoreMult()),C.x,C.y-38,160,16,700,4,'#ff6');}
   // center post, kickbacks, roo, save
@@ -1201,7 +1394,7 @@ function drawDyn(){
   if(G.ch.roo>0){drawEmo(260,968,'🦘',22);fitText('x'+G.ch.roo,284,972,30,12,700,3);}
   if(G.saveT>0&&(G.saveT>3||Math.sin(tm*14)>0)){drawEmo(232,968,'🦫',20);}
   // flippers
-  for(const f of T.flippers){
+  for(const f of T.mini?T.flippers.concat([T.mini]):T.flippers){
     const ca=Math.cos(f.a),sa=Math.sin(f.a),tx=f.x+ca*f.len,ty=f.y+sa*f.len;
     ctx.save();ctx.fillStyle='rgba(0,0,0,.3)';ctx.translate(3,5);flipPath(f,tx,ty);ctx.fill();ctx.restore();
     const g=ctx.createLinearGradient(f.x,f.y-10,f.x,f.y+10);g.addColorStop(0,G.tilted?'#777':shade(c.flip,40));g.addColorStop(1,G.tilted?'#444':c.flip);
@@ -1222,15 +1415,16 @@ function drawDyn(){
     ctx.font='700 14px Fredoka,sans-serif';const w=ctx.measureText(p.txt).width+14;ctx.fillStyle='#fff';rrect(-w/2,-12,w,24,10);ctx.fill();
     ctx.beginPath();ctx.moveTo(-5,11);ctx.lineTo(5,11);ctx.lineTo(0,19);ctx.fill();ctx.fillStyle='#222';ctx.fillText(p.txt,0,1);ctx.restore();}
   ctx.globalAlpha=1;
+  if(def.dark)drawDark();
   // hints
   const ready=G.balls.find(b=>b.inLane&&b.y>880);
   if(ready&&G.state==='play'&&G.plunge===0&&Math.sin(tm*4)>-0.5){fitText(t('launchHint')+' ➜',380,985,230,14,700,3,'#fff');}
   if(ready&&G.ballNum===1&&G.state==='play'&&G.plunge===0&&!P.seenHelp){ctx.globalAlpha=0.5;ctx.fillStyle='#fff';fitText('◀ '+t('tapLeft'),120,830,140,20,700,4);fitText(t('tapRight')+' ▶',400,830,140,20,700,4);ctx.globalAlpha=1;}
   // corner HUD inside table space
-  drawCorners();
+  if(!VIEW.cam)drawCorners();
   // messages
   if(G.msgs.length){const m=G.msgs[0],p=m.t;const sc=p<0.15?p/0.15*1.15:p<0.3?1.15-(p-0.15):1;const a=p>m.d-0.3?Math.max(0,(m.d-p)/0.3):1;
-    ctx.save();ctx.globalAlpha=a;ctx.translate(260,455);ctx.scale(sc,sc);fitText(m.txt,0,0,450,42,700,7,m.col);if(m.sub)fitText(m.sub,0,38,430,22,600,5,'#fff');ctx.restore();}
+    ctx.save();ctx.globalAlpha=a;ctx.translate(260,VIEW.cam?VIEW.camY-HUD+VIEW.LH*0.42:455);ctx.scale(sc,sc);fitText(m.txt,0,0,450,42,700,7,m.col);if(m.sub)fitText(m.sub,0,38,430,22,600,5,'#fff');ctx.restore();}
   if(G.state==='bonus'&&G.bonus)drawBonus();
 }
 function flipPath(f,tx,ty){ctx.beginPath();ctx.arc(f.x,f.y,f.r0,f.a+Math.PI/2,f.a+Math.PI*1.5);ctx.arc(tx,ty,f.r1,f.a-Math.PI/2,f.a+Math.PI/2);ctx.closePath();}
@@ -1248,6 +1442,7 @@ function drawBall(b){
     ctx.fillStyle=g;circ(b.x,b.y,b.r);}
 }
 function drawCorners(){
+  if(VIEW.cam)return;
   const L1=[[22,20],[54,20],[22,54],[54,54],[22,88],[22,122],[22,156]];let k=0;
   const item=(e,txt,col)=>{if(k>=L1.length)return;const[x,y]=L1[k++];ctx.fillStyle='rgba(0,0,0,.45)';circ(x,y,15);drawEmo(x,y-2,e,18);if(txt)fitText(txt,x,y+13,30,11,700,3,col||'#fff');};
   for(const p of PU)if(p.dur&&G.pw[p.id]>0)item(p.e,Math.ceil(G.pw[p.id])+'s');
@@ -1264,7 +1459,7 @@ function drawCorners(){
 }
 function drawBonus(){
   const B=G.bonus,tt=B.t;
-  ctx.save();ctx.globalAlpha=Math.min(1,tt*4);ctx.fillStyle='rgba(15,8,40,.88)';rrect(50,250,420,430,24);ctx.fill();ctx.strokeStyle=G.def.col.acc;ctx.lineWidth=3;ctx.stroke();
+  ctx.save();if(VIEW.cam)ctx.translate(0,VIEW.camY-HUD+(VIEW.LH-430)/2-250);ctx.globalAlpha=Math.min(1,tt*4);ctx.fillStyle='rgba(15,8,40,.88)';rrect(50,250,420,430,24);ctx.fill();ctx.strokeStyle=G.def.col.acc;ctx.lineWidth=3;ctx.stroke();
   fitText(t('bonus'),260,290,380,34,700,5,'#ffd84a');fitText(B.quip,260,326,390,17,600,4,'#fff');
   B.lines.forEach((l,i)=>{if(tt<0.35+i*0.3)return;const y=370+i*36;ctx.textAlign='left';fitText(l[0],75,y,190,18,600,3,'#cfe');ctx.textAlign='right';fitText(l[1]+' × '+fmt(l[2]),445,y,190,18,700,3,'#fff');});
   ctx.textAlign='center';
@@ -1367,15 +1562,16 @@ addEventListener('gamepadconnected',()=>toast('🎮 '+(LANG==='sv'?'Handkontroll
 function goFS(){
   const d=document.documentElement,f=d.requestFullscreen||d.webkitRequestFullscreen;
   if(f&&!document.fullscreenElement&&!document.webkitFullscreenElement){try{const p=f.call(d,{navigationUI:'hide'});if(p&&p.catch)p.catch(()=>{});}catch(e){}}
-  try{if(screen.orientation&&screen.orientation.lock)screen.orientation.lock('portrait').catch(()=>{});}catch(e){}
+  
 }
 function exitFS(){try{if(document.fullscreenElement)document.exitFullscreen().catch(()=>{});else if(document.webkitFullscreenElement)document.webkitExitFullscreen();}catch(e){}}
 const hudBtns=$('#hudBtns'),bPause=$('#bPause'),bNudge=$('#bNudge');
 function showHudBtns(v){hudBtns.style.display=v?'block':'none';positionHud();}
 function positionHud(){
   const r=cv.getBoundingClientRect();Object.assign(hudBtns.style,{left:r.left+'px',top:r.top+'px',width:r.width+'px',height:r.height+'px'});
-  const s=SCALE;Object.assign(bPause.style,{left:500*s+'px',top:10*s+'px',width:34*s+'px',height:34*s+'px',fontSize:18*s+'px'});
-  Object.assign(bNudge.style,{left:6*s+'px',top:10*s+'px',width:44*s+'px',height:34*s+'px',fontSize:18*s+'px'});
+  const s=SCALE;const pl=(el,x,y,w,h,f)=>Object.assign(el.style,{left:x*s+'px',top:y*s+'px',width:w*s+'px',height:h*s+'px',fontSize:f*s+'px'});
+  if(VIEW.cam){pl(bPause,VIEW.LW-74,14,60,52,28);pl(bNudge,14,14,72,52,28);}
+  else{pl(bPause,500,10,34,34,18);pl(bNudge,6,10,44,34,18);}
 }
 bPause.addEventListener('pointerdown',e=>{e.stopPropagation();e.preventDefault();pauseGame();});
 bNudge.addEventListener('pointerdown',e=>{e.stopPropagation();e.preventDefault();nudge();});
@@ -1448,7 +1644,7 @@ splash:()=>`<div class="panel splash" data-a="start"><div class="logo">🐄🎱�
   <p class="sub" style="font-size:14px">🇸🇪 Svenska · 🇬🇧 English</p></div>`,
 title:()=>{ensureDaily();const nx=xpNeed(P.level);const dd=P.daily.tasks.filter(x=>x.done).length;
   return`<div class="panel"><div class="logo">🐄🎱🐧</div><h1>${t('title')}</h1><p class="sub">${t('sub')}</p>
-  <div class="topbar"><span class="pill">🎓 ${t('level')} ${P.level}</span><span class="pill">🍬 ${fmt(P.coins)}</span><span class="pill">🌟 ${totalStars()}/18</span></div>
+  <div class="topbar"><span class="pill">🎓 ${t('level')} ${P.level}</span><span class="pill">🍬 ${fmt(P.coins)}</span><span class="pill">🌟 ${totalStars()}/${TABLES.length*3}</span></div>
   <div class="bar"><i style="width:${Math.round(P.xp/nx*100)}%"></i></div>
   ${P.save&&TABLES[P.save.ti]?`<button class="btn green" data-a="cont">${t('cont')}<br><small style="font-size:14px">${TABLES[P.save.ti].e} ${L(TABLES[P.save.ti].n)} · ${fmt(P.save.score)}</small></button>`:''}
   <button class="btn" data-a="go" data-v="tables">${t('play')}</button>
@@ -1457,7 +1653,7 @@ title:()=>{ensureDaily();const nx=xpNeed(P.level);const dd=P.daily.tasks.filter(
   <div class="row"><button class="btn alt" data-a="go" data-v="ach">${t('ach')}</button><button class="btn alt" data-a="go" data-v="stats">${t('stats')}</button></div>
   <div class="row"><button class="btn gray" data-a="go" data-v="settings">${t('settings')}</button><button class="btn gray" data-a="go" data-v="howto">${t('howto')}</button></div>
   <button class="btn gray small" data-a="lang">🇸🇪 Svenska ⇄ 🇬🇧 English</button></div>`;},
-tables:()=>`<div class="panel"><h2>${t('tables')}</h2><div class="topbar"><span class="pill">🌟 ${totalStars()}/18</span><span class="pill">🍬 ${fmt(P.coins)}</span></div><div class="grid">
+tables:()=>`<div class="panel"><h2>${t('tables')}</h2><div class="topbar"><span class="pill">🌟 ${totalStars()}/${TABLES.length*3}</span><span class="pill">🍬 ${fmt(P.coins)}</span></div><div class="grid">
   ${TABLES.map((d,i)=>{const u=unlocked(i),tb=P.tb[d.id];return`<button class="card tcard btn gray ${u?'':'lock'}" style="text-align:left;background:linear-gradient(${d.col.bg1},${d.col.bg2});box-shadow:0 4px 0 #0006" data-a="table" data-v="${i}">
   <div class="big">${u?d.e:'🔒'} <span style="font-size:24px">${d.animals.slice(0,3).join('')}</span></div><b>${L(d.n)}</b>
   <small style="color:#ffd84a;font-size:18px">${stars(starsFor(i))}</small>
