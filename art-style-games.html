@@ -2,7 +2,8 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes">
 <title>Twenty Styles Arcade</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -24,26 +25,37 @@ html,body{margin:0;background:var(--bg);color:var(--fg);font-family:system-ui,-a
 .card .tx{padding:11px 13px 14px}
 .card h3{margin:0 0 4px;font-size:16px}
 .card p{margin:0;font-size:13px;color:var(--mut);line-height:1.4}
-#game{display:none;flex-direction:column;align-items:center;min-height:100vh;padding:8px 8px 14px}
-#bar{display:flex;align-items:center;gap:10px;width:100%;max-width:1000px;padding:4px 2px 8px;flex-wrap:wrap}
-#bar button{font:600 14px system-ui,sans-serif;color:var(--fg);background:var(--card);border:1px solid var(--line);border-radius:8px;padding:7px 12px;cursor:pointer}
-#bar button:hover{border-color:var(--acc)}
-#gt{font-weight:700;font-size:16px}
-#gs{color:var(--mut);font-size:13px;flex:1;min-width:180px}
-#c{display:block;width:min(100%,calc((100vh - 120px)*1.6));max-width:1000px;aspect-ratio:8/5;touch-action:none;background:#000;border-radius:6px;cursor:crosshair}
-#hint{color:var(--mut);font-size:13px;margin-top:8px;text-align:center;max-width:1000px}
+#game{display:none;position:fixed;inset:0;background:#000;align-items:center;justify-content:center;overflow:hidden;touch-action:none}
+#c{display:block;touch-action:none;background:#000;cursor:crosshair;width:800px;height:500px}
+#bar{position:fixed;top:max(8px,env(safe-area-inset-top));left:max(8px,env(safe-area-inset-left));display:flex;gap:8px;z-index:6}
+#bar button{width:40px;height:40px;border-radius:50%;background:rgba(0,0,0,.5);color:#fff;border:1px solid rgba(255,255,255,.4);font:600 17px/1 system-ui,sans-serif;padding:0;cursor:pointer;opacity:.75}
+#bar button:hover{opacity:1}
+#hint{position:fixed;left:50%;top:max(10px,env(safe-area-inset-top));transform:translateX(-50%);background:rgba(0,0,0,.7);color:#fff;padding:7px 14px;border-radius:10px;font-size:13px;line-height:1.45;max-width:min(90vw,640px);text-align:center;transition:opacity .8s;pointer-events:none;z-index:6;white-space:pre-line}
+#hint.hide{opacity:0}
+.tc{position:fixed;z-index:5;display:none;touch-action:none;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;bottom:max(14px,env(safe-area-inset-bottom))}
+#tcL{left:max(14px,env(safe-area-inset-left));width:170px;height:170px;transform-origin:bottom left}
+#tcR{right:max(14px,env(safe-area-inset-right));width:110px;height:110px;transform-origin:bottom right}
+.vb{position:absolute;width:64px;height:64px;border-radius:50%;background:rgba(255,255,255,.16);border:2px solid rgba(255,255,255,.5);color:#fff;font:700 24px/1 system-ui,sans-serif;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 10px rgba(0,0,0,.35);touch-action:none}
+.vb.on{background:rgba(255,255,255,.5)}
+.joy{position:absolute;inset:5px;border-radius:50%;background:rgba(255,255,255,.12);border:2px solid rgba(255,255,255,.45);touch-action:none}
+.knob{position:absolute;left:50%;top:50%;width:62px;height:62px;margin:-31px;border-radius:50%;background:rgba(255,255,255,.45);border:2px solid #fff;pointer-events:none}
+@media (max-height:430px){#tcL,#tcR{transform:scale(.8)}#hint{font-size:11px;padding:5px 10px;max-width:60vw}}
+#rot{position:fixed;inset:0;z-index:10;background:#111;color:#fff;display:none;flex-direction:column;align-items:center;justify-content:center;font:600 18px system-ui,sans-serif;text-align:center;gap:14px;padding:20px}
+@media (max-height:500px){#menu{padding:14px 12px 30px}#menu h1{font-size:22px}#menu .sub{margin-bottom:14px;font-size:14px}.card .sw{height:54px}#grid{grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:10px}.card .tx{padding:8px 11px 10px}}
 </style>
 </head>
 <body>
 <div id="menu">
   <h1>Twenty Styles Arcade</h1>
-  <p class="sub">Twenty tiny games, each in its own art style with live-generated music to match. Everything is drawn on a canvas and every note is synthesized in your browser. Pick a card to play; press <b>Esc</b> to come back.</p>
+  <p class="sub">Twenty tiny games, each in its own art style with live-generated music to match. Everything is drawn on a canvas and every note is synthesized in your browser. Pick a card to play. Games open fullscreen and fit any screen; on a phone, hold it sideways and use the on-screen controls. Press <b>Esc</b> or ✕ to come back.</p>
   <div id="grid"></div>
 </div>
 <div id="game">
-  <div id="bar"><button id="back">← All games</button><span id="gt"></span><span id="gs"></span><button id="mute">Sound: on</button></div>
+  <div id="bar"><button id="back" aria-label="Back to all games" title="All games (Esc)">✕</button><button id="mute" aria-label="Toggle sound" title="Sound">🔊</button><button id="fs" aria-label="Toggle fullscreen" title="Fullscreen">⛶</button></div>
   <canvas id="c" width="800" height="500"></canvas>
+  <div id="tcL" class="tc"></div><div id="tcR" class="tc"></div>
   <div id="hint"></div>
+  <div id="rot"><div style="font-size:54px">📱 ↻</div>Turn your device sideways (landscape) to play</div>
 </div>
 <script>
 'use strict';
@@ -61,7 +73,8 @@ function spr(c,rows,pal,x,y,flip=false,s=1){for(let j=0;j<rows.length;j++){const
 const rgb=(a)=>`rgb(${a[0]|0},${a[1]|0},${a[2]|0})`,mixc=(a,b,t)=>[lerp(a[0],b[0],t),lerp(a[1],b[1],t),lerp(a[2],b[2],t)];
 
 // input
-const keys={},prs={};
+const keys={},prs={};let TOUCH=matchMedia('(pointer:coarse)').matches||navigator.maxTouchPoints>0&&matchMedia('(hover:none)').matches,paused=false;
+function vkey(k,d){if(d){if(!keys[k])prs[k]=1;keys[k]=1}else keys[k]=0}
 const kn=e=>{const k=e.key.toLowerCase();return k===' '?'space':k};
 addEventListener('keydown',e=>{const k=kn(e);if(!keys[k])prs[k]=1;keys[k]=1;
  if(cur&&['arrowup','arrowdown','arrowleft','arrowright','space'].includes(k))e.preventDefault();
@@ -140,10 +153,10 @@ function startGame(g,fresh){cur=g;resetCtx();g.over=false;g.overT=0;g.score=0;g.
 function overlay(g){const u=g.ui||{},f=u.font||'sans-serif';resetCtx();ctx.fillStyle=u.shade||'rgba(0,0,0,.6)';ctx.fillRect(0,0,W,H);
  ctx.textAlign='center';txt(g.msg,W/2,H/2-14,`${u.big||46}px ${f}`,u.fg||'#fff','center');
  txt((u.scoreLabel||'Score ')+Math.floor(g.score),W/2,H/2+30,`${u.small||20}px ${f}`,u.fg||'#fff','center');
- ctx.globalAlpha=.55+.45*Math.sin(T*4);txt(u.retry||'Click or press Space to play again',W/2,H/2+68,`${u.small||20}px ${f}`,u.fg||'#fff','center');ctx.globalAlpha=1}
+ ctx.globalAlpha=.55+.45*Math.sin(T*4);txt((u.retry||'Click or press Space to play again').replace(/click/gi,m=>TOUCH?(m[0]=='C'?'Tap':'tap'):m),W/2,H/2+68,`${u.small||20}px ${f}`,u.fg||'#fff','center');ctx.globalAlpha=1}
 let last=0;
-function frame(ts){const dt=Math.min(.05,(ts-(last||ts))/1000);last=ts;T+=dt;
- if(cur){let restart=false;const g=cur;resetCtx();ctx.save();g.t+=dt;
+function frame(ts){const dt=Math.min(.05,(ts-(last||ts))/1000);last=ts;T+=dt;if(M.down)M.mt=T;
+ if(cur&&!paused){let restart=false;const g=cur;resetCtx();ctx.save();g.t+=dt;
   try{if(!g.over)g.update(dt);else{g.overT+=dt;if(g.overT>.8&&(P('space','enter','r')||M.click))restart=true}g.draw(dt)}catch(e){console.error(e)}
   ctx.restore();if(g.over)overlay(g);if(restart)startGame(g,false)}
  for(const k in prs)delete prs[k];M.click=M.up=M.rclick=false;requestAnimationFrame(frame)}
@@ -233,7 +246,7 @@ spawn(){let x,y,k=0;do{x=rnd(30,770);y=rnd(30,470)}while(dist(x,y,this.p.x,this.
  const ty=pick(this.t>18?['d','d','w','c','c']:['d','d','w']);this.e.push({x,y,ty,vx:rnd(-1,1)*120,vy:rnd(-1,1)*120,r:ty=='c'?11:15,rot:0,born:0,dead:0})},
 update(dt){const p=this.p,mx=ax(),my=ay(),l=Math.hypot(mx,my)||1;
  p.vx=lerp(p.vx,mx/l*320,.18);p.vy=lerp(p.vy,my/l*320,.18);p.x=clamp(p.x+p.vx*dt,16,784);p.y=clamp(p.y+p.vy*dt,16,484);
- p.a=Math.atan2(M.y-p.y,M.x-p.x);p.inv-=dt;
+ if(TOUCH&&T-M.mt>.6){let bd=1e9,be=null;for(const e of this.e){const d=dist(e.x,e.y,p.x,p.y);if(d<bd){bd=d;be=e}}if(be)p.a=Math.atan2(be.y-p.y,be.x-p.x)}else p.a=Math.atan2(M.y-p.y,M.x-p.x);p.inv-=dt;
  if((this.fire-=dt)<=0){this.fire=.1;for(const k of[-.06,.06])this.b.push({x:p.x+Math.cos(p.a)*12,y:p.y+Math.sin(p.a)*12,vx:Math.cos(p.a+k)*720,vy:Math.sin(p.a+k)*720});
   if(R()<.5)tone({f:1500,slide:300,d:.05,type:'sawtooth',v:.012,bus:sfx})}
  for(const b of this.b){b.x+=b.vx*dt;b.y+=b.vy*dt}this.b=this.b.filter(b=>!b.dead&&b.x>-10&&b.x<810&&b.y>-10&&b.y<510);
@@ -1203,17 +1216,47 @@ music(s,t,d){const i=s%16,bar=(s>>4)%4,ch=this.UKE[['C','Am','F','G'][bar]];cons
  const mel=[0,0,72,0,74,0,76,0,0,0,79,0,76,0,74,0];if((s>>6)%2==1&&mel[i])tone({t:tt,f:mf(mel[i]+(bar==3?-1:0)),d:d*1.8,a:.05,r:.25,type:'sine',vib:[5,15],v:.04})}
 });
 
+// ================= MOBILE / FULLSCREEN =================
+const $=id=>document.getElementById(id);
+const TC={1:'lrA',2:'joy',5:'lrA',9:'lr',11:'joy',12:'dpad',15:'iso'};
+const MC=['◀ ▶ move · A jump','joystick moves · auto-aims (touch the screen to aim yourself)','tap to jump · hold to glide','tap to flap','◀ ▶ move · A jump','tap anywhere as each orb hits the ring','swipe to slash','tap the left or right half to slash','◀ ▶ steer','drag to guide the lantern','joystick moves','d-pad steers','drag to move the paddle · tap to launch','drag around the ring to orbit','diagonal pad hops around the island','tap the glass panes in order','drag to move','tap bubbles to pop them','tap the radar screen to launch','draw with your finger · tap DROP / ERASE'];
+G.forEach((g,i)=>{g.tc=TC[i+1];g.mctl=MC[i]});
+function vbtn(par,label,k,x,y,s=64){const b=document.createElement('div');b.className='vb';b.textContent=label;Object.assign(b.style,{left:x+'px',top:y+'px',width:s+'px',height:s+'px'});const ks=k.split(',');
+ const dn=e=>{e.preventDefault();try{b.setPointerCapture(e.pointerId)}catch(_){}b.classList.add('on');ks.forEach(q=>vkey(q,1));audioInit()},up=()=>{b.classList.remove('on');ks.forEach(q=>vkey(q,0))};
+ b.addEventListener('pointerdown',dn);b.addEventListener('pointerup',up);b.addEventListener('pointercancel',up);b.addEventListener('lostpointercapture',up);par.appendChild(b)}
+function joy(par){const base=document.createElement('div');base.className='joy';const kn=document.createElement('div');kn.className='knob';base.appendChild(kn);par.appendChild(base);let id=null;
+ const ctr=()=>{const r=base.getBoundingClientRect();return[r.left+r.width/2,r.top+r.height/2,r.width/160]};
+ const set=(dx,dy,sc=1)=>{dx/=sc;dy/=sc;const l=Math.hypot(dx,dy);if(l>58){dx*=58/l;dy*=58/l}kn.style.transform=`translate(${dx}px,${dy}px)`;const t=20;vkey('arrowleft',dx<-t);vkey('arrowright',dx>t);vkey('arrowup',dy<-t);vkey('arrowdown',dy>t)};
+ base.addEventListener('pointerdown',e=>{e.preventDefault();id=e.pointerId;try{base.setPointerCapture(id)}catch(_){}const[x,y,s]=ctr();set(e.clientX-x,e.clientY-y,s);audioInit()});
+ base.addEventListener('pointermove',e=>{if(e.pointerId!==id)return;const[x,y,s]=ctr();set(e.clientX-x,e.clientY-y,s)});
+ const end=()=>{id=null;set(0,0)};base.addEventListener('pointerup',end);base.addEventListener('pointercancel',end)}
+function setupControls(g){const L=$('tcL'),Rt=$('tcR');L.innerHTML=Rt.innerHTML='';L.style.display=Rt.style.display='none';for(const k in keys)keys[k]=0;if(!g||!TOUCH||!g.tc)return;L.style.display='block';const c=g.tc;
+ if(c=='joy')joy(L);
+ else if(c=='dpad'){vbtn(L,'▲','arrowup',53,0);vbtn(L,'◀','arrowleft',0,53);vbtn(L,'▶','arrowright',106,53);vbtn(L,'▼','arrowdown',53,106)}
+ else if(c=='iso'){vbtn(L,'↖','arrowleft',8,8);vbtn(L,'↗','arrowup',98,8);vbtn(L,'↙','arrowdown',8,98);vbtn(L,'↘','arrowright',98,98)}
+ else{vbtn(L,'◀','arrowleft',0,90,76);vbtn(L,'▶','arrowright',90,90,76)}
+ if(c=='lrA'){Rt.style.display='block';vbtn(Rt,'A','space',20,20,86)}}
+addEventListener('pointerdown',e=>{if(e.pointerType==='touch'&&!TOUCH){TOUCH=true;if(cur){setupControls(cur);fit()}}},true);
+function fit(){const vw=innerWidth,vh=innerHeight,s=Math.min(vw/800,vh/500);cv.style.width=Math.floor(800*s)+'px';cv.style.height=Math.floor(500*s)+'px';
+ const port=!!cur&&TOUCH&&vh>vw;$('rot').style.display=port?'flex':'none';paused=port}
+addEventListener('resize',fit);addEventListener('orientationchange',()=>setTimeout(fit,250));
+const isFS=()=>!!(document.fullscreenElement||document.webkitFullscreenElement);
+function goFS(){const d=document.documentElement,f=d.requestFullscreen||d.webkitRequestFullscreen;if(f&&!isFS()){try{const r=f.call(d,{navigationUI:'hide'});if(r&&r.catch)r.catch(()=>{})}catch(_){}}
+ setTimeout(()=>{try{const r=screen.orientation&&screen.orientation.lock&&screen.orientation.lock('landscape');if(r&&r.catch)r.catch(()=>{})}catch(_){}},300)}
+function exitFS(){const f=document.exitFullscreen||document.webkitExitFullscreen;if(isFS()&&f){try{const r=f.call(document);if(r&&r.catch)r.catch(()=>{})}catch(_){}}}
+let hintT=0;function showHint(s){const h=$('hint');h.textContent=s;h.classList.remove('hide');clearTimeout(hintT);hintT=setTimeout(()=>h.classList.add('hide'),5500)}
 // ================= MENU =================
-const menu=document.getElementById('menu'),gameEl=document.getElementById('game'),grid=document.getElementById('grid');
+const menu=$('menu'),gameEl=$('game'),grid=$('grid');
 G.forEach((g,i)=>{const b=document.createElement('button');b.className='card';b.innerHTML=`<div class="sw" style="background:${g.sw}"><b>${String(i+1).padStart(2,'0')}</b></div><div class="tx"><h3>${g.n}</h3><p>${g.st}<br>♪ ${g.mu}</p></div>`;
- b.onclick=()=>openGame(i);grid.appendChild(b)});
-function openGame(i){audioInit();const g=G[i];menu.style.display='none';gameEl.style.display='flex';
- document.getElementById('gt').textContent=(i+1)+'. '+g.n;document.getElementById('gs').textContent=g.st+' · ♪ '+g.mu;document.getElementById('hint').textContent=g.ctl+'  ·  Esc = back to menu';
- startGame(g,true);history.replaceState(null,'','#'+(i+1))}
-function showMenu(){cur=null;Seq.stop();if(AC)newBus();gameEl.style.display='none';menu.style.display='block';history.replaceState(null,'',location.pathname+location.search)}
-document.getElementById('back').onclick=showMenu;
-document.getElementById('mute').onclick=e=>{muted=!muted;if(master)master.gain.setTargetAtTime(muted?0:.75,AC.currentTime,.02);e.target.textContent='Sound: '+(muted?'off':'on')};
-const hn=parseInt(location.hash.slice(1));if(hn>=1&&hn<=G.length)openGame(hn-1);
+ b.onclick=()=>openGame(i,true);grid.appendChild(b)});
+function openGame(i,gesture){audioInit();if(gesture)goFS();const g=G[i];menu.style.display='none';gameEl.style.display='flex';document.body.style.overflow='hidden';
+ startGame(g,true);setupControls(g);fit();showHint(`${i+1}. ${g.n} — ${g.st} · ♪ ${g.mu}\n${TOUCH?g.mctl:g.ctl+'  ·  Esc = menu'}`);history.replaceState(null,'','#'+(i+1))}
+function showMenu(){cur=null;paused=false;Seq.stop();if(AC)newBus();setupControls(null);exitFS();gameEl.style.display='none';menu.style.display='block';document.body.style.overflow='';$('rot').style.display='none';history.replaceState(null,'',location.pathname+location.search)}
+$('back').onclick=showMenu;
+$('fs').onclick=()=>{isFS()?exitFS():goFS();setTimeout(fit,300)};
+$('mute').onclick=e=>{muted=!muted;if(master)master.gain.setTargetAtTime(muted?0:.75,AC.currentTime,.02);e.currentTarget.textContent=muted?'🔇':'🔊'};
+document.addEventListener('fullscreenchange',fit);document.addEventListener('webkitfullscreenchange',fit);
+const hn=parseInt(location.hash.slice(1));if(hn>=1&&hn<=G.length)openGame(hn-1,false);
 </script>
 </body>
 </html>
