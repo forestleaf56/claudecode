@@ -23,6 +23,7 @@ A second, separate game in `starhaven.html`: a cozy, slow-paced, story-driven 2D
 - **Languages:** English and Svenska (title screen or Settings).
 - **Controls:** keyboard, touch (D-pad, ⤒ jump, ✋ use) and gamepad (B confirms, uses and talks; A jumps, cancels and goes back; Y bag, Start menu, LB/RB tabs, right stick or LT/RT scrolls menus). Fullscreen on by default.
 - **Quest tracker:** shows up to two active quests with every goal ticked off and where each person is.
+- **Drawn icons:** every icon (items, crops, fish, animals, furniture, UI symbols, flags) is hand-drawn vector art, so the game uses no emoji at all and looks the same on every device.
 - **Splash:** opens with the "Cozy Forest" splash screen (shared with Hamnljus).
 - **Saving:** 3 slots, autosave every 30 seconds, plus saving when you sleep and when the tab is hidden.
 - **Look & sound:** smooth, rounded vector art with a distinct theme for every area (wood-panelled cabin with curtains and fairy lights, bridge viewscreen and consoles, vine-covered hydroponics with grow lights, gears and pipes in engineering, market stalls and string lights on the Promenade, crates and hazard stripes in cargo, constellations and orreries in the observatory, fish tanks in the aquarium, barn windows and hay bales on the ranch, sunlit trellises in the dome, solar panels on the hull, glowing conduits in the reactor, trees on Verdance), themed floors, lights and ambient particles, and a generative soundtrack whose mood changes per area, day and night.
