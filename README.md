@@ -22,3 +22,4 @@ A dark, cozy, story-driven top-down survival crafting RPG in a single file: open
 - **Controls:** keyboard + mouse, touch (virtual stick and buttons), and gamepad for both play and all menus. Fullscreen is requested on start.
 - **Saving:** autosaves every 30 seconds, on sleep and when the tab is hidden.
 - **Splash:** opens with the same 10-second Cozy Forest splash as Starhaven.
+- **Art:** round, smooth vector-style graphics (soft rounded terrain, gradient trees and rocks, chibi characters, glossy creatures) with dark, glowing lighting.
