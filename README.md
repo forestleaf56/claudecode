@@ -23,3 +23,4 @@ A dark, cozy, story-driven top-down survival crafting RPG in a single file: open
 - **Saving:** autosaves every 30 seconds, on sleep and when the tab is hidden.
 - **Splash:** opens with the same 10-second Cozy Forest splash as Starhaven.
 - **Art:** round, smooth vector-style graphics (soft rounded terrain, gradient trees and rocks, chibi characters, glossy creatures) with dark, glowing lighting.
+- **Music & sound:** a smooth generative score (warm pads, bells, plucks and flute with reverb) with its own mood for the village by day and night, each region, the mine and boss fights, plus soft ambience and rounded sound effects.
