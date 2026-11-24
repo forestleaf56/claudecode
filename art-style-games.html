@@ -19,7 +19,8 @@ html,body{margin:0;background:var(--bg);color:var(--fg);font-family:system-ui,-a
 #menu .sub{color:var(--mut);margin:0 0 22px;max-width:70ch;line-height:1.5}
 #grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:14px}
 .card{all:unset;cursor:pointer;display:flex;flex-direction:column;background:var(--card);border:1px solid var(--line);border-radius:12px;overflow:hidden;transition:transform .15s,border-color .15s}
-.card:hover,.card:focus-visible{transform:translateY(-2px);border-color:var(--acc)}
+.card:hover,.card:focus-visible,.card.padsel{transform:translateY(-2px);border-color:var(--acc)}
+.card.padsel{box-shadow:0 0 0 3px var(--acc);outline:none}
 .card .sw{height:84px;position:relative}
 .card .sw b{position:absolute;left:10px;top:8px;font:700 13px/1 ui-monospace,monospace;color:#fff;background:rgba(0,0,0,.45);padding:4px 7px;border-radius:6px}
 .card .tx{padding:11px 13px 14px}
@@ -33,6 +34,7 @@ html,body{margin:0;background:var(--bg);color:var(--fg);font-family:system-ui,-a
 #pm .box{background:#17171d;color:#f1f1f4;border:1px solid #33333d;border-radius:16px;padding:18px 18px 14px;width:min(340px,92vw);max-height:92vh;overflow:auto;text-align:center}
 #pm h2{margin:0 0 2px;font-size:20px}#pm p{margin:0 0 12px;color:#a3a3b0;font-size:13px}
 #pm button{display:block;width:100%;margin:7px 0;padding:11px;border-radius:10px;border:1px solid #3a3a46;background:#23232b;color:#f1f1f4;font:600 15px system-ui,sans-serif;cursor:pointer}
+#pm button.padsel{border-color:#8fd3ff;background:#2b2b35;box-shadow:0 0 0 2px #8fd3ff}
 #pm button:hover,#pm button:focus-visible{border-color:#8fd3ff;outline:none;background:#2b2b35}
 #pm .ph{margin:8px 0 0;font-size:12px}
 @media (max-height:420px){#pm .box{padding:12px}#pm button{padding:8px;margin:5px 0}}
@@ -1244,7 +1246,7 @@ function joy(par){const base=document.createElement('div');base.className='joy';
  base.addEventListener('pointerdown',e=>{e.preventDefault();id=e.pointerId;try{base.setPointerCapture(id)}catch(_){}const[x,y,s]=ctr();set(e.clientX-x,e.clientY-y,s);audioInit()});
  base.addEventListener('pointermove',e=>{if(e.pointerId!==id)return;const[x,y,s]=ctr();set(e.clientX-x,e.clientY-y,s)});
  const end=()=>{id=null;set(0,0)};base.addEventListener('pointerup',end);base.addEventListener('pointercancel',end)}
-function setupControls(g){const L=$('tcL'),Rt=$('tcR');L.innerHTML=Rt.innerHTML='';L.style.display=Rt.style.display='none';for(const k in keys)keys[k]=0;if(!g||!TOUCH||!g.tc)return;L.style.display='block';const c=g.tc;
+function setupControls(g){const L=$('tcL'),Rt=$('tcR');L.innerHTML=Rt.innerHTML='';L.style.display=Rt.style.display='none';for(const k in keys)keys[k]=0;if(!g||!TOUCH||!g.tc||PAD.on)return;L.style.display='block';const c=g.tc;
  if(c=='joy')joy(L);
  else if(c=='dpad'){vbtn(L,'▲','arrowup',53,0);vbtn(L,'◀','arrowleft',0,53);vbtn(L,'▶','arrowright',106,53);vbtn(L,'▼','arrowdown',53,106)}
  else if(c=='iso'){vbtn(L,'↖','arrowleft',8,8);vbtn(L,'↗','arrowup',98,8);vbtn(L,'↙','arrowdown',8,98);vbtn(L,'↘','arrowright',98,98)}
@@ -1264,11 +1266,11 @@ const menu=$('menu'),gameEl=$('game'),grid=$('grid');
 G.forEach((g,i)=>{const b=document.createElement('button');b.className='card';b.innerHTML=`<div class="sw" style="background:${g.sw}"><b>${String(i+1).padStart(2,'0')}</b></div><div class="tx"><h3>${g.n}</h3><p>${g.st}<br>♪ ${g.mu}</p></div>`;
  b.onclick=()=>openGame(i,true);grid.appendChild(b)});
 function openGame(i,gesture){audioInit();if(gesture)goFS();const g=G[i];menu.style.display='none';gameEl.style.display='flex';document.body.style.overflow='hidden';
- startGame(g,true);setupControls(g);fit();setTimeout(fit,400);showHint(`${i+1}. ${g.n} — ${g.st} · ♪ ${g.mu}\n${PAD.on?g.pctl:TOUCH?g.mctl:g.ctl+'  ·  Esc = pause'}`);history.replaceState(null,'','#'+(i+1))}
-function showMenu(){if(pmOpen)setPause(false);cur=null;paused=false;Seq.stop();if(AC)newBus();setupControls(null);exitFS();gameEl.style.display='none';menu.style.display='block';document.body.style.overflow='';$('rot').style.display='none';history.replaceState(null,'',location.pathname+location.search)}
+ startGame(g,true);setupControls(g);fit();setTimeout(fit,400);showHint(`${i+1}. ${g.n} — ${g.st} · ♪ ${g.mu}\n${PAD.on?g.pctl:TOUCH?g.mctl:g.ctl+'  ·  Esc = pause'}`);history.replaceState(null,'','#'+(i+1));PAD.mi=i;menuSel()}
+function showMenu(){if(pmOpen)setPause(false);const gi=G.indexOf(cur);if(gi>=0)PAD.mi=gi;cur=null;paused=false;Seq.stop();if(AC)newBus();setupControls(null);exitFS();gameEl.style.display='none';menu.style.display='block';document.body.style.overflow='';$('rot').style.display='none';history.replaceState(null,'',location.pathname+location.search);menuSel(true);setTimeout(()=>menuSel(true),350)}
 function setPause(on){if(!cur&&on)return;pmOpen=on;$('pm').style.display=on?'flex':'none';for(const k in keys)keys[k]=0;M.down=false;
  if(AC){try{on?AC.suspend():AC.resume()}catch(_){}}
- if(on){$('pmt').textContent=cur.n;$('pms').textContent=cur.st+' · ♪ '+cur.mu;$('pmMute').textContent=muted?'🔇 Sound: off':'🔊 Sound: on';$('pmFs').textContent=isFS()?'⛶ Exit fullscreen':'⛶ Fullscreen';PAD.mi2=0;$('pmResume').focus()}}
+ if(on){$('pmt').textContent=cur.n;$('pms').textContent=cur.st+' · ♪ '+cur.mu;$('pmMute').textContent=muted?'🔇 Sound: off':'🔊 Sound: on';$('pmFs').textContent=isFS()?'⛶ Exit fullscreen':'⛶ Fullscreen';PAD.mi2=0;pmSel()}}
 $('pz').onclick=()=>setPause(true);
 $('pmResume').onclick=()=>setPause(false);
 $('pmMenu').onclick=showMenu;
@@ -1279,20 +1281,26 @@ document.addEventListener('visibilitychange',()=>{if(document.hidden&&cur&&!pmOp
 // ================= GAMEPAD =================
 function padKey(k,on){if(!!PAD.keys[k]!==on){PAD.keys[k]=on;vkey(k,on)}}
 function padRelease(){for(const k in PAD.keys)if(PAD.keys[k])padKey(k,false);if(PAD.mdown){PAD.mdown=false;M.down=false;M.up=true}}
-addEventListener('gamepadconnected',e=>{PAD.on=true;showHint('🎮 Controller connected: '+(e.gamepad.id||'').split('(')[0].trim().slice(0,40))});
-addEventListener('gamepaddisconnected',()=>{PAD.on=false;padRelease()});
+addEventListener('gamepadconnected',e=>{padOn(true);showHint('🎮 Controller connected: '+(e.gamepad.id||'').split('(')[0].trim().slice(0,40))});
+addEventListener('gamepaddisconnected',()=>{const gs=navigator.getGamepads?[...navigator.getGamepads()].filter(g=>g&&g.connected):[];if(!gs.length)padOn(false)});
+function padOn(v){if(PAD.on===v)return;PAD.on=v;if(!v)padRelease();setupControls(cur);menuSel(v);if(pmOpen)pmSel()}
+function menuSel(scroll){const cards=[...grid.children],show=PAD.on&&!cur&&SP.done;PAD.mi=clamp(PAD.mi|0,0,cards.length-1);
+ cards.forEach((c,i)=>c.classList.toggle('padsel',show&&i===PAD.mi));if(show){const c=cards[PAD.mi];try{c.focus({preventScroll:true})}catch(_){c.focus()}if(scroll)c.scrollIntoView({block:'nearest'})}}
+const PMB=['pmResume','pmMute','pmFs','pmMenu'];
+function pmSel(){PMB.forEach((id,j)=>$(id).classList.toggle('padsel',PAD.on&&j===(PAD.mi2||0)));$(PMB[PAD.mi2||0]).focus()}
+function padRep(D,k){if(D[k]&&!PAD.pdir[k]){PAD.rep=T+.4;return true}if(D[k]&&T>=PAD.rep){PAD.rep=T+.12;return true}return false}
 function pollPad(dt){const gs=navigator.getGamepads?navigator.getGamepads():[];let gp=null;for(const g of gs||[])if(g&&g.connected){gp=g;break}
- if(!gp){if(PAD.on){PAD.on=false;padRelease()}return}
+ if(!gp){if(PAD.on)padOn(false);return}
  const b=gp.buttons,a=gp.axes,dz=v=>Math.abs(v)<.18?0:v,now=b.map(x=>!!x&&(x.pressed||x.value>.5)),edge=i=>now[i]&&!PAD.prev[i],rel=i=>!now[i]&&PAD.prev[i];
  PAD.lx=dz(a[0]||0);PAD.ly=dz(a[1]||0);PAD.rx=dz(a[2]||0);PAD.ry=dz(a[3]||0);
- if(now.some(x=>x)||PAD.lx||PAD.ly||PAD.rx||PAD.ry){if(!PAD.on){PAD.on=true;showHint('🎮 Controller ready')}}
+ if(now.some(x=>x)||PAD.lx||PAD.ly||PAD.rx||PAD.ry){if(!PAD.on){padOn(true);showHint('🎮 Controller ready')}}
  const D={up:now[12]||PAD.ly<-.5,dn:now[13]||PAD.ly>.5,lf:now[14]||PAD.lx<-.5,rt:now[15]||PAD.lx>.5},de=k=>D[k]&&!PAD.pdir[k];
  if(!SP.done){if(edge(0)||edge(9)||edge(1))endSplash()}
- else if(!cur){const cards=[...grid.children];if(!cards.length){}else{let cols=1;while(cols<cards.length&&cards[cols].offsetTop===cards[0].offsetTop)cols++;let i=PAD.mi;
-   if(de('lf'))i--;if(de('rt'))i++;if(de('up'))i-=cols;if(de('dn'))i+=cols;i=clamp(i,0,cards.length-1);
-   if(i!==PAD.mi||(document.activeElement!==cards[i]&&(de('lf')||de('rt')||de('up')||de('dn')))){PAD.mi=i;cards[i].focus();cards[i].scrollIntoView({block:'nearest'})}
+ else if(!cur){const cards=[...grid.children];if(!cards.length){}else{let cols=1;while(cols<cards.length&&cards[cols].offsetTop===cards[0].offsetTop)cols++;const ae=cards.indexOf(document.activeElement);if(ae>=0&&ae!==PAD.mi)PAD.mi=ae;let i=PAD.mi;
+   if(padRep(D,'lf'))i--;if(padRep(D,'rt'))i++;if(padRep(D,'up'))i-=cols;if(padRep(D,'dn'))i+=cols;i=clamp(i,0,cards.length-1);
+   const sel=cards[i].classList.contains('padsel');if(i!==PAD.mi||!sel){PAD.mi=i;menuSel(true)}
    if(edge(0)||edge(9))openGame(PAD.mi,true)}}
- else if(pmOpen){const bt=['pmResume','pmMute','pmFs','pmMenu'];let j=PAD.mi2||0;if(de('up'))j=(j+3)%4;if(de('dn'))j=(j+1)%4;if(j!==(PAD.mi2||0)){PAD.mi2=j;$(bt[j]).focus()}
+ else if(pmOpen){const bt=['pmResume','pmMute','pmFs','pmMenu'];const ae=bt.indexOf(document.activeElement&&document.activeElement.id);let j=ae>=0?ae:(PAD.mi2||0);if(padRep(D,'up'))j=(j+3)%4;if(padRep(D,'dn'))j=(j+1)%4;if(j!==(PAD.mi2||0)||!$(bt[j]).classList.contains('padsel')){PAD.mi2=j;pmSel()}
    if(edge(9))setPause(false);else if(edge(1)||edge(8))showMenu();else if(edge(0))$(bt[PAD.mi2||0]).click()}
  else{if(edge(9)){padRelease();setPause(true);PAD.prev=now;PAD.pdir=D;return}
   if(edge(8)){padRelease();showMenu();PAD.prev=now;PAD.pdir=D;return}
@@ -1309,7 +1317,7 @@ const SP={el:$('splash'),start:performance.now(),dur:10000,fade:0,done:false,tex
 function endSplash(){if(!SP.fade&&!SP.done)SP.fade=performance.now()}
 SP.el.addEventListener('pointerdown',e=>{e.preventDefault();endSplash()});
 addEventListener('keydown',()=>{if(!SP.done)endSplash()});
-function afterSplash(){const hn=parseInt(location.hash.slice(1));if(hn>=1&&hn<=G.length)openGame(hn-1,false);else if(PAD.on){grid.children[0].focus()}}
+function afterSplash(){const hn=parseInt(location.hash.slice(1));if(hn>=1&&hn<=G.length)openGame(hn-1,false);else menuSel(true)}
 function drawSplash(){const now=performance.now(),el=SP.el,dpr=Math.min(2,devicePixelRatio||1),w=innerWidth,h=innerHeight;
  if(el.width!==Math.round(w*dpr)||el.height!==Math.round(h*dpr)){el.width=Math.round(w*dpr);el.height=Math.round(h*dpr)}
  const c=el.getContext('2d'),t=(now-SP.start)/1000;if(!SP.fade&&now-SP.start>=SP.dur)SP.fade=now;
