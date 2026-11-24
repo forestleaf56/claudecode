@@ -30,6 +30,7 @@ html,body{margin:0;background:var(--bg);color:var(--fg);font-family:system-ui,-a
 #c{display:block;touch-action:none;background:#000;cursor:crosshair;width:100vw;height:100vh;height:100dvh}
 #pz{position:fixed;top:max(6px,env(safe-area-inset-top));left:50%;transform:translateX(-50%);width:38px;height:38px;border-radius:50%;background:rgba(0,0,0,.45);color:#fff;border:1px solid rgba(255,255,255,.45);font:700 13px/1 system-ui,sans-serif;padding:0;cursor:pointer;opacity:.45;z-index:6;transition:opacity .3s}
 #pz:hover,#pz:focus-visible{opacity:1}
+body.pad #pz{display:none}
 #pm{position:fixed;inset:0;z-index:9;background:rgba(0,0,0,.62);display:none;align-items:center;justify-content:center;padding:16px;backdrop-filter:blur(3px)}
 #pm .box{background:#17171d;color:#f1f1f4;border:1px solid #33333d;border-radius:16px;padding:18px 18px 14px;width:min(340px,92vw);max-height:92vh;overflow:auto;text-align:center}
 #pm h2{margin:0 0 2px;font-size:20px}#pm p{margin:0 0 12px;color:#a3a3b0;font-size:13px}
@@ -1283,7 +1284,7 @@ function padKey(k,on){if(!!PAD.keys[k]!==on){PAD.keys[k]=on;vkey(k,on)}}
 function padRelease(){for(const k in PAD.keys)if(PAD.keys[k])padKey(k,false);if(PAD.mdown){PAD.mdown=false;M.down=false;M.up=true}}
 addEventListener('gamepadconnected',e=>{padOn(true);showHint('🎮 Controller connected: '+(e.gamepad.id||'').split('(')[0].trim().slice(0,40))});
 addEventListener('gamepaddisconnected',()=>{const gs=navigator.getGamepads?[...navigator.getGamepads()].filter(g=>g&&g.connected):[];if(!gs.length)padOn(false)});
-function padOn(v){if(PAD.on===v)return;PAD.on=v;if(!v)padRelease();setupControls(cur);menuSel(v);if(pmOpen)pmSel()}
+function padOn(v){if(PAD.on===v)return;PAD.on=v;document.body.classList.toggle('pad',v);if(!v)padRelease();setupControls(cur);menuSel(v);if(pmOpen)pmSel()}
 function menuSel(scroll){const cards=[...grid.children],show=PAD.on&&!cur&&SP.done;PAD.mi=clamp(PAD.mi|0,0,cards.length-1);
  cards.forEach((c,i)=>c.classList.toggle('padsel',show&&i===PAD.mi));if(show){const c=cards[PAD.mi];try{c.focus({preventScroll:true})}catch(_){c.focus()}if(scroll)c.scrollIntoView({block:'nearest'})}}
 const PMB=['pmResume','pmMute','pmFs','pmMenu'];
