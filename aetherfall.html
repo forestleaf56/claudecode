@@ -30,11 +30,15 @@ h1,h2,h3,.cinzel{font-family:'Cinzel',Georgia,serif;letter-spacing:.04em}
 /* ---------- title ---------- */
 .screen{position:fixed;inset:0;z-index:50;display:flex;flex-direction:column;align-items:center;justify-content:center}
 #title{background:radial-gradient(ellipse at 50% 35%,rgba(40,50,90,.15),rgba(5,6,12,.75))}
-#title .logo{font-family:'Cinzel',serif;font-weight:900;font-size:min(13vw,96px);letter-spacing:.12em;color:#f7e7b4;text-shadow:0 0 30px rgba(130,170,255,.6),0 4px 0 #6b5220,0 8px 30px #000;margin-top:-6vh}
-#title .sub{font-family:'Cinzel',serif;color:#cfe0ff;font-size:min(4.5vw,22px);letter-spacing:.3em;margin:6px 0 40px;text-shadow:0 2px 10px #000}
-#title .menu{display:flex;flex-direction:column;gap:12px;width:260px}
-#title .menu .btn{font-family:'Cinzel',serif;font-size:18px;padding:10px}
-#title .foot{position:absolute;bottom:14px;color:var(--dim);font-size:12px;text-align:center;line-height:1.5}
+#title{padding:max(12px,env(safe-area-inset-top)) max(12px,env(safe-area-inset-right)) max(12px,env(safe-area-inset-bottom)) max(12px,env(safe-area-inset-left));overflow:hidden}
+#title .logo{font-family:'Cinzel',serif;font-weight:900;font-size:clamp(28px,min(10.5vw,15vh),96px);letter-spacing:.08em;white-space:nowrap;max-width:100%;text-align:center;color:#f7e7b4;text-shadow:0 0 30px rgba(130,170,255,.6),0 4px 0 #6b5220,0 8px 30px #000;margin-top:-6vh}
+#title .sub{font-family:'Cinzel',serif;color:#cfe0ff;font-size:clamp(11px,min(3.6vw,4.2vh),22px);letter-spacing:.24em;text-align:center;margin:6px 0 clamp(14px,5vh,40px);text-shadow:0 2px 10px #000}
+#title .menu{display:flex;flex-direction:column;gap:clamp(6px,1.6vh,12px);width:min(260px,78vw)}
+#title .menu .btn{font-family:'Cinzel',serif;font-size:clamp(14px,2.4vh,18px);padding:clamp(7px,1.4vh,10px);min-height:42px}
+#title .foot{position:absolute;left:0;right:0;bottom:max(10px,env(safe-area-inset-bottom));padding:0 12px;color:var(--dim);font-size:12px;text-align:center;line-height:1.5}
+.touch #title .foot .kbd{display:none}#title .foot .tch{display:none}.touch #title .foot .tch{display:inline}
+#fsHint{text-align:center;max-width:90vw}
+@media (max-height:520px){#title .logo{margin-top:0}#title .foot{position:static;margin-top:10px;font-size:10px;line-height:1.35}#fsHint{margin-top:8px;font-size:12px}}
 /* ---------- creator ---------- */
 #creator{align-items:flex-start;justify-content:flex-start;pointer-events:none}
 #creator .cpanel{pointer-events:auto;margin:20px;width:340px;max-height:calc(100% - 40px);overflow:auto;padding:16px}
@@ -265,7 +269,7 @@ html,body{touch-action:none;overscroll-behavior:none;-webkit-tap-highlight-color
     <button class="btn" id="btnImport">Import Save</button>
   </div>
   <div id="fsHint">Click, tap or press any key to play in fullscreen · Touch &amp; controllers supported</div>
-  <div class="foot">An original single-file fantasy MMORPG · WASD move · Mouse drag camera · 1–0 actions · Tab target · F interact<br>3D models: KayKit packs by Kay Lousberg (CC0) · Fox by PixelMannen (CC0), rigged &amp; animated by tomkranis (CC-BY 4.0)</div>
+  <div class="foot"><span class="kbd">An original single-file fantasy MMORPG · WASD move · Mouse drag camera · 1–0 actions · Tab target · F interact</span><span class="tch">An original single-file fantasy MMORPG · Drag left to move · Drag right to look · Tap to target</span><br>3D models: KayKit packs by Kay Lousberg (CC0) · Fox by PixelMannen (CC0), rigged &amp; animated by tomkranis (CC-BY 4.0)</div>
 </div>
 <div id="creator" class="screen hidden"><div class="cpanel panel" id="cpanel"></div></div>
 <div id="hud" class="hidden">
@@ -11636,14 +11640,22 @@ UI.savedPing = function () { const e = $('#saveInd'); if (!e) return; e.classLis
 /* ---------------- fullscreen by default ---------------- */
 const FS = {
   want() { try { const v = localStorage.getItem('aetherfall_fs'); return v == null ? true : v === '1'; } catch (e) { return true; } },
-  set(on) { try { localStorage.setItem('aetherfall_fs', on ? '1' : '0'); } catch (e) { } if (on) FS.enter(); else FS.exit(); },
-  enter() { const d = document.documentElement; if (document.fullscreenElement || !d.requestFullscreen) return; d.requestFullscreen({ navigationUI: 'hide' }).catch(() => { }); },
-  exit() { if (document.fullscreenElement && document.exitFullscreen) document.exitFullscreen().catch(() => { }); },
-  tried: false,
+  set(on) { try { localStorage.setItem('aetherfall_fs', on ? '1' : '0'); } catch (e) { } FS.userExited = false; if (on) FS.enter(); else FS.exit(); },
+  active() { return !!(document.fullscreenElement || document.webkitFullscreenElement); },
+  supported() { const d = document.documentElement; return !!(d.requestFullscreen || d.webkitRequestFullscreen); },
+  enter() {
+    const d = document.documentElement; if (FS.active()) return;
+    try { if (d.requestFullscreen) { const r = d.requestFullscreen({ navigationUI: 'hide' }); if (r && r.catch) r.catch(() => { }); } else if (d.webkitRequestFullscreen) d.webkitRequestFullscreen(); } catch (e) { }
+  },
+  exit() { try { if (document.exitFullscreen && document.fullscreenElement) document.exitFullscreen().catch(() => { }); else if (document.webkitExitFullscreen && document.webkitFullscreenElement) document.webkitExitFullscreen(); } catch (e) { } },
+  was: false, userExited: false,
 };
-function fsGesture() { if (FS.tried) return; FS.tried = true; if (FS.want()) FS.enter(); }
-addEventListener('pointerdown', fsGesture, true); addEventListener('keydown', fsGesture, true); addEventListener('touchend', fsGesture, true);
-document.addEventListener('fullscreenchange', () => { const h = $('#fsHint'); if (h) h.style.display = document.fullscreenElement || !FS.want() ? 'none' : ''; });
+// Request fullscreen on every activation gesture (tap/click/key) until it succeeds; once the player leaves fullscreen themselves, respect that.
+function fsGesture() { if (!FS.want() || FS.userExited || FS.active() || !FS.supported()) return; FS.enter(); }
+for (const ev of ['pointerup', 'touchend', 'click', 'mousedown', 'keydown']) addEventListener(ev, fsGesture, true);
+function fsChanged() { if (FS.active()) FS.was = true; else if (FS.was) FS.userExited = true; const h = $('#fsHint'); if (h) h.style.display = FS.active() || !FS.want() ? 'none' : ''; }
+document.addEventListener('fullscreenchange', fsChanged); document.addEventListener('webkitfullscreenchange', fsChanged);
+if (!FS.supported()) { const h = $('#fsHint'); if (h) h.innerHTML = /iPhone|iPod/i.test(navigator.userAgent) ? 'Tip: on iPhone, use Share → <b>Add to Home Screen</b> to play fullscreen' : 'Touch &amp; controllers supported'; }
 
 /* ---------------- gamepad ---------------- */
 const PAD = { connected: false, active: false, prev: [], mx: 0, my: 0, jump: false, focusEl: null, navT: 0, labels: false };
@@ -11753,7 +11765,7 @@ function pollPad(dt) {
    tap targeting, action buttons, compact layout, lighter graphics
    ========================================================================== */
 const IS_TOUCH = (window.matchMedia && matchMedia('(pointer: coarse)').matches) || (navigator.maxTouchPoints > 0 && /Mobi|Android|iPad|iPhone|iPod|Tablet/i.test(navigator.userAgent));
-if (IS_TOUCH) document.body.classList.add('touch');
+if (IS_TOUCH) { document.body.classList.add('touch'); const h = $('#fsHint'); if (h && FS.supported()) h.innerHTML = 'Tap anywhere to play in fullscreen · Controllers supported'; }
 const TOUCH = { mx: 0, my: 0, jump: false, joy: null, cam: null, pinch: null };
 
 /* ---------- lighter defaults on phones/tablets ---------- */
@@ -11811,7 +11823,7 @@ function bindTouch() {
   const cv = $('#view');
   const opts = { passive: false };
   cv.addEventListener('touchstart', e => {
-    e.preventDefault(); Sound.init(); fsGesture();
+    e.preventDefault(); Sound.init();
     for (const t of e.changedTouches) {
       const game = G.mode === 'game' && G.started && !touchModal();
       if (game && !TOUCH.joy && t.clientX < innerWidth * .42 && t.clientY > innerHeight * .25) {
