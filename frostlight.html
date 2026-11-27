@@ -833,7 +833,7 @@ R('cloth',1,[['fiber',6]],'bench');
 R('insul',1,[['wool',1],['fiber',3]],'bench');
 R('wire',2,[['cbar',1]],'bench');
 R('gear',2,[['ibar',1]],'bench');
-R('circuit',1,[['wire',2],['quartz',1],['cbar',1]],'bench',2);
+R('circuit',1,[['wire',2],['quartz',1],['cbar',1]],'bench');
 R('battery',1,[['cbar',1],['ibar',1],['coal',2]],'bench',2);
 R('chest',1,[['plank',8],['cbar',1]],'bench');
 R('lamp',1,[['ibar',1],['glass',1],['resin',2]],'bench',1);
@@ -857,15 +857,15 @@ R('exparka',1,[['parka',1],['wool',4],['insul',4],['sbar',1]],'bench',6);
 R('aurorahat',1,[['trapper',1],['aurorashard',2],['sbar',1]],'bench',8);
 R('auroraparka',1,[['exparka',1],['aurorashard',4],['gbar',2]],'bench',9);
 R('axe2',1,[['axe1',1],['cbar',5]],'bench',1);R('axe3',1,[['axe2',1],['ibar',5]],'bench',4);R('axe4',1,[['axe3',1],['gbar',3],['aurorashard',2]],'bench',8);
-R('pick2',1,[['pick1',1],['cbar',5]],'bench',1);R('pick3',1,[['pick2',1],['ibar',5]],'bench',4);R('pick4',1,[['pick3',1],['gbar',3],['aurorashard',2]],'bench',8);
+R('pick2',1,[['pick1',1],['cbar',5]],'bench');R('pick3',1,[['pick2',1],['ibar',5]],'bench',2);R('pick4',1,[['pick3',1],['gbar',3],['aurorashard',2]],'bench',8);
 R('rod2',1,[['rod1',1],['cbar',3],['rope',2]],'bench',2);R('rod3',1,[['rod2',1],['gbar',2],['aurorashard',2]],'bench',8);
 R('can2',1,[['can1',1],['cbar',4]],'bench',2);
 R('probe',1,[['cbar',1],['wire',1]],'bench');
 R('auroralantern',1,[['gbar',1],['glass',2],['aurorashard',3],['icecrystal',2]],'bench');
 R('cbar',1,[['copper',3],['coal',1]],'smelter');
 R('ibar',1,[['iron',3],['coal',1]],'smelter');
-R('sbar',1,[['silver',3],['coal',1]],'smelter',2);
-R('gbar',1,[['goldore',3],['coal',1]],'smelter',4);
+R('sbar',1,[['silver',3],['coal',1]],'smelter',1);
+R('gbar',1,[['goldore',3],['coal',1]],'smelter',2);
 R('glass',1,[['sand',3],['coal',1]],'smelter');
 R('ibar',1,[['scrap',5]],'smelter');
 R('coal',2,[['wood',5]],'smelter');
@@ -1136,7 +1136,7 @@ const MAIL={
 const SHOPS={
  canteen:{name:'Frostlight Canteen',npc:'oskar',hours:[7,21],items:['flour','sugar','milk','butter','cocoapow','coffeebean','oats','rice','salt','oil','cinnamon','cocoa','coffee','bread','fishsoup','porridge'],bonus:'food'},
  seeds:{name:'Greenhouse Seeds',npc:'lena',hours:[8,18],items:'seeds',bonus:'crop'},
- workshop:{name:'Felix\'s Workshop',npc:'felix',hours:[8,19],items:['plank','glass','rope','wire','coal','cbar','ibar','gear','scrap','chest','lamp','planter','bench','sprinkler','can1','axe1','pick1','probe'],bonus:'ore'},
+ workshop:{name:'Felix\'s Workshop',npc:'felix',hours:[8,19],items:['plank','glass','rope','wire','coal','cbar','ibar','gear','scrap','quartz','chest','lamp','planter','bench','sprinkler','can1','axe1','pick1','probe'],bonus:'ore'},
  quarter:{name:'Quartermaster',npc:'bjorn',hours:[8,18],items:['woolhat','scarf','mittens','boots','parka','cloth','insul','kibble','feed','candle','campfire','flag','heatpack','fertilizer','backpack'],bonus:'artifact'},
  dock:{name:'Ivan\'s Bait & Tackle',npc:'ivan',hours:[6,17],items:['bait','glowlure','rod1','rod2','rope','kelp','auger'],bonus:'fish'},
  clinic:{name:'Infirmary',npc:'sofia',hours:[8,18],items:['medkit','heatpack','minttea'],bonus:'forage'},
@@ -1328,7 +1328,7 @@ function buildStation(){
  board(mb,-3,80.2,y,0);board(mb,1,80.2,y,0,'#5a6a8a');terminal(mb,4.6,80.7,y,0);plantPot(mb,8.2,81,y);plantPot(mb,-8.2,91.2,y);
  table(mb,7.4,91,y,1.4,.8,'#6a4a3a');terminal(mb,-6.2,91.4,y,Math.PI,'#f0c060');
  spot('oskar',-6.3,81.4,'hall',0);spot('maren',7.4,90.2,'hall',Math.PI);spot('hall1',-1,85.6,'hall',0);spot('hall2',2.6,87.4,'hall',Math.PI);spot('hall3',6.2,85,'hall',-Math.PI/2);spot('hall4',4.2,87.4,'hall',Math.PI/2);spot('hall5',-4.6,87.4,'hall',Math.PI);
- addInt({x:-6.3,y:y+1.1,z:82.4,r:1.6,label:'Canteen Counter',act:()=>openShop('canteen')});
+ addInt({x:-6.3,y:y+1.1,z:82.4,r:1.6,label:'Canteen Counter',act:()=>shopAct('canteen')});
  addInt({x:-8.2,y:y+1,z:83.6,r:1,label:'Use Stove',act:()=>openCraft('stove')});
  addInt({x:-3,y:y+1.6,z:80.4,r:1.1,label:'Daily Request Board',act:()=>openDaily()});
  addInt({x:1,y:y+1.6,z:80.4,r:1.1,label:'Station Project Board',act:()=>openProjects()});
@@ -1350,7 +1350,7 @@ function buildStation(){
  const ws=building({id:'ws',name:'Workshop',x:27,z:78,w:12,d:10,h:3.6,door:'w',wall:'#7a7a80',roof:'#2e3a46',frameC:'#3a3a40'});mb=ws.mb;y=ws.fy+.05;
  workbench(mb,30,74.2,y,0);addInt({x:30,y:y+1.1,z:74.6,r:1.3,label:'Workbench',act:()=>openCraft('bench')});
  smelterM(mb,31.6,80.6,y);addInt({x:31.6,y:y+1,z:80.6,r:1.3,label:'Smelter',act:()=>{if(!S.flags.power){toast('The smelter needs power. Help Felix fix the generator.','lock');return}openCraft('smelter')}});
- counter(mb,23.6,81,26.6,82.4,y,'#5a5a62','#8a8a92');addInt({x:25,y:y+1.1,z:81.4,r:1.3,label:'Felix\'s Counter',act:()=>openShop('workshop')});
+ counter(mb,23.6,81,26.6,82.4,y,'#5a5a62','#8a8a92');addInt({x:25,y:y+1.1,z:81.4,r:1.3,label:'Felix\'s Counter',act:()=>shopAct('workshop')});
  barrel(mb,32.2,76.6,y);barrel(mb,32.2,77.6,y,'#c84a3a');crate(mb,22.6,73.8,y);crate(mb,23.6,73.8,y,.7);
  mb.box(25.6,y,73.2,28,y+1.6,73.6,C('#5a5a62'));for(let i=0;i<4;i++)mb.box(25.8+i*.55,y+.9,73.3,26.1+i*.55,y+1.5,73.7,C(['#c84a3a','#e0b030','#3a6ad0','#8a929c'][i]));
  spot('felix',25,82.8,'ws',Math.PI);spot('ws2',29.4,76,'ws',0);
@@ -1381,7 +1381,7 @@ function buildStation(){
  PLOTS.length=0;for(let r=0;r<2;r++)for(let k=0;k<6;k++){const px=gx-gw/2+1.8+k*2.15,pz=gz-2.6+r*5.2;mb.box(px-.8,gfy,pz-1.1,px+.8,gfy+.55,pz+1.1,C('#8a5a3a'));mb.box(px-.7,gfy+.5,pz-1,px+.7,gfy+.6,pz+1,C('#4a3424'));PLOTS.push({x:px,z:pz,y:gfy+.6,gh:1});addCol(px-.8,pz-1.1,px+.8,pz+1.1,gfy,gfy+.55)}
  mb.cyl(gx+gw/2-1,gfy,gz+gd/2-1.2,.5,.5,1,8,C('#3a6a8a'),E('#5ab0e0',.6));addInt({x:gx+gw/2-1,y:gfy+1,z:gz+gd/2-1.2,r:.9,label:'Water Barrel (refill can)',act:()=>refillCan()});
  counter(mb,gx+gw/2-3.4,gz-gd/2+.6,gx+gw/2-1,gz-gd/2+1.6,gfy+.05,'#7a9a6a','#c8d8b0');plantPot(mb,gx+gw/2-3,gz-gd/2+1.1,gfy+1.05,'#e05a7a');
- addInt({x:gx+gw/2-2.2,y:gfy+1.1,z:gz-gd/2+1.2,r:1.2,label:'Lena\'s Seed Stall',act:()=>openShop('seeds')});
+ addInt({x:gx+gw/2-2.2,y:gfy+1.1,z:gz-gd/2+1.2,r:1.2,label:'Lena\'s Seed Stall',act:()=>shopAct('seeds')});
  spot('lena',gx+gw/2-2.2,gz-gd/2+2.4,'gh',Math.PI);spot('gh2',gx,gz,'gh',0);
  // greenhouse extension (project)
  GHEX.x=gx;GHEX.z=gz-gd/2-4.5;
@@ -1391,14 +1391,14 @@ function buildStation(){
  for(let k=0;k<3;k++){mb.box(23.4,y,103+k*1.8,24,y+1.8,104.4+k*1.8,C('#6a5a4a'));mb.box(23.4,y+.9,103+k*1.8,24.4,y+.95,104.4+k*1.8,C('#8a7a6a'))}
  addInt({x:24.4,y:y+1.2,z:105,r:1.6,label:'Museum Display',act:()=>openMuseum()});
  bed(mb,33.6,109,y,Math.PI/2,'#f4f4f8');mb.box(31.4,y,110.2,32.2,y+1.4,110.8,C('#e8ecf0'));mb.box(31.5,y+1,110.1,32.1,y+1.3,110.15,E('#e24f5a',.7));
- addInt({x:32,y:y+1,z:109.6,r:1.4,label:'Infirmary',act:()=>openShop('clinic')});
+ addInt({x:32,y:y+1,z:109.6,r:1.4,label:'Infirmary',act:()=>shopAct('clinic')});
  table(mb,27.6,106,y,1.8,.9,'#e8ecf0');for(let k=0;k<4;k++)mb.cyl(26.9+k*.45,y+.8,106,.07,.07,.32,6,E(['#7affc8','#5ab0e0','#f0c060','#e05a7a'][k],.6));
  spot('aki',29.4,103.4,'lab',0);spot('sofia',31.4,108.4,'lab',Math.PI/2);spot('lab3',27.6,107.4,'lab',Math.PI);
  // ===== Quartermaster =====
  const qm=building({id:'qm',name:'Quartermaster',x:-15,z:128,w:9,d:7,h:3.2,door:'n',wall:'#c88a3a',roof:'#4a2e28',chimney:1});mb=qm.mb;y=qm.fy+.05;
  counter(mb,-18.5,128.4,-13,129.4,y);for(let k=0;k<3;k++)shelf(mb,-17.5+k*2.4,131.3,y,Math.PI);
  for(let k=0;k<4;k++){mb.cyl(-11.6,y+1.4+k*.0,125.6+k*.9,.3,.3,.05,6,C(['#d04a3a','#3a6ad0','#e8782e','#5a9a5a'][k]))}
- addInt({x:-15.8,y:y+1.1,z:128.2,r:1.6,label:'Quartermaster Counter',act:()=>openShop('quarter')});spot('bjorn',-15.8,130.2,'qm',Math.PI);
+ addInt({x:-15.8,y:y+1.1,z:128.2,r:1.6,label:'Quartermaster Counter',act:()=>shopAct('quarter')});spot('bjorn',-15.8,130.2,'qm',Math.PI);
  // ===== Weather station =====
  const wx=building({id:'wx',name:'Weather Station',x:15,z:128,w:8,d:7,h:3.2,door:'n',wall:'#3a7ab0',roof:'#e4e8ec',trim:'#e4e8ec'});mb=wx.mb;y=wx.fy+.05;
  counter(mb,12,130.2,18,131.2,y,'#e4e8ec','#c8d4dc');terminal(mb,13.4,130.7,y+1,Math.PI,'#5ad0f0');terminal(mb,16,130.7,y+1,Math.PI,'#f0c060');
@@ -1433,7 +1433,7 @@ function buildStation(){
  // ===== Dock =====
  const ds=building({id:'dock',name:'Dock Shack',x:12,z:174,w:7,d:6,h:3,door:'w',wall:'#3a6a8a',roof:'#c8c8c8',fy:Math.max(terrH(12,174),.5)+.5,lights:true});mb=ds.mb;y=ds.fy+.05;
  counter(mb,10.2,172,11.2,176,y,'#5a4a3a');mb.box(13.4,y,171.6,15,y+1.6,172.2,C('#8a6a4a'));for(let k=0;k<3;k++)mb.cyl(13.6+k*.5,y+1.6,171.9,.04,.04,1.2,4,C('#7a5a3a'));
- addInt({x:10.8,y:y+1.1,z:174,r:1.6,label:'Ivan\'s Bait & Tackle',act:()=>openShop('dock')});spot('ivan',12.6,174,'dock',-Math.PI/2);
+ addInt({x:10.8,y:y+1.1,z:174,r:1.6,label:'Ivan\'s Bait & Tackle',act:()=>shopAct('dock')});spot('ivan',12.6,174,'dock',-Math.PI/2);
  // pier
  pier();
  spot('pierend',1.2,199,null,Math.PI);spot('lakeshore',-92,70,null,-Math.PI/2);spot('grove',-118,-6,null,0);spot('tongue',60,-98,null,0);spot('radiohut',-63,29,null,Math.PI);spot('obsdome',OBS.x,OBS.z-1,null,Math.PI);
@@ -1932,9 +1932,9 @@ let stepT=0;
 /* ===================== TARGETING ===================== */
 let TGT=null;
 function raySphere(o,d,c,r){const ox=o[0]-c[0],oy=o[1]-c[1],oz=o[2]-c[2];const b=ox*d[0]+oy*d[1]+oz*d[2];const cc=ox*ox+oy*oy+oz*oz-r*r;const h=b*b-cc;if(h<0)return-1;const t=-b-Math.sqrt(h);return t<0?(cc<0?0:-1):t}
-function findTarget(){const o=eyePos(),d=fwd();let best=null,bt=3.6;
+function findTarget(){const o=eyePos(),d=fwd();let best=null,bt=3.6,npcB=null,npcT=9;
  const test=(c,r,obj,max)=>{const t=raySphere(o,d,c,r);if(t>=0&&t<Math.min(bt,max||3.6)){bt=t;best=obj}};
- for(const id of NPC_IDS){const e=NPCE[id];if(npcAsleep(e))continue;if(Math.abs(e.x-P.x)>6||Math.abs(e.z-P.z)>6)continue;test([e.x,e.y+1.1,e.z],.55,{k:'npc',id})}
+ for(const id of NPC_IDS){const e=NPCE[id];if(npcAsleep(e))continue;if(Math.abs(e.x-P.x)>6||Math.abs(e.z-P.z)>6)continue;const tn=raySphere(o,d,[e.x,e.y+1.05,e.z],.75);if(tn>=0&&tn<4&&tn<npcT){npcT=tn;npcB={k:'npc',id}}}if(npcB)return npcB;
  for(const a of ANI){if(Math.abs(a.x-P.x)>6||Math.abs(a.z-P.z)>6)continue;if(!animalVisible(a))continue;test([a.x,a.y+.4+a.fy,a.z],a.sp==='polarbear'||a.sp==='muskox'||a.sp==='reindeer'||a.sp==='walrus'?1:.5,{k:'ani',a})}
  for(const it of INTS){if(Math.abs(it.x-P.x)>8||Math.abs(it.z-P.z)>8)continue;if(it.cond&&!it.cond())continue;test([it.x,it.y,it.z],it.r,{k:'int',it},3.4+it.r*.3)}
  const i0=Math.floor((P.x+HALF)/8),j0=Math.floor((P.z+HALF)/8);
@@ -1995,7 +1995,7 @@ function nodeDrops(n){const t=n.t,geo=S.res.geology;
   else if(t==='copper'){addItem('copper',ri(2,3)+ex);addItem('stone',1)}else if(t==='iron'){addItem('iron',ri(2,3)+ex)}else if(t==='coal'){addItem('coal',ri(2,4)+ex)}
   else if(t==='silver'){addItem('silver',ri(2,3)+ex)}else if(t==='gold'){addItem('goldore',ri(2,3)+ex)}
   else if(t==='geode'){const r=rand();addItem(r<.4?'quartz':r<.65?'amethyst':r<.87?'garnet':'sapphire',1);if(chance(.06))addItem('meteorite',1);if(chance(.3))addItem('quartz',1)}
-  else if(t==='ice'){addItem('icecrystal',ri(1,2));if(chance(.1))addItem('snowsample',1)}else if(t==='aurora'){addItem('aurorashard',1);addItem('icecrystal',1)}}
+  else if(t==='ice'){addItem('icecrystal',ri(1,2));if(chance(.1))addItem('snowsample',1)}else if(t==='aurora'){addItem('aurorashard',ri(1,2));addItem('icecrystal',1)}}
  checkAch()}
 function interactNode(n){const t=n.t;const bot=S.res.botany&&chance(.3)?2:1;
  if(NT[t].tool&&t!=='sample'){const it=bestTool(NT[t].tool);toast(it?'Hold your '+it.name+' and press USE.':'You need a '+(NT[t].tool==='axe'?'axe':'pickaxe')+'.','question');return}
@@ -2096,9 +2096,9 @@ function takePhoto(){sfx('shutter');FLASH=1;const o=eyePos(),d=fwd();let best=nu
 let FLASH=0;
 
 /* ===================== TIME / WEATHER / WARMTH ===================== */
-const isNight=()=>{const h=S.time/60%24;if(S.season===1)return false;if(S.season===3)return!(h>=10.5&&h<13.5);return h>=20||h<6};
+const isNight=()=>{const h=S.time/60%24;if(S.season===1)return!!S.aurora&&(h>=23.5||h<1.5);if(S.season===3)return!(h>=10.5&&h<13.5);return h>=20||h<6};
 function rollWeather(){const s=S.season;const T=[[['clear',.4],['cloudy',.3],['snow',.25],['blizzard',.05]],[['clear',.62],['cloudy',.3],['snow',.08]],[['clear',.3],['cloudy',.3],['snow',.3],['blizzard',.1]],[['clear',.36],['cloudy',.2],['snow',.3],['blizzard',.14]]][s];let r=rand();for(const[w,p]of T){r-=p;if(r<=0)return w}return'clear'}
-function rollAurora(){if(S.season===1)return false;if(S.flags.forceAurora){S.flags.forceAurora=0;return true}if(S.wx==='blizzard'||S.wx==='snow')return chance(.08);let p=S.season===3?.45:.28;if(S.res.auroratheory)p+=.2;if(S.proj.telescope)p+=.15;return chance(p)}
+function rollAurora(){if(S.q.m10&&S.q.m10.st==='active')return true;if(S.flags.forceAurora){S.flags.forceAurora=0;return true}if(S.season===1)return false;if(S.wx==='blizzard'||S.wx==='snow')return chance(.08);let p=S.season===3?.45:.28;if(S.res.auroratheory)p+=.2;if(S.proj.telescope)p+=.15;return chance(p)}
 function insulation(){let s=0;for(const k in S.eq){const id=S.eq[k];if(id&&ITEMS[id])s+=ITEMS[id].ins}if(S.res.thermal)s+=10;return Math.min(s,85)}
 function nearHeat(){for(const h of HEATS){if(h.cond&&!h.cond())continue;if(Math.hypot(P.x-h.x,P.z-h.z)<h.r&&Math.abs(P.y-h.y)<4)return h.p}for(const p of S.placed){if((p.t==='campfire'&&Math.hypot(P.x-p.x,P.z-p.z)<4)||(p.t==='heater'&&Math.hypot(P.x-p.x,P.z-p.z)<7))return 2}return 0}
 function updateSurvival(gm){// gm = game minutes elapsed
@@ -2197,6 +2197,9 @@ function talkTo(id){const n=NPCS[id];const e=NPCE[id];e.talk=9999;const o=S.npc[
  if(fest&&id==='maren'&&!S.fest[S.season+'_'+S.year])opts.push(['Festival tokens?',()=>{S.fest[S.season+'_'+S.year]=1;addItem('token',6);say(id,'Of course! Here are your festival tokens. Spend them at the festival stall on the plaza. Enjoy the night!',[['Thanks!',closeDlg]])},'grn']);
  opts.push(['Goodbye',closeDlg]);
  say(id,txt,opts,bd||fest?'happy':null)}
+function npcBusiness(id){for(const qid in S.q){const q=QUESTS[qid];if(S.q[qid].st==='active'&&q.giver===id&&q.obj.some(o=>o.t==='item')&&questReady(qid))return true}if(availQuests(id).length)return true;
+ if(festActive()&&id==='maren'&&!S.fest[S.season+'_'+S.year])return true;return false}
+function shopAct(k){const id=SHOPS[k].npc;const e=id&&NPCE[id];if(e&&!npcAsleep(e)&&Math.hypot(e.x-P.x,e.z-P.z)<6&&npcBusiness(id))return talkTo(id);openShop(k)}
 function offerQuest(id,qid){const q=QUESTS[qid];say(id,q.desc+'\n\nReward: '+rewardText(q.rew),[['Accept',()=>{acceptQuest(qid);say(id,'Thank you! Come back to me when it\'s done.',[['Will do',closeDlg]])},'grn'],['Not now',closeDlg]])}
 function rewardText(r){const p=[];if(r.m)p.push(r.m+' credits');if(r.it)r.it.forEach(([i,n])=>p.push(n+'x '+ITEMS[i].name));if(r.rp)p.push(r.rp+' research points');if(r.fp)p.push('friendship');return p.join(', ')||'gratitude'}
 function giftReaction(id,item){const n=NPCS[id],it=ITEMS[item];if(n.loves.includes(item))return 3;if(n.hates.includes(item))return 0;if(n.likes.includes(item)||n.likes.includes(it.cat))return 2;if(it.cat==='junk')return 0;return 1}
@@ -2303,7 +2306,7 @@ function renderCraft(b,st){const sk=st==='stove'?'cooking':'crafting';const lv=s
   const mk=(n)=>{const x=document.createElement('button');x.className='btn';x.textContent=n===1?'Make':'x'+n;x.disabled=!can||!hasItems(r.ing.map(([i,c])=>[i,c*n]));x.onclick=()=>{for(let k=0;k<n;k++)craft(r);rerender()};bx.appendChild(x)};mk(1);mk(5);d.appendChild(bx);L.appendChild(d)}
  b.appendChild(L)}
 function craft(r){if(!hasItems(r.ing))return;r.ing.forEach(([i,n])=>removeItem(i,n));let n=r.n;if(r.st==='smelter'&&S.res.smelt&&ITEMS[r.out].cat==='bar'&&chance(.25))n++;addItem(r.out,n,true);toast('Made '+n+'x '+ITEMS[r.out].name,r.out);
- if(r.st==='stove'){S.st.cooked++;S.coll.cooked[r.out]=1;addXP('cooking',8+r.lvl*2);sfx('cook')}else{S.st.crafted++;addXP('crafting',5+r.lvl*2);sfx('craft')}checkAch();checkQuestsSoon()}
+ if(r.st==='stove'){S.st.cooked++;S.coll.cooked[r.out]=1;addXP('cooking',8+r.lvl*2);sfx('cook')}else{S.st.crafted++;addXP('crafting',10+r.lvl*4);sfx('craft')}checkAch();checkQuestsSoon()}
 /* ---------- chest ---------- */
 function openChest(p){const key=p==='home'?'home':'p'+p.id;const arr=S.chests[key]||(S.chests[key]=Array(p==='home'?36:24).fill(null));
  showPanel([{id:'chest',label:p==='home'?'Storage Chest':'Chest',icon:'chest',render:b=>{b.innerHTML='<h3>Chest <small>Tap an item to move the whole stack</small></h3>';const g1=document.createElement('div');g1.className='grid';
@@ -2461,7 +2464,8 @@ function drawCompass(){const c=$('compCv'),x=c.getContext('2d');x.clearRect(0,0,
 function reachable(x,z){return S.proj.bridge||z>CREVZ(x)+9}
 function nearestNode(f){let best=null,bd=1e9;for(const n of NODES){if(!f(n)||!nodeAlive(n)||!reachable(n.x,n.z))continue;const d=Math.hypot(n.x-P.x,n.z-P.z);if(d<bd){bd=d;best=n}}return best}
 function whereIs(x,z){for(const d of INDOOR){if(d.on&&!d.on())continue;if(x>d.x0&&x<d.x1&&z>d.z0&&z<d.z1)return d.name}return null}
-function tNPC(id,hint){const e=NPCE[id];const w=whereIs(e.x,e.z);return{x:e.x,z:e.z,y:e.y+2.3,label:NPCS[id].name.split(' ')[0],hint:(hint||'Talk to '+NPCS[id].name)+(w?' ('+w+')':'')}}
+function tNPC(id,hint){const e=NPCE[id];const w=whereIs(e.x,e.z);const sl=npcAsleep(e);return{x:e.x,z:e.z,y:e.y+2.3,label:NPCS[id].name.split(' ')[0]+(sl?' (asleep)':''),hint:(hint||'Talk to '+NPCS[id].name)+(sl?' - asleep until 6:00, sleep and come back in the morning':w?' ('+w+')':'')}}
+function missing(out){const r=RECIPES.find(r=>r.out===out);return r.ing.filter(([i,n])=>countItem(i)<n).map(([i,n])=>ITEMS[i].name+' '+countItem(i)+'/'+n).join(', ')}
 function tPt(x,z,label,hint,y){return{x,z,y:y!=null?y:groundAt(x,z,99)+1.6,label,hint:hint||label}}
 function tNode(n,label,hint){return n?tPt(n.x,n.z,label,hint,n.y+1.6):null}
 function questTarget(){const id=MAIN[mainIdx()];const q=id&&QUESTS[id],st=id&&S.q[id];
@@ -2471,21 +2475,21 @@ function questTarget(){const id=MAIN[mainIdx()];const q=id&&QUESTS[id],st=id&&S.
   case'm1':t=tNPC('maren','Talk to Commander Maren');break;
   case'm2':t=!S.flags.sawBed?tPt(-31.6,74.4,'Your bunk','Inspect your bed in the Bunkhouse',BLD.bunk.fy+1.4):tPt(-22.5,81.5,'Chest','Open the storage chest',BLD.bunk.fy+1.6);break;
   case'm3':t=tNode(nearestNode(n=>n.t==='tree'||n.t==='drift'||n.t==='birch'),'Wood','Chop wood with your axe ('+c('wood')+'/10)');break;
-  case'm4':t=c('copper')<5?tNode(nearestNode(n=>n.t==='copper'),'Copper','Mine copper veins with your pickaxe ('+c('copper')+'/5)'):tNode(nearestNode(n=>n.t==='rock'),'Rock','Mine rocks for stone ('+c('stone')+'/10)');break;
+  case'm4':t=c('copper')<5?(tNode(nearestNode(n=>n.t==='copper'),'Copper','Mine copper veins with your pickaxe ('+c('copper')+'/5)')||tPt(MINE.x,MINE.z+4,'Old Mine','Mine copper in the Old Mine ('+c('copper')+'/5)',BLD.mine.fy+2)):tNode(nearestNode(n=>n.t==='rock'),'Rock','Mine rocks for stone ('+c('stone')+'/10)');break;
   case'm5':{const planted=S.plots.some(d=>d&&d.c),ripe=PLOTS.findIndex((p,i)=>S.plots[i]&&S.plots[i].c&&S.plots[i].g>=CROPS[S.plots[i].c].days),dry=PLOTS.findIndex((p,i)=>S.plots[i]&&S.plots[i].c&&!S.plots[i].w);
    if(ripe>=0)t=tPt(PLOTS[ripe].x,PLOTS[ripe].z,'Harvest','Harvest your ripe crop',PLOTS[ripe].y+1.2);else if(dry>=0)t=tPt(PLOTS[dry].x,PLOTS[dry].z,'Water','Water your crops with the watering can',PLOTS[dry].y+1.2);
    else if(!planted)t=c('s_radish')||S.inv.some(s=>s&&ITEMS[s.id].seed)?tPt(PLOTS[0].x,PLOTS[0].z,'Planter','Hold seeds and plant them in a greenhouse planter',PLOTS[0].y+1.2):tNPC('lena','Buy seeds from Lena in the Greenhouse');
    else t={...tPt(BLD.bunk.x,BLD.bunk.z,'Bunk','Crops grow overnight. Sleep, then water again',BLD.bunk.fy+3)};break}
   case'm6':t=tPt(0,199,'Pier','Fish from the end of the pier (hold the rod, aim at water)',2.8);break;
-  case'm7':t=c('wire')>=3&&c('circuit')>=1?tPt(RADIO.x+6,RADIO.z-3,'Mast','Repair the radio mast panel'):tPt(30,74.6,'Workbench',c('cbar')<2&&c('wire')<3?'Smelt copper bars, then craft wire + circuit at the workbench':'Craft 3 Copper Wire + 1 Circuit Board',BLD.ws.fy+1.8);break;
+  case'm7':t=c('wire')>=3&&c('circuit')>=1?tPt(RADIO.x+6,RADIO.z-3,'Mast','Repair the radio mast panel'):c('wire')<3+(c('circuit')?0:2)&&c('cbar')<1?tPt(31.6,80.6,'Smelter','Smelt Copper Bars (3 copper ore + 1 coal) for wire and the circuit',BLD.ws.fy+1.8):c('circuit')<1&&c('quartz')<1?tPt(25,81.4,'Felix','Get Quartz: buy at Felix\'s counter or mine rocks',BLD.ws.fy+1.8):tPt(30,74.6,'Workbench','Craft 3 Copper Wire + 1 Circuit Board at the workbench',BLD.ws.fy+1.8);break;
   case'm8':{const p=PROBES.filter(p=>!S.flags[p.f]).sort((a,b)=>Math.hypot(a.x-P.x,a.z-P.z)-Math.hypot(b.x-P.x,b.z-P.z))[0];t=p?tPt(p.x,p.z,'Probe site','Install a weather probe here'):null;break}
   case'm9':t=tNode(nearestNode(n=>n.t==='sample'&&n.smp==='icecore'),'Ice core','Use the Sample Kit at the blue flag ('+c('icecore')+'/3)');break;
-  case'm10':t=isNight()&&S.aurora?tPt(OBS.x,OBS.z+12,'Sky','Look up and photograph the aurora with the camera'):tPt(OBS.x,OBS.z+12,'Observatory','Wait for an aurora night (sleep), then photograph the sky');break;
+  case'm10':t=c('camera')<1?tNPC('elin','Ask Elin for the camera'):isNight()&&S.aurora?tPt(OBS.x,OBS.z+12,'Sky','Look up and photograph the aurora with the camera'):tPt(OBS.x,OBS.z+12,'Observatory',S.season===1?'Midnight Sun: a pale aurora appears around midnight (23:30-1:30). Photograph it':'An aurora is coming tonight. Wait until dark, then photograph the sky');break;
   case'm11':t=tPt(HUT.x,HUT.z,'Old hut','Find the journal page in the expedition hut (far west)',BLD.hut.fy+2);break;
   case'm12':t=tNode(nearestNode(n=>n.t==='page'),'Journal page','Find journal pages ('+Object.keys(S.coll.pages).length+'/6)');break;
   case'm13':t=tPt(1,80.6,'Project Board','Fund the Glacier Bridge on the Project Board',BLD.hall.fy+2.2);break;
-  case'm14':t=tPt(ICECAVE.x,ICECAVE.z+5,'Ice Cave','Mine Aurora Shards in the Ice Cave ('+c('aurorashard')+'/3)',BLD.cave.fy+2.5);break;
-  case'm15':t=c('auroralantern')?tNPC('elin','Bring the lantern to Elin at the Observatory at night'):tPt(30,74.6,'Workbench','Craft the Aurora Lantern at the workbench',BLD.ws.fy+1.8);break}
+  case'm14':{const pk=bestTool('pick');t=pk&&pk.tier>=2?tPt(ICECAVE.x,ICECAVE.z+5,'Ice Cave','Mine glowing Aurora Crystals in the Ice Cave ('+c('aurorashard')+'/3)',BLD.cave.fy+2.5):tPt(30,74.6,'Workbench','Upgrade to a Copper Pickaxe (5 Copper Bars) to mine Aurora Crystals',BLD.ws.fy+1.8);break}
+  case'm15':{const ms=missing('auroralantern');t=c('auroralantern')?tNPC('elin','Bring the lantern to Elin'):!ms?tPt(30,74.6,'Workbench','Craft the Aurora Lantern at the workbench',BLD.ws.fy+1.8):c('gbar')<1&&c('goldore')<3?tPt(MINE.x,MINE.z+4,'Old Mine','Need: '+ms+'. Gold ore is in gold veins (Iron Pickaxe), or buy a Gold Bar on the supply ship',BLD.mine.fy+2):c('aurorashard')<3?tPt(ICECAVE.x,ICECAVE.z+5,'Ice Cave','Need: '+ms+'. Mine more Aurora Crystals',BLD.cave.fy+2.5):c('gbar')<1?tPt(31.6,80.6,'Smelter','Smelt your gold ore into a Gold Bar. Still need: '+ms,BLD.ws.fy+1.8):tPt(31.6,80.6,'Smelter','Need: '+ms+' (glass: smelt 3 sand)',BLD.ws.fy+1.8);break}}
   if(t)return t}
  for(const qid in S.q){const s=S.q[qid],qq=QUESTS[qid];if(s.st==='active'&&!qq.main&&qq.obj.some(o=>o.t==='item')&&questReady(qid))return tNPC(qq.giver,'Deliver "'+qq.title+'" to '+NPCS[qq.giver].name)}
  return null}
