@@ -145,6 +145,10 @@ h1,h2,h3,.cinzel{font-family:'Cinzel',Georgia,serif;letter-spacing:.04em}
 #zoneBanner .zb2{font-size:15px;color:#cfd8ff;letter-spacing:.3em;text-transform:uppercase}
 #zoneBanner hr{border:0;height:1px;background:linear-gradient(90deg,transparent,var(--gold2),transparent);width:360px}
 /* ---------- windows ---------- */
+.padfocus{outline:2px solid #ffe27a!important;outline-offset:2px;box-shadow:0 0 12px rgba(255,226,122,.7)!important}
+#saveInd{position:absolute;right:16px;bottom:96px;font-size:12px;color:#bfe9a8;opacity:0;pointer-events:none;text-shadow:0 1px 2px #000}
+#saveInd.show{animation:saved 2.4s forwards}@keyframes saved{0%{opacity:0}15%{opacity:1}75%{opacity:1}100%{opacity:0}}
+#fsHint{color:#cfe0ff;font-size:13px;margin-top:16px;opacity:.85}
 .win{position:fixed;z-index:20;min-width:260px;max-height:80vh;display:flex;flex-direction:column}
 .win .wh{display:flex;justify-content:space-between;align-items:center;padding:7px 10px;border-bottom:1px solid rgba(201,169,95,.4);cursor:move;background:linear-gradient(rgba(201,169,95,.15),transparent)}
 .win .wh h3{margin:0;font-size:15px;color:var(--gold2)}
@@ -208,6 +212,7 @@ input[type=range]{accent-color:#c9a95f}
     <button class="btn" id="btnNew">New Adventure</button>
     <button class="btn" id="btnImport">Import Save</button>
   </div>
+  <div id="fsHint">Click or press any key to play in fullscreen · Controllers supported</div>
   <div class="foot">An original single-file fantasy MMORPG · WASD move · Mouse drag camera · 1–0 actions · Tab target · F interact<br>3D models: KayKit packs by Kay Lousberg (CC0) · Fox by PixelMannen (CC0), rigged &amp; animated by tomkranis (CC-BY 4.0)</div>
 </div>
 <div id="creator" class="screen hidden"><div class="cpanel panel" id="cpanel"></div></div>
@@ -229,6 +234,7 @@ input[type=range]{accent-color:#c9a95f}
   <div id="xpbar"><i></i></div>
   <div id="hotbars"></div>
   <div id="gold" class="panel"></div>
+  <div id="saveInd">✔ Autosaved</div>
   <div id="menuBar" class="panel"></div>
   <div id="prompt" class="panel"></div>
   <div id="toasts"></div>
@@ -10716,7 +10722,8 @@ const UI = {
   /* settings / system menu */
   renderSystem() {
     const W = this.win('sys', 'System Menu', 380, null, 100); const st = G.save.settings;
-    W.body.innerHTML = `<div class="kv" style="grid-template-columns:1fr 160px;align-items:center;gap:8px">
+    W.body.innerHTML = `<div style="display:flex;flex-wrap:wrap;gap:5px;margin-bottom:10px">${[['char', 'Character', 'renderChar'], ['inv', 'Inventory', 'renderInv'], ['jobs', 'Jobs', 'renderJobs'], ['journal', 'Journal', 'renderJournal'], ['map', 'Map', 'renderMap'], ['board', 'Expeditions', 'renderBoard']].map(([id, n, f]) => `<button class="btn small" data-open="${id}" data-fn="${f}">${n}</button>`).join('')}</div><div class="kv" style="grid-template-columns:1fr 160px;align-items:center;gap:8px">
+      <span>Fullscreen</span><input type="checkbox" id="sFs"${FS.want() ? ' checked' : ''}>
       <span>Music volume</span><input type="range" min="0" max="1" step=".05" value="${st.music}" id="sMus">
       <span>Sound effects</span><input type="range" min="0" max="1" step=".05" value="${st.sfx}" id="sSfx">
       <span>Mouse sensitivity</span><input type="range" min=".3" max="2.5" step=".1" value="${st.sens}" id="sSens">
@@ -10725,12 +10732,14 @@ const UI = {
       <span>Shadows</span><input type="checkbox" id="sSh"${st.shadows ? ' checked' : ''}>
       <span>View distance</span><input type="range" min=".5" max="1.5" step=".1" value="${st.view}" id="sView"></div><hr style="border-color:#444">
       <div style="display:flex;flex-wrap:wrap;gap:6px"><button class="btn small" id="sSave">Save Game</button><button class="btn small" id="sExp">Export Save</button><button class="btn small" id="sImp">Import Save</button><button class="btn small" id="sKeys">Controls</button><button class="btn small" id="sQuit">Save & Quit to Title</button></div>`;
+    W.body.querySelectorAll('[data-open]').forEach(b => b.onclick = () => { this.close('sys'); UI[b.dataset.fn](); this.open(b.dataset.open); });
+    $('#sFs').onchange = e => FS.set(e.target.checked);
     $('#sMus').oninput = e => { st.music = +e.target.value; Sound.setVol('music', st.music); }; $('#sSfx').oninput = e => { st.sfx = +e.target.value; Sound.setVol('sfx', st.sfx); };
     $('#sSens').oninput = e => st.sens = +e.target.value; $('#sInv').onchange = e => st.invertY = e.target.checked; $('#sSh').onchange = e => { st.shadows = e.target.checked; applySettings(); }; $('#sQ').onchange = e => { st.quality = +e.target.value; applySettings(); }; $('#sView').oninput = e => { st.view = +e.target.value; applySettings(); };
     $('#sSave').onclick = () => saveGame(); $('#sExp').onclick = exportSave; $('#sImp').onclick = () => $('#fileIn').click(); $('#sKeys').onclick = () => this.showHelp(); $('#sQuit').onclick = () => { saveGame(true); location.reload(); };
   },
   showHelp() {
-    this.popup('Controls', `<div style="text-align:left;font-size:13px;line-height:1.6;columns:2;column-gap:24px"><b>W A S D</b> move · <b>Space</b> jump<br><b>Mouse drag</b> rotate camera · <b>Wheel</b> zoom<br><b>Right-drag</b> turn character<br><b>Click</b> target · <b>Tab</b> next enemy<br><b>F</b> interact / talk / gather<br><b>1–0, -, =</b> hotbar 1<br><b>Shift + 1–=</b> hotbar 2<br><b>R</b> mount · <b>T</b> autorun<br><b>Esc</b> clear target / menu<br><b>C</b> character · <b>I</b> inventory<br><b>K</b> jobs & actions · <b>J</b> journal<br><b>M</b> map · <b>B</b> expedition board<br><b>Enter</b> chat · <b>/help</b> commands<br><b>F1</b> hide UI</div>`, [['Close', null]]);
+    this.popup('Controls', `<div style="text-align:left;font-size:13px;line-height:1.6;columns:2;column-gap:24px"><b>W A S D</b> move · <b>Space</b> jump<br><b>Mouse drag</b> rotate camera · <b>Wheel</b> zoom<br><b>Right-drag</b> turn character<br><b>Click</b> target · <b>Tab</b> next enemy<br><b>F</b> interact / talk / gather<br><b>1–0, -, =</b> hotbar 1<br><b>Shift + 1–=</b> hotbar 2<br><b>R</b> mount · <b>T</b> autorun<br><b>Esc</b> clear target / menu<br><b>C</b> character · <b>I</b> inventory<br><b>K</b> jobs & actions · <b>J</b> journal<br><b>M</b> map · <b>B</b> expedition board<br><b>Enter</b> chat · <b>/help</b> commands<br><b>F1</b> hide UI</div><div style="text-align:left;font-size:13px;line-height:1.6;margin-top:10px;border-top:1px solid #444;padding-top:8px"><b class="cinzel" style="color:#f1d891">Controller</b><br><b>Left stick</b> move · <b>Right stick</b> camera · <b>A</b> interact / confirm · <b>B</b> cancel / back · <b>X</b> jump · <b>Y</b> mount<br><b>Hold LT</b> + A/B/X/Y and D-pad: actions 1–8 · <b>Hold RT</b> + A/B/X/Y: actions 9–12, + D-pad: Dash and potions · <b>LT+RT</b> + face buttons: Sunfox, Unity Surge, Return, Sit<br><b>RB</b> / D-pad → next enemy · D-pad ← party/self · <b>LB</b> nearby NPC · D-pad ↑↓ zoom · <b>L3</b> autorun · <b>R3</b> reset camera<br><b>Start</b> system menu (all windows) · <b>Back</b> map · In menus: D-pad or stick to move, A to select, B to close</div>`, [['Close', null]]);
   },
   /* dialogue */
   dialog(name, text, opts) {
@@ -10915,6 +10924,7 @@ function updatePlayer(dt) {
   let ix = 0, iz = 0;
   if (!chatting) { if (KEYS.KeyW || KEYS.ArrowUp) iz += 1; if (KEYS.KeyS || KEYS.ArrowDown) iz -= 1; if (KEYS.KeyA || KEYS.ArrowLeft) ix -= 1; if (KEYS.KeyD || KEYS.ArrowRight) ix += 1; }
   if (MOUSE.down && MOUSE.right) iz = 1;
+  if (!chatting && (PAD.mx || PAD.my)) { ix += PAD.mx; iz -= PAD.my; }
   if (G.autorun) { if (iz < 0) G.autorun = false; else iz = 1; }
   const moving = ix || iz;
   if (MOUSE.right && !moving) P.rot = CAM.yaw + Math.PI;
@@ -10937,7 +10947,7 @@ function updatePlayer(dt) {
   if (P.gathering) { P.gathering.t += dt; P.st.s = 'gather'; if (P.gathering.t >= P.gathering.dur) finishGather(); }
   // vertical
   const gy = ground(P.pos.x, P.pos.z);
-  if (KEYS.Space && P.onGround && !chatting && !P.cast) { P.vy = P.mounted ? 10 : 8.5; P.onGround = false; }
+  if ((KEYS.Space || PAD.jump) && P.onGround && !chatting && !P.cast) { P.vy = P.mounted ? 10 : 8.5; P.onGround = false; }
   P.vy -= 26 * dt; P.pos.y += P.vy * dt; if (P.pos.y <= gy) { P.pos.y = gy; P.vy = 0; P.onGround = true; }
   // facing target while casting/attacking
   if (!moving && G.target && G.target !== P && (P.cast || P.anim > 0) && G.target.kind !== 'npc') P.faceTo(G.target);
@@ -11033,6 +11043,7 @@ let last = performance.now();
 function frame(now) {
   requestAnimationFrame(frame);
   const dt = Math.min(.05, (now - last) / 1000); last = now; G.t += dt;
+  pollPad(dt);
   if (G.mode === 'title' || G.mode === 'creator') { titleTick(dt); updateWater(dt); updateGrass(dt); renderFrame(); return; }
   if (!G.started) return;
   G.hour = (G.hour + dt / 60) % 24; G.save.played += dt;
@@ -11052,7 +11063,6 @@ function frame(now) {
   UI.updatePlates(dt); UI.updateHotbars(); UI.updateHUD(dt);
   G.mmT = (G.mmT || 0) - dt; if (G.mmT <= 0) { G.mmT = .1; UI.drawMinimap(); }
   const it = findInteract(); const pr = $('#prompt'); if (it && !UI.anyOpen()) { UI.set(pr, `<b>F</b> — ${esc(it.label)}`, 'innerHTML'); pr.style.display = 'block'; } else pr.style.display = 'none';
-  G.saveT = (G.saveT || 30) - dt; if (G.saveT <= 0) { G.saveT = 30; saveGame(true); }
 }
 
 /* ---------------- title & character creation ---------------- */
@@ -11560,6 +11570,129 @@ function renderFrame() {
 function upgradeWorld() {
   if (!ASSETS.ok) return;
   patchTerrain(); buildWaterShader(); buildGrass(); kitClouds();
+}
+
+/* ==========================================================================
+   Section 10: Gamepad support, fullscreen by default, reliable autosave
+   ========================================================================== */
+/* ---------------- autosave every 30 seconds (independent of rendering) ---------------- */
+const AUTOSAVE_MS = 30000;
+setInterval(() => { if (G.started && G.save && G.player) { saveGame(true); UI.savedPing && UI.savedPing(); } }, AUTOSAVE_MS);
+UI.savedPing = function () { const e = $('#saveInd'); if (!e) return; e.classList.remove('show'); void e.offsetWidth; e.classList.add('show'); };
+
+/* ---------------- fullscreen by default ---------------- */
+const FS = {
+  want() { try { const v = localStorage.getItem('aetherfall_fs'); return v == null ? true : v === '1'; } catch (e) { return true; } },
+  set(on) { try { localStorage.setItem('aetherfall_fs', on ? '1' : '0'); } catch (e) { } if (on) FS.enter(); else FS.exit(); },
+  enter() { const d = document.documentElement; if (document.fullscreenElement || !d.requestFullscreen) return; d.requestFullscreen({ navigationUI: 'hide' }).catch(() => { }); },
+  exit() { if (document.fullscreenElement && document.exitFullscreen) document.exitFullscreen().catch(() => { }); },
+  tried: false,
+};
+function fsGesture() { if (FS.tried) return; FS.tried = true; if (FS.want()) FS.enter(); }
+addEventListener('pointerdown', fsGesture, true); addEventListener('keydown', fsGesture, true); addEventListener('touchend', fsGesture, true);
+document.addEventListener('fullscreenchange', () => { const h = $('#fsHint'); if (h) h.style.display = document.fullscreenElement || !FS.want() ? 'none' : ''; });
+
+/* ---------------- gamepad ---------------- */
+const PAD = { connected: false, active: false, prev: [], mx: 0, my: 0, jump: false, focusEl: null, navT: 0, labels: false };
+const BTN = { A: 0, B: 1, X: 2, Y: 3, LB: 4, RB: 5, LT: 6, RT: 7, BACK: 8, START: 9, L3: 10, R3: 11, UP: 12, DOWN: 13, LEFT: 14, RIGHT: 15 };
+addEventListener('gamepadconnected', e => { PAD.connected = true; if (G.started) { UI.log(`Controller connected: ${esc(e.gamepad.id.slice(0, 40))}. Hold LT/RT with face buttons or the D-pad to use actions.`, 'sys'); } });
+addEventListener('gamepaddisconnected', () => { PAD.connected = false; PAD.mx = PAD.my = 0; PAD.jump = false; setPadLabels(false); });
+addEventListener('mousemove', () => { if (PAD.active) { PAD.active = false; setPadLabels(false); clearPadFocus(); } });
+addEventListener('keydown', () => { if (PAD.active) { PAD.active = false; setPadLabels(false); clearPadFocus(); } });
+const PAD_LABELS = [['LT A', 'LT B', 'LT X', 'LT Y', 'LT ↑', 'LT →', 'LT ↓', 'LT ←', 'RT A', 'RT B', 'RT X', 'RT Y'], ['RT ↑', 'RT →', 'RT ↓', 'RT ←', 'LR A', 'LR B', 'LR X', 'LR Y', '', '', '', '']];
+function setPadLabels(on) {
+  PAD.labels = on; const keys = '1234567890-=';
+  (UI.hot || []).forEach((row, r) => row.forEach((h, i) => { const k = h.s.querySelector('.key'); if (k) k.textContent = on ? PAD_LABELS[r][i] : (r ? '⇧' : '') + keys[i]; }));
+}
+const _bh = UI.buildHotbars; UI.buildHotbars = function () { _bh.call(UI); if (PAD.labels) setPadLabels(true); };
+function padGet() { const ps = navigator.getGamepads ? navigator.getGamepads() : []; for (const p of ps) if (p && p.connected) return p; return null; }
+const dz = v => Math.abs(v) < .18 ? 0 : (v - Math.sign(v) * .18) / .82;
+/* menu navigation */
+function padContext() {
+  const vis = e => e && !e.classList.contains('hidden');
+  if (vis($('#popup'))) return $('#popup'); if (vis($('#dialog'))) return $('#dialog');
+  let top = null, z = -1; for (const k in UI.wins) { const w = UI.wins[k]; if (w.open) { const zz = +w.el.style.zIndex || 0; if (zz >= z) { z = zz; top = w.el; } } } if (top) return top;
+  if (G.mode === 'title' && vis($('#title'))) return $('#title'); if (G.mode === 'creator') return $('#cpanel'); return null;
+}
+function padFocusables(ctx) {
+  return [...ctx.querySelectorAll('button:not(:disabled), .opt, .sw, .li, .cell[data-i], .eq, select, input[type=range], input[type=checkbox], .x')].filter(e => { const r = e.getBoundingClientRect(); return r.width > 0 && r.height > 0 && getComputedStyle(e).visibility !== 'hidden'; });
+}
+function clearPadFocus() { if (PAD.focusEl) PAD.focusEl.classList.remove('padfocus'); PAD.focusEl = null; }
+function setPadFocus(e) { clearPadFocus(); if (!e) return; PAD.focusEl = e; e.classList.add('padfocus'); e.scrollIntoView({ block: 'nearest' }); if (e.matches('.cell[data-i], .li, .eq')) { const r = e.getBoundingClientRect(); e.dispatchEvent(new MouseEvent('mouseenter', { clientX: r.right, clientY: r.top })); } }
+function padNavigate(dx, dy) {
+  const ctx = padContext(); if (!ctx) return; const els = padFocusables(ctx); if (!els.length) return;
+  let cur = PAD.focusEl && els.includes(PAD.focusEl) ? PAD.focusEl : null;
+  if (!cur) { const modal = ctx.id === 'popup' || ctx.id === 'dialog' || ctx.id === 'title'; setPadFocus((modal && els.find(e => e.matches('.btn.gold'))) || els.find(e => e.tagName === 'BUTTON' && ctx.id === 'title') || els[0]); return; }
+  if (cur.type === 'range' && dx) { cur.value = +cur.value + dx * (+cur.step || .05) * 2; cur.dispatchEvent(new Event('input')); return; }
+  const a = cur.getBoundingClientRect(), ax = a.left + a.width / 2, ay = a.top + a.height / 2; let best = null, bs = 1e9;
+  for (const e of els) { if (e === cur) continue; const b = e.getBoundingClientRect(), bx = b.left + b.width / 2, by = b.top + b.height / 2; const vx = bx - ax, vy = by - ay; const along = vx * dx + vy * dy; if (along <= 4) continue; const side = Math.abs(vx * dy - vy * dx); const s = along + side * 2.5; if (s < bs) { bs = s; best = e; } }
+  if (best) setPadFocus(best);
+}
+function padActivate() {
+  const ctx = padContext(); if (!ctx) return false; const e = PAD.focusEl && ctx.contains(PAD.focusEl) ? PAD.focusEl : null;
+  if (!e) { padNavigate(0, 1); return true; }
+  if (e.type === 'checkbox') { e.checked = !e.checked; e.dispatchEvent(new Event('change')); return true; }
+  if (e.tagName === 'SELECT') { e.selectedIndex = (e.selectedIndex + 1) % e.options.length; e.dispatchEvent(new Event('change')); return true; }
+  const inner = e.matches('.li') ? e.querySelector('.btn') : null; (inner || e).click(); Sound.sfx.ui();
+  setTimeout(() => { if (PAD.focusEl && !document.body.contains(PAD.focusEl)) { PAD.focusEl = null; const c = padContext(); if (c) { const f = padFocusables(c); setPadFocus(f.find(x => x.matches('.btn.gold')) || f[0]); } } }, 60);
+  return true;
+}
+function padBack() {
+  const vis = e => e && !e.classList.contains('hidden');
+  if (vis($('#popup'))) { const bs = $('#popup').querySelectorAll('.pb .btn'); if (bs.length > 1) bs[bs.length - 1].click(); return true; }
+  if (vis($('#dialog'))) { UI.closeDialog(); return true; }
+  let top = null, z = -1, id = null; for (const k in UI.wins) { const w = UI.wins[k]; if (w.open && (+w.el.style.zIndex || 0) >= z) { z = +w.el.style.zIndex || 0; top = w; id = k; } }
+  if (top) { UI.close(id); clearPadFocus(); return true; }
+  return false;
+}
+function pollPad(dt) {
+  const gp = padGet(); if (!gp) { PAD.mx = PAD.my = 0; PAD.jump = false; return; }
+  const b = i => !!(gp.buttons[i] && (gp.buttons[i].pressed || gp.buttons[i].value > .5));
+  const now = gp.buttons.map((_, i) => b(i)); const prev = PAD.prev; const pr = i => now[i] && !prev[i]; PAD.prev = now;
+  const lx = dz(gp.axes[0] || 0), ly = dz(gp.axes[1] || 0), rx = dz(gp.axes[2] || 0), ry = dz(gp.axes[3] || 0);
+  const any = now.some(Boolean) || lx || ly || rx || ry;
+  if (any && !PAD.active) { PAD.active = true; setPadLabels(true); Sound.init(); }
+  if (!PAD.active) return;
+  const ctx = padContext(); const lt = now[BTN.LT], rt = now[BTN.RT];
+  // ---- menus (title, creator, windows, dialogs, popups)
+  if (ctx) {
+    PAD.mx = PAD.my = 0; PAD.jump = false;
+    PAD.navT -= dt; let nx = 0, ny = 0;
+    if (pr(BTN.LEFT)) nx = -1; else if (pr(BTN.RIGHT)) nx = 1; else if (pr(BTN.UP)) ny = -1; else if (pr(BTN.DOWN)) ny = 1;
+    if (!nx && !ny && PAD.navT <= 0 && (Math.abs(lx) > .6 || Math.abs(ly) > .6)) { if (Math.abs(lx) > Math.abs(ly)) nx = Math.sign(lx); else ny = Math.sign(ly); PAD.navT = .22; }
+    if (nx || ny) padNavigate(nx, ny);
+    if (pr(BTN.A)) padActivate();
+    if (pr(BTN.B)) padBack();
+    if (pr(BTN.START) && G.started) UI.toggle('sys', () => UI.renderSystem());
+    if (G.mode === 'creator' && (rx || pr(BTN.LB) || pr(BTN.RB))) CR.rot += rx * dt * 2.5 + (pr(BTN.RB) ? .6 : 0) - (pr(BTN.LB) ? .6 : 0);
+    return;
+  }
+  clearPadFocus();
+  if (!G.started) return;
+  // ---- gameplay
+  PAD.mx = lx; PAD.my = ly; PAD.jump = false;
+  const sens = (G.save ? G.save.settings.sens : 1); const inv = G.save && G.save.settings.invertY ? -1 : 1;
+  CAM.yaw -= rx * dt * 2.8 * sens; CAM.pitch = clamp(CAM.pitch + ry * dt * 1.8 * sens * inv, -.35, 1.35);
+  const slot = (r, i) => { const h = UI.hot[r] && UI.hot[r][i]; if (h && h.sk) activateSkill(h.sk); };
+  const face = [BTN.A, BTN.B, BTN.X, BTN.Y], dpad = [BTN.UP, BTN.RIGHT, BTN.DOWN, BTN.LEFT];
+  if (lt && rt) { face.forEach((f, i) => { if (pr(f)) slot(1, 4 + i); }); }
+  else if (lt) { face.forEach((f, i) => { if (pr(f)) slot(0, i); }); dpad.forEach((f, i) => { if (pr(f)) slot(0, 4 + i); }); }
+  else if (rt) { face.forEach((f, i) => { if (pr(f)) slot(0, 8 + i); }); dpad.forEach((f, i) => { if (pr(f)) slot(1, i); }); }
+  else {
+    if (pr(BTN.A)) { if (findInteract()) interact(); else if (G.target && G.target.team === 'foe' && !G.target.dead) { const h = UI.hot[0][0]; if (h && h.sk) activateSkill(h.sk); } }
+    PAD.jump = now[BTN.X];
+    if (pr(BTN.B)) { const P = G.player; if (P.cast) { P.cast = null; UI.log('Casting canceled.', 'sys'); } else if (G.target) setTarget(null); }
+    if (pr(BTN.Y)) mount();
+    if (pr(BTN.UP)) CAM.want = clamp(CAM.want - 1.5, 2.5, 26); if (pr(BTN.DOWN)) CAM.want = clamp(CAM.want + 1.5, 2.5, 26);
+    if (pr(BTN.RIGHT)) tabTarget();
+    if (pr(BTN.LEFT)) { const pool = (G.inst ? G.inst.party : [G.player]).filter(p => !p.removed); const i = pool.indexOf(G.target); setTarget(pool[(i + 1) % pool.length]); }
+  }
+  if (pr(BTN.RB) && !lt && !rt) tabTarget();
+  if (pr(BTN.LB) && !lt && !rt) { const fr = G.ents.filter(e => e.kind === 'npc' && e.realm === G.realm && e.dist(G.player) < 12).sort((a, b) => a.dist(G.player) - b.dist(G.player)); if (fr.length) { const i = fr.indexOf(G.target); setTarget(fr[(i + 1) % fr.length]); } }
+  if (pr(BTN.START)) UI.toggle('sys', () => UI.renderSystem());
+  if (pr(BTN.BACK)) UI.toggle('map', () => UI.renderMap());
+  if (pr(BTN.L3)) G.autorun = !G.autorun;
+  if (pr(BTN.R3)) { CAM.yaw = G.player.rot + Math.PI; CAM.pitch = .3; }
 }
 
 </script>
