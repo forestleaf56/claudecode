@@ -2,7 +2,11 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#0b0d14">
 <title>Aetherfall</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700;900&family=Alegreya+Sans:wght@400;500;700&display=swap" rel="stylesheet">
@@ -197,6 +201,51 @@ input[type=range]{accent-color:#c9a95f}
 .minor{color:var(--dim);font-size:12px}
 .gold{color:#ffe08a}
 ::-webkit-scrollbar{width:7px}::-webkit-scrollbar-thumb{background:#c9a95f66;border-radius:4px}::-webkit-scrollbar-track{background:transparent}
+/* ---------- touch / mobile ---------- */
+html,body{touch-action:none;overscroll-behavior:none;-webkit-tap-highlight-color:transparent;-webkit-touch-callout:none}
+#joy{position:fixed;width:120px;height:120px;margin:-60px 0 0 -60px;border-radius:50%;border:2px solid rgba(241,216,145,.55);background:radial-gradient(rgba(20,22,30,.35),rgba(20,22,30,.6));z-index:12;pointer-events:none;display:none}
+#joy.on{display:block}
+#joyKnob{position:absolute;left:50%;top:50%;width:54px;height:54px;border-radius:50%;background:radial-gradient(#f1d891,#8a6d2f);box-shadow:0 0 10px rgba(0,0,0,.6);transform:translate(-50%,-50%)}
+#touchUI{display:none}
+#rotHint{position:fixed;left:50%;top:34%;transform:translateX(-50%);z-index:45;padding:6px 12px;font-size:13px;display:none}
+.touch{font-size:12.5px}
+.touch #touchUI{display:grid;position:absolute;right:calc(10px + env(safe-area-inset-right));bottom:calc(10px + env(safe-area-inset-bottom));grid-template-columns:repeat(2,64px);gap:8px}
+.touch .tb{width:64px;height:46px;border-radius:12px;border:1px solid rgba(241,216,145,.6);background:rgba(20,22,30,.72);color:#f1d891;font-family:Cinzel,serif;font-size:12px;font-weight:700;touch-action:none}
+.touch .tb.big{grid-column:span 2;width:136px;height:58px;font-size:15px;border-radius:29px;background:rgba(60,50,30,.8)}
+.touch .tb.down{background:rgba(201,169,95,.55);color:#fff}.touch .tb.lit{background:rgba(120,170,80,.6);color:#fff}
+.touch #hotbars{left:calc(8px + env(safe-area-inset-left));transform:none;bottom:calc(8px + env(safe-area-inset-bottom))}
+.touch #hotbars .hb-row:nth-child(2){display:none}.touch #hotbars.alt .hb-row:nth-child(1){display:none}.touch #hotbars.alt .hb-row:nth-child(2){display:flex}
+.touch .hb-row{flex-wrap:wrap;max-width:calc(100vw - 170px);gap:3px;padding:3px}
+.touch .slot{width:40px;height:40px}
+.touch #bars{left:calc(8px + env(safe-area-inset-left));transform:none;bottom:calc(64px + env(safe-area-inset-bottom));gap:8px}
+.touch #bars .bb{width:min(150px,26vw)}.touch #jobLabel{min-width:0;font-size:11px}
+.touch #xpbar{left:calc(8px + env(safe-area-inset-left));transform:none;width:min(470px,calc(100vw - 200px));bottom:calc(56px + env(safe-area-inset-bottom))}
+.touch #buffs{left:calc(8px + env(safe-area-inset-left));transform:none;bottom:calc(96px + env(safe-area-inset-bottom))}
+.touch #castBar{bottom:auto;top:38%}.touch #unity{bottom:auto;top:46%}
+.touch #party{left:calc(6px + env(safe-area-inset-left));top:6px;width:170px;padding:3px}.touch .pm{padding:1px 3px;gap:4px}.touch .pm .ji{width:20px;height:20px}.touch .pm .nm{font-size:11px}.touch .bar{height:4px}
+.touch #target{top:6px;width:min(340px,44vw);padding:4px 8px}.touch #target .tn{font-size:13px}
+.touch #mm{right:calc(6px + env(safe-area-inset-right));top:6px;width:118px;padding:4px}.touch #mm canvas{width:96px;height:96px}.touch #zoneName{font-size:11px}.touch #clock{display:none}
+.touch #tracker{right:calc(130px + env(safe-area-inset-right));top:6px;width:min(200px,30vw);font-size:11px;max-height:32vh;padding:5px 7px}.touch #tracker.hide{display:none}.touch #tracker .q div{font-size:11px}
+.touch #menuBar{right:calc(6px + env(safe-area-inset-right));bottom:auto;top:128px;padding:3px;gap:3px}.touch #menuBar .mb{width:auto;padding:0 7px;height:28px;font-size:11px}
+.touch.modal #touchUI,.touch.modal #prompt{visibility:hidden}
+.touch #gold,.touch #enmity{display:none}
+.touch #chat{display:none}.touch #chat.open{display:flex;left:50%;transform:translateX(-50%);top:18vh;bottom:auto;width:min(520px,80vw);height:50vh;z-index:25}
+.touch #prompt{top:auto;max-width:60vw;text-align:center;font-size:15px;padding:9px 18px;border-color:#f1d891;cursor:pointer}
+.touch #prompt b{display:none}.touch #prompt::before{content:'Tap: ';color:#f1d891}
+.touch #toasts{top:20%}.touch .toast{font-size:21px}.touch .toast small{font-size:13px}
+.touch #zoneBanner .zb1{font-size:28px}.touch #zoneBanner hr{width:240px}
+.touch .win{left:50%!important;top:50%!important;transform:translate(-50%,-50%);max-width:96vw;max-height:90vh}
+.touch .win .wh{cursor:default}.touch .win .x{font-size:24px;padding:0 8px}
+.touch .win .wb>div[style*="display:flex"]{flex-wrap:wrap}
+.touch .grid{grid-template-columns:repeat(auto-fill,42px)}
+.touch .btn{padding:8px 14px}.touch .btn.small{padding:6px 10px;font-size:13px}
+.touch #dialog{bottom:calc(8px + env(safe-area-inset-bottom));width:min(640px,96vw);padding:10px 14px;max-height:70vh;overflow:auto}.touch #dialog .dt{font-size:14.5px}
+.touch #popup{max-width:94vw;max-height:90vh;overflow:auto}
+.touch #tip{max-width:240px}
+.touch .plate{font-size:11px}.touch .dmg{font-size:18px}.touch .dmg.crit{font-size:23px}
+@media (max-width:700px){#creator .cpanel{position:absolute;left:0;right:0;bottom:0;width:auto;margin:6px;max-height:50vh}#title .menu{width:220px}}
+@media (max-height:500px){#creator .cpanel{max-height:calc(100vh - 20px);width:300px;margin:8px;padding:10px}.crow{margin:6px 0}#title .sub{margin-bottom:16px}#title .menu .btn{padding:7px;font-size:15px}}
+@media (max-width:700px) and (orientation:portrait){.touch #tracker{display:none}.touch #target{top:auto;bottom:calc(230px + env(safe-area-inset-bottom))}}
 @media (max-width:1100px){#chat{width:260px;height:150px}#party{width:190px}}@media (max-width:900px){#chat{width:240px;height:130px}#tracker{display:none}#target{width:300px}}
 </style>
 </head>
@@ -212,7 +261,7 @@ input[type=range]{accent-color:#c9a95f}
     <button class="btn" id="btnNew">New Adventure</button>
     <button class="btn" id="btnImport">Import Save</button>
   </div>
-  <div id="fsHint">Click or press any key to play in fullscreen · Controllers supported</div>
+  <div id="fsHint">Click, tap or press any key to play in fullscreen · Touch &amp; controllers supported</div>
   <div class="foot">An original single-file fantasy MMORPG · WASD move · Mouse drag camera · 1–0 actions · Tab target · F interact<br>3D models: KayKit packs by Kay Lousberg (CC0) · Fox by PixelMannen (CC0), rigged &amp; animated by tomkranis (CC-BY 4.0)</div>
 </div>
 <div id="creator" class="screen hidden"><div class="cpanel panel" id="cpanel"></div></div>
@@ -10925,6 +10974,7 @@ function updatePlayer(dt) {
   if (!chatting) { if (KEYS.KeyW || KEYS.ArrowUp) iz += 1; if (KEYS.KeyS || KEYS.ArrowDown) iz -= 1; if (KEYS.KeyA || KEYS.ArrowLeft) ix -= 1; if (KEYS.KeyD || KEYS.ArrowRight) ix += 1; }
   if (MOUSE.down && MOUSE.right) iz = 1;
   if (!chatting && (PAD.mx || PAD.my)) { ix += PAD.mx; iz -= PAD.my; }
+  if (TOUCH.mx || TOUCH.my) { ix += TOUCH.mx; iz -= TOUCH.my; }
   if (G.autorun) { if (iz < 0) G.autorun = false; else iz = 1; }
   const moving = ix || iz;
   if (MOUSE.right && !moving) P.rot = CAM.yaw + Math.PI;
@@ -10947,7 +10997,7 @@ function updatePlayer(dt) {
   if (P.gathering) { P.gathering.t += dt; P.st.s = 'gather'; if (P.gathering.t >= P.gathering.dur) finishGather(); }
   // vertical
   const gy = ground(P.pos.x, P.pos.z);
-  if ((KEYS.Space || PAD.jump) && P.onGround && !chatting && !P.cast) { P.vy = P.mounted ? 10 : 8.5; P.onGround = false; }
+  if ((KEYS.Space || PAD.jump || TOUCH.jump) && P.onGround && !chatting && !P.cast) { P.vy = P.mounted ? 10 : 8.5; P.onGround = false; }
   P.vy -= 26 * dt; P.pos.y += P.vy * dt; if (P.pos.y <= gy) { P.pos.y = gy; P.vy = 0; P.onGround = true; }
   // facing target while casting/attacking
   if (!moving && G.target && G.target !== P && (P.cast || P.anim > 0) && G.target.kind !== 'npc') P.faceTo(G.target);
@@ -11071,7 +11121,7 @@ function titleTick(dt) {
   if (G.mode === 'title') { const a = G.t * .05; updateVeg(R.camera.position, 1); R.camera.position.set(c.x + Math.cos(a) * 70, c.h + 28, c.z + Math.sin(a) * 70); R.camera.lookAt(c.x, c.h + 6, c.z); updateSky(G.hour = 17.6, new THREE.Vector3(c.x, c.h, c.z), ZONES.forest.fog, dt); }
   else if (G.mode === 'creator' && G.preview) {
     const p = G.preview; const H = p.rig.H || 1.8; const t = G.t;
-    const ang = CR.rot; R.camera.position.set(p.x + Math.sin(ang) * 4.2, c.h + H * .75, p.z + Math.cos(ang) * 4.2); R.camera.lookAt(p.x - Math.cos(ang) * .9, c.h + H * .62, p.z + Math.sin(ang) * .9);
+    const ang = CR.rot; R.camera.position.set(p.x + Math.sin(ang) * 4.2, c.h + H * .75, p.z + Math.cos(ang) * 4.2); const off = innerWidth < 700 ? 0 : .9; R.camera.lookAt(p.x - Math.cos(ang) * off, c.h + H * (innerWidth < 700 && innerHeight > innerWidth ? .2 : .62), p.z + Math.sin(ang) * off);
     updateVeg(R.camera.position, 1); animate(p.rig, { s: CR.pose }, t, dt); updateSky(G.hour = 10, new THREE.Vector3(p.x, c.h, p.z), ZONES.forest.fog, dt);
   }
   for (const e of G.ents) if (e.rig && e.rig.root.visible && e.kind === 'npc') animate(e.rig, e.st, G.t + e.id, dt);
@@ -11129,7 +11179,7 @@ function showCreator() {
 function startGame(save, isNew) {
   // migrate older saves gracefully
   for (const j in JOBS) if (!save.jobs[j]) save.jobs[j] = { lvl: 1, xp: 0, unlocked: false };
-  save.settings = Object.assign({ music: .5, sfx: .7, sens: 1, shadows: true, invertY: false, view: 1, quality: 1 }, save.settings || {});
+  save.settings = Object.assign({ music: .5, sfx: .7, sens: 1, shadows: true, invertY: false, view: IS_TOUCH ? .85 : 1, quality: IS_TOUCH ? 0 : 1 }, save.settings || {});
   if (!save.look.model) save.look.model = JOB_MODEL[save.job] || 'Knight';
   G.save = save; G.mode = 'game'; G.hour = save.hour || 9;
   Sound.setVol('music', save.settings.music); Sound.setVol('sfx', save.settings.sfx);
@@ -11160,7 +11210,7 @@ function boot() {
     () => initRenderer(),
     () => loadAssets(),
     () => buildWorld(),
-    () => { setupPost(); applyQuality(1); },
+    () => { setupPost(); applyQuality(IS_TOUCH ? 0 : 1); },
     () => { spawnNPCs(); spawnEnemies(); spawnNodes(); },
     () => { bindInput(); R.camera.position.set(0, 50, 0); },
   ];
@@ -11694,6 +11744,109 @@ function pollPad(dt) {
   if (pr(BTN.L3)) G.autorun = !G.autorun;
   if (pr(BTN.R3)) { CAM.yaw = G.player.rot + Math.PI; CAM.pitch = .3; }
 }
+
+/* ==========================================================================
+   Section 11: Mobile & touch — virtual joystick, touch camera, pinch zoom,
+   tap targeting, action buttons, compact layout, lighter graphics
+   ========================================================================== */
+const IS_TOUCH = (window.matchMedia && matchMedia('(pointer: coarse)').matches) || (navigator.maxTouchPoints > 0 && /Mobi|Android|iPad|iPhone|iPod|Tablet/i.test(navigator.userAgent));
+if (IS_TOUCH) document.body.classList.add('touch');
+const TOUCH = { mx: 0, my: 0, jump: false, joy: null, cam: null, pinch: null };
+
+/* ---------- lighter defaults on phones/tablets ---------- */
+const _populate = populateNear; populateNear = function (force) {
+  if (!IS_TOUCH) return _populate(force);
+  const s = SIMS.length; _populate(force); while (SIMS.length > 10 && SIMS.length > s) { const e = SIMS.pop(); usedNames.delete(e.name); e.remove(); }
+};
+const _newSave = newSave; newSave = function (c) { const s = _newSave(c); if (IS_TOUCH) { s.settings.quality = 0; s.settings.view = .85; } return s; };
+const _applyQ = applyQuality; applyQuality = function (q) { _applyQ(q); if (IS_TOUCH && q === 0 && R.sky && R.sky.sun.shadow.mapSize.x !== 1024) { R.sky.sun.shadow.mapSize.set(1024, 1024); if (R.sky.sun.shadow.map) { R.sky.sun.shadow.map.dispose(); R.sky.sun.shadow.map = null; } } };
+const _fsEnter = FS.enter; FS.enter = function () { _fsEnter(); setTimeout(() => { try { if (document.fullscreenElement && screen.orientation && screen.orientation.lock) screen.orientation.lock('landscape').catch(() => { }); } catch (e) { } }, 300); };
+
+/* ---------- touch controls ---------- */
+function touchModal() { return !$('#popup').classList.contains('hidden') || !$('#dialog').classList.contains('hidden'); }
+function buildTouchUI() {
+  if (!IS_TOUCH || $('#touchUI')) return;
+  const joy = el('div', '', '<div id="joyKnob"></div>'); joy.id = 'joy'; document.body.appendChild(joy);
+  const t = el('div', ''); t.id = 'touchUI';
+  t.innerHTML = `<button class="tb big" id="tbJump">Jump</button><button class="tb" id="tbTarget">Target</button><button class="tb" id="tbMount">Mount</button><button class="tb" id="tbRow">Bar ⇅</button><button class="tb" id="tbRun">Auto-run</button>`;
+  $('#hud').appendChild(t);
+  const on = (id, fn) => { const b = $('#' + id); b.addEventListener('pointerdown', e => { e.preventDefault(); e.stopPropagation(); Sound.init(); fn(); b.classList.add('down'); }); b.addEventListener('pointerup', () => b.classList.remove('down')); b.addEventListener('pointerleave', () => b.classList.remove('down')); };
+  on('tbJump', () => { TOUCH.jump = true; setTimeout(() => TOUCH.jump = false, 180); });
+  on('tbTarget', () => tabTarget()); on('tbMount', () => mount());
+  on('tbRow', () => $('#hotbars').classList.toggle('alt'));
+  on('tbRun', () => { G.autorun = !G.autorun; $('#tbRun').classList.toggle('lit', G.autorun); });
+  $('#prompt').addEventListener('click', () => interact());
+  // chat & tracker toggles in the menu bar
+  const mb = $('#menuBar'); mb.innerHTML = '';
+  const add = (label, title, fn) => { const b = el('div', 'mb', label); b.title = title; b.onclick = fn; mb.appendChild(b); };
+  add('Menu', 'All menus & settings', () => UI.toggle('sys', () => UI.renderSystem()));
+  add('Chat', 'Chat', () => { $('#chat').classList.toggle('open'); const L = $('#chatLog'); L.scrollTop = L.scrollHeight; });
+  add('Quests', 'Quest tracker', () => $('#tracker').classList.toggle('hide'));
+  rotHint(); setInterval(touchLayout, 250); touchLayout();
+}
+function rotHint() {
+  if (!IS_TOUCH) return; let h = $('#rotHint'); if (!h) { h = el('div', 'panel', 'For the best view, turn your device sideways. <b>✕</b>'); h.id = 'rotHint'; h.onclick = () => { h.dataset.off = 1; h.style.display = 'none'; }; document.body.appendChild(h); }
+  h.style.display = !h.dataset.off && innerHeight > innerWidth && G.mode === 'game' && !document.body.classList.contains('modal') ? 'block' : 'none';
+}
+addEventListener('resize', rotHint);
+function touchLayout() { // keep bars, buffs and prompts stacked above the (possibly wrapped) hotbar
+  if (!IS_TOUCH || !G.started) return; const hb = $('#hotbars').getBoundingClientRect(); if (!hb.height) return;
+  const base = innerHeight - hb.top + 6; const set = (sel, v) => { const e = $(sel); if (e && e._b !== v) { e.style.bottom = v + 'px'; e._b = v; } };
+  set('#xpbar', base); set('#bars', base + 9); set('#buffs', base + 44); set('#prompt', base + 76);
+  const modal = touchModal() || Object.values(UI.wins).some(w => w.open); document.body.classList.toggle('modal', modal); rotHint();
+  if (modal && TOUCH.joy) { TOUCH.joy = null; TOUCH.mx = TOUCH.my = 0; $('#joy').classList.remove('on'); }
+}
+function bindTouch() {
+  const cv = $('#view');
+  const opts = { passive: false };
+  cv.addEventListener('touchstart', e => {
+    e.preventDefault(); Sound.init(); fsGesture();
+    for (const t of e.changedTouches) {
+      const game = G.mode === 'game' && G.started && !touchModal();
+      if (game && !TOUCH.joy && t.clientX < innerWidth * .42 && t.clientY > innerHeight * .25) {
+        TOUCH.joy = { id: t.identifier, x: t.clientX, y: t.clientY }; const j = $('#joy'); j.style.left = t.clientX + 'px'; j.style.top = t.clientY + 'px'; j.classList.add('on'); $('#joyKnob').style.transform = 'translate(-50%,-50%)';
+      } else if (!TOUCH.cam) { TOUCH.cam = { id: t.identifier, x: t.clientX, y: t.clientY, sx: t.clientX, sy: t.clientY, t0: performance.now(), moved: 0 }; }
+      else if (!TOUCH.pinch) { const c = TOUCH.cam; TOUCH.pinch = { id: t.identifier, x: t.clientX, y: t.clientY, d: Math.hypot(t.clientX - c.x, t.clientY - c.y), want: CAM.want }; c.moved = 99; }
+    }
+  }, opts);
+  cv.addEventListener('touchmove', e => {
+    e.preventDefault();
+    for (const t of e.changedTouches) {
+      if (TOUCH.joy && t.identifier === TOUCH.joy.id) { let dx = t.clientX - TOUCH.joy.x, dy = t.clientY - TOUCH.joy.y; const d = Math.hypot(dx, dy), R0 = 55; if (d > R0) { dx = dx / d * R0; dy = dy / d * R0; } TOUCH.mx = dx / R0; TOUCH.my = dy / R0; if (Math.hypot(TOUCH.mx, TOUCH.my) < .15) TOUCH.mx = TOUCH.my = 0; $('#joyKnob').style.transform = `translate(calc(-50% + ${dx}px), calc(-50% + ${dy}px))`; }
+      else if (TOUCH.cam && t.identifier === TOUCH.cam.id) {
+        const c = TOUCH.cam; const dx = t.clientX - c.x, dy = t.clientY - c.y; c.x = t.clientX; c.y = t.clientY; c.moved += Math.abs(dx) + Math.abs(dy);
+        if (TOUCH.pinch) { const p = TOUCH.pinch; const d = Math.hypot(p.x - c.x, p.y - c.y); CAM.want = clamp(p.want * p.d / Math.max(20, d), 2.5, 26); continue; }
+        if (G.mode === 'creator') { CR.rot += dx * .012; continue; }
+        const s = (G.save ? G.save.settings.sens : 1) * .0065; CAM.yaw -= dx * s; CAM.pitch = clamp(CAM.pitch + dy * s * (G.save && G.save.settings.invertY ? -1 : 1), -.35, 1.35);
+      } else if (TOUCH.pinch && t.identifier === TOUCH.pinch.id) { const p = TOUCH.pinch, c = TOUCH.cam; p.x = t.clientX; p.y = t.clientY; const d = Math.hypot(p.x - c.x, p.y - c.y); CAM.want = clamp(p.want * p.d / Math.max(20, d), 2.5, 26); }
+    }
+  }, opts);
+  const end = e => {
+    e.preventDefault();
+    for (const t of e.changedTouches) {
+      if (TOUCH.joy && t.identifier === TOUCH.joy.id) { TOUCH.joy = null; TOUCH.mx = TOUCH.my = 0; $('#joy').classList.remove('on'); }
+      else if (TOUCH.cam && t.identifier === TOUCH.cam.id) {
+        const c = TOUCH.cam; TOUCH.cam = null; if (TOUCH.pinch) { TOUCH.pinch = null; continue; }
+        if (c.moved < 14 && performance.now() - c.t0 < 350 && G.started && G.mode === 'game') { // tap: target / talk
+          const hit = pickEntity(t.clientX, t.clientY);
+          if (hit) { if (hit === G.target && hit.kind === 'npc' && hit.dist(G.player) < 7) talkTo(hit); setTarget(hit); }
+        }
+      } else if (TOUCH.pinch && t.identifier === TOUCH.pinch.id) TOUCH.pinch = null;
+    }
+  };
+  cv.addEventListener('touchend', end, opts); cv.addEventListener('touchcancel', end, opts);
+  // hide sticky tooltips on touch
+  addEventListener('touchstart', e => { if (!e.target.closest('.cell,.li,.slot,.eq')) UI.hideTip(); }, { passive: true });
+  // prevent pinch-zoom / double-tap zoom of the page itself
+  document.addEventListener('gesturestart', e => e.preventDefault());
+  document.addEventListener('dblclick', e => { if (IS_TOUCH) e.preventDefault(); });
+}
+if (IS_TOUCH) bindTouch();
+const _sg = startGame; startGame = function (s, n) { _sg(s, n); buildTouchUI(); if (IS_TOUCH && n) UI.log('Touch controls: drag the left side to move, drag the right side to look, pinch to zoom, tap to target. Tap an action to use it; tap the prompt to talk.', 'sys'); };
+const _help = UI.showHelp.bind(UI); UI.showHelp = function () {
+  _help();
+  if (IS_TOUCH) { const p = $('#popup > div'); if (p) p.insertAdjacentHTML('afterbegin', '<div style="text-align:left;font-size:13px;line-height:1.6;margin-bottom:10px;border-bottom:1px solid #444;padding-bottom:8px"><b class="cinzel" style="color:#f1d891">Touch</b><br>Drag the <b>left side</b> of the screen to move · drag the <b>right side</b> to look · <b>pinch</b> to zoom<br><b>Tap</b> a creature or person to target it · tap a targeted NPC or the <b>prompt</b> to talk<br>Tap hotbar actions to use them · <b>Bar ⇅</b> switches action bars · <b>Jump</b>, <b>Target</b>, <b>Mount</b>, <b>Auto-run</b> on the right</div>'); }
+};
 
 </script>
 </body>
