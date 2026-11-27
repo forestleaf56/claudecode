@@ -205,6 +205,13 @@ input[type=range]{accent-color:#c9a95f}
 .minor{color:var(--dim);font-size:12px}
 .gold{color:#ffe08a}
 ::-webkit-scrollbar{width:7px}::-webkit-scrollbar-thumb{background:#c9a95f66;border-radius:4px}::-webkit-scrollbar-track{background:transparent}
+#guidePtr{position:absolute;transform:translate(-50%,-50%);pointer-events:none;text-align:center;color:#ffe27a;font-weight:700;text-shadow:0 0 4px #000,0 1px 2px #000;z-index:2}
+#guidePtr .ga{display:none;font-size:28px;line-height:1}#guidePtr.edge .ga{display:block}
+#guidePtr .gl{font-size:12px;background:rgba(0,0,0,.45);border-radius:8px;padding:0 6px}
+#tracker .q.guide{border-left:3px solid #ffd35e;padding:3px 0 3px 7px;background:rgba(255,211,94,.09);border-radius:3px}#tracker .q.guide b{color:#ffe27a}
+#tracker .q.tracked{box-shadow:inset 3px 0 0 #ffd35e;padding-left:6px}
+.plate.far .mk{font-size:20px;opacity:.95}
+@media (max-width:700px) and (orientation:portrait){.touch #tracker{display:block!important;left:6px!important;right:auto!important;top:66px!important;width:58vw!important;max-height:none}.touch #tracker .q:not(.guide),.touch #tracker h4{display:none}}
 /* ---------- touch / mobile ---------- */
 html,body{touch-action:none;overscroll-behavior:none;-webkit-tap-highlight-color:transparent;-webkit-touch-callout:none}
 #joy{position:fixed;width:120px;height:120px;margin:-60px 0 0 -60px;border-radius:50%;border:2px solid rgba(241,216,145,.55);background:radial-gradient(rgba(20,22,30,.35),rgba(20,22,30,.6));z-index:12;pointer-events:none;display:none}
@@ -10736,7 +10743,7 @@ const UI = {
     else items = N.shop.filter(i => !(i === 'skyhorn_whistle' && S.mount));
     W.body.innerHTML = `<div class="minor" style="margin-bottom:6px">You have <span class="gold">${fmt(S.gold)} gold</span>. Open your inventory (I) to sell.</div><div class="list" style="max-height:55vh;overflow:auto">${items.map(id => { const d = ITEMS[id]; const price = d.type === 'gear' ? d.price : d.price * 2; return `<div class="li" data-id="${id}"><span style="display:flex;align-items:center;gap:8px"><img src="${iconURL(d.icon)}" style="width:30px;height:30px;border-radius:5px"><span class="r-${d.rarity || 'common'}">${esc(d.name)}${d.lvl ? ` <span class="minor">Lv${d.lvl}</span>` : ''}</span></span><span><span class="gold">${fmt(price)}g</span> <button class="btn small">Buy</button></span></div>`; }).join('')}</div>`;
     W.body.querySelectorAll('[data-id]').forEach(r => { const id = r.dataset.id, d = ITEMS[id]; const price = d.type === 'gear' ? d.price : d.price * 2; r.onmouseenter = ev => this.tipItem({ id }, ev); r.onmouseleave = () => this.hideTip(); r.querySelector('.btn').onclick = () => { if (S.gold < price) return this.err('Not enough gold.'); if (addItem(id, 1)) { S.gold -= price; this.renderShop(npcKey); } }; });
-    this.open('shop'); if (!this.wins.inv || !this.wins.inv.open) { this.renderInv(); this.open('inv'); }
+    if (!this.wins.inv || !this.wins.inv.open) { this.renderInv(); this.open('inv'); } this.open('shop');
   },
   /* crafting */
   openCraft() {
@@ -11108,7 +11115,7 @@ function frame(now) {
   if (G.realm === 'world') { questTick(); riftTick(dt); simChatter(dt); for (const n of NODES) if (!n.ready) { n.t -= dt; if (n.t <= 0) { n.ready = true; n.mesh.visible = true; } } }
   else instTick(dt);
   queueTick(dt); zoneTick(dt);
-  updateCamera(dt);
+  updateCamera(dt); updateGuide(dt);
   if (G.realm === 'world') {
         const sk = updateSky(G.hour, G.player.pos, ZONES[G.curZone || 'forest'].fog, dt);
     R.lampMat.opacity = clamp((.12 - sk.sunUp) * 4, 0, 1); if (R.water.material.map) { R.water.material.map.offset.x += dt * .012; R.water.material.map.offset.y += dt * .006; }
@@ -11694,15 +11701,16 @@ function padNavigate(dx, dy) {
   if (best) setPadFocus(best);
 }
 function padActivate() {
-  const ctx = padContext(); if (!ctx) return false; const e = PAD.focusEl && ctx.contains(PAD.focusEl) ? PAD.focusEl : null;
+  const ctx = padContext(); if (!ctx) return false; const e = PAD.focusEl && (ctx.contains(PAD.focusEl) || (UI.assigning && PAD.focusEl.matches('#hotbars .slot'))) ? PAD.focusEl : null;
   if (!e) { padNavigate(0, 1); return true; }
   if (e.type === 'checkbox') { e.checked = !e.checked; e.dispatchEvent(new Event('change')); return true; }
   if (e.tagName === 'SELECT') { e.selectedIndex = (e.selectedIndex + 1) % e.options.length; e.dispatchEvent(new Event('change')); return true; }
   const inner = e.matches('.li') ? e.querySelector('.btn') : null; (inner || e).click(); Sound.sfx.ui();
-  setTimeout(() => { if (PAD.focusEl && !document.body.contains(PAD.focusEl)) { PAD.focusEl = null; const c = padContext(); if (c) { const f = padFocusables(c); setPadFocus(f.find(x => x.matches('.btn.gold')) || f[0]); } } }, 60);
+  setTimeout(() => { if (PAD.focusEl && !document.body.contains(PAD.focusEl)) { PAD.focusEl = null; if (padContext()) { clearPadFocus(); padNavigate(0, 0); } } }, 60);
   return true;
 }
 function padBack() {
+  if (UI.assigning) { UI.assigning = null; document.body.style.cursor = ''; PAD.assignFor = null; const c = padContext(); if (c) { clearPadFocus(); padNavigate(0, 0); } return true; }
   const vis = e => e && !e.classList.contains('hidden');
   if (vis($('#popup'))) { const bs = $('#popup').querySelectorAll('.pb .btn'); if (bs.length > 1) bs[bs.length - 1].click(); return true; }
   if (vis($('#dialog'))) { UI.closeDialog(); return true; }
@@ -11869,6 +11877,193 @@ const _sg = startGame; startGame = function (s, n) { _sg(s, n); buildTouchUI(); 
 const _help = UI.showHelp.bind(UI); UI.showHelp = function () {
   _help();
   if (IS_TOUCH) { const p = $('#popup > div'); if (p) p.insertAdjacentHTML('afterbegin', '<div style="text-align:left;font-size:13px;line-height:1.6;margin-bottom:10px;border-bottom:1px solid #444;padding-bottom:8px"><b class="cinzel" style="color:#f1d891">Touch</b><br>Drag the <b>left side</b> of the screen to move · drag the <b>right side</b> to look · <b>pinch</b> to zoom<br><b>Tap</b> a creature or person to target it · tap a targeted NPC or the <b>prompt</b> to talk<br>Tap hotbar actions to use them · <b>Bar ⇅</b> switches action bars · <b>Jump</b>, <b>Target</b>, <b>Mount</b>, <b>Auto-run</b> on the right</div>'); }
+};
+
+/* ==========================================================================
+   Section 12: Navigation guidance ("where to go next") and gamepad
+   coverage for every screen
+   ========================================================================== */
+const BOARD_NPCS = ['ilsa', 'quill', 'sefa'];
+function npcWorldPos(k) { const N = NPCS[k]; if (!N) return null; if (N.city) { const c = CITIES[N.city]; return { x: c.x + N.ox, z: c.z + N.oz }; } return { x: N.fx, z: N.fz }; }
+function nearestOf(list, P) { let best = null, bd = 1e9; for (const o of list) { if (!o) continue; const d = Math.hypot(o.x - P.pos.x, o.z - P.pos.z); if (d < bd) { bd = d; best = o; } } return best; }
+function trainingSpot(L) {
+  const P = G.player; const ok = SPAWNS.filter(s => { const m = MONSTERS[s.mob]; return m.lvl[0] <= L + 1 && m.lvl[1] >= L - 1; });
+  const sp = nearestOf((ok.length ? ok : SPAWNS).map(s => ({ x: s.x, z: s.z, area: s.r, s })), P); if (!sp) return null; const m = MONSTERS[sp.s.mob];
+  return { x: sp.x, z: sp.z, area: sp.area, label: `Hunt ${m.name}s (Lv ${m.lvl[0]}–${m.lvl[1]})` };
+}
+function stepGuide(id) {
+  const q = QUEST[id], a = G.save.quests.active[id]; if (!q || !a) return null; const P = G.player; const st = q.steps[a.step];
+  const npcG = (k, verb) => { const p = npcWorldPos(k); return p ? { x: p.x, z: p.z, npc: k, label: `${verb} ${NPCS[k].name}` } : null; };
+  if (a.ready) return npcG(q.turnin, 'Report to');
+  if (!st) return null;
+  switch (st.t) {
+    case 'talk': return npcG(st.npc, 'Speak with');
+    case 'reach': case 'spawn': return { x: st.x, z: st.z, label: st.d };
+    case 'attune': { const w = WAYSTONES[st.ws]; return { x: w.x, z: w.z, label: `Attune to ${w.name}` }; }
+    case 'kill': { const sp = nearestOf(SPAWNS.filter(s => s.mob === st.mob).map(s => ({ x: s.x, z: s.z, area: s.r })), P); return sp && Object.assign(sp, { label: `${st.d} (${a.prog}/${st.n})` }); }
+    case 'collect': {
+      const have = Math.min(countItem(st.item), st.n);
+      const node = nearestOf(NODES.filter(n => n.item === st.item).map(n => ({ x: n.x, z: n.z })), P);
+      if (node) return Object.assign(node, { label: `Gather ${ITEMS[st.item].name} (${have}/${st.n}) — ${PAD.active ? 'press A' : IS_TOUCH ? 'tap the prompt' : 'press F'} at the glowing plant or rock` });
+      const sp = nearestOf(SPAWNS.filter(s => (MONSTERS[s.mob].drops || []).some(d => d[0] === st.item)).map(s => ({ x: s.x, z: s.z, area: s.r, mob: s.mob })), P);
+      return sp && Object.assign(sp, { label: `Collect ${ITEMS[st.item].name} (${have}/${st.n}) from ${MONSTERS[sp.mob].name}s` });
+    }
+    case 'level': { const L = G.save.jobs[G.save.job].lvl; const t = trainingSpot(L); return t && Object.assign(t, { label: `Reach level ${st.n} (now ${L}) — ${t.label}, seal rifts, or do side quests` }); }
+    case 'dungeon': { const d = DUNGEONS[st.id]; const b = nearestOf(BOARD_NPCS.map(k => Object.assign(npcWorldPos(k), { npc: k })), P); const L = G.player.lvl;
+      if (L < d.lvl) { const t = trainingSpot(L); return t && Object.assign(t, { label: `${d.name} needs level ${d.lvl} (now ${L}) — ${t.label}` }); }
+      const how = PAD.active ? 'Start → Expeditions' : IS_TOUCH ? 'Menu → Expeditions' : 'press B'; return Object.assign(b, { label: `Queue for ${d.name}: ${how}, or speak with ${NPCS[b.npc].name}` }); }
+  }
+  return null;
+}
+function computeGuide() {
+  const P = G.player, S = G.save; if (!P) return null;
+  if (G.realm === 'inst' && G.inst) {
+    const I = G.inst; if (I.complete) return { inst: 1, label: `Expedition complete — ${PAD.active ? 'press A' : IS_TOUCH ? 'tap the prompt' : 'press F'} to leave`, x: P.pos.x, z: P.pos.z, here: 1 };
+    const i = I.rooms.findIndex(r => !r.cleared); if (i < 0) return null; const rm = I.rooms[i];
+    const b = G.ents.find(e => e.kind === 'enemy' && e.room === i && e.def.boss && !e.dead);
+    return { inst: 1, x: rm.x, z: rm.z, label: b ? `Defeat ${b.name}` : 'Defeat the enemies here to open the way forward' };
+  }
+  if (G.queue && G.queue.ready) return null;
+  const act = Object.keys(S.quests.active);
+  let id = S.focusQ && S.quests.active[S.focusQ] ? S.focusQ : (act.find(k => QUEST[k].main) || act[0]);
+  if (id) { const g = stepGuide(id); if (g) return Object.assign(g, { q: id, main: QUEST[id].main }); }
+  const next = QUESTS.find(q => q.main && qAvailable(q)); if (next) { const p = npcWorldPos(next.giver); return { x: p.x, z: p.z, npc: next.giver, main: 1, label: `New story quest: speak with ${NPCS[next.giver].name}` }; }
+  const lock = QUESTS.find(q => q.main && qLocked(q)); const side = QUESTS.filter(q => !q.main && qAvailable(q)).map(q => Object.assign(npcWorldPos(q.giver), { npc: q.giver }));
+  const sg = nearestOf(side, P); if (sg) return Object.assign(sg, { label: `Side quest available: speak with ${NPCS[sg.npc].name}` });
+  if (lock) { const L = S.jobs[S.job].lvl; const t = trainingSpot(L); return t && Object.assign(t, { label: `Next story quest at level ${lock.lvl} (now ${L}) — ${t.label}` }); }
+  return null;
+}
+
+/* ---------------- 3D beacon, ground trail, screen pointer ---------------- */
+const GUIDE = { g: null, t: 0 };
+function buildGuideFX() {
+  const grp = new THREE.Group();
+  const pillar = new THREE.Mesh(new THREE.CylinderGeometry(.7, 1.6, 60, 16, 1, true), new THREE.MeshBasicMaterial({ color: 0xffd35e, transparent: true, opacity: .22, side: THREE.DoubleSide, depthWrite: false, blending: THREE.AdditiveBlending }));
+  pillar.position.y = 30; grp.add(pillar);
+  const gem = new THREE.Mesh(GEO.oct, new THREE.MeshBasicMaterial({ color: 0xffe27a })); gem.scale.set(.9, 1.5, .9); grp.add(gem);
+  const glow = new THREE.Sprite(new THREE.SpriteMaterial({ map: R.glowTex, color: 0xffd35e, blending: THREE.AdditiveBlending, depthWrite: false, transparent: true })); glow.scale.setScalar(5); grp.add(glow);
+  const ring = new THREE.Mesh(new THREE.RingGeometry(.9, 1, 48), new THREE.MeshBasicMaterial({ color: 0xffd35e, transparent: true, opacity: .7, side: THREE.DoubleSide, depthWrite: false })); ring.rotation.x = -Math.PI / 2; grp.add(ring);
+  const trail = []; const tm = new THREE.SpriteMaterial({ map: R.glowTex, color: 0xffd35e, blending: THREE.AdditiveBlending, depthWrite: false, transparent: true });
+  for (let i = 0; i < 12; i++) { const s = new THREE.Sprite(tm.clone()); s.scale.setScalar(.8); trail.push(s); }
+  Object.assign(GUIDE, { grp, pillar, gem, glow, ring, trail });
+  const ptr = el('div', ''); ptr.id = 'guidePtr'; ptr.innerHTML = '<div class="ga">➤</div><div class="gl"></div>'; $('#plates').appendChild(ptr); GUIDE.ptr = ptr;
+}
+function updateGuide(dt) {
+  if (!G.started || !G.player) return;
+  if (!GUIDE.grp) buildGuideFX();
+  GUIDE.t -= dt; if (GUIDE.t <= 0) { GUIDE.t = .5; GUIDE.g = computeGuide(); UI.dirtyQuests = true; }
+  const g = GUIDE.g, P = G.player, sc = R.scene;
+  if (GUIDE.grp.parent !== sc) { sc.add(GUIDE.grp); for (const s of GUIDE.trail) sc.add(s); }
+  const show = g && !g.here && G.save.settings.guide !== false;
+  GUIDE.grp.visible = !!show; for (const s of GUIDE.trail) s.visible = false; GUIDE.ptr.style.display = 'none';
+  if (!show) return;
+  // anchor: NPC head when the guide is a person
+  let x = g.x, z = g.z, y = ground(x, z), top = 3;
+  if (g.npc) { const e = G.ents.find(n => n.npc === g.npc); if (e) { x = e.pos.x; z = e.pos.z; y = e.pos.y; top = (e.rig ? e.rig.H : 2) + 1.6; } }
+  const d = Math.hypot(x - P.pos.x, z - P.pos.z);
+  GUIDE.grp.position.set(x, y, z); const bob = Math.sin(G.t * 2.4) * .25;
+  GUIDE.gem.position.y = top + .8 + bob; GUIDE.gem.rotation.y += dt * 2; GUIDE.glow.position.y = top + .8 + bob;
+  GUIDE.pillar.visible = d > 18; GUIDE.pillar.material.opacity = clamp((d - 18) / 60, 0, 1) * .28;
+  GUIDE.ring.visible = !!g.area || !g.npc; GUIDE.ring.scale.setScalar(g.area ? g.area : 3 + Math.sin(G.t * 3) * .3); GUIDE.ring.position.y = .3; GUIDE.ring.material.opacity = g.area ? .25 : .7;
+  const near = g.area ? d < g.area : d < 4;
+  // trail of glowing motes leading toward the goal
+  if (!near && d > 8) {
+    const dx = (x - P.pos.x) / d, dz = (z - P.pos.z) / d; const ph = (G.t * 6) % 3;
+    for (let i = 0; i < GUIDE.trail.length; i++) {
+      const s = GUIDE.trail[i]; const k = 2.5 + i * 3 + ph; if (k > d - 2) continue; const px = P.pos.x + dx * k, pz = P.pos.z + dz * k;
+      s.position.set(px, (G.realm === 'inst' ? 0 : ground(px, pz)) + .35, pz); s.visible = true; s.material.opacity = (1 - i / GUIDE.trail.length) * .85 * Math.min(1, (k - 2) / 2);
+    }
+  }
+  // on-screen pointer with distance
+  const v = new THREE.Vector3(x, y + top + .8, z).project(R.camera); const W = innerWidth, H = innerHeight;
+  let sx = (v.x + 1) / 2 * W, sy = (1 - v.y) / 2 * H; const behind = v.z > 1; const m = 46;
+  const onScreen = !behind && sx > m && sx < W - m && sy > m && sy < H - m;
+  const ptr = GUIDE.ptr; ptr.style.display = 'block'; ptr.classList.toggle('edge', !onScreen);
+  if (!onScreen) {
+    let ax = sx - W / 2, ay = sy - H / 2; if (behind) { ax = -ax; ay = -ay; if (Math.abs(ay) < 1) ay = 1; }
+    const s = Math.min((W / 2 - m) / Math.abs(ax || 1e-3), (H / 2 - m) / Math.abs(ay || 1e-3)); sx = W / 2 + ax * s; sy = H / 2 + ay * s;
+    ptr.querySelector('.ga').style.transform = `rotate(${Math.atan2(ay, ax)}rad)`;
+  }
+  ptr.style.left = sx + 'px'; ptr.style.top = sy + 'px';
+  const lbl = `${Math.round(d)}m`; const gl = ptr.querySelector('.gl'); if (gl._t !== lbl) { gl.textContent = lbl; gl._t = lbl; }
+}
+/* tracker: always show a "Next" line; tap a quest to track it */
+const _rt = UI.renderTracker; UI.renderTracker = function () {
+  _rt.call(UI); const g = GUIDE.g; const T = $('#tracker'); if (!T) return;
+  if (g && G.player) {
+    const d = g.here ? '' : ` · ${Math.round(Math.hypot(g.x - G.player.pos.x, g.z - G.player.pos.z))}m`;
+    const box = el('div', 'q guide', `<b>➤ Next</b><div>${esc(g.label)}<span class="minor">${d}</span></div>`); T.insertBefore(box, T.firstChild); T._innerHTML = null;
+  }
+  T.querySelectorAll('.q').forEach(qd => { const name = qd.querySelector('b'); if (!name) return; const q = QUESTS.find(q => name.textContent.replace(/^◆ /, '') === q.name && G.save.quests.active[q.id]); if (q) { qd.style.cursor = 'pointer'; if (G.save.focusQ === q.id || (GUIDE.g && GUIDE.g.q === q.id)) qd.classList.add('tracked'); qd.onclick = () => { G.save.focusQ = q.id; GUIDE.t = 0; UI.dirtyQuests = true; }; } });
+};
+// journal: Track button
+const _rj = UI.renderJournal; UI.renderJournal = function () {
+  _rj.call(UI); const W = UI.wins.journal; if (!W) return; const sel = W.body.querySelector('.li.sel'); if (!sel) return; const id = sel.dataset.q;
+  const btn = el('button', 'btn small gold', G.save.focusQ === id ? 'Tracking ✓' : 'Track this quest'); btn.style.marginRight = '6px';
+  btn.onclick = () => { G.save.focusQ = id; GUIDE.t = 0; UI.renderJournal(); };
+  const right = W.body.querySelector('div > div:last-child'); if (right) right.appendChild(btn);
+};
+// announce the next objective whenever a quest advances
+const _qa = questAdvance; questAdvance = function (id) { _qa(id); GUIDE.t = 0; setTimeout(() => { const g = computeGuide(); if (g) UI.log(`<b>Next:</b> ${esc(g.label)}`, 'sys'); }, 50); };
+const _cq = completeQuest; completeQuest = function (id) { _cq(id); GUIDE.t = 0; setTimeout(() => { const g = computeGuide(); if (g) { UI.log(`<b>Next:</b> ${esc(g.label)}`, 'sys'); } }, 2000); };
+const _aq = acceptQuest; acceptQuest = function (id) { _aq(id); G.save.focusQ = QUEST[id].main || !G.save.focusQ ? id : G.save.focusQ; GUIDE.t = 0; };
+// quest-giver markers are visible from much farther away
+const _up = UI.updatePlates.bind(UI); UI.updatePlates = function (dt) {
+  _up(dt);
+  const P = G.player; if (!P) return; const W = innerWidth, H = innerHeight; const v = new THREE.Vector3(); let used = 0; const pool = (this.farPool = this.farPool || []);
+  for (const e of G.ents) {
+    if (e.kind !== 'npc' || e.realm !== G.realm) continue; const d = e.dist(P); if (d < 30 || d > 110) continue; const mk = npcMarker(e.npc); if (!mk) continue;
+    v.copy(e.pos); v.y += (e.rig ? e.rig.H : 2) + .6; v.project(R.camera); if (v.z > 1) continue;
+    let p = pool[used]; if (!p) { p = el('div', 'plate npc far'); $('#plates').appendChild(p); pool.push(p); } used++;
+    const h = `<span class="mk">${mk}</span>`; if (p._h !== h) { p.innerHTML = h; p._h = h; } p.style.left = ((v.x + 1) / 2 * W) + 'px'; p.style.top = ((1 - v.y) / 2 * H) + 'px'; p.style.display = '';
+  }
+  for (let i = used; i < pool.length; i++) pool[i].style.display = 'none';
+};
+
+/* ---------------- gamepad coverage for every screen ---------------- */
+// 1) map travel without pointing: list of attuned waystones under the map (also handy on touch)
+function travelTo(k) {
+  const w = WAYSTONES[k]; if (G.inst) return UI.err('You cannot travel from here.'); if (G.player.inCombat > 0) return UI.err('You cannot teleport during combat.');
+  const cost = 25 + Math.round(Math.hypot(w.x - G.player.pos.x, w.z - G.player.pos.z) / 8);
+  UI.popup('Teleport', `Travel to <b>${esc(w.name)}</b> for <span class="gold">${cost} gold</span>?`, [['Travel', () => { if (G.save.gold < cost) return UI.err('Not enough gold.'); G.save.gold -= cost; UI.close('map'); teleportTo(w.x + 5, w.z + 5); }], ['Cancel', null]]);
+}
+const _rm = UI.renderMap; UI.renderMap = function () {
+  _rm.call(UI); const W = UI.wins.map; const P = G.player;
+  const ks = Object.keys(WAYSTONES).filter(k => G.save.attuned[k]);
+  const box = el('div', '', `<div class="minor" style="margin:6px 0 4px">Travel to an attuned waystone:</div><div style="display:flex;flex-wrap:wrap;gap:5px">${ks.map(k => `<button class="btn small" data-ws="${k}">${esc(WAYSTONES[k].name)} <span class="gold">${25 + Math.round(Math.hypot(WAYSTONES[k].x - P.pos.x, WAYSTONES[k].z - P.pos.z) / 8)}g</span></button>`).join('')}</div>`);
+  W.body.appendChild(box); box.querySelectorAll('[data-ws]').forEach(b => b.onclick = () => travelTo(b.dataset.ws));
+};
+// 2) quick chat and emotes reachable from the system menu
+const _rs = UI.renderSystem; UI.renderSystem = function () {
+  _rs.call(UI); const W = UI.wins.sys;
+  const row = el('div', '', `<div class="minor" style="margin:2px 0 4px">Emotes &amp; quick chat</div><div style="display:flex;flex-wrap:wrap;gap:5px;margin-bottom:10px">${['/wave', '/cheer', '/dance', '/bow', '/sit', 'Hello!', 'Thank you!', 'Good game!', 'Ready!', 'Need help here!'].map(c => `<button class="btn small" data-cmd="${esc(c)}">${esc(c.replace('/', ''))}</button>`).join('')}<button class="btn small" id="sGuide">${G.save.settings.guide === false ? 'Show' : 'Hide'} waypoint</button></div>`);
+  W.body.insertBefore(row, W.body.children[1]);
+  row.querySelectorAll('[data-cmd]').forEach(b => b.onclick = () => { chatCommand(b.dataset.cmd); });
+  $('#sGuide').onclick = () => { G.save.settings.guide = G.save.settings.guide === false; UI.renderSystem(); };
+};
+// 3) smarter focus: auto-focus new menus, skip close buttons, include hotbar while assigning actions
+const _pf = padFocusables; padFocusables = function (ctx) {
+  let els = _pf(ctx); if (UI.assigning && UI.wins.jobs && ctx === UI.wins.jobs.el) els = els.concat([...document.querySelectorAll('#hotbars .slot')].filter(e => e.offsetParent)); return els;
+};
+const _pn = padNavigate; padNavigate = function (dx, dy) {
+  const ctx = padContext(); if (!ctx) return; const els = padFocusables(ctx);
+  const cur = PAD.focusEl && els.includes(PAD.focusEl) ? PAD.focusEl : null;
+  if (!cur && !dx && !dy || !cur) { const modal = ctx.id === 'popup' || ctx.id === 'dialog' || ctx.id === 'title'; const pickFirst = els.find(e => !e.classList.contains('x') && (e.tagName === 'BUTTON' || e.matches('.li,.cell,.eq,.opt')));
+    const target = UI.assigning && UI.wins.jobs && ctx === UI.wins.jobs.el ? els.find(e => e.matches('#hotbars .slot')) : (modal && els.find(e => e.matches('.btn.gold'))) || pickFirst || els[0]; if (target) setPadFocus(target); return; }
+  if (UI.assigning && cur.matches('#hotbars .slot')) { // stay within the hotbar while choosing a slot
+    const slots = [...document.querySelectorAll('#hotbars .slot')].filter(e => e.offsetParent); const a = cur.getBoundingClientRect(); let best = null, bs = 1e9;
+    for (const e of slots) { if (e === cur) continue; const r = e.getBoundingClientRect(); const vx = r.left - a.left, vy = r.top - a.top; const along = vx * dx + vy * dy; if (along <= 4) continue; const sc = along + Math.abs(vx * dy - vy * dx) * 3; if (sc < bs) { bs = sc; best = e; } }
+    if (best) setPadFocus(best); return; }
+  _pn(dx, dy);
+};
+const _pp = pollPad; pollPad = function (dt) {
+  _pp(dt);
+  const ctx = padContext(); if (PAD.active && ctx !== PAD.lastCtx) { PAD.lastCtx = ctx; if (ctx) { clearPadFocus(); padNavigate(0, 0); } }
+  if (!ctx) PAD.lastCtx = null;
+  // assigning an action: jump focus to the hotbar once, and leave assign mode if the jobs window closes
+  if (UI.assigning && PAD.active && PAD.assignFor !== UI.assigning) { PAD.assignFor = UI.assigning; const s = [...document.querySelectorAll('#hotbars .slot')].find(e => e.offsetParent); if (s) setPadFocus(s); }
+  if (!UI.assigning) PAD.assignFor = null;
+  if (UI.assigning && !(UI.wins.jobs && UI.wins.jobs.open)) { UI.assigning = null; document.body.style.cursor = ''; }
 };
 
 </script>
