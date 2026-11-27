@@ -187,7 +187,6 @@ h3{font-weight:normal!important;font-size:19px!important;color:var(--ink)!import
 #cPrev{border:2.5px solid var(--ink)!important;border-radius:48% 52% 50% 46%/52% 46% 54% 48%!important}
 .summary h2{font-family:"Patrick Hand",sans-serif;font-weight:normal;font-size:34px!important}.summary{font-size:19px!important}
 #rotate{background:var(--paper)!important;color:var(--ink)!important;font-size:17px!important}
-#splash{background:radial-gradient(circle at 50% 42%,#fffaf0 0%,#f6ead2 60%,#ead6b2 100%),url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.75' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .5 0 0 0 0 .4 0 0 0 0 .3 0 0 0 .1 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")!important}
 table.kv td{border-bottom:1px dashed rgba(61,47,43,.3)!important;font-size:15px}
 body.kbnav :focus,body.kbnav :focus:not(:focus-visible){outline:3px dashed #3a7fc0!important;box-shadow:0 0 0 5px rgba(58,127,192,.25)!important}
 </style>
@@ -2707,7 +2706,7 @@ document.addEventListener('visibilitychange',()=>{if(!document.hidden)fsDeclined
 window.addEventListener('pagehide',()=>{if(state&&!onTitle)saveGame(true);});
 window.addEventListener('resize',()=>{resize();});
 let splashing=false;
-function drawSplashLogo(g,t){g.__ink=true;g.__inkScale=1.5;const W=g.canvas.width;g.setTransform(W/200,0,0,W/200,0,0);g.clearRect(0,0,200,200);const T2=Math.PI*2;
+function drawSplashLogo(g,t){const W=g.canvas.width;g.setTransform(W/200,0,0,W/200,0,0);g.clearRect(0,0,200,200);const T2=Math.PI*2;
  const C=(x,y,r,c)=>{g.fillStyle=c;g.beginPath();g.arc(x,y,r,0,T2);g.fill();};const E=(x,y,rx,ry,c)=>{g.fillStyle=c;g.beginPath();g.ellipse(x,y,rx,ry,0,0,T2);g.fill();};
  const RR=(x,y,w,h,r,c)=>{g.fillStyle=c;g.beginPath();g.roundRect(x,y,w,h,r);g.fill();};
  const VG=(y0,y1,a,b)=>{const gr=g.createLinearGradient(0,y0,0,y1);gr.addColorStop(0,a);gr.addColorStop(1,b);return gr;};
@@ -2740,7 +2739,7 @@ function drawSplashLogo(g,t){g.__ink=true;g.__inkScale=1.5;const W=g.canvas.widt
  // fireflies
  for(let i=0;i<8;i++){const fx=46+((i*29+t*5)%110),fy=58+Math.sin(t*1.3+i*2)*12+i*4;const a=0.35+0.65*Math.max(0,Math.sin(t*2.4+i*1.7));const fg=g.createRadialGradient(fx,fy,0,fx,fy,4.5);fg.addColorStop(0,`rgba(255,246,190,${a})`);fg.addColorStop(1,'rgba(255,246,190,0)');g.fillStyle=fg;g.fillRect(fx-4.5,fy-4.5,9,9);}
  // wordmark
- g.__ink=false;g.font='bold 32px "Patrick Hand", "Trebuchet MS", sans-serif';g.textAlign='center';g.textBaseline='middle';g.lineJoin='round';
+ g.font='900 27px Nunito, "Trebuchet MS", sans-serif';g.textAlign='center';g.textBaseline='middle';g.lineJoin='round';
  const ty=180;g.fillStyle='rgba(120,70,30,.18)';g.fillText('Cozy Forest',100,ty+2.5);g.strokeStyle='#fffaf0';g.lineWidth=7;g.strokeText('Cozy Forest',100,ty);
  const tg=g.createLinearGradient(0,ty-12,0,ty+12);tg.addColorStop(0,'#7a5236');tg.addColorStop(1,'#4e3324');g.fillStyle=tg;g.fillText('Cozy Forest',100,ty);}
 function showSplash(done){const el=$('#splash'),cv2=$('#splashCv');const g2=cv2.getContext('2d');splashing=true;const t0=performance.now();
