@@ -29,6 +29,9 @@ img{pointer-events:none;-webkit-user-drag:none}
 .rb{width:44px;height:44px;border-radius:12px;background:rgba(253,247,236,.93);box-shadow:var(--sh);display:grid;place-items:center;position:relative}.rb img{width:28px;height:28px}
 .rb .dot{position:absolute;right:3px;top:3px;width:10px;height:10px;border-radius:50%;background:var(--red);border:2px solid #fff}
 #tracker{position:absolute;right:max(8px,env(safe-area-inset-right));top:calc(max(8px,env(safe-area-inset-top)) + 52px);width:224px;font-size:12px;padding:7px 10px;max-height:40vh;overflow:hidden}
+#wp{position:absolute;left:0;top:0;pointer-events:none;display:flex;flex-direction:column;align-items:center;margin:-22px 0 0 -60px;width:120px;filter:drop-shadow(0 2px 3px rgba(0,0,0,.5))}#wp img{width:30px;height:30px;animation:wpb 1.2s ease-in-out infinite}#wpTxt{margin-top:1px;padding:1px 8px;border-radius:9px;background:rgba(20,30,50,.75);color:#ffd86a;font-size:12px;font-weight:800;white-space:nowrap}
+#wpArrow{position:absolute;left:50%;top:15px;width:0;height:0;margin:-9px 0 0 -9px;border:9px solid transparent;border-left:16px solid #ffb84a;transform-origin:4px 9px;translate:26px 0}@keyframes wpb{50%{transform:translateY(-4px)}}
+#tracker .next{background:#fff1d6;border-radius:8px;padding:4px 6px;margin-bottom:6px;border-left:3px solid var(--amb2)}
 #tracker h4{margin:0 0 3px;font-size:11px;color:var(--amb2);text-transform:uppercase;letter-spacing:.06em}
 #tracker div{margin-bottom:4px;line-height:1.25}#tracker .ok{color:var(--grn);font-weight:800}
 #cross{position:absolute;left:50%;top:50%;width:6px;height:6px;margin:-3px 0 0 -3px;border-radius:50%;background:rgba(255,255,255,.9);box-shadow:0 0 0 2px rgba(0,0,0,.25);transition:all .12s}
@@ -158,6 +161,7 @@ textarea{width:100%;height:90px;font-size:11px;border-radius:10px;border:2px sol
     <button class="rb" id="bMenu" aria-label="Menu"><img data-ic="menu" alt=""><span class="dot hidden" id="mDot"></span></button>
   </div>
   <div id="tracker" class="card"></div>
+  <div id="wp" class="hidden"><div id="wpArrow"></div><img id="wpIc" alt=""><span id="wpTxt"></span></div>
   <div id="cross"></div>
   <div id="prompt"></div>
   <div id="hpbar2" class="hidden"><s></s></div>
@@ -205,7 +209,7 @@ function scl(a,k){return[a[0]*k,a[1]*k,a[2]*k]}
 const fmt=n=>Math.floor(n).toLocaleString('en-US');
 
 /* ---------- settings ---------- */
-const SET=Object.assign({sens:1,inv:false,vol:.7,mus:.5,q:1,fs:true,fov:72,bob:true,touchSens:1,daylen:1},(()=>{try{return JSON.parse(localStorage.getItem('frostlight_set')||'{}')}catch(e){return{}}})());
+const SET=Object.assign({sens:1,inv:false,vol:.7,mus:.5,q:1,fs:true,fov:72,bob:true,touchSens:1,daylen:1,wp:true},(()=>{try{return JSON.parse(localStorage.getItem('frostlight_set')||'{}')}catch(e){return{}}})());
 function saveSet(){try{localStorage.setItem('frostlight_set',JSON.stringify(SET))}catch(e){}}
 const IS_TOUCH=('ontouchstart' in window)||navigator.maxTouchPoints>0;
 
@@ -1712,6 +1716,7 @@ function buildModels(){
  MOD.line=(()=>{const m=new MB(0,53);m.box(-.01,0,-.01,.01,1,.01,C('#e8e8e8'));return m.build()})();
  MOD.hole=(()=>{const m=new MB(0,54);m.cyl(0,.16,0,.6,.6,.02,10,C('#1a3a5a'));m.cyl(0,.15,0,.85,.8,.04,10,C('#f4f8fc'),null,true);return m.build()})();
  MOD.blades=(()=>{const m=new MB(.02,55);for(let k=0;k<3;k++){m.at(0,0,0,0,1,0,k*TAU/3);m.box(-.15,0,-.04,.15,7,.04,C('#f4f4f4'));m.reset()}m.sph(0,0,0,.5,C('#e8e8e8'),6,4);return m.build()})();
+ MOD.beam=(()=>{const m=new MB(0,59);m.box(-.6,0,-.6,.6,70,.6,C('#ffffff'));m.box(-1,0,-1,1,1.2,1,C('#ffffff'));return m.build()})();
  MOD.drop=(()=>{const m=new MB(0,56);m.box(-.15,-.15,-.15,.15,.15,.15,C('#ffffff'));return m.build()})();
  MOD.steam=(()=>{const m=new MB(0,57);m.sph(0,0,0,.4,C('#ffffff'),5,3);return m.build()})();
 }
@@ -1819,7 +1824,7 @@ function addFP(id,n){const o=S.npc[id]||(S.npc[id]={fp:0,talk:0,gift:0,gw:0});co
 /* ===================== ENTITIES ===================== */
 const NPCE={};
 const SCHED={
- maren:[[6,'bunk1'],[8,'maren'],[12,'plaza1'],[13,'maren'],[18,'hall3'],[22,'bunk1']],
+ maren:[[6,'maren'],[12,'plaza1'],[13,'maren'],[18,'hall3'],[22,'bunk1']],
  oskar:[[6,'oskar'],[21,'hall5'],[23,'bunk2']],
  felix:[[7,'hall1'],[8,'felix'],[12,'hall2'],[13,'ws2'],[19,'plaza3'],[21,'bunk3']],
  lena:[[7,'gh2'],[8,'lena'],[17,'gh2'],[19,'hall1'],[22,'bunk2']],
@@ -2382,6 +2387,7 @@ function renderMap(b){if(!mapBase||mapSeason!==S.season)buildMapBase();b.innerHT
  else for(const n of NODES)if(n.t==='sample'&&n.smp==='icecore'&&S.q.m9&&S.q.m9.st==='active'&&n.z>-130)mark(n.x,n.z,'vial','Ice core site',20);
  for(const p of S.placed)if(p.t==='flag')mark(p.x,p.z,'flag','Your flag',24);
  for(const id of NPC_IDS){const e=NPCE[id];x.fillStyle='#3a6ad0';x.beginPath();x.arc(M(e.x),M(e.z),5,0,TAU);x.fill();marks.push([M(e.x),M(e.z),NPCS[id].name])}
+ const qt=questTarget();if(qt){x.strokeStyle='#f39a2a';x.lineWidth=4;x.setLineDash([10,8]);x.beginPath();x.moveTo(M(P.x),M(P.z));x.lineTo(M(qt.x),M(qt.z));x.stroke();x.setLineDash([]);x.drawImage(imgCache('pin'),M(qt.x)-20,M(qt.z)-38,40,40);marks.push([M(qt.x),M(qt.z),'Next: '+qt.hint]);info.textContent='Next: '+qt.hint}
  x.save();x.translate(M(P.x),M(P.z));x.rotate(-P.yaw);x.fillStyle='#e24f5a';x.strokeStyle='#fff';x.lineWidth=3;x.beginPath();x.moveTo(0,-14);x.lineTo(10,10);x.lineTo(0,5);x.lineTo(-10,10);x.closePath();x.stroke();x.fill();x.restore();
  x.fillStyle='rgba(0,0,0,.5)';x.font='bold 22px sans-serif';x.fillText('N',740,30);
  const pick2=(ev)=>{const r=c.getBoundingClientRect();const mx=(ev.clientX-r.left)/r.width*768,my=(ev.clientY-r.top)/r.height*768;let best=null,bd=40;for(const m of marks){const d=Math.hypot(m[0]-mx,m[1]-my);if(d<bd){bd=d;best=m}}info.textContent=best?best[2]:''};c.onclick=pick2;c.onpointermove=pick2}
@@ -2391,7 +2397,7 @@ function renderSettings(b){b.innerHTML='<h3>Settings</h3>';const row=(label,el)=
  const rng=(k,min,max,step,on)=>{const r=document.createElement('input');r.type='range';r.min=min;r.max=max;r.step=step;r.value=SET[k];r.oninput=()=>{SET[k]=+r.value;saveSet();on&&on()};return r};
  const tog=(k,on)=>{const x=document.createElement('button');x.className='btn '+(SET[k]?'grn':'alt');x.textContent=SET[k]?'On':'Off';x.onclick=()=>{SET[k]=!SET[k];saveSet();on&&on();rerender()};return x};
  row('Look sensitivity',rng('sens',.3,2.5,.05));row('Touch look sensitivity',rng('touchSens',.3,2.5,.05));row('Invert look up/down',tog('inv'));row('Sound volume',rng('vol',0,1,.05,()=>audioVol()));row('Music volume',rng('mus',0,1,.05,()=>audioVol()));
- row('Field of view',rng('fov',55,95,1,()=>resize()));row('Graphics quality (0 = fast)',rng('q',0,2,1,()=>resize()));row('Head bob',tog('bob'));row('Fullscreen on start',tog('fs',()=>{if(SET.fs)goFull();else if(document.fullscreenElement)document.exitFullscreen().catch(()=>{})}));
+ row('Field of view',rng('fov',55,95,1,()=>resize()));row('Graphics quality (0 = fast)',rng('q',0,2,1,()=>resize()));row('Head bob',tog('bob'));row('Waypoint marker',tog('wp'));row('Fullscreen on start',tog('fs',()=>{if(SET.fs)goFull();else if(document.fullscreenElement)document.exitFullscreen().catch(()=>{})}));
  row('Day length (x)',rng('daylen',.5,2,.25));
  const c=document.createElement('div');c.className='grid';c.style.marginTop='10px';const B=(l,f,cl)=>{const x=document.createElement('button');x.className='btn '+(cl||'');x.textContent=l;x.onclick=f;c.appendChild(x)};
  B('Save now',()=>{saveGame();toast('Game saved.','save')},'grn');B('Save & exit to title',()=>{saveGame();closePanel();toTitle()},'alt');
@@ -2452,14 +2458,53 @@ function drawCompass(){const c=$('compCv'),x=c.getContext('2d');x.clearRect(0,0,
  // quest marker
  const qm=questMarker();if(qm){const a=Math.atan2(qm[0]-P.x,-(qm[1]-P.z))*180/Math.PI;let d=((a-yawDeg+540)%360)-180;x.globalAlpha=1;const px=260+clamp(d,-80,80)*3;x.fillStyle='#ffd86a';x.beginPath();x.moveTo(px,6);x.lineTo(px+8,18);x.lineTo(px-8,18);x.fill()}
  x.globalAlpha=1;x.fillStyle='rgba(255,255,255,.8)';x.fillRect(259,40,2,10)}
-function questMarker(){const mi=mainIdx();const id=MAIN[mi];if(!id||!S.q[id])return null;const q=QUESTS[id];
- if(q.obj.some(o=>o.t==='item')&&questReady(id)){const e=NPCE[q.giver];return[e.x,e.z]}
- if(id==='m2')return[BLD.bunk.x,BLD.bunk.z];if(id==='m7')return S.flags.mastFixed?null:[RADIO.x+6,RADIO.z-4];if(id==='m8'){const p=PROBES.find(p=>!S.flags[p.f]);return p?[p.x,p.z]:null}if(id==='m9')return[TONGUE.x,TONGUE.z];if(id==='m11')return[HUT.x,HUT.z];if(id==='m13')return[0,84];if(id==='m14')return[ICECAVE.x,ICECAVE.z];if(id==='m15'&&countItem('auroralantern'))return[OBS.x,OBS.z];if(id==='m4'&&!(countItem('copper')>=5))return[100,-60];if(id==='m6')return[BAY.x-60,BAY.z];return null}
+function reachable(x,z){return S.proj.bridge||z>CREVZ(x)+9}
+function nearestNode(f){let best=null,bd=1e9;for(const n of NODES){if(!f(n)||!nodeAlive(n)||!reachable(n.x,n.z))continue;const d=Math.hypot(n.x-P.x,n.z-P.z);if(d<bd){bd=d;best=n}}return best}
+function whereIs(x,z){for(const d of INDOOR){if(d.on&&!d.on())continue;if(x>d.x0&&x<d.x1&&z>d.z0&&z<d.z1)return d.name}return null}
+function tNPC(id,hint){const e=NPCE[id];const w=whereIs(e.x,e.z);return{x:e.x,z:e.z,y:e.y+2.3,label:NPCS[id].name.split(' ')[0],hint:(hint||'Talk to '+NPCS[id].name)+(w?' ('+w+')':'')}}
+function tPt(x,z,label,hint,y){return{x,z,y:y!=null?y:groundAt(x,z,99)+1.6,label,hint:hint||label}}
+function tNode(n,label,hint){return n?tPt(n.x,n.z,label,hint,n.y+1.6):null}
+function questTarget(){const id=MAIN[mainIdx()];const q=id&&QUESTS[id],st=id&&S.q[id];
+ if(q&&st&&st.st==='active'){const ready=q.obj.some(o=>o.t==='item')&&questReady(id);if(ready)return tNPC(q.giver,'Bring it to '+NPCS[q.giver].name);
+  const c=i=>countItem(i);let t=null;
+  switch(id){
+  case'm1':t=tNPC('maren','Talk to Commander Maren');break;
+  case'm2':t=!S.flags.sawBed?tPt(-31.6,74.4,'Your bunk','Inspect your bed in the Bunkhouse',BLD.bunk.fy+1.4):tPt(-22.5,81.5,'Chest','Open the storage chest',BLD.bunk.fy+1.6);break;
+  case'm3':t=tNode(nearestNode(n=>n.t==='tree'||n.t==='drift'||n.t==='birch'),'Wood','Chop wood with your axe ('+c('wood')+'/10)');break;
+  case'm4':t=c('copper')<5?tNode(nearestNode(n=>n.t==='copper'),'Copper','Mine copper veins with your pickaxe ('+c('copper')+'/5)'):tNode(nearestNode(n=>n.t==='rock'),'Rock','Mine rocks for stone ('+c('stone')+'/10)');break;
+  case'm5':{const planted=S.plots.some(d=>d&&d.c),ripe=PLOTS.findIndex((p,i)=>S.plots[i]&&S.plots[i].c&&S.plots[i].g>=CROPS[S.plots[i].c].days),dry=PLOTS.findIndex((p,i)=>S.plots[i]&&S.plots[i].c&&!S.plots[i].w);
+   if(ripe>=0)t=tPt(PLOTS[ripe].x,PLOTS[ripe].z,'Harvest','Harvest your ripe crop',PLOTS[ripe].y+1.2);else if(dry>=0)t=tPt(PLOTS[dry].x,PLOTS[dry].z,'Water','Water your crops with the watering can',PLOTS[dry].y+1.2);
+   else if(!planted)t=c('s_radish')||S.inv.some(s=>s&&ITEMS[s.id].seed)?tPt(PLOTS[0].x,PLOTS[0].z,'Planter','Hold seeds and plant them in a greenhouse planter',PLOTS[0].y+1.2):tNPC('lena','Buy seeds from Lena in the Greenhouse');
+   else t={...tPt(BLD.bunk.x,BLD.bunk.z,'Bunk','Crops grow overnight. Sleep, then water again',BLD.bunk.fy+3)};break}
+  case'm6':t=tPt(0,199,'Pier','Fish from the end of the pier (hold the rod, aim at water)',2.8);break;
+  case'm7':t=c('wire')>=3&&c('circuit')>=1?tPt(RADIO.x+6,RADIO.z-3,'Mast','Repair the radio mast panel'):tPt(30,74.6,'Workbench',c('cbar')<2&&c('wire')<3?'Smelt copper bars, then craft wire + circuit at the workbench':'Craft 3 Copper Wire + 1 Circuit Board',BLD.ws.fy+1.8);break;
+  case'm8':{const p=PROBES.filter(p=>!S.flags[p.f]).sort((a,b)=>Math.hypot(a.x-P.x,a.z-P.z)-Math.hypot(b.x-P.x,b.z-P.z))[0];t=p?tPt(p.x,p.z,'Probe site','Install a weather probe here'):null;break}
+  case'm9':t=tNode(nearestNode(n=>n.t==='sample'&&n.smp==='icecore'),'Ice core','Use the Sample Kit at the blue flag ('+c('icecore')+'/3)');break;
+  case'm10':t=isNight()&&S.aurora?tPt(OBS.x,OBS.z+12,'Sky','Look up and photograph the aurora with the camera'):tPt(OBS.x,OBS.z+12,'Observatory','Wait for an aurora night (sleep), then photograph the sky');break;
+  case'm11':t=tPt(HUT.x,HUT.z,'Old hut','Find the journal page in the expedition hut (far west)',BLD.hut.fy+2);break;
+  case'm12':t=tNode(nearestNode(n=>n.t==='page'),'Journal page','Find journal pages ('+Object.keys(S.coll.pages).length+'/6)');break;
+  case'm13':t=tPt(1,80.6,'Project Board','Fund the Glacier Bridge on the Project Board',BLD.hall.fy+2.2);break;
+  case'm14':t=tPt(ICECAVE.x,ICECAVE.z+5,'Ice Cave','Mine Aurora Shards in the Ice Cave ('+c('aurorashard')+'/3)',BLD.cave.fy+2.5);break;
+  case'm15':t=c('auroralantern')?tNPC('elin','Bring the lantern to Elin at the Observatory at night'):tPt(30,74.6,'Workbench','Craft the Aurora Lantern at the workbench',BLD.ws.fy+1.8);break}
+  if(t)return t}
+ for(const qid in S.q){const s=S.q[qid],qq=QUESTS[qid];if(s.st==='active'&&!qq.main&&qq.obj.some(o=>o.t==='item')&&questReady(qid))return tNPC(qq.giver,'Deliver "'+qq.title+'" to '+NPCS[qq.giver].name)}
+ return null}
+function questMarker(){const t=questTarget();return t?[t.x,t.z]:null}
+let WPT=null,wpT=0;
+function updateWaypoint(dt,PV){const el=$('wp');wpT-=dt;if(wpT<=0){wpT=.25;WPT=SET.wp!==false?questTarget():null}
+ const t=WPT;if(!t||!PV||uiBlocking()){el.classList.add('hidden');return}
+ const d=Math.hypot(t.x-P.x,t.z-P.z);if(d<2.2){el.classList.add('hidden');return}
+ const v=[t.x,t.y,t.z];const cx=PV[0]*v[0]+PV[4]*v[1]+PV[8]*v[2]+PV[12],cy=PV[1]*v[0]+PV[5]*v[1]+PV[9]*v[2]+PV[13],cw=PV[3]*v[0]+PV[7]*v[1]+PV[11]*v[2]+PV[15];
+ let nx=cx/Math.abs(cw||1e-4),ny=cy/Math.abs(cw||1e-4);const W=innerWidth,Hh=innerHeight;let on=cw>0&&Math.abs(nx)<.92&&Math.abs(ny)<.86;
+ if(!on){if(cw<=0){nx=-nx;ny=-ny;if(Math.abs(nx)<.01)nx=.01}const k=Math.max(Math.abs(nx)/.88,Math.abs(ny)/.78);nx/=k;ny/=k}
+ const sx=(nx*.5+.5)*W,sy=(-ny*.5+.5)*Hh;el.classList.remove('hidden');el.style.transform=`translate(${sx}px,${sy}px)`;
+ $('wpArrow').style.display=on?'none':'block';$('wpArrow').style.transform=`rotate(${Math.atan2(-ny,nx)}rad)`;
+ const txt=t.label+' - '+Math.round(d)+' m';if(el._t!==txt){el._t=txt;$('wpTxt').textContent=txt}}
 let trackKey='';
 function renderTracker(){if(!S)return;const act=Object.keys(S.q).filter(id=>S.q[id].st==='active');act.sort((a,b)=>(QUESTS[b].main?1:0)-(QUESTS[a].main?1:0));
- let h='<h4>Quests</h4>';for(const id of act.slice(0,3)){const q=QUESTS[id];h+='<div><b>'+(q.main?'&#9733; ':'')+H(q.title)+'</b>';
+ let h='';for(const id of act.slice(0,3)){const q=QUESTS[id];h+='<div><b>'+(q.main?'&#9733; ':'')+H(q.title)+'</b>';
   if(q.obj.some(o=>o.t==='item')&&questReady(id))h+='<br><span class="ok">Return to '+H(NPCS[q.giver].name)+'</span>';else for(const o of q.obj){const p=objProg(id,o);h+='<br><span class="'+(objDone(id,o)?'ok':'')+'">'+H(objText(o))+(p&&p!=='done'?' '+p:'')+'</span>'}h+='</div>'}
- if(!act.length)h+='<div>Talk to people around the station for work.</div>';if(act.length>3)h+='<div style="color:var(--mut)">+'+(act.length-3)+' more (J)</div>';
+ const nt=questTarget();if(nt)h='<div class="next"><b>Next:</b> '+H(nt.hint)+'</div>'+h.replace('<h4>Quests</h4>','');h='<h4>Quests</h4>'+h;if(!act.length)h+='<div>Talk to people around the station for work.</div>';if(act.length>3)h+='<div style="color:var(--mut)">+'+(act.length-3)+' more (J)</div>';
  if(h!==trackKey){trackKey=h;$('tracker').innerHTML=h}}
 
 /* ===================== INPUT ===================== */
@@ -2579,7 +2624,7 @@ function musicTick(){if(!AC||AC.state!=='running'||!gameOn&&$('title').classList
 function updateAmbience(){if(!AC||!windG)return;let v=0;if(gameOn&&!P.inside){v={clear:.04,cloudy:.07,snow:.12,blizzard:.4}[S.wx]||.05}else if(gameOn)v=.012;windG.gain.setTargetAtTime(v,AC.currentTime,.5);windF.frequency.setTargetAtTime(S&&S.wx==='blizzard'?900+Math.sin(performance.now()/700)*300:400+Math.sin(performance.now()/1300)*120,AC.currentTime,.3)}
 
 /* ===================== RENDER ===================== */
-let PROJ=null,T=0,gameOn=false;
+let PROJ=null,T=0,gameOn=false,LASTPV=null;
 function resize(){const dpr=Math.min(window.devicePixelRatio||1,[.85,1.35,2][SET.q|0]||1);cv.width=Math.max(1,innerWidth*dpr|0);cv.height=Math.max(1,innerHeight*dpr|0);gl.viewport(0,0,cv.width,cv.height);PROJ=M4.persp(SET.fov*D2R,cv.width/cv.height,.08,1000)}
 addEventListener('resize',resize);
 let seaMesh,lakeMesh,lakeIceMesh,bayIceMesh,glassMesh,floeMesh;
@@ -2650,6 +2695,8 @@ function render(dt){if(!S)return;computeEnv(dt);
  // steam
  if(S.proj.hotspring&&Math.hypot(P.x-SPRING.x,P.z-SPRING.z)<120){gl.uniform1f(u.uSpec,0);gl.uniform1f(u.uAlpha,.18);for(let k=0;k<6;k++){const ph=(T*.3+k/6)%1;draw(MOD.steam,mdl(SPRING.x+Math.sin(k*2.1)*2,terrH(SPRING.x,SPRING.z)+ph*4,SPRING.z+Math.cos(k*1.7)*2,0,1+ph*2),WHITE,.6)}}
  gl.uniform1f(u.uAlpha,1);gl.uniform1f(u.uSpec,0);gl.depthMask(true);
+ // waypoint beam
+ if(gameOn&&WPT&&SET.wp!==false){const d=Math.hypot(WPT.x-eye[0],WPT.z-eye[2]);if(d>9){gl.blendFunc(gl.SRC_ALPHA,gl.ONE);gl.uniform1f(u.uAlpha,clamp((d-9)/20,0,.75));gl.uniform1f(u.uFogD,ENV.fogD*.35);const gy=WPT.y-1.6;draw(MOD.beam,mul(M4.T(WPT.x,gy,WPT.z),M4.RY(T)),[1,.62,.2],1);gl.uniform1f(u.uFogD,ENV.fogD);gl.blendFunc(gl.SRC_ALPHA,gl.ONE_MINUS_SRC_ALPHA);gl.uniform1f(u.uAlpha,1)}}
  // snow
  const snowing=(S.wx==='snow'||S.wx==='blizzard')?1:(S.season>=2&&S.wx==='clear'?.25:0);const inF=1-ENV.indoor;
  if(snowing*inF>.05&&snowBuf){useP(PT);gl.disableVertexAttribArray(1);gl.disableVertexAttribArray(2);gl.bindBuffer(gl.ARRAY_BUFFER,snowBuf);gl.vertexAttribPointer(0,3,gl.FLOAT,false,0,0);
@@ -2658,7 +2705,7 @@ function render(dt){if(!S)return;computeEnv(dt);
   useP(MP);gl.enableVertexAttribArray(1);gl.enableVertexAttribArray(2)}
  gl.disable(gl.BLEND);
  // first-person held item
- if(gameOn&&!panelOpen)drawHeld(VIEW)}
+ LASTPV=PV;if(gameOn&&!panelOpen)drawHeld(VIEW)}
 function rodTip(eye){const f=fwd();const r=[Math.cos(P.yaw),0,-Math.sin(P.yaw)];return[eye[0]+f[0]*1.6+r[0]*.35,eye[1]+f[1]*1.6+.55,eye[2]+f[2]*1.6+r[2]*.35]}
 function lineMat(a,b){const d=[b[0]-a[0],b[1]-a[1],b[2]-a[2]];const L=Math.hypot(...d)||1;const y=d.map(v=>v/L);let x=[y[2],0,-y[0]];let xl=Math.hypot(...x);if(xl<.01)x=[1,0,0];else x=x.map(v=>v/xl);const z=[x[1]*y[2]-x[2]*y[1],x[2]*y[0]-x[0]*y[2],x[0]*y[1]-x[1]*y[0]];
  return new Float32Array([x[0],x[1],x[2],0,y[0]*L,y[1]*L,y[2]*L,0,z[0],z[1],z[2],0,a[0],a[1],a[2],1])}
@@ -2699,7 +2746,7 @@ function frame(now){const rdt=Math.min(.1,(now-last)/1000)||.016;const dt=Math.m
  if(gameOn){if(!fadeBusy){updatePlayer(dt);if(rdt>dt)updatePlayer(rdt-dt);updateTime(rdt)}updateNPCs(dt);updateAnimals(dt);updateFishing(dt);
   if(IN.useHeld&&P.useCD<=0&&!uiBlocking()&&!FS.phase){const it=heldIt();if(it&&(it.tool==='axe'||it.tool==='pick'))doUse()}
   for(let i=DROPS.length-1;i>=0;i--){const d=DROPS[i];d.t+=dt;d.y=Math.max(groundAt(d.x,d.z,d.y)+.25,d.y-dt*3);if(d.t>1&&Math.hypot(d.x-P.x,d.z-P.z)<1.6){DROPS.splice(i,1);addItem(d.id,d.n)}}
-  if(!uiBlocking())TGT=findTarget();else TGT=null;updateHUD(dt);
+  if(!uiBlocking())TGT=findTarget();else TGT=null;updateHUD(dt);updateWaypoint(rdt,LASTPV);
   if(qCheckT>0){qCheckT-=dt;if(qCheckT<=0)autoCheckQuests()}periodicT-=dt;if(periodicT<=0){periodicT=2;autoCheckQuests()}
   if(FLASH>0){FLASH=Math.max(0,FLASH-dt*3);$('fade').style.opacity=0}
  }else titleCam(dt);
@@ -2749,7 +2796,7 @@ function toTitle(){gameOn=false;exitLock();endFish();if(dlgShown)closeDlg();S=Ob
 function boot(){resize();gl.enable(gl.DEPTH_TEST);gl.disable(gl.CULL_FACE);
  const sp=$('splashCv');drawLogo(sp);
  setTimeout(()=>{try{
-  document.querySelectorAll('img[data-ic]').forEach(i=>i.src=uiIcon(i.dataset.ic==='bag'?'bagi':i.dataset.ic));
+  $('wpIc').src=uiIcon('pin');document.querySelectorAll('img[data-ic]').forEach(i=>i.src=uiIcon(i.dataset.ic==='bag'?'bagi':i.dataset.ic));
   buildModels();buildStation();buildProjMeshes();decorate();genNodes();
   S=Object.assign(newState(),{time:21*60,season:2,day:5,wx:'clear',aurora:true});
   rebuildWorldMeshes();buildWaterMeshes();makeSnow(SET.q===0?900:2200);refreshProjMeshes();initNPCs();initAnimals();ENV.aur=1;setupTouch();
