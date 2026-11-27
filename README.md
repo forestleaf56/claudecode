@@ -25,3 +25,5 @@ An original open-world fantasy MMORPG-style game in a single file: open `aetherf
 - **Economy:** gear tiers with item levels, shops, gathering nodes, and a crafting minigame with high-quality (HQ) results.
 - **Controls:** WASD to move, drag the mouse to look, click or Tab to target, 1–0, - and = for actions (add Shift for the second bar), F to interact, R to mount, and C/I/K/J/M/B for menus. Press H in-game for the full list.
 - **Saving:** autosaves to browser storage; you can export or import a save from the system menu (Esc).
+- **Art:** artist-made, animated 3D characters, enemies, buildings, trees, props and a modular dungeon kit, embedded in the file (about 7.8 MB). Rendering adds bloom, color grading, FXAA, optional ambient occlusion, a shaded ocean with shoreline foam, wind-swept grass and textured terrain. Graphics quality (Low/Medium/High) is in the system menu.
+- **Credits:** KayKit Character Pack: Adventurers and Skeletons, Medieval Hexagon Pack and Dungeon Remastered by Kay Lousberg (CC0). Fox model by PixelMannen (CC0), rigged and animated by tomkranis (CC-BY 4.0), from the Khronos glTF sample assets. Three.js and meshoptimizer (MIT).
