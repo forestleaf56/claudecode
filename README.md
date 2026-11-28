@@ -15,7 +15,7 @@ A cozy, story-driven 2D platformer RPG set in the sleepy Swedish harbor village 
 
 # Cirrus Linux (`linux-os/`)
 
-A mobile-friendly Linux-style desktop that runs entirely in the browser. Open `linux-os/index.html` (no build step, works offline except for web features).
+A mobile-friendly Linux-style desktop that runs entirely in the browser. Open `linux-os/index.html` (no build step, works offline except for web features), or use the single-file bundle `linux-os/cirrus-linux.html`.
 
 - **Desktop:** boot screen, lock screen with optional password, wallpaper, desktop icons, panel with pinned and running apps, app menu with search and categories, quick settings, notifications, calendar popup, window overview, context menus (long-press on touch).
 - **Windows:** drag, resize, snap to edges, maximize, minimize. On phones, windows open full-screen.
