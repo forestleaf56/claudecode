@@ -1,0 +1,99 @@
+/* Cirrus Linux — package manager (shared by apt and the Software app) */
+(function () {
+  'use strict';
+  // type: 'app' => GUI app (app id = key), 'cli' => terminal command(s), 'lib' => library/meta
+  const R = {
+    // core GUI (preinstalled)
+    files: { v: '24.11.2', size: 2140, sec: 'System', desc: 'Browse and manage your files', type: 'app', core: 1 },
+    terminal: { v: '24.11.1', size: 880, sec: 'System', desc: 'Command line terminal with bash-like shell', type: 'app', core: 1 },
+    browser: { v: '132.0', size: 81200, sec: 'Internet', desc: 'Fast, private web browser with tabs', type: 'app' },
+    editor: { v: '46.2', size: 1620, sec: 'Accessories', desc: 'Simple text and code editor', type: 'app' },
+    settings: { v: '24.11.0', size: 3200, sec: 'System', desc: 'Configure appearance, users, sound and more', type: 'app', core: 1 },
+    software: { v: '24.11.0', size: 2900, sec: 'System', desc: 'Find and install apps', type: 'app', core: 1 },
+    calculator: { v: '46.1', size: 640, sec: 'Accessories', desc: 'Basic and scientific calculator', type: 'app' },
+    viewer: { v: '46.0', size: 920, sec: 'Graphics', desc: 'View images and videos', type: 'app' },
+    monitor: { v: '46.0', size: 1180, sec: 'System', desc: 'See processes, CPU, memory and storage', type: 'app' },
+    calendar: { v: '46.1', size: 1440, sec: 'Office', desc: 'Calendar with events', type: 'app' },
+    clock: { v: '46.0', size: 720, sec: 'Accessories', desc: 'World clock, stopwatch, timer and alarms', type: 'app' },
+    music: { v: '3.2.0', size: 2410, sec: 'Multimedia', desc: 'Music player with built-in synth tracks', type: 'app' },
+    paint: { v: '2.4.1', size: 1910, sec: 'Graphics', desc: 'Draw and paint pictures', type: 'app' },
+    weather: { v: '46.0', size: 860, sec: 'Internet', desc: 'Live forecasts for any city', type: 'app' },
+    notes: { v: '1.6.0', size: 540, sec: 'Office', desc: 'Sticky notes that save automatically', type: 'app' },
+    trash: { v: '24.11', size: 40, sec: 'System', desc: 'Deleted files', type: 'app', core: 1 },
+    snake: { v: '1.4', size: 210, sec: 'Games', desc: 'Eat, grow, and do not bite your tail', type: 'app' },
+    mines: { v: '3.1', size: 260, sec: 'Games', desc: 'Clear the field without hitting a mine', type: 'app' },
+    merge: { v: '1.2', size: 180, sec: 'Games', desc: 'Slide and merge tiles to reach 2048', type: 'app' },
+    blocks: { v: '2.0', size: 320, sec: 'Games', desc: 'Stack falling blocks and clear lines', type: 'app' },
+    memory: { v: '1.1', size: 150, sec: 'Games', desc: 'Flip cards and find all the pairs', type: 'app' },
+    tictactoe: { v: '1.0', size: 90, sec: 'Games', desc: 'Classic X and O against the computer', type: 'app' },
+    // optional GUI
+    sudoku: { v: '3.0', size: 410, sec: 'Games', desc: 'Number puzzles with three difficulty levels', type: 'app' },
+    pong: { v: '1.0', size: 120, sec: 'Games', desc: 'Paddle duel against a CPU opponent', type: 'app' },
+    bricks: { v: '1.3', size: 240, sec: 'Games', desc: 'Break all the bricks with your ball', type: 'app' },
+    piano: { v: '1.0', size: 380, sec: 'Multimedia', desc: 'Playable synth piano with keyboard and touch', type: 'app' },
+    camera: { v: '46.0', size: 760, sec: 'Multimedia', desc: 'Take photos with your device camera', type: 'app' },
+    typing: { v: '1.0', size: 130, sec: 'Games', desc: 'Test how fast you can type', type: 'app' },
+    // CLI
+    coreutils: { v: '9.4', size: 7100, sec: 'System', desc: 'GNU core utilities (ls, cat, cp, mv...)', type: 'lib', core: 1 },
+    bash: { v: '5.2.21', size: 1800, sec: 'System', desc: 'GNU Bourne Again SHell', type: 'lib', core: 1 },
+    apt: { v: '2.7.14', size: 4200, sec: 'System', desc: 'Commandline package manager', type: 'lib', core: 1 },
+    'cirrus-desktop': { v: '24.11', size: 52000, sec: 'System', desc: 'The Cirrus desktop environment', type: 'lib', core: 1 },
+    nano: { v: '7.2', size: 880, sec: 'Editors', desc: 'Small, friendly text editor', type: 'cli', cmds: ['nano'] },
+    curl: { v: '8.5.0', size: 520, sec: 'Network', desc: 'Command line tool for transferring data with URLs', type: 'cli', cmds: ['curl'] },
+    wget: { v: '1.21.4', size: 980, sec: 'Network', desc: 'Retrieves files from the web', type: 'cli', cmds: ['wget'] },
+    neofetch: { v: '7.1.0', size: 340, sec: 'Utilities', desc: 'Shows system information with a logo', type: 'cli', cmds: ['neofetch'] },
+    'iputils-ping': { v: '20240117', size: 120, sec: 'Network', desc: 'Tools to test the reachability of network hosts', type: 'cli', cmds: ['ping'] },
+    cowsay: { v: '3.03', size: 93, sec: 'Games', desc: 'Configurable talking cow', type: 'cli', cmds: ['cowsay', 'cowthink'] },
+    figlet: { v: '2.2.5', size: 610, sec: 'Utilities', desc: 'Make large letters out of ordinary text', type: 'cli', cmds: ['figlet'] },
+    fortune: { v: '1.99.1', size: 1800, sec: 'Games', desc: 'Provides fortune cookies on demand', type: 'cli', cmds: ['fortune'] },
+    sl: { v: '5.02', size: 60, sec: 'Games', desc: 'Corrects you if you type sl by mistake', type: 'cli', cmds: ['sl'] },
+    cmatrix: { v: '2.0', size: 75, sec: 'Utilities', desc: 'Shows a scrolling digital rain like in the movies', type: 'cli', cmds: ['cmatrix'] },
+    lolcat: { v: '100.0', size: 42, sec: 'Utilities', desc: 'Rainbow coloring for text', type: 'cli', cmds: ['lolcat'] },
+    htop: { v: '3.3.0', size: 380, sec: 'Utilities', desc: 'Interactive process viewer', type: 'cli', cmds: ['htop'] },
+    tree: { v: '2.1.1', size: 110, sec: 'Utilities', desc: 'Displays an indented directory tree', type: 'cli', cmds: ['tree'] },
+    nodejs: { v: '20.11.1', size: 38000, sec: 'Development', desc: 'JavaScript runtime (node command)', type: 'cli', cmds: ['node', 'nodejs'] },
+    python3: { v: '3.12.3', size: 21000, sec: 'Development', desc: 'Python interpreter (tiny subset: print, math, loops)', type: 'cli', cmds: ['python3', 'python'] },
+    git: { v: '2.43.0', size: 18000, sec: 'Development', desc: 'Fast, scalable, distributed revision control (basic local repo)', type: 'cli', cmds: ['git'] },
+    bc: { v: '1.07.1', size: 230, sec: 'Utilities', desc: 'Arbitrary precision calculator language', type: 'cli', cmds: ['bc'] },
+    toilet: { v: '0.3', size: 120, sec: 'Utilities', desc: 'Display large colourful characters', type: 'cli', cmds: ['toilet'] },
+    'bsd-games': { v: '2.17', size: 1200, sec: 'Games', desc: 'Collection of classic text games (guess number, banner, rot13)', type: 'cli', cmds: ['guess', 'banner', 'rot13', 'factor'] },
+    asciiquarium: { v: '1.1', size: 80, sec: 'Games', desc: 'Enjoy the mysteries of the sea from your terminal', type: 'cli', cmds: ['asciiquarium'] },
+    vim: { v: '9.1', size: 3900, sec: 'Editors', desc: 'Vi IMproved (opens the graphical editor)', type: 'cli', cmds: ['vim', 'vi'] },
+    jq: { v: '1.7.1', size: 160, sec: 'Utilities', desc: 'Lightweight command-line JSON processor', type: 'cli', cmds: ['jq'] },
+  };
+  const DEFAULT = ['coreutils', 'bash', 'apt', 'cirrus-desktop', 'files', 'terminal', 'browser', 'editor', 'settings', 'software', 'calculator', 'viewer', 'monitor', 'calendar', 'clock', 'music', 'paint', 'weather', 'notes', 'trash', 'snake', 'mines', 'merge', 'blocks', 'memory', 'tictactoe', 'nano', 'curl', 'wget', 'neofetch', 'iputils-ping', 'bc'];
+
+  const pkg = (OS.pkg = { repo: R });
+  const list = () => { if (!Array.isArray(OS.settings.installed)) { OS.settings.installed = DEFAULT.slice(); OS.saveSettings(); } return OS.settings.installed; };
+  pkg.installed = () => list().slice();
+  pkg.isInstalled = (n) => list().includes(n);
+  pkg.appAvailable = (id) => !R[id] || R[id].type !== 'app' || pkg.isInstalled(id);
+  pkg.cmdAvailable = (cmd) => { for (const n in R) if (R[n].cmds && R[n].cmds.includes(cmd)) return pkg.isInstalled(n) ? true : n; return true; };
+  pkg.pkgForCmd = (cmd) => Object.keys(R).find((n) => R[n].cmds && R[n].cmds.includes(cmd));
+  pkg.search = (q) => { q = q.toLowerCase(); return Object.keys(R).filter((n) => n.includes(q) || R[n].desc.toLowerCase().includes(q) || (OS.apps[n] && OS.apps[n].name.toLowerCase().includes(q))); };
+  pkg.label = (n) => (OS.apps[n] ? OS.apps[n].name : n);
+  pkg.kb = (n) => R[n].size;
+
+  pkg.install = async (n, onProgress = () => {}) => {
+    if (!R[n]) throw new Error(`Unable to locate package ${n}`);
+    if (pkg.isInstalled(n)) return false;
+    const total = R[n].size; const steps = OS.clamp(Math.round(Math.log2(total + 2) * 2), 6, 30);
+    for (let i = 1; i <= steps; i++) { await OS.sleep(40 + Math.random() * 90); onProgress(i / steps, 'download'); }
+    onProgress(1, 'unpack'); await OS.sleep(200);
+    list().push(n); OS.saveSettings();
+    try { OS.fs.append('/var/log/apt/history.log', `\nStart-Date: ${new Date().toISOString()}\nCommandline: apt install ${n}\nInstall: ${n}:amd64 (${R[n].v})\nEnd-Date: ${new Date().toISOString()}\n`); } catch (e) {}
+    OS.emit('pkg', n, true); return true;
+  };
+  pkg.remove = async (n) => {
+    if (!R[n]) throw new Error(`Unable to locate package ${n}`);
+    if (R[n].core) throw new Error(`${n} is an essential package and cannot be removed`);
+    if (!pkg.isInstalled(n)) return false;
+    await OS.sleep(300);
+    OS.settings.installed = list().filter((x) => x !== n); OS.saveSettings();
+    if (R[n].type === 'app') { OS.wm.byApp(n).forEach((w) => OS.wm.close(w)); OS.settings.pinned = OS.settings.pinned.filter((x) => x !== n); OS.saveSettings(); }
+    OS.emit('pkg', n, false); return true;
+  };
+  // fake updates for a realistic "apt upgrade"
+  pkg.upgradable = () => { const st = OS.store.get('apt-upgraded', 0); if (Date.now() - st < 6 * 3600e3) return []; return ['browser', 'cirrus-desktop', 'coreutils', 'curl', 'terminal'].filter((n) => pkg.isInstalled(n)); };
+  pkg.markUpgraded = () => OS.store.set('apt-upgraded', Date.now());
+})();

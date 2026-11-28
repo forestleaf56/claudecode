@@ -10,3 +10,16 @@ A cozy, story-driven 2D platformer RPG set in the sleepy Swedish harbor village 
 - **Languages:** Svenska and English (switch on the title screen or in Settings).
 - **Controls:** keyboard, touch (on-screen D-pad and buttons) and gamepad. Gamepad: A jump / back, B use & talk / confirm, Y menu, LB/RB cycle items. Keyboard: E confirm, Space back. Touch: ✋ confirm, ⤒ back. Fullscreen is on by default (entered on your first tap/click; toggle in Settings).
 - **Saving:** autosaves to browser storage every 30 seconds, when you sleep, and when the tab is hidden; "Save & exit" in the menu returns to the title screen. Saves can be exported/imported as text in Settings.
+
+---
+
+# Cirrus Linux (`linux-os/`)
+
+A mobile-friendly Linux-style desktop that runs entirely in the browser. Open `linux-os/index.html` (no build step, works offline except for web features).
+
+- **Desktop:** boot screen, lock screen with optional password, wallpaper, desktop icons, panel with pinned and running apps, app menu with search and categories, quick settings, notifications, calendar popup, window overview, context menus (long-press on touch).
+- **Windows:** drag, resize, snap to edges, maximize, minimize. On phones, windows open full-screen.
+- **File system:** persistent (stored in localStorage), with Trash, import from and download to the real device, and drag-and-drop.
+- **Terminal:** bash-like shell with pipes, redirects, `&&`/`||`, variables, `$(...)`, globs, scripts, tab completion and history, plus 130+ commands. `sudo apt install` installs real packages (cowsay, figlet, sl, cmatrix, lolcat, htop, tree, nodejs, python3, git, jq…), and `curl`, `wget` and `ping` make real network requests.
+- **Apps:** Files, Terminal, Browser (tabs, bookmarks, local HTML), Text Editor, Settings (themes, accent colors, wallpapers, users, storage, backup), Software center, Calculator, Image Viewer, System Monitor, Calendar, Clock, Music (synthesized tracks), Paint, Weather (live), Notes, plus installable Camera and Piano.
+- **Games:** Snake, Mines, Merge, Block Drop, Memory, Tic-Tac-Toe, plus installable Sudoku, Pong, Bricks and Typing Test.
