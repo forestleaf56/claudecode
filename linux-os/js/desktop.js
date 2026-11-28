@@ -329,6 +329,11 @@
     const name = OS.fs.basename(p), t = OS.ftype(name);
     if (how) return OS.wm.open(how, { path: p });
     if (name.endsWith('.desktop')) { const m = /Exec=(\S+)/.exec(OS.fs.read(p)); if (m && OS.apps[m[1]]) return OS.wm.open(m[1]); }
+    const ex = OS.ext(name);
+    if (['cdoc', 'doc'].includes(ex)) return OS.wm.open('writer', { path: p });
+    if (['csht', 'csv', 'tsv'].includes(ex)) return OS.wm.open('sheets', { path: p });
+    if (ex === 'cslide') return OS.wm.open('slides', { path: p });
+    if (['docx', 'odt', 'xlsx', 'ods', 'pptx', 'odp'].includes(ex)) return OS.alert('Binary office file', `Cumulus Office can't read .${ex} files. Export them as .doc/HTML, .csv or plain text first.`);
     if (t === 'image' || t === 'video') return OS.wm.open('viewer', { path: p });
     if (t === 'audio') return OS.wm.open('music', { path: p });
     if (t === 'html') return OS.wm.open('browser', { url: 'file://' + p });

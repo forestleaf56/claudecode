@@ -54,7 +54,7 @@
         win.body.querySelector('[data-name]').textContent = OS.fs.basename(path); win.setTitle(OS.fs.basename(path) + ' — Image Viewer');
       }
       function apply() { const img = v.querySelector('img'); if (img) { img.style.width = img.naturalWidth * zoom + 'px'; img.style.transform = `rotate(${rot}deg)`; } }
-      function fit() { const img = v.querySelector('img'); if (!img) return; const w = img.naturalWidth || 800, h = img.naturalHeight || 600; zoom = Math.min(1, (v.clientWidth - 20) / w, (v.clientHeight - 20) / h); apply(); }
+      function fit() { const img = v.querySelector('img'); if (!img) return; const w = img.naturalWidth || 800, h = img.naturalHeight || 600; zoom = Math.min(1, (v.clientWidth - 20) / w, (v.clientHeight - 20) / h); fitZoom = zoom; apply(); }
       const step = (d) => { if (!list.length) return; const i = (list.indexOf(path) + d + list.length) % list.length; path = list[i]; rot = 0; show(); };
       const openDlg = async () => { const p = await OS.pickFile({ mode: 'open', path: path ? OS.fs.dirname(path) : OS.home() + '/Pictures', filter: (n) => ['image', 'video'].includes(OS.ftype(n)) }); if (p) { path = p; show(); } };
       const A = (n, f) => (win.body.querySelector(`[data-a=${n}]`).onclick = f);
@@ -65,7 +65,14 @@
         { label: 'Download to device', icon: 'download', disabled: !path, action: () => OS.downloadReal(OS.fs.basename(path), OS.toDataUrl(OS.fs.read(path), path)) },
         { label: 'Move to Trash', icon: 'trash', danger: true, disabled: !path, action: () => { const p = path; step(1); OS.fs.trash(p); if (path === p) { path = null; show(); } } },
       ]); });
-      OS.onSwipe(v, (d) => { if (d === 'left') step(1); else if (d === 'right') step(-1); });
+      const ptrs = new Map(); let pinch = null, lastTapT = 0, fitZoom = 1;
+      v.style.touchAction = 'pan-x pan-y';
+      v.addEventListener('pointerdown', (e) => { ptrs.set(e.pointerId, [e.clientX, e.clientY]); if (ptrs.size === 2) { const [a, b] = [...ptrs.values()]; pinch = { d: Math.hypot(a[0] - b[0], a[1] - b[1]), z: zoom }; } });
+      v.addEventListener('pointermove', (e) => { if (!ptrs.has(e.pointerId)) return; ptrs.set(e.pointerId, [e.clientX, e.clientY]); if (pinch && ptrs.size === 2) { const [a, b] = [...ptrs.values()]; zoom = OS.clamp(pinch.z * Math.hypot(a[0] - b[0], a[1] - b[1]) / pinch.d, 0.05, 20); apply(); } });
+      const pend = (e) => { ptrs.delete(e.pointerId); if (ptrs.size < 2 && pinch) { pinch.done = Date.now(); setTimeout(() => (pinch = null), 300); } };
+      v.addEventListener('pointerup', (e) => { if (e.pointerType !== 'mouse' && !pinch) { const n = Date.now(); if (n - lastTapT < 300) { if (zoom > fitZoom * 1.05) fit(); else { zoom = fitZoom * 2.5; apply(); } lastTapT = 0; } else lastTapT = n; } pend(e); });
+      v.addEventListener('pointercancel', pend);
+      OS.onSwipe(v, (d) => { if (pinch || zoom > fitZoom * 1.05) return; if (d === 'left') step(1); else if (d === 'right') step(-1); });
       v.addEventListener('wheel', (e) => { if (e.ctrlKey) { e.preventDefault(); zoom *= e.deltaY < 0 ? 1.1 : 0.9; apply(); } }, { passive: false });
       OS.wm.keys(win, (e) => { if (e.key === 'ArrowRight') step(1); else if (e.key === 'ArrowLeft') step(-1); else if (e.key === '+') { zoom *= 1.25; apply(); } else if (e.key === '-') { zoom /= 1.25; apply(); } });
       win.onResize = fit; win.onArgs = (a) => { if (a.path) { path = a.path; show(); } };
@@ -101,7 +108,7 @@
         win.body.querySelectorAll('[data-t]').forEach((b) => b.classList.toggle('on', b.dataset.t === tab));
         if (tab === 'proc') {
           const ps = OS.procs().sort((a, b) => b.cpu - a.cpu);
-          main.innerHTML = `<table class="proc-table"><thead><tr><th>Process</th><th>PID</th><th>User</th><th>% CPU</th><th>Memory</th></tr></thead><tbody>${ps.map((p) => `<tr data-pid="${p.pid}" class="${sel === p.pid ? 'sel' : ''}"><td><span class="row" style="gap:8px">${p.win ? OS.appIcon(p.win.app, 20) : `<span class="pkg-ico" style="width:20px;height:20px;border-radius:6px">${gl('cpu')}</span>`}${esc(p.win ? p.win.title : p.cmd)}</span></td><td>${p.pid}</td><td>${esc(p.user)}</td><td>${p.cpu.toFixed(1)}</td><td>${(p.mem * 12.3).toFixed(1)} MB</td></tr>`).join('')}</tbody></table><div class="pad"><button class="btn danger" data-a="kill" ${sel && ps.find((p) => p.pid === sel)?.win ? '' : 'disabled'}>${gl('x')}End process</button></div>`;
+          main.innerHTML = `<table class="proc-table"><thead><tr><th>Process</th><th>PID</th><th>User</th><th>% CPU</th><th>Memory</th></tr></thead><tbody>${ps.map((p) => `<tr data-pid="${p.pid}" class="${sel === p.pid ? 'sel' : ''}"><td><span class="row" style="gap:8px">${p.win ? OS.appIcon(p.win.app, 20) : `<span class="pkg-ico" style="width:20px;height:20px;border-radius:6px">${gl('cpu')}</span>`}${esc(p.win ? p.win.title : p.cmd)}</span></td><td>${p.pid}</td><td>${esc(p.user)}</td><td>${p.cpu.toFixed(1)}</td><td>${p.res.toFixed(1)} MB</td></tr>`).join('')}</tbody></table><div class="pad"><button class="btn danger" data-a="kill" ${sel && ps.find((p) => p.pid === sel)?.win ? '' : 'disabled'}>${gl('x')}End process</button></div>`;
           main.querySelectorAll('tr[data-pid]').forEach((tr) => (tr.onclick = () => { sel = +tr.dataset.pid; render(); }));
           main.querySelector('[data-a=kill]').onclick = () => { const p = OS.procs().find((x) => x.pid === sel); if (p && p.win) { OS.wm.close(p.win); sel = null; render(); } };
         } else if (tab === 'res') {

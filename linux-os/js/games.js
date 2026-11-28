@@ -49,7 +49,7 @@
       const board = win.body.querySelector('.mines'), wrap = win.body.querySelector('.gwrap');
       const COL = ['', '#2bb3ff', '#3fdc77', '#ff6b6b', '#8b5cff', '#ff9f43', '#1fc8b0', '#555', '#999'];
       function reset() {
-        [R, Cc, M] = LV[lv]; cells = Array.from({ length: R * Cc }, () => ({ m: false, o: false, f: false, n: 0 })); first = true; over = false; flags = 0; clearInterval(timer); t0 = 0;
+        [R, Cc, M] = LV[lv]; { const wr = wrap.getBoundingClientRect(); if (Cc > R && wr.height > wr.width) [R, Cc] = [Cc, R]; } cells = Array.from({ length: R * Cc }, () => ({ m: false, o: false, f: false, n: 0 })); first = true; over = false; flags = 0; clearInterval(timer); t0 = 0;
         win.body.querySelectorAll('[data-l]').forEach((b) => b.classList.toggle('on', b.dataset.l === lv)); win.body.querySelector('[data-t]').textContent = 0;
         wrap.querySelector('.game-over')?.remove(); size(); render();
       }
@@ -254,7 +254,7 @@
   /* ======================= PONG ======================= */
   OS.registerApp({
     id: 'pong', name: 'Pong', icon: 'pong', color: ['#3a3f4b', '#6c8cff'], cat: 'Games', w: 720, h: 520, desc: 'Paddle duel', launch(win) {
-      const W = 640, H = 400; let p1, p2, ball, s1, s2, raf, keys = {}, running = false;
+      const W = 640, H = 400; let p1, p2, ball, s1, s2, raf, keys = {}, running = false, vert = false;
       win.body.innerHTML = `<div class="game"><div class="game-head"><div class="stat"><small>You</small><b data-a>0</b></div><div class="stat"><small>CPU</small><b data-b>0</b></div></div><div class="gwrap" style="flex:1;width:100%;display:grid;place-items:center;min-height:0;position:relative"><canvas width="${W}" height="${H}"></canvas></div><div class="small muted">Move with mouse, touch, or ↑/↓ · first to 7 wins</div></div>`;
       const cv = win.body.querySelector('canvas'), g = cv.getContext('2d'), wrap = win.body.querySelector('.gwrap');
       function serve(dir) { ball = { x: W / 2, y: H / 2, vx: 5 * dir, vy: (Math.random() * 4 - 2) }; }
@@ -262,7 +262,7 @@
       const upd = () => { win.body.querySelector('[data-a]').textContent = s1; win.body.querySelector('[data-b]').textContent = s2; };
       function loop() {
         raf = requestAnimationFrame(loop); if (!running) return;
-        if (keys.ArrowUp) p1 -= 7; if (keys.ArrowDown) p1 += 7; p1 = OS.clamp(p1, 40, H - 40);
+        if (keys.ArrowUp || keys.ArrowLeft) p1 -= 7; if (keys.ArrowDown || keys.ArrowRight) p1 += 7; p1 = OS.clamp(p1, 40, H - 40);
         p2 += OS.clamp(ball.y - p2, -4.2, 4.2) * (ball.vx > 0 ? 1 : 0.3); p2 = OS.clamp(p2, 40, H - 40);
         ball.x += ball.vx; ball.y += ball.vy; if (ball.y < 8 || ball.y > H - 8) { ball.vy *= -1; ball.y = OS.clamp(ball.y, 8, H - 8); }
         const hit = (px, py) => Math.abs(ball.x - px) < 12 && Math.abs(ball.y - py) < 44;
@@ -270,15 +270,16 @@
         if (ball.vx > 0 && hit(W - 24, p2)) { ball.vx = Math.max(-14, -ball.vx * 1.06); ball.vy += (ball.y - p2) / 8; OS.sound('click'); }
         if (ball.x < 0) { s2++; upd(); serve(1); } if (ball.x > W) { s1++; upd(); serve(-1); }
         if (s1 >= 7 || s2 >= 7) { running = false; if (s1 >= 7) OS.sound('done'); overlay(wrap, s1 >= 7 ? 'You win!' : 'CPU wins', `${s1} – ${s2}`, 'Play again', reset); }
-        const ac = OS.settings.accent; g.fillStyle = '#0d0f14'; g.fillRect(0, 0, W, H); g.strokeStyle = '#ffffff22'; g.setLineDash([8, 10]); g.beginPath(); g.moveTo(W / 2, 0); g.lineTo(W / 2, H); g.stroke(); g.setLineDash([]);
+        const ac = OS.settings.accent; g.setTransform(1, 0, 0, 1, 0, 0); g.fillStyle = '#0d0f14'; g.fillRect(0, 0, cv.width, cv.height); if (vert) g.setTransform(0, -1, 1, 0, 0, W); g.strokeStyle = '#ffffff22'; g.setLineDash([8, 10]); g.beginPath(); g.moveTo(W / 2, 0); g.lineTo(W / 2, H); g.stroke(); g.setLineDash([]);
         g.fillStyle = ac; g.beginPath(); g.roundRect(16, p1 - 40, 10, 80, 5); g.fill(); g.fillStyle = '#ff8a5c'; g.beginPath(); g.roundRect(W - 26, p2 - 40, 10, 80, 5); g.fill();
         g.fillStyle = '#fff'; g.beginPath(); g.arc(ball.x, ball.y, 8, 0, 7); g.fill();
       }
-      cv.addEventListener('pointermove', (e) => { const r = cv.getBoundingClientRect(); p1 = (e.clientY - r.top) * H / r.height; });
-      cv.addEventListener('pointerdown', (e) => { cv.setPointerCapture(e.pointerId); const r = cv.getBoundingClientRect(); p1 = (e.clientY - r.top) * H / r.height; });
+      const aim = (e) => { const r = cv.getBoundingClientRect(); p1 = vert ? (e.clientX - r.left) * H / r.width : (e.clientY - r.top) * H / r.height; };
+      cv.addEventListener('pointermove', aim);
+      cv.addEventListener('pointerdown', (e) => { cv.setPointerCapture(e.pointerId); aim(e); });
       OS.wm.keys(win, (e) => { if (e.key.startsWith('Arrow')) { e.preventDefault(); keys[e.key] = true; } });
       const ku = (e) => (keys[e.key] = false); document.addEventListener('keyup', ku);
-      win.onResize = () => fitCanvas(cv, wrap, W / H, 900); win.onClose(() => { cancelAnimationFrame(raf); document.removeEventListener('keyup', ku); });
+      win.onResize = () => { const r = wrap.getBoundingClientRect(); const v = r.height > r.width * 1.1; if (v !== vert) { vert = v; cv.width = vert ? H : W; cv.height = vert ? W : H; win.body.querySelector('.small.muted').textContent = vert ? 'Drag left/right to move your paddle (bottom) · first to 7 wins' : 'Move with mouse, touch, or ↑/↓ · first to 7 wins'; } fitCanvas(cv, wrap, vert ? H / W : W / H, 900); }; win.onClose(() => { cancelAnimationFrame(raf); document.removeEventListener('keyup', ku); });
       setTimeout(win.onResize, 0); reset();
     },
   });

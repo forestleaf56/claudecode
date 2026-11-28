@@ -297,7 +297,7 @@
       win.body.innerHTML = `<div class="br-tabs"></div>
         <div class="toolbar"><button class="ibtn" data-a="back">${gl('left')}</button><button class="ibtn" data-a="fwd">${gl('right')}</button><button class="ibtn" data-a="reload">${gl('refresh')}</button><button class="ibtn hide-m" data-a="home">${gl('home')}</button>
         <form class="br-url"><span class="br-lock">${gl('globe')}</span><input spellcheck="false" autocomplete="off" autocapitalize="off" placeholder="Search or enter address"></form>
-        <button class="ibtn" data-a="star" title="Bookmark">${gl('star')}</button><button class="ibtn" data-a="ext" title="Open externally">${gl('external')}</button><button class="ibtn" data-a="menu">${gl('dots')}</button></div>
+        <button class="ibtn hide-m" data-a="star" title="Bookmark">${gl('star')}</button><button class="ibtn hide-m" data-a="ext" title="Open externally">${gl('external')}</button><button class="ibtn" data-a="menu">${gl('dots')}</button></div>
         <div class="br-bm"></div><div class="br-note" hidden></div><div class="br-view"><div class="br-progress"></div></div>`;
       const $ = (s) => win.body.querySelector(s); const view = $('.br-view'), urlIn = $('.br-url input'), prog = $('.br-progress');
       const renderBm = () => { const host = $('.br-bm'); host.innerHTML = ''; (OS.settings.bookmarks || []).forEach((b) => { const el = OS.el(`<button>${gl(b.i || 'globe')}${esc(b.t)}</button>`); el.onclick = () => nav(b.u); OS.onContext(el, (e, x, y) => OS.menu(x, y, [{ label: 'Open in new tab', icon: 'plus', action: () => newTab(b.u) }, { label: 'Remove bookmark', icon: 'trash', danger: true, action: () => { OS.set('bookmarks', OS.settings.bookmarks.filter((z) => z !== b)); renderBm(); } }])); host.appendChild(el); }); };
@@ -366,6 +366,9 @@
       };
       $('[data-a=menu]').onclick = (e) => { const r = e.currentTarget.getBoundingClientRect(); OS.menu(r.left - 200, r.bottom + 4, [
         { label: 'New tab', icon: 'plus', key: 'Ctrl+T', action: () => newTab() },
+        { label: (OS.settings.bookmarks || []).some((b) => b.u === active.url) ? 'Remove bookmark' : 'Bookmark this page', icon: 'star', action: () => $('[data-a=star]').click() },
+        { label: 'Open in real browser', icon: 'external', disabled: !/^https?:/.test(active.url), action: () => window.open(active.url, '_blank', 'noopener') },
+        { label: 'Home', icon: 'home', action: () => nav(OS.settings.homepage) },
         { label: 'Open local file…', icon: 'folder', action: async () => { const p = await OS.pickFile({ mode: 'open', path: OS.home() + '/Documents' }); if (p) nav('file://' + p); } },
         { label: 'Save page link to Downloads', icon: 'download', disabled: !/^https?:/.test(active.url), action: () => { OS.fs.write(OS.fs.uniqueName(OS.home() + '/Downloads', (active.title || 'link').replace(/[\/\\]/g, '-') + '.url'), `[InternetShortcut]\nURL=${active.url}\n`); OS.notify('Saved', 'Link saved to Downloads', { app: 'browser' }); } },
         { label: 'Help', icon: 'info', action: () => newTab('about:help') },

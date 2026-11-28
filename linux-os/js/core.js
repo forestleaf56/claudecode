@@ -34,7 +34,7 @@
     theme: 'dark', accent: '#6c8cff', wallpaper: 'aurora', customWallpaper: '', transparency: true, animations: true,
     panelPos: 'bottom', iconSize: 'medium', fontScale: 100, brightness: 100, nightLight: false, volume: 70, sounds: true,
     clock24: true, showSeconds: false, username: 'user', fullname: 'Cirrus User', password: '', avatar: '#6c8cff',
-    hostname: 'cirrus', installed: null, pinned: ['files', 'terminal', 'browser', 'editor', 'software', 'settings'],
+    hostname: 'cirrus', installed: null, pinned: ['files', 'terminal', 'browser', 'office', 'software', 'settings'],
     homepage: 'about:home', searchEngine: 'wikipedia', showLabels: false, dnd: false, desktopIcons: true,
     termTheme: 'dark', termFont: 13.5, bookmarks: null, lockOnBoot: true, mobileMode: 'auto', fullscreenOnLogin: true,
   };
@@ -187,6 +187,19 @@
     shield: '<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>', users: '<circle cx="9" cy="8" r="4"/><path d="M2 21a7 7 0 0 1 14 0M16 3.1a4 4 0 0 1 0 7.8M22 21a7 7 0 0 0-5-6.7"/>',
     droplet: '<path d="M12 2.7l5.7 5.6a8 8 0 1 1-11.3 0z"/>', wind: '<path d="M9.6 4.6A2 2 0 1 1 11 8H2M12.6 19.4A2 2 0 1 0 14 16H2M17.7 7.7A2.5 2.5 0 1 1 19.5 12H2"/>',
     location: '<path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0z"/><circle cx="12" cy="10" r="3"/>',
+    bold: '<path d="M7 5h6a3.5 3.5 0 0 1 0 7H7zM7 12h7a3.5 3.5 0 0 1 0 7H7z"/>', italic: '<path d="M10 4h8M6 20h8M14 4l-4 16"/>', underline: '<path d="M7 4v7a5 5 0 0 0 10 0V4M5 20h14"/>',
+    strike: '<path d="M16 6.5A4 4 0 0 0 12 4C9.5 4 8 5.5 8 7.3c0 1.4 1 2.4 3 3M4 12h16M8 17.5A4.5 4.5 0 0 0 12 20c2.5 0 4.5-1.5 4.5-3.5 0-1.2-.6-2.2-1.6-2.9"/>',
+    alignl: '<path d="M4 6h16M4 10h10M4 14h16M4 18h10"/>', alignc: '<path d="M4 6h16M7 10h10M4 14h16M7 18h10"/>', alignr: '<path d="M4 6h16M10 10h10M4 14h16M10 18h10"/>', alignj: '<path d="M4 6h16M4 10h16M4 14h16M4 18h16"/>',
+    listul: '<path d="M9 6h11M9 12h11M9 18h11"/><circle cx="4.5" cy="6" r="1.2" fill="currentColor"/><circle cx="4.5" cy="12" r="1.2" fill="currentColor"/><circle cx="4.5" cy="18" r="1.2" fill="currentColor"/>',
+    listol: '<path d="M10 6h10M10 12h10M10 18h10M4 4h1v4M3.5 8h3M4 14.5a1.2 1.2 0 0 1 2 .8c0 .8-2 1.7-2 2.7h2.2"/>',
+    indent: '<path d="M10 6h10M10 12h10M10 18h10M3 9l3 3-3 3"/>', outdent: '<path d="M10 6h10M10 12h10M10 18h10M7 9l-3 3 3 3"/>',
+    table: '<rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 10h18M3 15h18M9 4v16M15 4v16"/>', chart: '<path d="M4 20V11M10 20V5M16 20v-7M22 20H2"/>',
+    sigma: '<path d="M18 5H6l6 7-6 7h12"/>', printer: '<path d="M6 9V3h12v6M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="7"/>',
+    highlight: '<path d="M9 11l-6 6v3h9l3-3M22 12l-4.6 4.6a2 2 0 0 1-2.8 0l-5.2-5.2a2 2 0 0 1 0-2.8L14 4"/>', present: '<rect x="2" y="3" width="20" height="13" rx="2"/><path d="M12 16v5M8 21h8M10 6.8l4.5 2.7-4.5 2.7z"/>',
+    shape: '<rect x="3" y="11" width="9" height="9" rx="1"/><circle cx="16" cy="8" r="5"/>', hr: '<path d="M3 12h18"/>', clearfmt: '<path d="M4 7V4h16v3M9 20h6M12 4l-4 16M15 15l6 6M21 15l-6 6"/>',
+    briefcase: '<rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2M2 13h20"/>', arrowdown: '<path d="M12 5v14M19 12l-7 7-7-7"/>',
+    textbox: '<rect x="3" y="5" width="18" height="14" rx="2"/><path d="M8 9h8M12 9v6"/>', fontsize: '<path d="M3 18l5-12 5 12M4.7 14h6.6M15 18l3-7 3 7M15.9 16h4.2"/>', fill: '<path d="M4 20h16" stroke-width="4"/><path d="M7 4l8 8-4 4-6-6z"/>',
+    rows: '<rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 12h18"/>', cols: '<rect x="3" y="4" width="18" height="16" rx="2"/><path d="M12 4v16"/>', sortaz: '<path d="M4 6h7M4 12h5M4 18h3M17 4v16M14 17l3 3 3-3"/>', sortza: '<path d="M4 6h3M4 12h5M4 18h7M17 4v16M14 17l3 3 3-3"/>',
     smile: '<circle cx="12" cy="12" r="9"/><path d="M8 14s1.5 2 4 2 4-2 4-2M9 9h.01M15 9h.01"/>',
   };
   OS.G = G;
@@ -205,10 +218,10 @@
   const TYPES = {
     image: ['png', 'jpg', 'jpeg', 'gif', 'svg', 'webp', 'bmp', 'ico', 'avif'], audio: ['mp3', 'wav', 'ogg', 'm4a', 'flac', 'aac', 'opus'],
     video: ['mp4', 'webm', 'mov', 'mkv', 'ogv'], html: ['html', 'htm'], code: ['js', 'json', 'css', 'py', 'sh', 'c', 'cpp', 'h', 'ts', 'rs', 'go', 'java', 'rb', 'php', 'xml', 'yml', 'yaml', 'toml', 'ini', 'conf'],
-    archive: ['zip', 'tar', 'gz', 'deb', '7z', 'rar', 'xz'], doc: ['md', 'txt', 'log', 'csv', 'rtf'], pdf: ['pdf'],
+    archive: ['zip', 'tar', 'gz', 'deb', '7z', 'rar', 'xz'], writer: ['cdoc', 'doc', 'docx', 'odt', 'rtf'], sheet: ['csht', 'csv', 'tsv', 'ods', 'xlsx'], slide: ['cslide', 'odp', 'pptx'], doc: ['md', 'txt', 'log'], pdf: ['pdf'],
   };
   OS.ftype = (name) => { const e = OS.ext(name); for (const k in TYPES) if (TYPES[k].includes(e)) return k; return 'text'; };
-  const FCOL = { image: '#3fb8af', audio: '#ff5ca8', video: '#ff7a45', html: '#ff9f43', code: '#6c8cff', archive: '#a37cff', doc: '#8a93a6', pdf: '#e5484d', text: '#8a93a6' };
+  const FCOL = { image: '#3fb8af', audio: '#ff5ca8', video: '#ff7a45', html: '#ff9f43', code: '#6c8cff', archive: '#a37cff', writer: '#2f7cf6', sheet: '#1fa774', slide: '#ff7a45', doc: '#8a93a6', pdf: '#e5484d', text: '#8a93a6' };
   OS.fileIcon = (name, isDir, path) => {
     if (isDir) {
       const special = { Desktop: 'monitor', Documents: 'filetext', Downloads: 'download', Music: 'music', Pictures: 'image', Videos: 'video', Trash: 'trash' };

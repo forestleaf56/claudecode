@@ -18,14 +18,14 @@
       for (let i = 0; i < codes.length; i++) {
         const c = codes[i];
         if (c === 0 || isNaN(c)) st = {};
-        else if (c === 1) st.b = 1; else if (c === 3) st.i = 1; else if (c === 4) st.u = 1;
+        else if (c === 1) st.b = 1; else if (c === 3) st.i = 1; else if (c === 4) st.u = 1; else if (c === 7) st.inv = 1; else if (c === 27) st.inv = 0; else if (c === 22) st.b = 0; else if (c === 39) delete st.fg; else if (c === 49) delete st.bg; else if (c === 2) st.dim = 1;
         else if (c >= 30 && c <= 37) st.fg = COLORS[c - 30]; else if (c >= 90 && c <= 97) st.fg = BRIGHT[c - 90];
         else if (c >= 40 && c <= 47) st.bg = COLORS[c - 40];
         else if (c === 38 && codes[i + 1] === 2) { st.fg = `rgb(${codes[i + 2]},${codes[i + 3]},${codes[i + 4]})`; i += 4; }
         else if (c === 48 && codes[i + 1] === 2) { st.bg = `rgb(${codes[i + 2]},${codes[i + 3]},${codes[i + 4]})`; i += 4; }
       }
       if (open) out += '</span>';
-      const css = (st.fg ? `color:${st.fg};` : '') + (st.bg ? `background:${st.bg};` : '') + (st.b ? 'font-weight:700;' : '') + (st.i ? 'font-style:italic;' : '') + (st.u ? 'text-decoration:underline;' : '');
+      const css = (st.inv ? `color:${st.bg || 'var(--tbg)'};background:${st.fg || 'var(--tfg)'};` : (st.fg ? `color:${st.fg};` : '') + (st.bg ? `background:${st.bg};` : '')) + (st.dim ? 'opacity:.6;' : '') + (st.b ? 'font-weight:700;' : '') + (st.i ? 'font-style:italic;' : '') + (st.u ? 'text-decoration:underline;' : '');
       if (st.b && !st.fg) {} // bold only
       out += `<span style="${css}">`; open = true;
     }
@@ -242,7 +242,7 @@
         // scripts / executables by path
         if (!fn && (name.includes('/'))) { const p = ctx.path(name); if (OS.fs.isFile(p)) return await CMDS.sh(Object.assign({}, ctx, { args: [p, ...ctx.args] })); }
         // GUI app launchers
-        if (!fn) { const app = Shell.appAlias(name); if (app) { OS.wm.open(app, ctx.args[0] ? { path: ctx.path(ctx.args[0]), url: ctx.args[0] } : {}); return 0; } }
+        if (!fn) { const app = Shell.appAlias(name); if (app) { let a = app; if (ctx.args.includes('--writer')) a = 'writer'; else if (ctx.args.includes('--calc')) a = 'sheets'; else if (ctx.args.includes('--impress')) a = 'slides'; const f = ctx.args.find((x) => !x.startsWith('-')); if (f && a === 'office' && OS.fs.exists(ctx.path(f))) { OS.desktop.openPath(ctx.path(f)); return 0; } OS.wm.open(a, f ? { path: ctx.path(f), url: f } : {}); return 0; } }
         if (!fn) {
           const p = OS.pkg.pkgForCmd(name);
           if (p) ctx.err(`Command '${name}' not found, but can be installed with:\n\nsudo apt install ${p}\n\n`);
@@ -258,7 +258,7 @@
       }
     }
     static appAlias(n) {
-      const map = { firefox: 'browser', chromium: 'browser', 'google-chrome': 'browser', nautilus: 'files', thunar: 'files', dolphin: 'files', gedit: 'editor', 'gnome-text-editor': 'editor', kate: 'editor', code: 'editor', 'gnome-calculator': 'calculator', gimp: 'paint', eog: 'viewer', 'gnome-system-monitor': 'monitor', 'gnome-control-center': 'settings', rhythmbox: 'music', 'gnome-software': 'software', 'gnome-terminal': 'terminal', xterm: 'terminal', konsole: 'terminal' };
+      const map = { libreoffice: 'office', soffice: 'office', lowriter: 'writer', localc: 'sheets', loimpress: 'slides', abiword: 'writer', gnumeric: 'sheets', firefox: 'browser', chromium: 'browser', 'google-chrome': 'browser', nautilus: 'files', thunar: 'files', dolphin: 'files', gedit: 'editor', 'gnome-text-editor': 'editor', kate: 'editor', code: 'editor', 'gnome-calculator': 'calculator', gimp: 'paint', eog: 'viewer', 'gnome-system-monitor': 'monitor', 'gnome-control-center': 'settings', rhythmbox: 'music', 'gnome-software': 'software', 'gnome-terminal': 'terminal', xterm: 'terminal', konsole: 'terminal' };
       if (map[n]) return map[n];
       if (OS.apps[n] && OS.pkg.appAvailable(n) && !CMDS[n]) return n;
       return null;
@@ -373,7 +373,6 @@
     return code;
   });
   def('cat', 'print files', (ctx) => { const [o, r] = opts(ctx.args); let s = readInput(ctx, r); if (o.n) s = lines(s).map((l, i) => String(i + 1).padStart(6) + '  ' + l).join('\n') + '\n'; if (OS.isDataUrl(s)) s = `[binary data, ${OS.fmtSize(s.length)}]\n`; ctx.out(s); });
-  def('less more most', 'view file', (ctx) => CMDS.cat(ctx));
   def('tac', 'concatenate and print in reverse', (ctx) => ctx.out(lines(readInput(ctx, ctx.args)).reverse().join('\n') + '\n'));
   def('head', 'first lines', (ctx) => { const [o, r] = opts(ctx.args.map((a) => (/^-\d+$/.test(a) ? '-n' + a.slice(1) : a)), 'n:c:'); const n = +(o.n || 10); ctx.out(lines(readInput(ctx, r)).slice(0, n).map((l) => l + '\n').join('')); });
   def('tail', 'last lines', (ctx) => { const [o, r] = opts(ctx.args.map((a) => (/^-\d+$/.test(a) ? '-n' + a.slice(1) : a)), 'n:'); const n = +(o.n || 10); ctx.out(lines(readInput(ctx, r)).slice(-n).map((l) => l + '\n').join('')); });
@@ -462,21 +461,31 @@
     for (let i = 1; i <= n; i++) { const today = i === d.getDate() && mo === d.getMonth() && y === d.getFullYear(); line += (today && ctx.isTTY ? '\x1b[7m' + String(i).padStart(2) + C.r : String(i).padStart(2)) + ' '; if ((first + i) % 7 === 0) { ctx.println(line.trimEnd()); line = ''; } }
     if (line) ctx.println(line.trimEnd());
   });
-  const procs = () => [
-    { pid: 1, user: 'root', cmd: '/sbin/init splash', cpu: 0.0, mem: 0.3 }, { pid: 284, user: 'root', cmd: 'systemd-journald', cpu: 0.0, mem: 0.4 }, { pid: 512, user: 'root', cmd: 'NetworkManager', cpu: 0.1, mem: 0.5 },
-    { pid: 640, user: OS.settings.username, cmd: 'pipewire', cpu: 0.2, mem: 0.3 }, { pid: 702, user: OS.settings.username, cmd: 'cirrus-shell', cpu: 1.8 + Math.random(), mem: 3.9 }, { pid: 733, user: OS.settings.username, cmd: 'cirrus-compositor', cpu: 2.4 + Math.random() * 2, mem: 2.1 },
-    ...OS.wm.wins.map((w) => ({ pid: w.pid, user: OS.settings.username, cmd: w.app, cpu: Math.random() * 3, mem: 1 + Math.random() * 4, win: w })),
-    { pid: 4242, user: OS.settings.username, cmd: 'bash', cpu: 0.0, mem: 0.1 },
+  const SYSPROCS = [
+    [1, 'root', 'systemd', 167, 12.4, 9.1, 'S'], [2, 'root', 'kthreadd', 0, 0, 0, 'S'], [14, 'root', 'rcu_preempt', 0, 0, 0, 'I'], [118, 'root', 'kworker/u8:2-events', 0, 0, 0, 'I'],
+    [284, 'root', 'systemd-journald', 50, 22.1, 20.8, 'S'], [311, 'root', 'systemd-udevd', 26, 7.2, 4.4, 'S'], [498, 'systemd+', 'systemd-resolved', 21, 13.6, 11.2, 'S'],
+    [512, 'root', 'NetworkManager', 318, 19.8, 15.9, 'S'], [520, 'message+', 'dbus-daemon', 10, 6.1, 3.9, 'S'], [533, 'root', 'polkitd', 391, 11.5, 7.9, 'S'], [541, 'root', 'systemd-logind', 17, 7.9, 6.6, 'S'],
+    [560, 'root', 'cron', 7, 2.8, 2.5, 'S'], [612, 'root', 'cupsd', 37, 12.3, 9.8, 'S'], [640, '%u', 'pipewire', 110, 14.6, 8.1, 'S'], [646, '%u', 'wireplumber', 340, 24.2, 16.8, 'S'],
+    [702, '%u', 'cirrus-shell', 4210, 312.5, 118.3, 'S'], [733, '%u', 'cirrus-compositor', 1980, 188.1, 92.4, 'S'], [760, '%u', 'Xwayland', 512, 64.2, 41.7, 'S'], [801, '%u', 'gnome-keyring-d', 389, 9.4, 7.1, 'S'],
   ];
+  const pstate = {};
+  const procs = () => {
+    const u = OS.settings.username, now = Date.now();
+    const list = SYSPROCS.map(([pid, user, cmd, virt, res, shr, s]) => ({ pid, user: user === '%u' ? u : user, cmd, virt, res, shr, s, base: cmd.startsWith('cirrus') ? 1.6 : cmd === 'Xwayland' ? 0.6 : res > 15 ? 0.15 : 0, start: OS.bootTime }));
+    OS.wm.wins.forEach((w) => list.push({ pid: w.pid, user: u, cmd: w.app, virt: 900 + (w.pid % 700), res: 60 + (w.pid % 180), shr: 30 + (w.pid % 50), s: 'S', base: 0.8, win: w, start: w.started }));
+    list.push({ pid: 4242, user: u, cmd: 'bash', virt: 11, res: 5.4, shr: 3.6, s: 'S', base: 0, start: OS.bootTime + 2000 });
+    const memTot = (navigator.deviceMemory || 8) * 1024;
+    list.forEach((p) => {
+      const st = pstate[p.pid] || (pstate[p.pid] = { cpu: p.base, t: 0, last: now });
+      if (now - st.last > 900) { st.cpu = Math.max(0, st.cpu * 0.6 + p.base * 0.4 + (p.base ? (Math.random() - 0.4) * p.base * 1.5 : Math.random() < 0.05 ? Math.random() * 0.7 : 0)); st.t += st.cpu * (now - st.last) / 100000; st.last = now; }
+      p.cpu = st.cpu; p.mem = p.res / memTot * 100; p.time = st.t + (now - p.start) / 1000 * p.base / 100;
+    });
+    return list;
+  };
   OS.procs = procs;
   def('ps', 'list processes', (ctx) => { const full = ctx.args.some((a) => /a|e|u|x/.test(a)); ctx.println(full ? 'USER         PID %CPU %MEM COMMAND' : '    PID TTY          TIME CMD'); procs().filter((p) => full || p.user === OS.settings.username).forEach((p) => ctx.println(full ? `${p.user.padEnd(10)} ${String(p.pid).padStart(5)} ${p.cpu.toFixed(1).padStart(4)} ${p.mem.toFixed(1).padStart(4)} ${p.cmd}` : `${String(p.pid).padStart(7)} pts/0    00:00:00 ${p.cmd}`)); });
   def('kill killall pkill', 'terminate processes', (ctx) => { const t = ctx.args.filter((a) => !a.startsWith('-')); let c = 0; t.forEach((x) => { const p = procs().find((p) => String(p.pid) === x || p.cmd === x); if (p && p.win) OS.wm.close(p.win); else if (p) { ctx.err(`kill: (${p.pid}) - Operation not permitted\n`); c = 1; } else { ctx.err(`kill: (${x}) - No such process\n`); c = 1; } }); return c; });
   def('free', 'memory usage', (ctx) => { const tot = (navigator.deviceMemory || 8) * 1024 * 1024; const used = performance.memory ? Math.round(performance.memory.usedJSHeapSize / 1024) + 900000 : 1500000; const f = (k) => (ctx.args.includes('-h') ? OS.fmtSize(k * 1024) : String(k)); ctx.println('               total        used        free      shared  buff/cache   available'); ctx.println(`Mem:    ${f(tot).padStart(12)} ${f(used).padStart(11)} ${f(tot - used - 1100000).padStart(11)} ${f(48000).padStart(11)} ${f(1100000).padStart(11)} ${f(tot - used).padStart(11)}`); ctx.println(`Swap:   ${f(2097148).padStart(12)} ${f(0).padStart(11)} ${f(2097148).padStart(11)}`); });
-  def('top', 'process viewer (opens System Monitor)', (ctx) => { OS.wm.open('monitor'); ctx.println('Opened System Monitor.'); });
-  def('htop', 'interactive process viewer', async (ctx) => {
-    const draw = () => { const ps = procs(); const cpus = navigator.hardwareConcurrency || 4; let s = ''; for (let i = 0; i < Math.min(cpus, 8); i++) { const v = Math.random() * 30; const n = Math.round(v / 100 * 30); s += `  ${String(i).padStart(2)}[${C.green}${'|'.repeat(n)}${C.r}${' '.repeat(30 - n)}${v.toFixed(1).padStart(5)}%]\n`; } const mu = 30 + Math.random() * 5; s += `  Mem[${C.green}${'|'.repeat(Math.round(mu * .3))}${C.r}${' '.repeat(30 - Math.round(mu * .3))}${mu.toFixed(0)}%]   Tasks: ${ps.length}, 1 running   Uptime: ${uptimeStr()}\n\n`; s += `\x1b[30;42m    PID USER       CPU%  MEM%  Command                          \x1b[0m\n`; ps.sort((a, b) => b.cpu - a.cpu).forEach((p) => (s += `${String(p.pid).padStart(7)} ${p.user.padEnd(10)} ${p.cpu.toFixed(1).padStart(5)} ${p.mem.toFixed(1).padStart(5)}  ${p.cmd}\n`)); s += `\n${C.gray}Press q or Ctrl+C to quit${C.r}`; return s; };
-    await ctx.term.fullscreen((pre, done) => { const t = setInterval(() => (pre.innerHTML = ansiToHtml(draw())), 1000); pre.innerHTML = ansiToHtml(draw()); pre.style.position = 'absolute'; pre.style.left = '10px'; pre.style.top = '10px'; pre.style.fontSize = '13px'; pre.style.lineHeight = '1.4'; return () => clearInterval(t); }, '#0d0f14');
-  });
   def('history', 'command history', (ctx) => { if (ctx.args[0] === '-c') { ctx.sh.history = []; OS.store.set('bash_history', []); return; } ctx.sh.history.forEach((h, i) => ctx.println(String(i + 1).padStart(5) + '  ' + h)); });
   def('env printenv', 'print environment', (ctx) => { Object.entries(ctx.sh.env).filter(([k]) => k !== '?').forEach(([k, v]) => ctx.println(`${k}=${v}`)); });
   def('export', 'set environment variable', (ctx) => { ctx.args.forEach((a) => { const i = a.indexOf('='); if (i > 0) ctx.sh.env[a.slice(0, i)] = a.slice(i + 1); }); });
@@ -533,7 +542,6 @@
   def('su', 'switch user', (ctx) => { ctx.err('su: Authentication failure (use sudo)\n'); return 1; });
   def('passwd', 'change password', async (ctx) => { const cur = OS.settings.password; if (cur) { const c = await ctx.readLine('Current password: ', true); if (c !== cur) { ctx.err('passwd: Authentication token manipulation error\n'); return 1; } } const a = await ctx.readLine('New password: ', true); const b = await ctx.readLine('Retype new password: ', true); if (a !== b) { ctx.err('Sorry, passwords do not match.\n'); return 1; } OS.set('password', a || ''); ctx.println('passwd: password updated successfully'); });
   def('open xdg-open gio', 'open file with default app', (ctx) => { const t = ctx.args[ctx.name === 'gio' ? 1 : 0] || '.'; if (/^https?:\/\//.test(t)) { OS.wm.open('browser', { url: t }); return; } const p = ctx.path(t); if (!OS.fs.exists(p)) { ctx.err(`${ctx.name}: ${t}: No such file\n`); return 1; } OS.desktop.openPath(p); });
-  def('nano vim vi edit', 'text editor', (ctx) => { const f = ctx.args.find((a) => !a.startsWith('-')); OS.wm.open('editor', f ? { path: ctx.path(f) } : {}); ctx.println(`Opened ${f || 'a new file'} in Text Editor.`); });
   def('lock', 'lock screen', () => OS.desktop.lock());
   def('shutdown poweroff halt', 'power off', async (ctx) => { if (!needRoot(ctx, 'shutdown')) { ctx.err('Try: sudo shutdown now\n'); return 1; } ctx.println('Broadcast message: The system will power off now!'); await OS.sleep(800); OS.desktop.shutdown(); });
   def('reboot', 'restart', async (ctx) => { if (!needRoot(ctx, 'reboot')) { ctx.err('Try: sudo reboot\n'); return 1; } ctx.println('Rebooting…'); await OS.sleep(800); OS.desktop.restart(); });
@@ -882,9 +890,10 @@
     id: 'terminal', name: 'Terminal', icon: 'terminal', color: ['#2b2f3a', '#0d0f14'], cat: 'System', w: 760, h: 480, desc: 'Command line', keywords: 'console shell bash command',
     launch(win, args) {
       const light = OS.settings.termTheme === 'light';
-      win.body.innerHTML = `<div class="term ${light ? 'light' : ''}" style="font-size:${OS.settings.termFont}px"></div>${OS.isTouch() ? `<div class="term-keys">${['Tab', '↑', '↓', '←', '→', 'Ctrl+C', 'Esc', '|', '/', '-', '~', '>', '&', '$', '*'].map((k) => `<button data-k="${k}">${k}</button>`).join('')}</div>` : ''}`;
+      win.body.innerHTML = `<div class="term ${light ? 'light' : ''}" style="font-size:${OS.settings.termFont}px"></div>${OS.isTouch() ? `<div class="term-keys">${['Tab', 'Ctrl', '↑', '↓', '←', '→', 'Ctrl+C', 'Esc', '|', '/', '-', '~', '>', '&', '$', '*'].map((k) => `<button data-k="${k}">${k}</button>`).join('')}</div>` : ''}`;
       const box = win.body.querySelector('.term');
-      let inputLine = null, inp = null, ctrl = null, hIdx = -1, draft = '', readResolve = null, busy = false, fullscreenStop = null;
+      let inputLine = null, inp = null, ctrl = null, hIdx = -1, draft = '', readResolve = null, busy = false, fullscreenStop = null, tuiStop = null, tuiTa = null, sticky = false;
+      const updSticky = () => win.body.querySelectorAll('[data-k=Ctrl]').forEach((b) => b.classList.toggle('on', sticky));
       const term = {
         write(t) { const atBottom = box.scrollHeight - box.scrollTop - box.clientHeight < 40; const parts = String(t).split('\n'); let last = box.lastElementChild && box.lastElementChild.classList.contains('ln') && !box.lastElementChild._closed ? box.lastElementChild : null;
           if (inputLine) inputLine.remove();
@@ -899,6 +908,86 @@
         readLine(promptText, secret) { return new Promise((res) => { readResolve = res; showInput(promptText, secret); }); },
         exit() { setTimeout(() => win.close(), 50); },
         fullscreen(setup, bg) { return new Promise((res) => { const fsEl = OS.el('<div class="term-full"><pre></pre></div>'); if (bg) fsEl.style.background = bg; win.body.appendChild(fsEl); const pre = fsEl.querySelector('pre'); let cleanup = null; const done = () => { if (!fsEl.isConnected) return; cleanup && cleanup(); fsEl.remove(); fullscreenStop = null; document.removeEventListener('keydown', kh, true); res(); focus(); }; const kh = (e) => { if (OS.wm.active !== win) return; if (e.key === 'q' || e.key === 'Escape' || (e.ctrlKey && e.key === 'c')) { e.preventDefault(); done(); } }; document.addEventListener('keydown', kh, true); fsEl.addEventListener('click', done); fullscreenStop = done; cleanup = setup(pre, done, fsEl); }); },
+
+        tui(prog) {
+          return new Promise((res) => {
+            const keysEl = win.body.querySelector('.term-keys:not(.tui-keys)');
+            const touch = OS.isTouch();
+            const el = OS.el(`<div class="term-tui ${light ? 'light' : ''}"><pre class="tui-scr"></pre><textarea class="tui-in" autocapitalize="off" autocomplete="off" autocorrect="off" spellcheck="false"></textarea><div class="tui-soft" hidden></div>${touch ? `<div class="term-keys tui-keys">${['Esc', 'Ctrl', 'Tab', '↑', '↓', '←', '→', 'PgUp', 'PgDn', 'Home', 'End'].map((k) => `<button data-k="${k}">${k}</button>`).join('')}</div>` : ''}</div>`);
+            box.style.display = 'none'; if (keysEl) keysEl.style.display = 'none';
+            win.body.insertBefore(el, keysEl || null);
+            const pre = el.querySelector('pre'), ta = el.querySelector('textarea'), soft = el.querySelector('.tui-soft');
+            const fsz = OS.settings.termFont; pre.style.fontSize = fsz + 'px'; const lh = Math.round(fsz * 1.3); pre.style.lineHeight = lh + 'px';
+            let cw = fsz * 0.6, done = false; const timers = [];
+            const api = {
+              cols: 80, rows: 24, sh, draw, exit,
+              interval(f, ms) { const t = setInterval(() => { if (!done) { f(); draw(); } }, ms); timers.push(t); return t; },
+              soft(list) { soft.hidden = !list || !list.length; soft.innerHTML = ''; (list || []).forEach((it) => { const b = OS.el(`<button>${it.k ? `<b>${esc(it.k)}</b> ` : ''}${esc(it.label)}</button>`); b.addEventListener('pointerdown', (e) => { e.preventDefault(); (Array.isArray(it.send) ? it.send : [it.send]).forEach((k) => send(k, true)); }); soft.appendChild(b); }); measure(); },
+              keyboard() { ta.focus({ preventScroll: true }); },
+            };
+            function measure() {
+              const sp = document.createElement('span'); sp.textContent = 'M'.repeat(50); pre.appendChild(sp); cw = sp.getBoundingClientRect().width / 50 || cw; sp.remove();
+              api.cols = Math.max(20, Math.floor((pre.clientWidth - 8) / cw)); api.rows = Math.max(6, Math.floor((pre.clientHeight - 4) / lh));
+            }
+            function draw() {
+              if (done) return; let ls; try { ls = prog.render(api) || []; } catch (e) { console.error(e); ls = ['render error: ' + e.message]; }
+              const out = []; for (let i = 0; i < api.rows; i++) out.push(ansiToHtml(ls[i] ?? ''));
+              pre.innerHTML = out.join('\n');
+            }
+            function exit(v) {
+              if (done) return; done = true; timers.forEach(clearInterval); ro.disconnect(); prog.close && prog.close();
+              el.remove(); box.style.display = ''; if (keysEl) keysEl.style.display = ''; tuiStop = null; tuiTa = null; sticky = false; updSticky();
+              box.scrollTop = box.scrollHeight; res(v); setTimeout(focus, 0);
+            }
+            function send(k, fromSoft) {
+              if (done) return;
+              if (sticky && !fromSoft && k.length === 1) k = 'C-' + k.toLowerCase();
+              if (sticky) { sticky = false; updSticky(); }
+              try { prog.key(k, api); } catch (e) { console.error(e); }
+              draw();
+            }
+            const NAMED = ['Enter', 'Backspace', 'Delete', 'Tab', 'Escape', 'ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'Home', 'End', 'PageUp', 'PageDown', 'Insert', 'F1', 'F2', 'F3', 'F4', 'F5', 'F6', 'F7', 'F8', 'F9', 'F10'];
+            ta.value = ' ';
+            ta.addEventListener('keydown', (e) => {
+              if (e.isComposing || e.keyCode === 229 || e.key === 'Unidentified' || e.key === 'Process') return;
+              let k = e.key; if (['Shift', 'Control', 'Alt', 'Meta', 'CapsLock', 'OS'].includes(k)) return;
+              if (e.ctrlKey && !e.altKey && k.length === 1) k = 'C-' + k.toLowerCase();
+              else if (e.altKey && !e.ctrlKey && k.length === 1) k = 'M-' + (e.code.startsWith('Key') ? e.code.slice(3).toLowerCase() : k.toLowerCase());
+              else if (k.length !== 1 && !NAMED.includes(k)) return;
+              if (k === 'C-v' && !prog.wantsCtrlV) return; // allow native paste
+              e.preventDefault(); e.stopPropagation(); send(k);
+            });
+            ta.addEventListener('paste', (e) => { const t = e.clipboardData.getData('text'); e.preventDefault(); if (prog.paste) { prog.paste(t, api); draw(); } else [...t].forEach((c) => send(c === '\n' ? 'Enter' : c)); });
+            ta.addEventListener('beforeinput', (e) => {
+              const t = e.inputType;
+              if (t === 'insertText' && e.data) { e.preventDefault(); [...e.data].forEach((c) => send(c)); }
+              else if (t === 'insertLineBreak' || t === 'insertParagraph') { e.preventDefault(); send('Enter'); }
+              else if (t === 'deleteContentBackward' && ta.value.length > 0 && ta.selectionStart > 0) { e.preventDefault(); send('Backspace'); }
+              else if (t === 'deleteContentForward') { e.preventDefault(); send('Delete'); }
+            });
+            ta.addEventListener('input', () => { const v = ta.value; if (v.length === 0) send('Backspace'); else if (v.length > 1) [...v.slice(1)].forEach((c) => send(c === '\n' ? 'Enter' : c)); ta.value = ' '; ta.setSelectionRange(1, 1); });
+            // pointer: tap = click / focus, drag = scroll
+            let py = null, px = null, acc = 0, moved = false;
+            pre.addEventListener('pointerdown', (e) => { e.preventDefault(); py = e.clientY; px = e.clientX; acc = 0; moved = false; pre.setPointerCapture(e.pointerId); });
+            pre.addEventListener('pointermove', (e) => { if (py == null) return; const dy = e.clientY - py; if (Math.abs(dy) > 6 || Math.abs(e.clientX - px) > 6) moved = true; acc += dy; py = e.clientY; while (Math.abs(acc) >= lh) { send(acc > 0 ? 'WheelUp' : 'WheelDown'); acc -= Math.sign(acc) * lh; } });
+            pre.addEventListener('pointerup', (e) => {
+              if (py == null) return; py = null;
+              if (!moved) { const r = pre.getBoundingClientRect(); const col = Math.floor((e.clientX - r.left - 4) / cw), row = Math.floor((e.clientY - r.top - 2) / lh); if (prog.click) { prog.click(col, row, api); draw(); } if (!touch || prog.wantsKeyboard) ta.focus({ preventScroll: true }); }
+            });
+            pre.addEventListener('wheel', (e) => { e.preventDefault(); const n = Math.max(1, Math.round(Math.abs(e.deltaY) / 40)); for (let i = 0; i < n; i++) send(e.deltaY > 0 ? 'WheelDown' : 'WheelUp'); }, { passive: false });
+            el.querySelectorAll('.tui-keys button').forEach((b) => b.addEventListener('pointerdown', (e) => {
+              e.preventDefault(); const k = b.dataset.k;
+              if (k === 'Ctrl') { sticky = !sticky; updSticky(); return; }
+              send({ Esc: 'Escape', Tab: 'Tab', '↑': 'ArrowUp', '↓': 'ArrowDown', '←': 'ArrowLeft', '→': 'ArrowRight', PgUp: 'PageUp', PgDn: 'PageDown', Home: 'Home', End: 'End' }[k], true);
+            }));
+            const ro = new ResizeObserver(() => { if (done) return; const c = api.cols, r = api.rows; measure(); if (c !== api.cols || r !== api.rows) { prog.resize && prog.resize(api); draw(); } });
+            ro.observe(pre);
+            tuiStop = () => exit(); tuiTa = ta;
+            measure(); try { prog.init && prog.init(api); } catch (e) { console.error(e); }
+            draw();
+            if (!touch || prog.wantsKeyboard) setTimeout(() => ta.focus({ preventScroll: true }), 30);
+          });
+        },
         signal: null,
       };
       const sh = new Shell(term, { cwd: args.cwd });
@@ -908,9 +997,10 @@
         inputLine = OS.el(`<div class="inl"><span class="pr"></span><input type="${secret ? 'password' : 'text'}" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false"></div>`);
         inputLine.querySelector('.pr').innerHTML = ansiToHtml(promptText);
         box.appendChild(inputLine); inp = inputLine.querySelector('input'); inp.onkeydown = onKey;
+        inp.addEventListener('beforeinput', (e) => { if (sticky && e.data) { e.preventDefault(); sticky = false; updSticky(); onKey({ key: e.data.slice(-1).toLowerCase(), ctrlKey: true, preventDefault() {} }); } });
         box.scrollTop = box.scrollHeight; focus();
       }
-      function focus() { if (inp && OS.wm.active === win && !window.getSelection().toString()) inp.focus({ preventScroll: true }); }
+      function focus() { if (tuiTa) { if (OS.wm.active === win) tuiTa.focus({ preventScroll: true }); return; } if (inp && OS.wm.active === win && !window.getSelection().toString()) inp.focus({ preventScroll: true }); }
       async function submit(line) {
         const pr = inputLine.querySelector('.pr').innerHTML; const secret = inp.type === 'password';
         inputLine.remove(); inputLine = null;
@@ -970,10 +1060,11 @@
       box.addEventListener('mouseup', () => { if (!window.getSelection().toString()) focus(); });
       box.addEventListener('click', () => focus());
       win.onFocus = () => setTimeout(focus, 0);
-      win.onClose(() => { if (ctrl) ctrl.abort(); if (fullscreenStop) fullscreenStop(); });
+      win.onClose(() => { if (ctrl) ctrl.abort(); if (fullscreenStop) fullscreenStop(); if (tuiStop) tuiStop(); });
       win.body.querySelectorAll('.term-keys button').forEach((b) => b.addEventListener('pointerdown', (e) => {
         e.preventDefault(); const k = b.dataset.k;
         if (!inp) return;
+        if (k === 'Ctrl') { sticky = !sticky; updSticky(); return; }
         if (k === 'Tab') complete(); else if (k === '↑' || k === '↓') onKey({ key: k === '↑' ? 'ArrowUp' : 'ArrowDown', preventDefault() {} });
         else if (k === 'Ctrl+C') interrupt(); else if (k === 'Esc') inp.value = '';
         else if (k === '←' || k === '→') { const p = inp.selectionStart + (k === '←' ? -1 : 1); inp.setSelectionRange(p, p); }
@@ -998,4 +1089,5 @@
     },
   });
   OS.ansiToHtml = ansiToHtml;
+  Object.assign(OS.shell, { def, opts, readInput, lines, C, stripAnsi, procs, uptimeStr });
 })();

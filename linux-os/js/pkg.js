@@ -26,6 +26,11 @@
     blocks: { v: '2.0', size: 320, sec: 'Games', desc: 'Stack falling blocks and clear lines', type: 'app' },
     memory: { v: '1.1', size: 150, sec: 'Games', desc: 'Flip cards and find all the pairs', type: 'app' },
     tictactoe: { v: '1.0', size: 90, sec: 'Games', desc: 'Classic X and O against the computer', type: 'app' },
+    office: { v: '24.8.2', size: 1200, sec: 'Office', desc: 'Cumulus Office start center: create and open documents', type: 'app' },
+    writer: { v: '24.8.2', size: 9800, sec: 'Office', desc: 'Cumulus Writer word processor: rich text, tables, images, export to Word/PDF', type: 'app' },
+    sheets: { v: '24.8.2', size: 8700, sec: 'Office', desc: 'Cumulus Sheets spreadsheet: formulas, charts, CSV import/export', type: 'app' },
+    slides: { v: '24.8.2', size: 7600, sec: 'Office', desc: 'Cumulus Slides presentations: themes, shapes, images, slideshow', type: 'app' },
+    'cumulus-office': { v: '24.8.2', size: 300, sec: 'Office', desc: 'Cumulus Office suite (Writer, Sheets, Slides)', type: 'lib', deps: ['office', 'writer', 'sheets', 'slides'] },
     // optional GUI
     sudoku: { v: '3.0', size: 410, sec: 'Games', desc: 'Number puzzles with three difficulty levels', type: 'app' },
     pong: { v: '1.0', size: 120, sec: 'Games', desc: 'Paddle duel against a CPU opponent', type: 'app' },
@@ -38,7 +43,12 @@
     bash: { v: '5.2.21', size: 1800, sec: 'System', desc: 'GNU Bourne Again SHell', type: 'lib', core: 1 },
     apt: { v: '2.7.14', size: 4200, sec: 'System', desc: 'Commandline package manager', type: 'lib', core: 1 },
     'cirrus-desktop': { v: '24.11', size: 52000, sec: 'System', desc: 'The Cirrus desktop environment', type: 'lib', core: 1 },
-    nano: { v: '7.2', size: 880, sec: 'Editors', desc: 'Small, friendly text editor', type: 'cli', cmds: ['nano'] },
+    nano: { v: '7.2', size: 880, sec: 'Editors', desc: 'Small, friendly terminal text editor', type: 'cli', cmds: ['nano', 'pico'] },
+    procps: { v: '4.0.4', size: 1400, sec: 'System', desc: 'Process utilities: top, ps, free, kill, watch, uptime', type: 'cli', core: 1, cmds: ['top', 'ps', 'free', 'kill', 'killall', 'pkill', 'watch', 'uptime'] },
+    less: { v: '590', size: 380, sec: 'Utilities', desc: 'Terminal pager (less, more)', type: 'cli', core: 1, cmds: ['less', 'more', 'most'] },
+    'man-db': { v: '2.12.0', size: 2600, sec: 'Documentation', desc: 'Manual page viewer (man, apropos, whatis)', type: 'cli', core: 1, cmds: ['man', 'apropos', 'whatis', 'info'] },
+    'vim-tiny': { v: '9.1', size: 1700, sec: 'Editors', desc: 'Vi IMproved, compact version (vi)', type: 'cli', cmds: ['vi'] },
+    'alsa-utils': { v: '1.2.9', size: 2300, sec: 'Multimedia', desc: 'Sound utilities including the alsamixer volume TUI', type: 'cli', cmds: ['alsamixer', 'amixer'] },
     curl: { v: '8.5.0', size: 520, sec: 'Network', desc: 'Command line tool for transferring data with URLs', type: 'cli', cmds: ['curl'] },
     wget: { v: '1.21.4', size: 980, sec: 'Network', desc: 'Retrieves files from the web', type: 'cli', cmds: ['wget'] },
     neofetch: { v: '7.1.0', size: 340, sec: 'Utilities', desc: 'Shows system information with a logo', type: 'cli', cmds: ['neofetch'] },
@@ -58,17 +68,23 @@
     toilet: { v: '0.3', size: 120, sec: 'Utilities', desc: 'Display large colourful characters', type: 'cli', cmds: ['toilet'] },
     'bsd-games': { v: '2.17', size: 1200, sec: 'Games', desc: 'Collection of classic text games (guess number, banner, rot13)', type: 'cli', cmds: ['guess', 'banner', 'rot13', 'factor'] },
     asciiquarium: { v: '1.1', size: 80, sec: 'Games', desc: 'Enjoy the mysteries of the sea from your terminal', type: 'cli', cmds: ['asciiquarium'] },
-    vim: { v: '9.1', size: 3900, sec: 'Editors', desc: 'Vi IMproved (opens the graphical editor)', type: 'cli', cmds: ['vim', 'vi'] },
+    vim: { v: '9.1', size: 3900, sec: 'Editors', desc: 'Vi IMproved, full version (vim, vimtutor)', type: 'cli', cmds: ['vim', 'vi', 'vimtutor', 'view'] },
     jq: { v: '1.7.1', size: 160, sec: 'Utilities', desc: 'Lightweight command-line JSON processor', type: 'cli', cmds: ['jq'] },
   };
-  const DEFAULT = ['coreutils', 'bash', 'apt', 'cirrus-desktop', 'files', 'terminal', 'browser', 'editor', 'settings', 'software', 'calculator', 'viewer', 'monitor', 'calendar', 'clock', 'music', 'paint', 'weather', 'notes', 'trash', 'snake', 'mines', 'merge', 'blocks', 'memory', 'tictactoe', 'nano', 'curl', 'wget', 'neofetch', 'iputils-ping', 'bc'];
+  const DEFAULT = ['coreutils', 'bash', 'apt', 'cirrus-desktop', 'files', 'terminal', 'browser', 'editor', 'settings', 'software', 'calculator', 'viewer', 'monitor', 'calendar', 'clock', 'music', 'paint', 'weather', 'notes', 'trash', 'snake', 'mines', 'merge', 'blocks', 'memory', 'tictactoe', 'nano', 'curl', 'wget', 'neofetch', 'iputils-ping', 'bc', 'procps', 'less', 'man-db', 'vim-tiny', 'alsa-utils', 'office', 'writer', 'sheets', 'slides', 'cumulus-office'];
+  const MIGRATIONS = { 2: ['procps', 'less', 'man-db', 'vim-tiny', 'alsa-utils', 'office', 'writer', 'sheets', 'slides', 'cumulus-office'] };
 
   const pkg = (OS.pkg = { repo: R });
-  const list = () => { if (!Array.isArray(OS.settings.installed)) { OS.settings.installed = DEFAULT.slice(); OS.saveSettings(); } return OS.settings.installed; };
+  const list = () => {
+    if (!Array.isArray(OS.settings.installed)) { OS.settings.installed = DEFAULT.slice(); OS.settings.pkgVersion = 2; OS.saveSettings(); }
+    const v = OS.settings.pkgVersion || 1;
+    if (v < 2) { Object.keys(MIGRATIONS).filter((k) => +k > v).forEach((k) => MIGRATIONS[k].forEach((n) => { if (!OS.settings.installed.includes(n)) OS.settings.installed.push(n); })); OS.settings.pkgVersion = 2; OS.saveSettings(); OS.emit('pkg-migrated', v); }
+    return OS.settings.installed;
+  };
   pkg.installed = () => list().slice();
   pkg.isInstalled = (n) => list().includes(n);
   pkg.appAvailable = (id) => !R[id] || R[id].type !== 'app' || pkg.isInstalled(id);
-  pkg.cmdAvailable = (cmd) => { for (const n in R) if (R[n].cmds && R[n].cmds.includes(cmd)) return pkg.isInstalled(n) ? true : n; return true; };
+  pkg.cmdAvailable = (cmd) => { let prov = null; for (const n in R) if (R[n].cmds && R[n].cmds.includes(cmd)) { if (pkg.isInstalled(n)) return true; prov = prov || n; } return prov || true; };
   pkg.pkgForCmd = (cmd) => Object.keys(R).find((n) => R[n].cmds && R[n].cmds.includes(cmd));
   pkg.search = (q) => { q = q.toLowerCase(); return Object.keys(R).filter((n) => n.includes(q) || R[n].desc.toLowerCase().includes(q) || (OS.apps[n] && OS.apps[n].name.toLowerCase().includes(q))); };
   pkg.label = (n) => (OS.apps[n] ? OS.apps[n].name : n);
@@ -80,7 +96,7 @@
     const total = R[n].size; const steps = OS.clamp(Math.round(Math.log2(total + 2) * 2), 6, 30);
     for (let i = 1; i <= steps; i++) { await OS.sleep(40 + Math.random() * 90); onProgress(i / steps, 'download'); }
     onProgress(1, 'unpack'); await OS.sleep(200);
-    list().push(n); OS.saveSettings();
+    list().push(n); (R[n].deps || []).forEach((d) => { if (!list().includes(d)) list().push(d); }); OS.saveSettings();
     try { OS.fs.append('/var/log/apt/history.log', `\nStart-Date: ${new Date().toISOString()}\nCommandline: apt install ${n}\nInstall: ${n}:amd64 (${R[n].v})\nEnd-Date: ${new Date().toISOString()}\n`); } catch (e) {}
     OS.emit('pkg', n, true); return true;
   };

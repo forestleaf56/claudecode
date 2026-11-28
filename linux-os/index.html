@@ -23,12 +23,16 @@
 <script src="js/wm.js"></script>
 <script src="js/desktop.js"></script>
 <script src="js/terminal.js"></script>
+<script src="js/tui.js"></script>
 <script src="js/apps-core.js"></script>
 <script src="js/apps-extra.js"></script>
 <script src="js/games.js"></script>
+<script src="js/office.js"></script>
 <script>
   (function () {
     OS.fs.load();
+    OS.pkg.installed();
+    OS.office.ensureSamples();
     OS.desktop.init();
     OS.desktop.boot();
     // unlock WebAudio on first interaction (mobile browsers require a gesture)
