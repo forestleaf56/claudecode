@@ -372,6 +372,7 @@
     const unlock = () => {
       if (s.password && inp.value !== s.password) { lk.querySelector('.lerr').textContent = 'Incorrect password, try again'; lk.querySelector('.lform').classList.remove('shake'); void lk.offsetWidth; lk.querySelector('.lform').classList.add('shake'); OS.sound('error'); inp.value = ''; return; }
       clearInterval(t); document.removeEventListener('keydown', key, true);
+      if (OS.settings.fullscreenOnLogin) OS.enterFullscreen();
       lk.classList.add('gone'); setTimeout(() => lk.remove(), 500);
       OS.sound(fromBoot ? 'startup' : 'unlock');
       if (fromBoot) setTimeout(firstRun, 700);
@@ -409,7 +410,7 @@
     b.removeEventListener('pointerdown', sk);
     b.style.transition = 'opacity .5s'; b.style.opacity = 0;
     setTimeout(() => { b.remove(); }, 500);
-    if (OS.settings.lockOnBoot || OS.settings.password) desk.lock(true); else { OS.sound('startup'); setTimeout(firstRun, 600); }
+    if (OS.settings.lockOnBoot || OS.settings.password) desk.lock(true); else { OS.sound('startup'); setTimeout(firstRun, 600); if (OS.settings.fullscreenOnLogin) document.addEventListener('pointerdown', OS.enterFullscreen, { once: true, capture: true }); }
   };
   desk.restart = () => {
     OS.fs.saveNow(); OS.wm.closeAll();

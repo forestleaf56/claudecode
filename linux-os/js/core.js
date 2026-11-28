@@ -36,7 +36,7 @@
     clock24: true, showSeconds: false, username: 'user', fullname: 'Cirrus User', password: '', avatar: '#6c8cff',
     hostname: 'cirrus', installed: null, pinned: ['files', 'terminal', 'browser', 'editor', 'software', 'settings'],
     homepage: 'about:home', searchEngine: 'wikipedia', showLabels: false, dnd: false, desktopIcons: true,
-    termTheme: 'dark', termFont: 13.5, bookmarks: null, lockOnBoot: true, mobileMode: 'auto',
+    termTheme: 'dark', termFont: 13.5, bookmarks: null, lockOnBoot: true, mobileMode: 'auto', fullscreenOnLogin: true,
   };
   OS.defaults = DEF;
   OS.settings = Object.assign({}, DEF, OS.store.get('settings', {}));
@@ -419,6 +419,12 @@
   OS.uploadPicker = (dir, accept) => {
     const i = document.createElement('input'); i.type = 'file'; i.multiple = true; if (accept) i.accept = accept;
     i.onchange = () => OS.importFiles([...i.files], dir); i.click();
+  };
+
+  /* fullscreen (must be called from a user gesture) */
+  OS.enterFullscreen = () => {
+    const d = document.documentElement; if (document.fullscreenElement || document.webkitFullscreenElement) return;
+    try { const r = (d.requestFullscreen || d.webkitRequestFullscreen)?.call(d, { navigationUI: 'hide' }); if (r && r.catch) r.catch(() => {}); } catch (e) {}
   };
 
   /* app registration */
