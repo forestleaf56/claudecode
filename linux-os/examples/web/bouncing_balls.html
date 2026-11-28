@@ -1,0 +1,39 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Bouncing balls</title>
+<style>
+  body { margin: 0; background: #0f1220; overflow: hidden; font-family: system-ui; }
+  p { position: fixed; top: 8px; left: 12px; color: #9aa3c7; margin: 0; }
+</style>
+</head>
+<body>
+<canvas id="c"></canvas>
+<p>Click to add balls</p>
+<script>
+const c = document.getElementById('c'), ctx = c.getContext('2d');
+const resize = () => { c.width = innerWidth; c.height = innerHeight; };
+resize(); addEventListener('resize', resize);
+const balls = [];
+function addBall(x, y) {
+  balls.push({ x, y, vx: (Math.random() - 0.5) * 8, vy: -Math.random() * 6, r: 8 + Math.random() * 18, hue: Math.random() * 360 });
+}
+for (let i = 0; i < 15; i++) addBall(Math.random() * c.width, Math.random() * c.height / 2);
+c.addEventListener('pointerdown', (e) => addBall(e.clientX, e.clientY));
+function frame() {
+  ctx.fillStyle = 'rgba(15,18,32,0.3)';
+  ctx.fillRect(0, 0, c.width, c.height);
+  for (const b of balls) {
+    b.vy += 0.25; b.x += b.vx; b.y += b.vy;
+    if (b.y + b.r > c.height) { b.y = c.height - b.r; b.vy *= -0.85; }
+    if (b.x - b.r < 0 || b.x + b.r > c.width) b.vx *= -1;
+    ctx.beginPath(); ctx.arc(b.x, b.y, b.r, 0, Math.PI * 2);
+    ctx.fillStyle = `hsl(${b.hue}, 80%, 60%)`; ctx.fill();
+  }
+  requestAnimationFrame(frame);
+}
+frame();
+</script>
+</body>
+</html>

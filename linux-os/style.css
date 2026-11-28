@@ -1168,3 +1168,70 @@ body.mobile .ob-steps .on b{display:inline}
 .br-view iframe{background:#fff}
 body.mobile .br-mode span{display:none}
 body.mobile .br-mode{padding:0 7px}
+
+/* ===== Breeze chat ===== */
+.bz{height:100%}
+.bz-side{width:250px;display:flex;flex-direction:column;gap:2px}
+.bz-me{display:flex;gap:10px;align-items:center;padding:8px 6px 12px;border-bottom:1px solid var(--border);margin-bottom:6px}
+.bz-me b{display:block;font-size:13.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:150px}
+.bz-st{border:0;background:transparent;color:var(--fg2);font-size:12px;padding:0;cursor:pointer}
+.bz-av{position:relative;width:36px;height:36px;border-radius:50%;display:grid;place-items:center;color:#fff;font-weight:700;flex:none;font-size:15px}
+.bz-av.sm{width:28px;height:28px;font-size:12.5px}
+.bz-av .st{position:absolute;right:-1px;bottom:-1px;width:11px;height:11px;border-radius:50%;border:2px solid var(--surface2)}
+.st.online{background:#3fdc77}.st.away{background:#f7c948}.st.busy{background:#ff5c5c}
+.bz-h{display:flex;align-items:center;justify-content:space-between;font-size:11.5px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--fg3);padding:10px 8px 4px}
+.bz-h .ibtn{width:24px;height:24px}
+.bz-side .side-item{display:flex;align-items:center;gap:9px}
+.bz-side .side-item span:not(.bz-av){flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;text-align:left}
+.bz-side .side-item em{font-style:normal;background:var(--accent);color:#fff;border-radius:999px;font-size:11px;padding:1px 7px;font-weight:700}
+.bz-people{flex:1;overflow-y:auto;min-height:60px}
+.bz-foot{padding:8px 6px 2px;border-top:1px solid var(--border)}
+.bz-conn{display:flex;gap:6px;align-items:center}.bz-conn svg{width:14px;height:14px;flex:none}
+.bz-conn.relay{color:#2fb866}.bz-conn.local{color:#c99a10}
+.bz-main{flex:1;min-width:0;display:flex;flex-direction:column;background:var(--surface)}
+.bz-top{display:flex;align-items:center;gap:8px;padding:8px 12px;border-bottom:1px solid var(--border)}
+.bz-title{min-width:0}.bz-title b{display:block;font-size:15px}.bz-title small{display:flex;gap:5px;align-items:center;color:var(--fg2);font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.bz-title small svg{width:12px;height:12px}
+.bz-log{flex:1;min-height:0;overflow-y:auto;padding:14px 14px 6px;display:flex;flex-direction:column;gap:3px}
+.bz-msg{display:flex;gap:8px;align-items:flex-end;max-width:82%;margin-top:8px}
+.bz-msg.grp{margin-top:0}
+.bz-msg.me{align-self:flex-end;flex-direction:row-reverse}
+.bz-b{position:relative;padding:7px 12px 6px;border-radius:16px;background:var(--surface2);border:1px solid var(--border);min-width:0;overflow-wrap:anywhere;line-height:1.45;font-size:14.5px}
+.bz-msg.me .bz-b{background:linear-gradient(135deg,var(--accent),#7c4dff);color:#fff;border-color:transparent}
+.bz-msg.me .bz-b a{color:#fff;text-decoration:underline}
+.bz-b.big{background:transparent!important;border-color:transparent!important;padding:0}
+.bz-b.big .be{width:58px;height:58px}
+.bz-b.big time{color:var(--fg3)!important}
+.bz-n{font-size:12px;font-weight:700;margin-bottom:1px}
+.bz-b time{display:block;text-align:right;font-size:10.5px;opacity:.6;margin-top:1px}
+.bz-b code{background:rgba(127,127,127,.2);border-radius:4px;padding:0 4px;font-family:var(--mono);font-size:.9em}
+.bz-img{display:block;width:180px;height:180px;border-radius:12px;background:#fff;margin:4px 0;cursor:zoom-in}
+.be{display:inline-block;width:24px;height:24px;vertical-align:-6px;margin:0 1px}
+.be svg,.be-btn svg,.be-big svg{width:100%;height:100%;display:block}
+.be-btn{display:block;width:22px;height:22px}
+.be-big{display:block;width:72px;height:72px;margin:0 auto 8px}
+.bz-sys{align-self:center;font-size:12px;color:var(--fg3);background:var(--surface2);border-radius:999px;padding:3px 12px;margin:8px 0}
+.bz-empty{margin:auto;text-align:center;color:var(--fg2);padding:20px}.bz-empty b{display:block;color:var(--fg);font-size:16px}
+.bz-typing{height:18px;font-size:12px;color:var(--fg2);padding:0 16px;font-style:italic}
+.bz-emo{display:grid;grid-template-columns:repeat(auto-fill,minmax(42px,1fr));gap:4px;max-height:190px;overflow-y:auto;padding:8px 10px;border-top:1px solid var(--border);background:var(--surface2)}
+.bz-emo button{border:0;background:transparent;border-radius:10px;padding:5px;cursor:pointer;aspect-ratio:1}
+.bz-emo button:hover{background:var(--hover);transform:scale(1.12)}
+.bz-emo svg{width:100%;height:100%}
+.bz-comp{display:flex;gap:4px;align-items:flex-end;padding:8px 10px 10px;border-top:1px solid var(--border)}
+.bz-comp textarea{flex:1;min-width:0;resize:none;border:1px solid var(--border2);background:var(--input);color:var(--fg);border-radius:20px;padding:10px 14px;font:inherit;font-size:15px;line-height:1.35;max-height:140px;outline:0}
+.bz-comp textarea:focus{border-color:var(--accent)}
+.bz-send{width:42px;height:42px;border-radius:50%;border:0;flex:none;background:linear-gradient(135deg,var(--accent),#7c4dff);color:#fff;display:grid;place-items:center;cursor:pointer}
+.bz-send svg{width:19px;height:19px}
+.win.bz-shake{animation:shake .5s}
+.bz-dood-ov{position:fixed;inset:0;z-index:100001;background:rgba(0,0,0,.45);display:grid;place-items:center;padding:12px}
+.bz-dood{background:var(--surface);border-radius:18px;padding:16px;width:min(420px,100%);box-shadow:var(--shadow)}
+.bz-dood h3{margin:0 0 10px}
+.bz-dood canvas{width:100%;aspect-ratio:1;border-radius:12px;border:1px solid var(--border2);touch-action:none;background:#fff;cursor:crosshair;display:block}
+.bz-dood-tools{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin:10px 0}
+.bz-dood-tools .sw{width:24px;height:24px;border-radius:50%;border:2px solid var(--border2);cursor:pointer}
+.bz-dood-tools .sw.on{outline:3px solid var(--accent);outline-offset:1px}
+.bz-dood-tools .sz{width:30px;height:30px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);display:grid;place-items:center;cursor:pointer}
+.bz-dood-tools .sz.on{border-color:var(--accent);background:color-mix(in srgb,var(--accent) 18%,transparent)}
+.bz-dood-tools .sz i{display:block;border-radius:50%;background:var(--fg)}
+.bz-dood .btns{display:flex;gap:6px}
+body.mobile .bz-msg{max-width:92%}
+body.mobile .bz-comp textarea{font-size:16px}

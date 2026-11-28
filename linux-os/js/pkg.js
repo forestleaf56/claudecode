@@ -85,6 +85,7 @@
     lolcat: { v: '100.0', size: 42, sec: 'Utilities', desc: 'Rainbow coloring for text', type: 'cli', cmds: ['lolcat'] },
     htop: { v: '3.3.0', size: 380, sec: 'Utilities', desc: 'Interactive process viewer', type: 'cli', cmds: ['htop'] },
     tree: { v: '2.1.1', size: 110, sec: 'Utilities', desc: 'Displays an indented directory tree', type: 'cli', cmds: ['tree'] },
+    breeze: { v: '1.0.0', size: 900, sec: 'Internet', desc: 'Breeze Chat: encrypted chat with people on your network, drawn emojis and doodles', type: 'app' },
     'build-essential': { v: '12.10', size: 52000, sec: 'Development', desc: 'C/C++ compilers: gcc, g++, clang (cloud build)', type: 'cli', cmds: ['gcc', 'cc', 'clang', 'g++', 'c++', 'clang++'] },
     'default-jdk': { v: '21.0.3', size: 180000, sec: 'Development', desc: 'Java Development Kit: javac and java', type: 'cli', cmds: ['javac', 'java'] },
     golang: { v: '1.22.4', size: 220000, sec: 'Development', desc: 'Go programming language: go run, go build', type: 'cli', cmds: ['go'] },
@@ -121,9 +122,9 @@
     wttr: { v: '1.0', size: 10, sec: 'Network', desc: 'Weather report in the terminal (wttr.in)', type: 'cli', cmds: ['wttr'] },
     jq: { v: '1.7.1', size: 160, sec: 'Utilities', desc: 'Lightweight command-line JSON processor', type: 'cli', cmds: ['jq'] },
   };
-  const DEFAULT = ['coreutils', 'bash', 'apt', 'cirrus-desktop', 'files', 'terminal', 'browser', 'editor', 'settings', 'software', 'calculator', 'viewer', 'monitor', 'calendar', 'clock', 'music', 'paint', 'weather', 'notes', 'trash', 'snake', 'mines', 'merge', 'blocks', 'memory', 'tictactoe', 'nano', 'curl', 'wget', 'neofetch', 'iputils-ping', 'bc', 'procps', 'less', 'man-db', 'vim-tiny', 'alsa-utils', 'office', 'writer', 'sheets', 'slides', 'cumulus-office', 'starlight', 'beatforge', 'sprout', 'code', 'help', 'assistant', 'nodejs', 'python3', 'build-essential', 'default-jdk', 'golang', 'rustc', 'mono-complete', 'kotlin', 'swift', 'php', 'ruby', 'lua5.4', 'perl', 'sqlite3', 'typescript', 'code-runner'];
-  const MIGRATIONS = { 2: ['procps', 'less', 'man-db', 'vim-tiny', 'alsa-utils', 'office', 'writer', 'sheets', 'slides', 'cumulus-office'], 3: ['starlight', 'beatforge', 'sprout', 'code'], 4: ['help', 'assistant'], 5: ['nodejs', 'python3', 'build-essential', 'default-jdk', 'golang', 'rustc', 'mono-complete', 'kotlin', 'swift', 'php', 'ruby', 'lua5.4', 'perl', 'sqlite3', 'typescript', 'code-runner'] };
-  const PKGV = 5;
+  const DEFAULT = ['coreutils', 'bash', 'apt', 'cirrus-desktop', 'files', 'terminal', 'browser', 'editor', 'settings', 'software', 'calculator', 'viewer', 'monitor', 'calendar', 'clock', 'music', 'paint', 'weather', 'notes', 'trash', 'snake', 'mines', 'merge', 'blocks', 'memory', 'tictactoe', 'nano', 'curl', 'wget', 'neofetch', 'iputils-ping', 'bc', 'procps', 'less', 'man-db', 'vim-tiny', 'alsa-utils', 'office', 'writer', 'sheets', 'slides', 'cumulus-office', 'starlight', 'beatforge', 'sprout', 'code', 'help', 'assistant', 'nodejs', 'python3', 'build-essential', 'default-jdk', 'golang', 'rustc', 'mono-complete', 'kotlin', 'swift', 'php', 'ruby', 'lua5.4', 'perl', 'sqlite3', 'typescript', 'code-runner', 'breeze'];
+  const MIGRATIONS = { 2: ['procps', 'less', 'man-db', 'vim-tiny', 'alsa-utils', 'office', 'writer', 'sheets', 'slides', 'cumulus-office'], 3: ['starlight', 'beatforge', 'sprout', 'code'], 4: ['help', 'assistant'], 5: ['nodejs', 'python3', 'build-essential', 'default-jdk', 'golang', 'rustc', 'mono-complete', 'kotlin', 'swift', 'php', 'ruby', 'lua5.4', 'perl', 'sqlite3', 'typescript', 'code-runner'], 6: ['breeze'] };
+  const PKGV = 6;
 
   const pkg = (OS.pkg = { repo: R });
   const list = () => {

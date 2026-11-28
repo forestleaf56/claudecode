@@ -370,6 +370,8 @@ Press **F5** or the ▶ button:
 | HTML / CSS / Markdown | Live preview beside the editor |
 | JSON | Validated in the Output panel |
 
+**Example programs:** 79 ready-to-run programs in 18 languages live in \`~/Projects/examples\` — open them from *Browse example programs…* on the welcome page, the Run panel, or the command palette (Ctrl+Shift+P → *Examples*).
+
 Compiled languages are built by real compilers on an online build service. Without internet, a built-in "lite" runner handles simple programs (printing, variables, loops, functions). Programs that read input ask for it in the terminal first. You can use the same commands yourself in any terminal, or run any file with \`run <file>\`.
 
 ## Handy shortcuts
@@ -568,6 +570,33 @@ Export a backup, open Cirrus on the other device and import it.
 ## Things that clear your data
 Clearing browsing data, private/incognito windows and some phone browsers (for files opened from Downloads) may delete local storage. Use regular windows and back up now and then.
 `,
+    '19 Breeze Chat.md': `# Breeze Chat
+
+Breeze lets you chat with other people on **the same network** — family on the home Wi-Fi, classmates, coworkers — with hand-drawn emojis and doodles.
+
+## How people find each other
+Open **Breeze Chat** on two or more devices (or browser tabs). Everyone on the same network lands in the **This network** room automatically and appears under *People here*.
+
+- Devices on one network share the same public internet address, so Breeze uses it to put you in the same room through a public relay.
+- Tabs on the **same device** talk to each other directly, even without internet.
+- To chat with someone elsewhere, click **+** next to *Rooms* and both enter the same room name (add a password for a private room).
+
+## Privacy
+Every message is **end-to-end encrypted** before it leaves your device (AES-256). The relay only sees scrambled data. **Direct messages** — click a person — use a separate key that only the two of you share.
+Breeze is still best for friendly chat, not secrets: anyone who knows a room's name and password, or who is on your network, can join that room.
+
+## Emojis and doodles
+- Click the smiley for **46 hand-drawn emojis**, or type codes like \`:rocket:\`, \`:heart:\`, \`:party:\`.
+- Classic faces turn into emojis too: \`:)\` \`:D\` \`;)\` \`:(\` \`<3\` \`:P\` \`B)\`.
+- A message with only one to three emojis is shown big.
+- Click the **brush** to draw a doodle and send it. Click a received drawing to save it to *Pictures*.
+
+## More
+- **Nudge** (⚡) shakes the other person's window.
+- Set your status to *Online*, *Away* or *Busy* (Busy turns off alerts).
+- You'll see who is typing, and get a notification when Breeze isn't in front.
+- Messages are kept on this device; *Clear history* (eraser) removes them.
+`,
     '18 Troubleshooting and FAQ.md': `# Troubleshooting and FAQ
 
 **A website doesn't look right in the Browser.**
@@ -605,7 +634,7 @@ Open **Help** from the app menu or the desktop, look in \`~/Documents/Help\`, or
   const helpDir = () => OS.home() + '/Documents/Help';
   OS.ensureHelpDocs = (force) => {
     const d = helpDir(); try { OS.fs.mkdir(d, { p: true }); } catch (e) { return; }
-    const upd = OS.store.get('help-ver', 1) < 2; if (upd) OS.store.set('help-ver', 2);
+    const upd = OS.store.get('help-ver', 1) < 3; if (upd) OS.store.set('help-ver', 3);
     let n = 0; Object.entries(DOCS).forEach(([name, c]) => { const p = OS.fs.join(d, name); if (force || upd || !OS.fs.exists(p)) { OS.fs.write(p, c); n++; } });
     const ds = OS.home() + '/Desktop/Help & Guides.desktop'; if (!OS.store.get('help-desk') && OS.fs.isDir(OS.home() + '/Desktop')) { OS.store.set('help-desk', 1); if (!OS.fs.exists(ds)) OS.fs.write(ds, '[Desktop Entry]\nType=Application\nName=Help & Guides\nExec=help\n'); }
     return n;

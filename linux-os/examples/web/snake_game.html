@@ -1,0 +1,49 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Snake</title>
+<style>
+  body { margin: 0; background: #111; color: #eee; font-family: system-ui; display: grid; place-items: center; height: 100vh; }
+  canvas { background: #1b1f2a; border-radius: 12px; touch-action: none; }
+  p { text-align: center; }
+</style>
+</head>
+<body>
+<div>
+  <canvas id="c" width="320" height="320"></canvas>
+  <p>Score: <b id="s">0</b> · arrow keys or swipe</p>
+</div>
+<script>
+const N = 16, SZ = 20, ctx = document.getElementById('c').getContext('2d');
+let snake, dir, food, score, alive;
+function reset() { snake = [{ x: 8, y: 8 }]; dir = { x: 1, y: 0 }; score = 0; alive = true; placeFood(); }
+function placeFood() { do { food = { x: Math.floor(Math.random() * N), y: Math.floor(Math.random() * N) }; } while (snake.some((s) => s.x === food.x && s.y === food.y)); }
+function turn(x, y) { if (x !== -dir.x || y !== -dir.y) dir = { x, y }; }
+addEventListener('keydown', (e) => {
+  const k = { ArrowUp: [0, -1], ArrowDown: [0, 1], ArrowLeft: [-1, 0], ArrowRight: [1, 0] }[e.key];
+  if (k) { e.preventDefault(); turn(...k); }
+  if (!alive && e.key === ' ') reset();
+});
+let sx, sy;
+addEventListener('touchstart', (e) => { sx = e.touches[0].clientX; sy = e.touches[0].clientY; if (!alive) reset(); });
+addEventListener('touchend', (e) => { const dx = e.changedTouches[0].clientX - sx, dy = e.changedTouches[0].clientY - sy; if (Math.abs(dx) > Math.abs(dy)) turn(Math.sign(dx), 0); else turn(0, Math.sign(dy)); });
+function tick() {
+  if (alive) {
+    const head = { x: (snake[0].x + dir.x + N) % N, y: (snake[0].y + dir.y + N) % N };
+    if (snake.some((s) => s.x === head.x && s.y === head.y)) alive = false;
+    else {
+      snake.unshift(head);
+      if (head.x === food.x && head.y === food.y) { score++; placeFood(); } else snake.pop();
+    }
+  }
+  ctx.clearRect(0, 0, 320, 320);
+  ctx.fillStyle = '#ff5c8a'; ctx.fillRect(food.x * SZ + 3, food.y * SZ + 3, SZ - 6, SZ - 6);
+  snake.forEach((s, i) => { ctx.fillStyle = i ? '#3fdc77' : '#a8ff60'; ctx.fillRect(s.x * SZ + 1, s.y * SZ + 1, SZ - 2, SZ - 2); });
+  if (!alive) { ctx.fillStyle = '#fff'; ctx.font = '20px system-ui'; ctx.textAlign = 'center'; ctx.fillText('Game over — space/tap to restart', 160, 165); }
+  document.getElementById('s').textContent = score;
+}
+reset(); setInterval(tick, 120);
+</script>
+</body>
+</html>

@@ -164,6 +164,8 @@
     zoomin: '<circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3M11 8v6M8 11h6"/>', zoomout: '<circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3M8 11h6"/>',
     rotate: '<path d="M21 2v6h-6"/><path d="M21 13a9 9 0 1 1-3-7.7L21 8"/>',
     undo: '<path d="M3 7v6h6"/><path d="M21 17a9 9 0 0 0-15-6.7L3 13"/>', redo: '<path d="M21 7v6h-6"/><path d="M3 17a9 9 0 0 1 15-6.7L21 13"/>',
+    chat: '<path d="M4 5.5A2.5 2.5 0 0 1 6.5 3h11A2.5 2.5 0 0 1 20 5.5v8a2.5 2.5 0 0 1-2.5 2.5H10l-4.5 4v-4h0A1.5 1.5 0 0 1 4 14.5z"/><path d="M8.5 9.5h.01M12 9.5h.01M15.5 9.5h.01" stroke-width="2.6"/>',
+    send: '<path d="M4 12l16-8-6 17-3-7z"/><path d="M11 14l9-10"/>',
     pin: '<path d="M9 3h6l-1 6 4 4H6l4-4z"/><path d="M12 13v8"/>',
     eye: '<path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/>',
     sparkle: '<path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8z"/><path d="M19 15l.7 2.1 2.1.7-2.1.7L19 21l-.7-2.5-2.1-.7 2.1-.7z"/>',
@@ -362,13 +364,13 @@
   };
 
   /* ---------- dialogs ---------- */
-  OS.dialog = ({ title = '', message = '', input = null, password = false, buttons = [{ label: 'OK', value: true, primary: true }], html = '' }) =>
+  OS.dialog = ({ title = '', message = '', input = null, password = false, buttons = [{ label: 'OK', value: true, primary: true }], html = '', read = null }) =>
     new Promise((resolve) => {
       const back = OS.el('<div class="dlg-back"></div>');
       const d = OS.el(`<div class="dlg menu-surface pop-anim">${title ? `<h3>${OS.esc(title)}</h3>` : ''}${message ? `<p>${OS.esc(message)}</p>` : ''}${html}${input !== null ? `<input class="inp" type="${password ? 'password' : 'text'}" value="${OS.esc(input)}" spellcheck="false">` : ''}<div class="btns"></div></div>`);
       back.appendChild(d);
       const inp = d.querySelector('input.inp');
-      const done = (v) => { back.remove(); document.removeEventListener('keydown', key, true); resolve(v); };
+      const done = (v) => { if (read && v) v = read(d, v); back.remove(); document.removeEventListener('keydown', key, true); resolve(v); };
       buttons.forEach((b) => {
         const el = OS.el(`<button class="btn ${b.primary ? 'primary' : ''} ${b.danger ? 'danger' : ''}">${OS.esc(b.label)}</button>`);
         el.onclick = () => done(b.value === true && inp ? inp.value : b.value); d.querySelector('.btns').appendChild(el);

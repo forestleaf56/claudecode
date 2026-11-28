@@ -1,0 +1,38 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Analog clock</title>
+<style>
+  body { margin: 0; height: 100vh; display: grid; place-items: center; background: radial-gradient(circle, #2b3150, #0d0f1a); }
+  .clock { width: 260px; height: 260px; border-radius: 50%; background: #f6f7fb; position: relative; box-shadow: 0 0 0 10px #c9cde0, 0 20px 50px rgba(0,0,0,.5); }
+  .hand { position: absolute; left: 50%; bottom: 50%; transform-origin: bottom center; border-radius: 4px; }
+  .h { width: 7px; height: 70px; margin-left: -3.5px; background: #222; }
+  .m { width: 5px; height: 100px; margin-left: -2.5px; background: #444; }
+  .s { width: 2px; height: 110px; margin-left: -1px; background: #e53935; }
+  .dot { position: absolute; width: 14px; height: 14px; border-radius: 50%; background: #e53935; left: 123px; top: 123px; }
+  .tick { position: absolute; left: 129px; top: 8px; width: 2px; height: 12px; background: #888; transform-origin: 1px 122px; }
+</style>
+</head>
+<body>
+<div class="clock" id="clock"><div class="hand h" id="h"></div><div class="hand m" id="m"></div><div class="hand s" id="s"></div><div class="dot"></div></div>
+<script>
+const clock = document.getElementById('clock');
+for (let i = 0; i < 12; i++) {
+  const t = document.createElement('div');
+  t.className = 'tick';
+  t.style.transform = `rotate(${i * 30}deg)`;
+  clock.appendChild(t);
+}
+function update() {
+  const d = new Date();
+  const s = d.getSeconds() + d.getMilliseconds() / 1000, m = d.getMinutes() + s / 60, h = (d.getHours() % 12) + m / 60;
+  document.getElementById('s').style.transform = `rotate(${s * 6}deg)`;
+  document.getElementById('m').style.transform = `rotate(${m * 6}deg)`;
+  document.getElementById('h').style.transform = `rotate(${h * 30}deg)`;
+  requestAnimationFrame(update);
+}
+update();
+</script>
+</body>
+</html>

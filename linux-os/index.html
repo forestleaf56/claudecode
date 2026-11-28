@@ -35,9 +35,11 @@
 <script src="js/starlight.js"></script>
 <script src="js/beatforge.js"></script>
 <script src="js/sprout.js"></script>
+<script src="js/code-examples.js"></script>
 <script src="js/codestudio.js"></script>
 <script src="js/storeapps.js"></script>
 <script src="js/help.js"></script>
+<script src="js/breeze.js"></script>
 <script src="js/cumulo-brain.js"></script>
 <script src="js/assistant.js"></script>
 <script>
@@ -46,6 +48,7 @@
     OS.pkg.installed();
     OS.office.ensureSamples();
     OS.ensureHelpDocs();
+    OS.ensureCodeExamples();
     OS.desktop.init();
     OS.desktop.boot();
     // unlock WebAudio on first interaction (mobile browsers require a gesture)
