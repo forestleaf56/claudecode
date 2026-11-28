@@ -150,6 +150,7 @@
     files.forEach((p) => body.querySelector('.r-files').appendChild(row(`<span class="ico">${OS.fileIcon(OS.fs.basename(p), OS.fs.isDir(p))}</span>`, OS.fs.basename(p), OS.fs.pretty(p), () => desk.openPath(p))));
     const act = body.querySelector('.r-act');
     act.appendChild(row(OS.appIcon('terminal'), `Run "${q}"`, 'Execute in a new terminal', () => OS.wm.open('terminal', { cmd: q })));
+    if (OS.apps.assistant && OS.pkg.appAvailable('assistant')) act.appendChild(row(OS.appIcon('assistant'), `Ask Cumulo: "${q}"`, 'The all-knowing assistant', () => OS.wm.open('assistant', { q })));
     act.appendChild(row(OS.appIcon('browser'), `Search the web for "${q}"`, 'Opens the Browser', () => OS.wm.open('browser', { url: q })));
     let calcV = null; try { calcV = OS.calc(q); } catch (e) {}
     if (calcV != null && isFinite(calcV) && /[\d)]/.test(q) && /[-+*/^%()a-z]/i.test(q)) act.prepend(row(OS.appIcon('calculator'), `= ${+calcV.toPrecision(12)}`, q, () => OS.wm.open('calculator', { expr: q })));
@@ -330,6 +331,7 @@
     if (how) return OS.wm.open(how, { path: p });
     if (name.endsWith('.desktop')) { const m = /Exec=(\S+)/.exec(OS.fs.read(p)); if (m && OS.apps[m[1]]) return OS.wm.open(m[1]); }
     const ex = OS.ext(name);
+    if (ex === 'md' && OS.fs.dirname(p) === OS.home() + '/Documents/Help' && OS.apps.help) return OS.wm.open('help', { doc: name });
     if (['cdoc', 'doc'].includes(ex)) return OS.wm.open('writer', { path: p });
     if (['csht', 'csv', 'tsv'].includes(ex)) return OS.wm.open('sheets', { path: p });
     if (ex === 'cslide') return OS.wm.open('slides', { path: p });

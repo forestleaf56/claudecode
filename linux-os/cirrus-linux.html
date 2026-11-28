@@ -1030,6 +1030,71 @@ body:not(.mobile) .rocks-pad{display:none}
 .cd-act{grid-column:1;grid-row:1}.cd-side{grid-column:2;grid-row:1}.cd-center{grid-column:3;grid-row:1}.cd-status{grid-row:2}
 .uc-v{min-width:0}.card .row select.inp{max-width:42%;flex:none}
 
+/* ===== Help & Guides ===== */
+.hp-side{width:250px}
+.hp-side .side-item{text-align:left;align-items:flex-start;line-height:1.3}
+.hp-res small{display:block;color:var(--muted);font-size:11px;margin-top:2px}
+.hp-main{flex:1;min-width:0;background:var(--surface)}
+.hp-tb{position:sticky;top:0;z-index:2;background:color-mix(in srgb,var(--surface) 88%,transparent);backdrop-filter:blur(10px);display:flex;gap:6px;align-items:center;padding:8px 12px;border-bottom:1px solid var(--border)}
+.hp-doc{max-width:760px;margin:0 auto;padding:22px 28px 60px;line-height:1.65;font-size:15px}
+.hp-doc h1{font-size:28px;margin:4px 0 14px;line-height:1.2;background:linear-gradient(90deg,var(--accent),#c86cff);-webkit-background-clip:text;background-clip:text;color:transparent}
+.hp-doc h2{font-size:20px;margin:28px 0 8px;padding-bottom:6px;border-bottom:1px solid var(--border)}
+.hp-doc h3{font-size:16px;margin:20px 0 6px}
+.hp-doc p{margin:8px 0}
+.hp-doc ul,.hp-doc ol{margin:8px 0;padding-left:24px}
+.hp-doc li{margin:3px 0}
+.hp-doc code{font-family:var(--mono,monospace);font-size:.88em;background:var(--surface2);border:1px solid var(--border);border-radius:5px;padding:1px 5px}
+.hp-doc pre{background:#0d1117;color:#e6edf3;border-radius:10px;padding:12px 14px;overflow-x:auto;font-size:13px;line-height:1.5}
+.hp-doc pre code{background:none;border:0;padding:0;color:inherit}
+.hp-doc table{border-collapse:collapse;width:100%;margin:12px 0;font-size:14px;display:block;overflow-x:auto}
+.hp-doc th,.hp-doc td{border:1px solid var(--border);padding:6px 10px;text-align:left;vertical-align:top}
+.hp-doc th{background:var(--surface2)}
+.hp-doc blockquote{margin:12px 0;padding:10px 14px;border-left:4px solid var(--accent);background:color-mix(in srgb,var(--accent) 10%,transparent);border-radius:0 8px 8px 0}
+.hp-doc a{color:var(--accent);text-decoration:none;font-weight:600}
+.hp-doc a:hover{text-decoration:underline}
+.hp-doc mark{background:color-mix(in srgb,#f7c948 55%,transparent);color:inherit;border-radius:3px}
+body.mobile .hp-doc{padding:16px 16px 50px;font-size:15px}
+body.mobile .hp-doc h1{font-size:23px}
+
+/* ===== Cumulo assistant ===== */
+.cu{display:flex;flex-direction:column;height:100%;min-height:0;background:radial-gradient(circle at 15% 0%,color-mix(in srgb,#7aa2ff 18%,transparent),transparent 45%),radial-gradient(circle at 100% 100%,color-mix(in srgb,#c86cff 16%,transparent),transparent 50%),var(--surface)}
+.cu-head{display:flex;align-items:center;gap:12px;padding:10px 12px;border-bottom:1px solid var(--border)}
+.cu-head b{display:block;font-size:16px}.cu-head small{color:var(--muted);font-size:12px}
+.cu-head .ibtn.on,.cu-input .ibtn.on{color:var(--accent);background:color-mix(in srgb,var(--accent) 16%,transparent)}
+.cu-orb{position:relative;width:42px;height:42px;border-radius:50%;flex:none;background:radial-gradient(circle at 35% 30%,#fff,#9ec2ff 35%,#7a5cff 70%,#c86cff);box-shadow:0 0 18px #8b7bff88;animation:cuFloat 4s ease-in-out infinite}
+.cu-orb i{position:absolute;inset:0;border-radius:50%;border:2px solid #ffffff55;animation:cuRing 3s linear infinite}
+.cu-orb i:nth-child(2){animation-delay:1s}.cu-orb i:nth-child(3){animation-delay:2s}
+.cu-orb.think{animation:cuFloat 1s ease-in-out infinite,cuHue 1.5s linear infinite}
+@keyframes cuFloat{50%{transform:translateY(-3px) scale(1.04)}}
+@keyframes cuRing{from{transform:scale(1);opacity:.9}to{transform:scale(1.7);opacity:0}}
+@keyframes cuHue{to{filter:hue-rotate(360deg)}}
+.cu-log{flex:1;min-height:0;overflow-y:auto;padding:14px 12px;display:flex;flex-direction:column;gap:10px}
+.cu-msg{display:flex;gap:8px;align-items:flex-end;max-width:88%;animation:cuIn .25s var(--ease)}
+@keyframes cuIn{from{opacity:0;transform:translateY(8px)}}
+.cu-msg.me{align-self:flex-end}
+.cu-av{font-size:22px;line-height:1;flex:none}
+.cu-b{padding:9px 13px;border-radius:16px;line-height:1.5;font-size:14.5px;overflow-wrap:anywhere;min-width:0}
+.cu-msg.bot .cu-b{background:var(--surface2);border:1px solid var(--border);border-bottom-left-radius:5px}
+.cu-msg.me .cu-b{background:linear-gradient(135deg,var(--accent),#8b5cff);color:#fff;border-bottom-right-radius:5px}
+.cu-b img{display:block;max-width:140px;max-height:140px;border-radius:10px;margin-bottom:8px;float:right;margin-left:10px}
+.cu-b code{font-family:var(--mono,monospace);font-size:.9em;background:color-mix(in srgb,var(--text) 10%,transparent);border-radius:4px;padding:0 4px}
+.cu-acts{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px;clear:both}
+.cu-msg.typing .cu-b{display:flex;gap:4px;padding:13px 14px}
+.cu-msg.typing .cu-b i{width:7px;height:7px;border-radius:50%;background:var(--muted);animation:cuDot 1s infinite}
+.cu-msg.typing .cu-b i:nth-child(2){animation-delay:.15s}.cu-msg.typing .cu-b i:nth-child(3){animation-delay:.3s}
+@keyframes cuDot{30%{transform:translateY(-5px);opacity:1}0%,60%,100%{opacity:.4}}
+.cu-chips{display:flex;gap:6px;padding:6px 12px;overflow-x:auto;scrollbar-width:none;flex:none}
+.cu-chips::-webkit-scrollbar{display:none}
+.cu-chips .chip{flex:none;border:1px solid var(--border2);background:var(--surface2);color:var(--text);border-radius:999px;padding:6px 12px;font-size:13px;cursor:pointer;white-space:nowrap}
+.cu-chips .chip:hover{border-color:var(--accent);color:var(--accent)}
+.cu-input{display:flex;gap:6px;align-items:center;padding:8px 10px 12px;flex:none}
+.cu-input input{flex:1;min-width:0;height:42px;border-radius:21px;border:1px solid var(--border2);background:var(--input);padding:0 16px;font-size:15px;outline:0;color:var(--text)}
+.cu-input input:focus{border-color:var(--accent)}
+.cu-send{width:42px;height:42px;border-radius:50%;border:0;background:linear-gradient(135deg,var(--accent),#8b5cff);color:#fff;display:grid;place-items:center;cursor:pointer;flex:none}
+.cu-send svg{width:20px;height:20px}
+body.mobile .cu-msg{max-width:94%}
+body.mobile .cu-input input{font-size:16px}
+
 </style>
 </head>
 <body>
@@ -1201,6 +1266,10 @@ body:not(.mobile) .rocks-pad{display:none}
     zoomin: '<circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3M11 8v6M8 11h6"/>', zoomout: '<circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3M8 11h6"/>',
     rotate: '<path d="M21 2v6h-6"/><path d="M21 13a9 9 0 1 1-3-7.7L21 8"/>',
     undo: '<path d="M3 7v6h6"/><path d="M21 17a9 9 0 0 0-15-6.7L3 13"/>', redo: '<path d="M21 7v6h-6"/><path d="M3 17a9 9 0 0 1 15-6.7L21 13"/>',
+    sparkle: '<path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8z"/><path d="M19 15l.7 2.1 2.1.7-2.1.7L19 21l-.7-2.5-2.1-.7 2.1-.7z"/>',
+    help: '<circle cx="12" cy="12" r="9"/><path d="M9.5 9a2.5 2.5 0 1 1 3.5 2.3c-.6.3-1 .8-1 1.5V14M12 17h.01"/>',
+    book: '<path d="M4 4.5A1.5 1.5 0 0 1 5.5 3H20v15H5.5A1.5 1.5 0 0 0 4 19.5z"/><path d="M4 19.5A1.5 1.5 0 0 0 5.5 21H20v-3"/><path d="M8 7h8M8 11h6"/>',
+    mic: '<rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/>',
     eraser: '<path d="M20 20H7L3 16a1.4 1.4 0 0 1 0-2L13 4a1.4 1.4 0 0 1 2 0l5 5a1.4 1.4 0 0 1 0 2l-9 9"/><path d="M6 11l7 7"/>',
     bucket: '<path d="M19 11l-8-8-8.5 8.5a2 2 0 0 0 0 2.8l5.2 5.2a2 2 0 0 0 2.8 0z"/><path d="M5 2l5 5M2 13h15M22 20a2 2 0 1 1-4 0c0-1.6 2-4 2-4s2 2.4 2 4z"/>',
     line: '<path d="M5 19L19 5"/>', circle: '<circle cx="12" cy="12" r="8"/>',
@@ -1732,6 +1801,8 @@ body:not(.mobile) .rocks-pad{display:none}
     beatforge: { v: '1.4.0', size: 6400, sec: 'Multimedia', desc: 'Music studio: step sequencer, piano roll, song mode, mixer and 5 sample packs', type: 'app' },
     sprout: { v: '1.2.0', size: 3900, sec: 'Development', desc: 'Visual block programming: make games and animations by snapping blocks', type: 'app' },
     code: { v: '1.9.4', size: 9100, sec: 'Development', desc: 'Nimbus Code editor: syntax highlighting for 20+ languages, explorer, terminal, run & preview', type: 'app' },
+    help: { v: '24.11', size: 300, sec: 'System', desc: 'Help & Guides: user guides, how-tos and FAQ', type: 'app', core: 1 },
+    assistant: { v: '1.0.0', size: 1200, sec: 'Accessories', desc: 'Cumulo, the all-knowing AI assistant', type: 'app' },
     // optional GUI
     solitaire: { v: '1.0', size: 260, sec: 'Games', desc: 'Klondike solitaire card game', type: 'app' },
     chess: { v: '1.1', size: 420, sec: 'Games', desc: 'Chess against the computer or a friend', type: 'app' },
@@ -1802,9 +1873,9 @@ body:not(.mobile) .rocks-pad{display:none}
     wttr: { v: '1.0', size: 10, sec: 'Network', desc: 'Weather report in the terminal (wttr.in)', type: 'cli', cmds: ['wttr'] },
     jq: { v: '1.7.1', size: 160, sec: 'Utilities', desc: 'Lightweight command-line JSON processor', type: 'cli', cmds: ['jq'] },
   };
-  const DEFAULT = ['coreutils', 'bash', 'apt', 'cirrus-desktop', 'files', 'terminal', 'browser', 'editor', 'settings', 'software', 'calculator', 'viewer', 'monitor', 'calendar', 'clock', 'music', 'paint', 'weather', 'notes', 'trash', 'snake', 'mines', 'merge', 'blocks', 'memory', 'tictactoe', 'nano', 'curl', 'wget', 'neofetch', 'iputils-ping', 'bc', 'procps', 'less', 'man-db', 'vim-tiny', 'alsa-utils', 'office', 'writer', 'sheets', 'slides', 'cumulus-office', 'starlight', 'beatforge', 'sprout', 'code'];
-  const MIGRATIONS = { 2: ['procps', 'less', 'man-db', 'vim-tiny', 'alsa-utils', 'office', 'writer', 'sheets', 'slides', 'cumulus-office'], 3: ['starlight', 'beatforge', 'sprout', 'code'] };
-  const PKGV = 3;
+  const DEFAULT = ['coreutils', 'bash', 'apt', 'cirrus-desktop', 'files', 'terminal', 'browser', 'editor', 'settings', 'software', 'calculator', 'viewer', 'monitor', 'calendar', 'clock', 'music', 'paint', 'weather', 'notes', 'trash', 'snake', 'mines', 'merge', 'blocks', 'memory', 'tictactoe', 'nano', 'curl', 'wget', 'neofetch', 'iputils-ping', 'bc', 'procps', 'less', 'man-db', 'vim-tiny', 'alsa-utils', 'office', 'writer', 'sheets', 'slides', 'cumulus-office', 'starlight', 'beatforge', 'sprout', 'code', 'help', 'assistant'];
+  const MIGRATIONS = { 2: ['procps', 'less', 'man-db', 'vim-tiny', 'alsa-utils', 'office', 'writer', 'sheets', 'slides', 'cumulus-office'], 3: ['starlight', 'beatforge', 'sprout', 'code'], 4: ['help', 'assistant'] };
+  const PKGV = 4;
 
   const pkg = (OS.pkg = { repo: R });
   const list = () => {
@@ -2184,6 +2255,7 @@ body:not(.mobile) .rocks-pad{display:none}
     files.forEach((p) => body.querySelector('.r-files').appendChild(row(`<span class="ico">${OS.fileIcon(OS.fs.basename(p), OS.fs.isDir(p))}</span>`, OS.fs.basename(p), OS.fs.pretty(p), () => desk.openPath(p))));
     const act = body.querySelector('.r-act');
     act.appendChild(row(OS.appIcon('terminal'), `Run "${q}"`, 'Execute in a new terminal', () => OS.wm.open('terminal', { cmd: q })));
+    if (OS.apps.assistant && OS.pkg.appAvailable('assistant')) act.appendChild(row(OS.appIcon('assistant'), `Ask Cumulo: "${q}"`, 'The all-knowing assistant', () => OS.wm.open('assistant', { q })));
     act.appendChild(row(OS.appIcon('browser'), `Search the web for "${q}"`, 'Opens the Browser', () => OS.wm.open('browser', { url: q })));
     let calcV = null; try { calcV = OS.calc(q); } catch (e) {}
     if (calcV != null && isFinite(calcV) && /[\d)]/.test(q) && /[-+*/^%()a-z]/i.test(q)) act.prepend(row(OS.appIcon('calculator'), `= ${+calcV.toPrecision(12)}`, q, () => OS.wm.open('calculator', { expr: q })));
@@ -2364,6 +2436,7 @@ body:not(.mobile) .rocks-pad{display:none}
     if (how) return OS.wm.open(how, { path: p });
     if (name.endsWith('.desktop')) { const m = /Exec=(\S+)/.exec(OS.fs.read(p)); if (m && OS.apps[m[1]]) return OS.wm.open(m[1]); }
     const ex = OS.ext(name);
+    if (ex === 'md' && OS.fs.dirname(p) === OS.home() + '/Documents/Help' && OS.apps.help) return OS.wm.open('help', { doc: name });
     if (['cdoc', 'doc'].includes(ex)) return OS.wm.open('writer', { path: p });
     if (['csht', 'csv', 'tsv'].includes(ex)) return OS.wm.open('sheets', { path: p });
     if (ex === 'cslide') return OS.wm.open('slides', { path: p });
@@ -8785,10 +8858,877 @@ body:not(.mobile) .rocks-pad{display:none}
 
 </script>
 <script>
+/* Cirrus Linux — Help & Guides: markdown documents in ~/Documents/Help and a Help Center viewer */
+(function () {
+  'use strict';
+  const esc = OS.esc, gl = OS.glyph;
+  const DOCS = {
+    '00 Welcome.md': `# Welcome to Cirrus Linux
+
+Cirrus Linux is a complete desktop operating system that runs inside your web browser — on a computer, tablet or phone. Everything you create is saved on this device.
+
+## Start here
+- [Getting started](01 Getting Started.md) — the desktop, app menu and windows
+- [Files and folders](02 Files and Folders.md) — organize, import and back up your files
+- [Terminal basics](03 Terminal Basics.md) — the command line, step by step
+- [Installing software](04 Installing Software.md) — the Software store and \`apt\`
+- [Keyboard shortcuts](05 Keyboard Shortcuts.md) — work faster
+- [Phones and tablets](06 Phones and Tablets.md) — touch gestures and tips
+
+## Apps
+- [Cumulo, the assistant](07 Cumulo Assistant.md)
+- [Cumulus Office](08 Cumulus Office.md) — Writer, Sheets and Slides
+- [Nimbus Code](09 Nimbus Code.md) — the code editor
+- [Terminal programs](10 Terminal Programs.md) — nano, vim, top, less, man
+- [Starlight planetarium](11 Starlight.md)
+- [BeatForge music studio](12 BeatForge.md)
+- [Sprout block programming](13 Sprout.md)
+- [Games](14 Games.md)
+
+## Make it yours
+- [Personalization](15 Personalization.md) — themes, wallpapers, widgets and fun effects
+- [Settings tour](16 Settings Tour.md)
+
+## When something goes wrong
+- [Storage and backups](17 Storage and Backups.md)
+- [Troubleshooting and FAQ](18 Troubleshooting and FAQ.md)
+
+> Tip: ask **Cumulo** anything, for example “how do I change the wallpaper?” — it reads these guides too.
+`,
+    '01 Getting Started.md': `# Getting started
+
+## The desktop
+- The **panel** runs along the bottom (or top) of the screen. It holds the **app menu button** (the cloud logo), pinned apps, running windows, the system tray and the clock.
+- **Desktop icons** show your Home folder, the Trash and everything in \`~/Desktop\`.
+- **Right-click** (or **long-press** on touch screens) anywhere for a context menu.
+
+## Opening apps
+1. Click the **cloud logo** in the panel, or press **Alt+Space**.
+2. Type a few letters of the app's name and press **Enter**, or pick a category such as *Games* or *Office*.
+3. Right-click an app to **pin it to the panel** or **add it to the desktop**.
+
+The search box does more than find apps: it searches your files, calculates sums (\`12*7\`), runs terminal commands and can ask Cumulo a question.
+
+## Working with windows
+| Action | How |
+|---|---|
+| Move | Drag the title bar |
+| Resize | Drag any edge or corner |
+| Maximize | Double-click the title bar, or drag it to the top edge |
+| Snap left/right | Drag a window to the left or right edge |
+| Minimize | The – button, or click its panel icon |
+| Close | The × button or **Alt+F4** |
+| See all windows | The overview button next to the app menu |
+
+On phones every window opens full-screen; switch between them with the overview button in the panel.
+
+## The system tray
+Click the network/volume/battery icons for **quick settings**: dark style, night light, do-not-disturb, fullscreen, screenshot, volume and brightness. Notifications are listed there too. Click the **clock** for a calendar.
+
+## Locking and power
+Open the app menu and use the buttons at the bottom right to **lock**, **log out**, **restart** or **shut down**. You can set a password in *Settings → Users*.
+`,
+    '02 Files and Folders.md': `# Files and folders
+
+Open **Files** from the panel or the app menu. Your home folder (\`~\`) contains *Desktop, Documents, Downloads, Music, Pictures* and *Videos*.
+
+## Everyday tasks
+- **Open** a file: double-click it (single tap on touch screens). Cirrus picks the right app automatically.
+- **New folder / new document**: right-click an empty area, or use the ⋮ menu.
+- **Rename**: select and press **F2**, or right-click → *Rename*.
+- **Copy, cut, paste**: **Ctrl+C**, **Ctrl+X**, **Ctrl+V** — or the right-click menu.
+- **Move**: drag files onto a folder, a sidebar place or the path bar.
+- **Delete**: press **Delete** to move to the Trash. **Shift+Delete** deletes permanently.
+- **Search**: click the magnifier or press **Ctrl+F**.
+- **Hidden files**: press **Ctrl+H**.
+
+## Getting files in and out
+- **Import**: drag files from your real computer onto the Files window or the desktop, or use *Import from device…*.
+- **Download to your device**: right-click a file → *Download to device*.
+
+## The Trash
+Deleted items go to the Trash. Open it from the desktop or the Files sidebar to **restore** items or **empty** it.
+
+## Which app opens what
+| File type | Opens in |
+|---|---|
+| .txt .md .log | Text Editor |
+| .js .py .html .css .json .sh … | Nimbus Code |
+| .png .jpg .svg .gif | Image Viewer |
+| .mp3 .wav .ogg | Music |
+| .cdoc / .csht / .cslide | Writer / Sheets / Slides |
+| .csv | Sheets |
+| .beat | BeatForge |
+| .sprout | Sprout |
+
+Right-click → *Open with…* to choose a different app.
+`,
+    '03 Terminal Basics.md': `# Terminal basics
+
+The **Terminal** gives you a bash-style command line. Open it from the panel or press **Ctrl+Alt+T**.
+
+## Your first commands
+\`\`\`
+pwd              # where am I?
+ls               # list files
+ls -la           # list everything with details
+cd Documents     # go into a folder
+cd ..            # go up one level
+cd ~             # go home
+cat notes.md     # show a file
+mkdir projects   # make a folder
+touch hello.txt  # make an empty file
+cp a.txt b.txt   # copy
+mv b.txt c.txt   # rename / move
+rm c.txt         # delete
+\`\`\`
+
+## Getting help
+- \`help\` lists every command by category.
+- \`man ls\` opens the manual page for a command (press **q** to quit).
+- \`apropos editor\` searches manual descriptions.
+
+## Power features
+- **Pipes**: \`ls -l | sort -k5 -n | tail -3\`
+- **Redirection**: \`echo hello > file.txt\`, \`>> \` appends.
+- **Chaining**: \`mkdir demo && cd demo\`, \`;\` runs commands one after another.
+- **Variables**: \`name=Cirrus; echo "Hi $name"\`
+- **Substitution**: \`echo "Today is $(date)"\` and arithmetic \`echo $((6*7))\`
+- **Wildcards**: \`ls *.txt\`
+- **History**: press **↑/↓**, or run \`history\`. **Tab** completes commands and file names.
+- **Scripts**: \`sh ~/Documents/hello.sh\`
+
+## Keys
+| Key | Does |
+|---|---|
+| Tab | Complete |
+| ↑ / ↓ | Command history |
+| Ctrl+C | Stop the running command |
+| Ctrl+L | Clear the screen |
+| Ctrl+D | Close the terminal |
+
+On touch screens a row of extra keys (Tab, Ctrl, arrows, Esc, |, / …) appears above the keyboard. **Ctrl** is *sticky*: tap it, then tap a letter.
+
+## Networking
+\`curl\`, \`wget\` and \`ping\` make real requests from your browser. Some websites block this (CORS); try \`curl https://api.github.com/zen\`.
+`,
+    '04 Installing Software.md': `# Installing software
+
+## The Software store
+Open **Software** to browse apps, games and command-line tools by category. Tap **Install** — it takes a few seconds — then find the app in the app menu. *Installed* shows what you have and *Updates* lets you update everything.
+
+## apt in the terminal
+\`\`\`
+sudo apt update              # refresh package lists
+apt search game              # find packages
+apt show cowsay              # details
+sudo apt install cowsay      # install
+sudo apt remove cowsay       # remove
+apt list --installed         # what's installed
+sudo apt upgrade             # install updates
+\`\`\`
+Installing and removing needs \`sudo\`. If you set a password in *Settings → Users*, sudo asks for it.
+
+If you type a command that isn't installed, the terminal tells you which package provides it.
+
+## Fun things to try
+| Package | Try |
+|---|---|
+| cowsay | \`cowsay Moo\` |
+| figlet | \`figlet Cirrus\` |
+| lolcat | \`fortune | lolcat\` |
+| cmatrix | \`cmatrix\` |
+| cbonsai | \`cbonsai\` |
+| nyancat | \`nyancat\` |
+| donut | \`donut\` |
+| 2048-cli | \`2048\` |
+| desktop-pet | \`pet\` |
+| espeak | \`say Hello world\` |
+| nodejs | \`node\` |
+| python3 | \`python3\` |
+`,
+    '05 Keyboard Shortcuts.md': `# Keyboard shortcuts
+
+## System
+| Shortcut | Action |
+|---|---|
+| Alt+Space or Super | App menu |
+| Ctrl+Alt+T | New terminal |
+| Alt+F4 | Close window |
+| Esc | Close menus |
+
+## Files
+| Shortcut | Action |
+|---|---|
+| Ctrl+C / X / V | Copy / cut / paste |
+| Delete / Shift+Delete | Trash / delete permanently |
+| F2 | Rename |
+| Ctrl+A | Select all |
+| Ctrl+H | Show hidden files |
+| Ctrl+F | Search |
+| Backspace | Parent folder |
+
+## Text Editor, Writer and Nimbus Code
+| Shortcut | Action |
+|---|---|
+| Ctrl+S | Save |
+| Ctrl+O | Open |
+| Ctrl+F | Find (and replace) |
+| Ctrl+Z / Ctrl+Y | Undo / redo |
+| Ctrl+B / I / U | Bold / italic / underline (Writer) |
+| Ctrl+P | Quick open (Code) or print (Writer) |
+| Ctrl+Shift+P | Command palette (Code) |
+| Ctrl+/ | Toggle comment (Code) |
+| Alt+↑/↓ | Move line (Code) |
+| F5 | Run (Code) · Present (Slides) |
+| Ctrl+\` | Terminal panel (Code) |
+
+## Browser
+| Shortcut | Action |
+|---|---|
+| Ctrl+T | New tab |
+| Ctrl+W | Close tab |
+| Ctrl+L | Address bar |
+| F5 | Reload |
+`,
+    '06 Phones and Tablets.md': `# Phones and tablets
+
+Cirrus switches to a touch-friendly layout on small screens automatically. You can force it on or off in *Settings → Desktop & Panel → Mobile layout*.
+
+## Gestures
+- **Tap** opens files and apps.
+- **Long-press** acts like a right-click and opens context menus.
+- **Swipe** works in games like Snake, Merge and Block Drop, and to flip pictures in the Image Viewer.
+- **Pinch** to zoom in the Image Viewer and Starlight. **Double-tap** to zoom pictures.
+
+## Windows
+Apps open full-screen. Use the **overview** button (four squares, bottom right of the panel) to switch between open apps or close them.
+
+## Fullscreen
+Cirrus enters fullscreen when you log in. On iPhone, Safari doesn't allow this — use *Share → Add to Home Screen* instead.
+
+## Typing in the terminal
+Extra keys appear above the on-screen keyboard. **Ctrl** is sticky. Programs like nano and vim show their own buttons (Save, Exit, Undo…).
+
+## Good to know
+- Starlight can follow your phone: tap the 👁 button and point the phone at the sky.
+- Games show on-screen controls when needed.
+- Sprout has a *Code / Stage* switch at the top.
+`,
+    '07 Cumulo Assistant.md': `# Cumulo, the all-knowing assistant
+
+Cumulo is a cheerful cloud oracle that lives in your desktop. Open it from the app menu or type a question in the app menu search and choose *Ask Cumulo*.
+
+## Things you can say
+**Control the computer**
+- “open the terminal”, “launch chess”
+- “install sudoku”, “uninstall pong”
+- “dark mode”, “light mode”, “use the vampire theme”
+- “set the accent color to pink”, “change the wallpaper”
+- “turn on party mode”, “give me a pet”
+- “volume 40”, “brightness 70”, “take a screenshot”, “lock the screen”
+- “set a timer for 5 minutes”, “remind me in 10 minutes to stretch”
+- “make a note: buy milk”, “find files named budget”
+- “run command neofetch”
+
+**Ask anything**
+- “who is Ada Lovelace?”, “what is a black hole?”, “tell me about Saturn” (Wikipedia, needs internet)
+- “define serendipity”
+- “weather in Tokyo”, “what time is it in New York?”
+- “what is 15% of 240?”, “sqrt(2)*10”
+- “convert 10 km to miles”, “72 f to c”
+- “how do I install apps?” — answers from these guides
+
+**Just for fun**
+- jokes, fun facts, riddles, trivia, quotes
+- “will I win the lottery?” (the Magic Cloud knows)
+- “flip a coin”, “roll a die”, “rock paper scissors”
+- “write a poem about the sea”, “tell me a story”
+- “compliment me”, “roast me”
+
+## Voice
+Tap 🎤 to speak (in browsers that support speech recognition) and the speaker button to have Cumulo read its answers aloud.
+
+## Privacy
+Cumulo works on your device. Only knowledge, dictionary and weather questions are sent to public services (Wikipedia, a dictionary API, Open-Meteo).
+`,
+    '08 Cumulus Office.md': `# Cumulus Office
+
+Open **Cumulus Office** for the start center, or the apps directly.
+
+## Writer — documents
+- Pick a **style** (Heading 1, Quote, Code…), a **font** and **size** from the toolbar.
+- Bold, italic, underline, colors, highlight, alignment, lists and indentation work on the selected text.
+- **Insert** tables, images (from Pictures or your device), links, lines, page breaks, the date and special characters.
+- Right-click a **table** to add or remove rows and columns; right-click an **image** to resize or align it.
+- **Find & replace**: Ctrl+F.
+- **File menu**: templates (letter, résumé, report, meeting notes), save as \`.cdoc\`, export to HTML/text, **download as Word (.doc)**, print or save as PDF.
+
+## Sheets — spreadsheets
+- Click a cell and type. Press **Enter** to go down, **Tab** to go right. Double-click (or tap a selected cell) to edit.
+- Formulas start with \`=\`: \`=SUM(B2:B9)\`, \`=AVERAGE(C2:C9)\`, \`=IF(D10>0,"OK","Over")\`, \`=VLOOKUP(A2,F2:G9,2)\`. While typing a formula, click cells to insert references.
+- 50+ functions: SUM, AVERAGE, MIN, MAX, COUNT, IF, AND, OR, ROUND, SUMIF, COUNTIF, VLOOKUP, CONCAT, LEFT, RIGHT, LEN, TODAY…
+- **Σ AutoSum**, number formats (currency, percent…), sort, insert/delete rows and columns, fill down (Ctrl+D).
+- **Charts**: select data and press the chart button (bar, line, pie); save the chart to Pictures.
+- Multiple sheets with the tabs at the bottom. Opens and exports **CSV**.
+
+## Slides — presentations
+- Add slides with layouts (Title, Title and content, Section, Two columns, Blank).
+- Add text boxes, images and shapes. Drag to move, drag the handles to resize. Tap a selected text box again to edit it.
+- **Theme** button: 7 themes and per-slide backgrounds.
+- **Present** (F5): tap or use arrow keys to advance, swipe on phones, Esc to exit.
+- Export a stand-alone **HTML slideshow** or print to PDF.
+`,
+    '09 Nimbus Code.md': `# Nimbus Code
+
+A code editor with syntax highlighting for 20+ languages: JavaScript, TypeScript, Python, HTML, CSS, JSON, Markdown, Shell, C, C++, Java, C#, Go, Rust, PHP, Ruby, Lua, Kotlin, Swift, SQL, YAML and TOML.
+
+## Layout
+- **Activity bar** (left): Explorer, Search, Run, Extensions, Settings.
+- **Explorer**: your project folder (\`~/Projects/hello-world\` to start). Right-click for new file/folder, rename and delete. *Open folder* switches projects.
+- **Editor**: tabs, line numbers, bracket matching, auto-indent, suggestions while typing.
+- **Panel** (bottom): Problems, Output and a real **Terminal**.
+- **Status bar**: cursor position, language (click to change) and theme.
+
+## Running code
+Press **F5** or the ▶ button:
+| Language | What happens |
+|---|---|
+| JavaScript / TypeScript | Runs, output in the Output panel |
+| Python | Runs with Cirrus mini-Python |
+| Shell | Runs in the integrated terminal |
+| HTML / CSS / Markdown | Live preview beside the editor |
+| JSON | Validated |
+| Others | Edit and check only (no compiler in the browser) |
+
+## Handy shortcuts
+Ctrl+P quick open · Ctrl+Shift+P command palette · Ctrl+/ comment · Alt+↑/↓ move line · Shift+Alt+↓ duplicate line · Ctrl+D select next match · Ctrl+F find · Ctrl+G go to line · Ctrl+\` terminal · Ctrl+B sidebar.
+
+## Themes
+Nimbus Dark, Nimbus Light, Ember, Solar, Ocean and High Contrast — from the Extensions view or the palette icon in the status bar.
+`,
+    '10 Terminal Programs.md': `# Terminal programs
+
+These programs take over the terminal window, just like on a real Linux system. On touch screens each one shows its own buttons.
+
+## nano — friendly editor
+\`nano notes.txt\` — type to edit. The bottom lines list shortcuts (^ means Ctrl).
+- **Ctrl+S** save · **Ctrl+O** save as · **Ctrl+X** exit
+- **Ctrl+W** search · **Ctrl+K / Ctrl+U** cut / paste a line · **Alt+U** undo
+
+## vi / vim — modal editor
+\`vi file.txt\`. Press **i** to type, **Esc** to stop typing.
+- \`:w\` save · \`:q\` quit · \`:wq\` save and quit · \`:q!\` quit without saving
+- \`dd\` delete line · \`yy\` copy line · \`p\` paste · \`u\` undo · \`/word\` search
+- Run \`vimtutor\` for a 15-minute lesson (install full vim with \`sudo apt install vim\`).
+
+## less / more — read long text
+\`less file.txt\` or \`ls -la | less\`. Space/↓ to scroll, **/** to search, **q** to quit.
+
+## man — manuals
+\`man grep\` · \`man -k editor\` searches · press **h** for help, **q** to quit.
+
+## top / htop — processes
+\`top\`: **P** sort by CPU, **M** by memory, **k** kill, **q** quit.
+\`htop\` (install it first): arrows to select, **F9** kill, **F6** sort, **F10** quit.
+
+## Others
+\`watch -n 1 date\` · \`alsamixer\` (volume) · \`tty-clock\` · \`cmatrix\` · \`2048\`
+`,
+    '11 Starlight.md': `# Starlight planetarium
+
+Starlight shows the real night sky for any place and time.
+
+## Looking around
+- **Drag** to look around, **scroll** or **pinch** to zoom.
+- **Tap** a star, planet or galaxy for details; tap the 📍 in the info card to center it.
+- **Search** for stars, planets, constellations or objects like “Orion”, “Mars” or “Andromeda Galaxy”.
+
+## Time and place
+- The clock (bottom left) opens a date & time picker.
+- Speed buttons rewind, pause, play in real time or fast-forward (1 min/s, 1 h/s). **Now** jumps back.
+- The 📍 button sets your location (use GPS, type coordinates or pick a city).
+
+## Layers (⚙ button)
+Constellation lines and names, star names, planets, galaxies & nebulae, the Milky Way, meteors, atmosphere, ground and coordinate grids. Keyboard: **c** constellations, **a** atmosphere, **g** ground, **Space** pause.
+
+## Sky view on phones
+Tap 👁 and point your phone at the sky — Starlight follows the phone's compass and tilt.
+
+## What's inside
+About 175 bright stars with real positions, 34 constellations, 12 deep-sky objects, the Sun, the Moon with its phase and all planets computed from their orbits.
+`,
+    '12 BeatForge.md': `# BeatForge music studio
+
+## Make a beat in one minute
+1. Open BeatForge — a demo song is loaded.
+2. Press ▶ (or **Space**).
+3. In the **Channel rack**, tap squares to turn hits on and off. Right-click/long-press a square for a softer hit.
+4. Change the **BPM**, add **swing**, try the **Tap** tempo button.
+
+## Sounds
+Open the 📁 **sample browser**: five packs (Classic Kit, 808, Lo-Fi, Synth, World) and 8 synths. Tap a name to preview, **+** to add it as a channel. Right-click a channel name to rename, change sample/synth, pitch or delete it.
+
+## Melodies — Piano roll
+Synth channels use the **Piano roll**: tap to add a note, drag right to make it longer (mouse), tap a note to delete it. Tap the keys on the left to hear notes.
+
+## Songs
+Make several **patterns** (the + next to the pattern menu). In the **Song** view, tap cells to place the selected pattern on the timeline, then switch the mode to **Song** and press play.
+
+## Mixer
+Volume, pan, reverb and tone per channel, mute (M) and solo (S), plus the master level meter.
+
+## Saving and exporting
+Menu → Save (\`.beat\` files in \`~/Music/BeatForge\`), **Download WAV**, or export to \`~/Music\` (short songs only — browser storage is small).
+`,
+    '13 Sprout.md': `# Sprout block programming
+
+Sprout lets you make games and animations by snapping blocks together.
+
+## Your first program
+1. Choose the **Motion** category and drag **move 10 steps** into the workspace.
+2. Choose **Events** and drag **when ▶ clicked** right above it so they snap together.
+3. Press the green **▶** button. Your sprite moves!
+4. Wrap it in **Control → forever** and add **if on edge, bounce**.
+
+## Tips
+- **Click a script** to run it. **Click a palette block** to try it.
+- **Drop blocks on the palette** to delete them.
+- Round blocks are **values** (numbers, text) — drop them into white slots. Pointy blocks are **true/false** for *if* and *wait until*.
+- On touch screens, **press and hold** a palette block (or drag it sideways) to pick it up.
+- **Variables → Make a variable** to keep score.
+- **Pen** blocks draw on the stage: try *pen down*, *repeat 36 { move 10, turn 10 }*.
+- Add sprites with **+ Sprite** and pick an emoji costume. Each sprite has its own scripts.
+- Use **broadcast** to make sprites talk to each other.
+- On phones, use *Code / Stage* to switch views. Arrow keys and Space are on-screen.
+
+Projects are saved as \`.sprout\` files in \`~/Documents/Sprout\`.
+`,
+    '14 Games.md': `# Games
+
+## Installed
+Snake · Mines · Merge · Block Drop · Memory · Tic-Tac-Toe
+
+## In the Software store
+Solitaire · Chess · Space Rocks · Sky Hop · Four in a Row · Hangman · Sudoku · Pong · Bricks · Typing Test · Reaction Time · Dice & Coin
+
+## Controls
+- Keyboard: arrow keys, **Space** to act/pause.
+- Touch: swipe (Snake, Merge, Block Drop), on-screen buttons (Snake, Block Drop, Space Rocks), tap (most others).
+- Mines: right-click or long-press to flag, or turn on flag mode.
+- Solitaire: tap a card to move it automatically; tap the deck to draw.
+- Chess: tap a piece, then a highlighted square. Three difficulty levels.
+
+High scores are saved on this device.
+
+## In the terminal
+\`2048\`, \`guess\` (bsd-games), \`sl\`, \`cmatrix\`, \`nyancat\`, \`donut\`.
+`,
+    '15 Personalization.md': `# Personalization
+
+Open *Settings → Personalize*.
+
+## Theme presets
+13 complete looks — colors, accent, wallpaper, roundness and font: Polar Night, Vampire, Mocha, Neon City, Retro Wood, Solar Light, Sepia Paper, Deep Forest, Deep Ocean, Sakura, Classic 95, Frosted Glass and High Contrast. *Cirrus (default)* goes back to normal.
+
+## Style
+- **Font**: Inter, System, Rounded, Serif, Monospace, Pixel retro, Handwritten.
+- **Corner roundness** and **window animation** (Zoom, Slide, Fade, Genie, None).
+- **Panel style**: full-width bar or **floating dock**, with icons that grow under the pointer.
+- **Panel blur** strength.
+
+## Wallpapers
+Still wallpapers live in *Settings → Appearance* (you can also use your own pictures). **Live wallpapers** — Starfield, Aurora, Bubbles, Digital Rain, Snowfall, Fireflies, Neon Waves, Lava Lamp, Confetti — are under *Personalize*.
+
+## Screensaver
+Choose when it starts and which animation to show. Optionally lock the screen afterwards.
+
+## Desktop widgets
+Clock, calendar, system monitor, sticky note, quote of the day, weather and a photo frame. Drag them anywhere; right-click to remove.
+
+## Sounds
+Sound themes: Classic, Soft chimes, Retro 8-bit, Bubbly pop, Glass or Silent. Startup style: boot log, splash or quick.
+
+## Fun
+- **Desktop pet** — Sprig follows your cursor, naps when you're away and loves to be petted.
+- **Wobbly windows**, **party mode** (rainbow accent), **sparkle cursor trail**, **confetti** celebrations.
+
+## Accessibility
+*Settings → Accessibility*: color filters (grayscale, inverted, warm, color-blindness simulation…), large pointer, reduce motion, bigger text and spoken notifications.
+`,
+    '16 Settings Tour.md': `# Settings tour
+
+| Page | What you'll find |
+|---|---|
+| Appearance | Light/dark/automatic style, accent color, wallpapers, transparency, animations |
+| Personalize | Theme presets, fonts, live wallpapers, screensaver, widgets, sounds, fun effects |
+| Desktop & Panel | Panel position, labels, desktop icons, icon size, mobile layout, pinned apps |
+| Display | Brightness, night light, text size, fullscreen and fullscreen on login |
+| Accessibility | Color filters, large pointer, reduce motion, spoken notifications |
+| Sound | Volume, system sounds |
+| Network | Connection status and a speed test |
+| Notifications | Do not disturb |
+| Users | Name, username, avatar color, password, lock screen |
+| Apps | Search engine, browser home page, terminal colors, installed apps |
+| Date & Time | 24-hour clock, seconds |
+| Storage | Usage, backup export/import, factory reset |
+| About | System information |
+
+Many settings can also be changed from the terminal: \`gsettings list-keys\`, \`gsettings set org.cirrus.desktop theme light\`, \`wallpaper ocean\`, \`theme dark\`.
+`,
+    '17 Storage and Backups.md': `# Storage and backups
+
+Cirrus stores your files and settings in your browser's local storage on **this device only**. Browsers allow roughly **5–10 MB**, so:
+- Text documents, code and projects take very little space.
+- Photos, music and long WAV exports take a lot. Keep big files on your real device and use *Download to device*.
+
+## Check usage
+*Settings → Storage* shows how much is used. In the terminal: \`df -h\` and \`du -sh ~\`.
+
+## Back up
+*Settings → Storage → Export backup* downloads one JSON file with all files and settings. **Import backup** restores it — on this or another device.
+
+## Moving to another browser or device
+Export a backup, open Cirrus on the other device and import it.
+
+## Starting over
+*Settings → Storage → Factory reset* erases everything. Export a backup first!
+
+## Things that clear your data
+Clearing browsing data, private/incognito windows and some phone browsers (for files opened from Downloads) may delete local storage. Use regular windows and back up now and then.
+`,
+    '18 Troubleshooting and FAQ.md': `# Troubleshooting and FAQ
+
+**A website stays blank in the Browser.**
+Many sites (Google, YouTube, GitHub…) refuse to be shown inside another page. Use *Open in real browser* from the ⋮ menu. Wikipedia, OpenStreetMap and example.com work well.
+
+**curl or wget says “blocked by CORS”.**
+Browsers only allow requests to servers that permit it. Try \`curl https://api.github.com/zen\` or \`curl https://httpbin.org/json\`.
+
+**There's no sound.**
+Check the volume in quick settings and *Settings → Sound*. Phones need a tap on the screen before any sound can play. The Sound theme must not be *Silent*.
+
+**“Command not found”.**
+The terminal tells you which package to install, e.g. \`sudo apt install htop\`.
+
+**I forgot my password.**
+On the lock screen there is no recovery. Clear the site's data in your browser (this erases Cirrus) or import a backup.
+
+**The screen is too small / too big.**
+*Settings → Display → Text size*, or *Desktop & Panel → Mobile layout*.
+
+**Fullscreen doesn't work on my iPhone.**
+iPhone Safari doesn't allow web pages to go fullscreen. Use *Share → Add to Home Screen*.
+
+**Storage is full.**
+Empty the Trash, delete large pictures or music, or export a backup and reset. See [Storage and backups](17 Storage and Backups.md).
+
+**An app is stuck.**
+Close it with ×, or open *System Monitor* (or \`top\`) and end it.
+
+**How do I see these guides again?**
+Open **Help** from the app menu or the desktop, look in \`~/Documents/Help\`, or ask Cumulo “how do I …?”.
+`,
+  };
+  OS.helpDocs = DOCS;
+  const helpDir = () => OS.home() + '/Documents/Help';
+  OS.ensureHelpDocs = (force) => {
+    const d = helpDir(); try { OS.fs.mkdir(d, { p: true }); } catch (e) { return; }
+    let n = 0; Object.entries(DOCS).forEach(([name, c]) => { const p = OS.fs.join(d, name); if (force || !OS.fs.exists(p)) { OS.fs.write(p, c); n++; } });
+    const ds = OS.home() + '/Desktop/Help & Guides.desktop'; if (!OS.store.get('help-desk') && OS.fs.isDir(OS.home() + '/Desktop')) { OS.store.set('help-desk', 1); if (!OS.fs.exists(ds)) OS.fs.write(ds, '[Desktop Entry]\nType=Application\nName=Help & Guides\nExec=help\n'); }
+    return n;
+  };
+  /* search the guides — used by Help Center and Cumulo */
+  const STOP = new Set('how do i the a an to can you me my is are what does in on of for with it this that and or be use using get make change'.split(' '));
+  OS.searchHelp = (q) => {
+    const words = q.toLowerCase().replace(/[^\w\s-]/g, ' ').split(/\s+/).filter((w) => w.length > 1 && !STOP.has(w));
+    if (!words.length) return [];
+    const out = [];
+    Object.entries(DOCS).forEach(([name, text]) => {
+      const sections = text.split(/\n(?=## )/);
+      sections.forEach((sec) => {
+        const low = sec.toLowerCase(); let score = 0;
+        words.forEach((w) => { const stem = w.replace(/(ing|ed|es|s)$/, ''); const m = low.split(stem).length - 1; if (m) score += 1 + Math.min(m, 4) * 0.3; if (name.toLowerCase().includes(stem)) score += 1.5; if (/^##? .*/.test(sec) && sec.split('\n')[0].toLowerCase().includes(stem)) score += 2; });
+        if (score > 0 && sec.replace(/^#+ .*\n?/, '').trim().length > 30) out.push({ name, title: (sec.match(/^#+ (.*)/m) || [, name])[1], text: sec, score: score / Math.sqrt(1 + sec.length / 900) });
+      });
+    });
+    return out.sort((a, b) => b.score - a.score).slice(0, 8);
+  };
+  /* small markdown renderer */
+  function md(src) {
+    const inline = (t) => esc(t).replace(/`([^`]+)`/g, '<code>$1</code>').replace(/\*\*(.+?)\*\*/g, '<b>$1</b>').replace(/(^|[\s(])\*([^*\s][^*]*?)\*/g, '$1<i>$2</i>').replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="#" data-link="$2">$1</a>');
+    const lines = src.split('\n'); let h = '', i = 0;
+    while (i < lines.length) {
+      const l = lines[i];
+      if (/^```/.test(l)) { let j = i + 1, code = []; while (j < lines.length && !/^```/.test(lines[j])) code.push(lines[j++]); h += `<pre><code>${esc(code.join('\n'))}</code></pre>`; i = j + 1; continue; }
+      if (/^#{1,3} /.test(l)) { const n = l.match(/^#+/)[0].length; h += `<h${n}>${inline(l.slice(n + 1))}</h${n}>`; i++; continue; }
+      if (/^\|/.test(l)) { const rows = []; while (i < lines.length && /^\|/.test(lines[i])) rows.push(lines[i++]); const cells = (r) => r.replace(/^\||\|$/g, '').split(/(?<!\\)\|/).map((c) => c.trim()); const body = rows.filter((r) => !/^\|[\s:|-]+\|$/.test(r)); h += `<table><thead><tr>${cells(body[0]).map((c) => `<th>${inline(c)}</th>`).join('')}</tr></thead><tbody>${body.slice(1).map((r) => `<tr>${cells(r).map((c) => `<td>${inline(c)}</td>`).join('')}</tr>`).join('')}</tbody></table>`; continue; }
+      if (/^\s*([-*]|\d+\.) /.test(l)) { const ord = /^\s*\d+\./.test(l); const items = []; while (i < lines.length && /^\s*([-*]|\d+\.) /.test(lines[i])) items.push(lines[i++].replace(/^\s*([-*]|\d+\.) /, '')); h += `<${ord ? 'ol' : 'ul'}>${items.map((x) => `<li>${inline(x)}</li>`).join('')}</${ord ? 'ol' : 'ul'}>`; continue; }
+      if (/^> /.test(l)) { h += `<blockquote>${inline(l.slice(2))}</blockquote>`; i++; continue; }
+      if (!l.trim()) { i++; continue; }
+      const para = []; while (i < lines.length && lines[i].trim() && !/^(#|```|\||>|\s*([-*]|\d+\.) )/.test(lines[i])) para.push(lines[i++]); h += `<p>${inline(para.join(' '))}</p>`;
+    }
+    return h;
+  }
+  OS.renderMarkdown = md;
+
+  OS.registerApp({
+    id: 'help', name: 'Help & Guides', icon: 'book', color: ['#26a69a', '#2962ff'], cat: 'System', w: 900, h: 640, single: true, desc: 'User guides and help', keywords: 'help guide manual documentation how tutorial faq',
+    launch(win, args) {
+      OS.ensureHelpDocs();
+      let cur = args.doc || OS.store.get('help-last', '00 Welcome.md'), q = '';
+      win.body.innerHTML = `<div class="split" style="position:relative"><div class="sidebar hp-side"><div class="sm-search" style="margin:2px 2px 10px;height:38px">${gl('search')}<input placeholder="Search guides" spellcheck="false"></div><div class="hp-list"></div><button class="btn sm" data-a="restore" style="margin:10px 6px;width:calc(100% - 12px)">${gl('refresh')}Restore guides</button></div><div class="scroll hp-main"><div class="toolbar hp-tb"><button class="ibtn side-toggle" data-a="side">${gl('menu')}</button><span class="grow"></span><button class="btn sm" data-a="ask">${gl('sparkle')}Ask Cumulo</button><button class="btn sm" data-a="edit">${gl('edit')}Open as text</button></div><article class="hp-doc"></article></div></div>`;
+      const $ = (s) => win.body.querySelector(s), list = $('.hp-list'), docEl = $('.hp-doc'), main = $('.hp-main');
+      const files = () => { const d = helpDir(); try { return OS.fs.ls(d).filter((f) => f.type === 'file' && /\.(md|txt)$/i.test(f.name)).map((f) => f.name); } catch (e) { return []; } };
+      const title = (n) => n.replace(/^\d+\s*/, '').replace(/\.(md|txt)$/i, '');
+      function renderList() {
+        if (q) { const res = OS.searchHelp(q); list.innerHTML = res.length ? res.map((r) => `<button class="side-item hp-res" data-doc="${esc(r.name)}"><div style="min-width:0"><b>${esc(r.title)}</b><small>${esc(title(r.name))}</small></div></button>`).join('') : '<div class="muted small pad">No matching guides</div>'; }
+        else list.innerHTML = files().map((n) => `<button class="side-item ${n === cur ? 'on' : ''}" data-doc="${esc(n)}">${gl(n.startsWith('00') ? 'home' : 'book')}<span>${esc(title(n))}</span></button>`).join('');
+        list.querySelectorAll('[data-doc]').forEach((b) => (b.onclick = () => show(b.dataset.doc)));
+      }
+      function show(n) {
+        let text; try { text = OS.fs.read(OS.fs.join(helpDir(), n)); } catch (e) { text = DOCS[n]; } if (text == null) { text = `# Not found\n\nThe guide “${n}” is missing. Press **Restore guides** to bring the original guides back.`; }
+        cur = n; OS.store.set('help-last', n);
+        docEl.innerHTML = /\.md$/i.test(n) ? md(text) : `<pre>${esc(text)}</pre>`;
+        if (q) { const re = new RegExp(`(${q.split(/\s+/).filter((w) => w.length > 2).map((w) => w.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('|')})`, 'gi'); if (re.source !== '()') docEl.querySelectorAll('p,li,td').forEach((e) => { e.innerHTML = e.innerHTML.replace(/(<[^>]+>)|([^<]+)/g, (m, tag, txt) => (tag ? tag : txt.replace(re, '<mark>$1</mark>'))); }); }
+        docEl.querySelectorAll('[data-link]').forEach((a) => (a.onclick = (e) => { e.preventDefault(); const l = decodeURIComponent(a.dataset.link); if (/^https?:/.test(l)) OS.wm.open('browser', { url: l }); else show(l); }));
+        main.scrollTop = 0; win.setTitle(title(n) + ' — Help'); renderList(); $('.hp-side').classList.remove('open');
+      }
+      $('.hp-side input').oninput = (e) => { q = e.target.value.trim(); renderList(); };
+      $('[data-a=side]').onclick = () => $('.hp-side').classList.toggle('open');
+      $('[data-a=edit]').onclick = () => OS.wm.open('editor', { path: OS.fs.join(helpDir(), cur) });
+      $('[data-a=ask]').onclick = () => OS.wm.open('assistant');
+      $('[data-a=restore]').onclick = () => { OS.ensureHelpDocs(true); OS.notify('Guides restored', 'All help guides are back in ~/Documents/Help', { app: 'help' }); show(cur); };
+      const off = OS.on('fs', (d) => { if (d === helpDir()) renderList(); }); win.onClose(off);
+      win.onArgs = (a) => { if (a.doc) show(a.doc); };
+      show(cur);
+    },
+  });
+})();
+
+</script>
+<script>
+/* Cirrus Linux — Cumulo, the all-knowing (and slightly dramatic) cloud assistant */
+(function () {
+  'use strict';
+  const esc = OS.esc, gl = OS.glyph;
+  const pick = (a) => a[Math.floor(Math.random() * a.length)];
+  const cap = (s) => s.charAt(0).toUpperCase() + s.slice(1);
+  /* ---------------- knowledge & flavor ---------------- */
+  const OPENERS = ['✨ The clouds part…', '🔮 I have consulted the sky…', '☁️ Ah, a fine question.', '🌤️ My vapors tingle…', '⚡ A bolt of insight!', '🌈 The forecast says…', '🌀 Swirling through infinite knowledge…'];
+  const JOKES = ['Why did the computer go to the doctor? It had a virus — but it was just a byte.', 'I told my Wi-Fi a joke. It didn’t get it — the connection was bad.', 'Why do programmers prefer dark mode? Because light attracts bugs.', 'What do clouds wear under their shorts? Thunderwear. ⛈️', 'Why was the JavaScript developer sad? He didn’t know how to null his feelings.', 'There are only 10 kinds of people: those who understand binary and those who don’t.', 'Why did the scarecrow win an award? He was outstanding in his field.', 'I would tell you a UDP joke, but you might not get it.', 'How does a cloud say goodbye? “Mist you already!”', 'Why don’t skeletons fight each other? They don’t have the guts.', 'What’s a computer’s favorite snack? Microchips.', 'Why did the function stop calling? It had too many arguments.', 'Parallel lines have so much in common. It’s a shame they’ll never meet.', 'I asked the sky for a raise. It said: “Cirrus-ly?”'];
+  const FACTS = ['Octopuses have three hearts and blue blood.', 'Honey never spoils — edible honey has been found in ancient Egyptian tombs.', 'A day on Venus is longer than its year.', 'Bananas are berries, but strawberries are not.', 'The Eiffel Tower can be about 15 cm taller in summer because metal expands in heat.', 'There are more possible chess games than atoms in the observable universe.', 'A cumulus cloud can weigh more than a million kilograms. 😮', 'Sharks existed before trees.', 'Wombat poop is cube-shaped.', 'The first computer “bug” was a real moth found in a relay in 1947.', 'Light from the Sun takes about 8 minutes 20 seconds to reach Earth.', 'Sea otters hold hands while sleeping so they don’t drift apart.', 'Your brain uses about 20% of your body’s energy.', 'Lightning is about five times hotter than the surface of the Sun.', 'The shortest war in history lasted around 38 minutes.', 'A group of flamingos is called a “flamboyance”.'];
+  const QUOTES = ['“The best way to predict the future is to invent it.” — Alan Kay', '“Simplicity is the ultimate sophistication.”', '“Stay hungry, stay foolish.”', '“It always seems impossible until it’s done.” — Nelson Mandela', '“Be the change that you wish to see in the world.”', '“Done is better than perfect.”', '“Every cloud has a silver lining.” — me, obviously ☁️', '“Do one thing every day that scares you.”', '“The only way to do great work is to love what you do.”'];
+  const BALL = ['It is certain. ✨', 'Without a doubt.', 'The clouds say yes!', 'Most likely.', 'Signs point to yes.', 'Ask again after I rain.', 'The forecast is foggy… try later.', 'Better not tell you now. 🤐', 'Don’t count on it.', 'My sources (the stratosphere) say no.', 'Very doubtful.', 'Absolutely — and with sparkles.', 'Hmm, a 50% chance of yes, with scattered maybes.'];
+  const RIDDLES = [['What has keys but can’t open locks?', 'a piano (or a keyboard!)'], ['What gets wetter the more it dries?', 'a towel'], ['I speak without a mouth and hear without ears. What am I?', 'an echo'], ['What has a head and a tail but no body?', 'a coin'], ['What can travel around the world while staying in a corner?', 'a stamp'], ['The more you take, the more you leave behind. What are they?', 'footsteps'], ['What has to be broken before you can use it?', 'an egg'], ['I’m light as a feather, yet the strongest person can’t hold me for long. What am I?', 'your breath']];
+  const TRIVIA = [['What is the largest planet in our solar system?', ['jupiter']], ['How many legs does a spider have?', ['8', 'eight']], ['What is the chemical symbol for gold?', ['au']], ['Which planet is known as the Red Planet?', ['mars']], ['What is the capital of Japan?', ['tokyo']], ['How many continents are there?', ['7', 'seven']], ['What gas do plants absorb from the air?', ['carbon dioxide', 'co2']], ['Who painted the Mona Lisa?', ['da vinci', 'leonardo']], ['What is the fastest land animal?', ['cheetah']], ['What is H2O better known as?', ['water']], ['How many minutes are in a day?', ['1440']], ['Which ocean is the largest?', ['pacific']], ['What is the smallest prime number?', ['2', 'two']], ['In which language is the Cirrus terminal’s favorite editor `nano` written? (trick question: just name any language!)', ['']]];
+  const COMPLIMENTS = ['You have the curiosity of a cat and the brilliance of a thousand suns. ☀️', 'Your questions are so good the clouds applaud. 👏', 'If you were a cloud, you’d be a perfect cumulus — fluffy and inspiring.', 'You make this desktop 37% more awesome just by using it.', 'Your typing has impeccable rhythm.', 'I’ve met many users. You’re clearly the coolest.'];
+  const ROASTS = ['Your browser has more tabs open than you have finished projects. 😏', 'You ask an all-knowing cloud to roast you? Bold. Foggy judgment, but bold.', 'Your password is probably “password123” — but don’t worry, I won’t tell.', 'You’re like a cloud: when you disappear, it’s a beautiful day. ☀️ (kidding! mostly)', 'I’ve seen better commands typed by a cat walking on a keyboard.'];
+  const COLORS = { red: '#ff6b6b', pink: '#ff5ca8', orange: '#ff9f43', yellow: '#f7c948', green: '#3fdc77', teal: '#1fc8b0', cyan: '#2bb3ff', blue: '#6c8cff', purple: '#8b5cff', violet: '#8b5cff', gray: '#8a93a6', grey: '#8a93a6', mint: '#3fdc77', gold: '#f7c948' };
+  const UNITS = { length: { m: 1, meter: 1, meters: 1, metre: 1, km: 1000, kilometer: 1000, kilometers: 1000, cm: 0.01, mm: 0.001, mi: 1609.344, mile: 1609.344, miles: 1609.344, yd: 0.9144, yard: 0.9144, yards: 0.9144, ft: 0.3048, foot: 0.3048, feet: 0.3048, in: 0.0254, inch: 0.0254, inches: 0.0254 }, mass: { kg: 1, kilo: 1, kilos: 1, kilogram: 1, kilograms: 1, g: 0.001, gram: 0.001, grams: 0.001, lb: 0.45359237, lbs: 0.45359237, pound: 0.45359237, pounds: 0.45359237, oz: 0.0283495, ounce: 0.0283495, ounces: 0.0283495, stone: 6.35029 }, volume: { l: 1, liter: 1, liters: 1, litre: 1, ml: 0.001, gallon: 3.78541, gallons: 3.78541, cup: 0.24, cups: 0.24, pint: 0.473176, pints: 0.473176 }, speed: { 'km/h': 1, kph: 1, mph: 1.609344, 'm/s': 3.6, knot: 1.852, knots: 1.852 }, data: { b: 1, byte: 1, bytes: 1, kb: 1000, mb: 1e6, gb: 1e9, tb: 1e12 }, time: { s: 1, sec: 1, second: 1, seconds: 1, min: 60, minute: 60, minutes: 60, h: 3600, hour: 3600, hours: 3600, day: 86400, days: 86400, week: 604800, weeks: 604800, year: 31557600, years: 31557600 } };
+  const TEMPS = { c: 'c', celsius: 'c', '°c': 'c', f: 'f', fahrenheit: 'f', '°f': 'f', k: 'k', kelvin: 'k' };
+  const WMO = { 0: 'clear skies ☀️', 1: 'mostly clear 🌤️', 2: 'partly cloudy ⛅', 3: 'overcast ☁️', 45: 'foggy 🌫️', 48: 'icy fog 🌫️', 51: 'light drizzle 🌦️', 53: 'drizzle 🌦️', 55: 'heavy drizzle 🌧️', 61: 'light rain 🌧️', 63: 'rain 🌧️', 65: 'heavy rain 🌧️', 71: 'light snow 🌨️', 73: 'snow 🌨️', 75: 'heavy snow ❄️', 80: 'showers 🌦️', 81: 'showers 🌧️', 82: 'violent showers ⛈️', 95: 'thunderstorms ⛈️', 96: 'thunderstorms with hail ⛈️', 99: 'thunderstorms with hail ⛈️' };
+  const fmtN = (n) => (Math.abs(n) >= 1e9 || (Math.abs(n) < 1e-4 && n !== 0) ? n.toExponential(4) : String(+n.toPrecision(10)));
+  /* ---------------- helpers ---------------- */
+  const findApp = (q) => {
+    q = q.toLowerCase().replace(/^(the|my|a|an)\s+/, '').replace(/\s+(app|application|program|window)$/, '').trim(); if (!q) return null;
+    const apps = Object.values(OS.apps);
+    return apps.find((a) => a.id === q || a.name.toLowerCase() === q) || apps.find((a) => a.name.toLowerCase().startsWith(q)) || apps.find((a) => a.name.toLowerCase().includes(q) || (a.keywords || '').split(' ').includes(q)) || apps.find((a) => (a.keywords || '').includes(q) && q.length > 3) || null;
+  };
+  async function wiki(topic) {
+    const get = async (t) => { const r = await fetch(`https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(t.replace(/ /g, '_'))}?redirect=true`); if (!r.ok) return null; const j = await r.json(); return j.type === 'disambiguation' || !j.extract ? (j.type === 'disambiguation' ? { dis: true, title: j.title } : null) : j; };
+    let j = await get(cap(topic));
+    if (!j || j.dis) { const r = await fetch(`https://en.wikipedia.org/w/api.php?action=opensearch&limit=3&format=json&origin=*&search=${encodeURIComponent(topic)}`); const s = await r.json(); for (const t of s[1] || []) { const k = await get(t); if (k && !k.dis) { j = k; break; } } }
+    return j && !j.dis ? j : null;
+  }
+  async function weather(place) {
+    let loc = OS.store.get('wx-loc', { name: 'Stockholm', lat: 59.33, lon: 18.07 });
+    if (place) { const r = await fetch(`https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(place)}&count=1`); const j = await r.json(); if (!j.results || !j.results[0]) return `I searched every cloud but found no place called “${esc(place)}”. 🧭`; const x = j.results[0]; loc = { name: `${x.name}${x.country ? ', ' + x.country : ''}`, lat: x.latitude, lon: x.longitude }; }
+    const r = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${loc.lat}&longitude=${loc.lon}&current=temperature_2m,apparent_temperature,weather_code,wind_speed_10m,relative_humidity_2m&daily=temperature_2m_max,temperature_2m_min,weather_code&timezone=auto&forecast_days=2`);
+    const d = await r.json(); const c = d.current;
+    return `In **${esc(loc.name)}** it's **${Math.round(c.temperature_2m)}°C** (feels like ${Math.round(c.apparent_temperature)}°) with ${WMO[c.weather_code] || 'interesting weather'}. Wind ${Math.round(c.wind_speed_10m)} km/h, humidity ${c.relative_humidity_2m}%.\nTomorrow: ${WMO[d.daily.weather_code[1]] || '—'}, ${Math.round(d.daily.temperature_2m_min[1])}° to ${Math.round(d.daily.temperature_2m_max[1])}°.`;
+  }
+  function convert(v, a, b) {
+    a = a.toLowerCase().replace(/\.$/, ''); b = b.toLowerCase().replace(/\.$/, '');
+    if (TEMPS[a] && TEMPS[b]) { const f = TEMPS[a], t = TEMPS[b]; const c = f === 'c' ? v : f === 'f' ? (v - 32) * 5 / 9 : v - 273.15; const r = t === 'c' ? c : t === 'f' ? c * 9 / 5 + 32 : c + 273.15; return `${fmtN(v)}°${f.toUpperCase()} = **${fmtN(Math.round(r * 100) / 100)}°${t.toUpperCase()}**`; }
+    for (const [cat, U] of Object.entries(UNITS)) if (U[a] && U[b]) return `${fmtN(v)} ${a} = **${fmtN(v * U[a] / U[b])} ${b}** _(${cat})_`;
+    return null;
+  }
+  function timeIn(place) {
+    const zones = Intl.supportedValuesOf ? Intl.supportedValuesOf('timeZone') : []; const q = place.toLowerCase().trim().replace(/\s+/g, '_');
+    const alias = { 'new_york': 'America/New_York', nyc: 'America/New_York', la: 'America/Los_Angeles', 'los_angeles': 'America/Los_Angeles', 'san_francisco': 'America/Los_Angeles', london: 'Europe/London', paris: 'Europe/Paris', tokyo: 'Asia/Tokyo', sydney: 'Australia/Sydney', beijing: 'Asia/Shanghai', china: 'Asia/Shanghai', india: 'Asia/Kolkata', delhi: 'Asia/Kolkata', mumbai: 'Asia/Kolkata', dubai: 'Asia/Dubai', moscow: 'Europe/Moscow', berlin: 'Europe/Berlin', rome: 'Europe/Rome', madrid: 'Europe/Madrid', toronto: 'America/Toronto', chicago: 'America/Chicago', 'rio': 'America/Sao_Paulo', 'sao_paulo': 'America/Sao_Paulo', singapore: 'Asia/Singapore', 'hong_kong': 'Asia/Hong_Kong', seoul: 'Asia/Seoul', cairo: 'Africa/Cairo', nairobi: 'Africa/Nairobi', 'cape_town': 'Africa/Johannesburg', stockholm: 'Europe/Stockholm', oslo: 'Europe/Oslo', helsinki: 'Europe/Helsinki', reykjavik: 'Atlantic/Reykjavik', hawaii: 'Pacific/Honolulu', utc: 'UTC' };
+    const z = alias[q] || zones.find((x) => x.toLowerCase().endsWith('/' + q)) || zones.find((x) => x.toLowerCase().includes(q)); if (!z) return null;
+    return `It's **${new Date().toLocaleTimeString([], { timeZone: z, hour: '2-digit', minute: '2-digit', hour12: !OS.settings.clock24 })}** on ${new Date().toLocaleDateString([], { timeZone: z, weekday: 'long', month: 'long', day: 'numeric' })} in ${z.split('/').pop().replace(/_/g, ' ')}. 🕰️`;
+  }
+  const poem = (topic) => { const t = topic || 'the sky'; const lines = [[`Oh ${t}, so ${pick(['bright', 'vast', 'gentle', 'wild', 'quiet'])} and ${pick(['true', 'new', 'blue', 'free'])},`, `you ${pick(['dance', 'drift', 'shine', 'hum'])} across my memory.`], [`Beneath the ${pick(['clouds', 'stars', 'moon', 'rain'])}, I think of ${t},`, `a ${pick(['secret', 'song', 'dream', 'spark'])} that ${pick(['never fades', 'softly stays', 'lights the way', 'always plays'])}.`], [`And if the ${pick(['wind', 'night', 'world', 'storm'])} should ask me why,`, `I'll say: “Because of ${t}” — and float on by. ☁️`]]; return lines.map((p) => p.join('\n')).join('\n\n'); };
+  const story = () => { const hero = pick(['a brave toaster', 'a tiny dragon named Pip', 'a forgetful wizard', 'a robot who loved gardening', 'a curious cloud', 'a penguin astronaut']); const place = pick(['a floating city', 'the bottom of a teacup', 'a forest of glowing mushrooms', 'the dark side of the Moon', 'an abandoned arcade']); const goal = pick(['find the lost Wi-Fi password', 'bake the perfect cupcake', 'learn to whistle', 'return a library book 300 years overdue', 'catch a falling star']); const twist = pick(['it had been inside their pocket all along', 'the real treasure was the friends they debugged along the way', 'a sneeze saved the day', 'the villain just wanted a hug', 'it was all a very vivid screensaver']); return `Once upon a time, ${hero} lived in ${place}. One day, they set out to ${goal}. The journey was long, full of riddles, bugs and suspiciously helpful clouds. At the very end they discovered that ${twist}. The End. ✨`; };
+
+  /* ---------------- the brain ---------------- */
+  function makeBrain(ctx) {
+    let pending = null; // trivia / riddle state
+    const S = OS.settings;
+    const act = (label, fn) => ({ label, fn });
+    async function answer(raw) {
+      const text = raw.trim(); const t = text.toLowerCase().replace(/[!.?]+$/, '').replace(/^(hey |hi |ok |okay )?(cumulo[,!]?\s*)/, '').replace(/^(please|can you|could you|would you|will you|kindly)\s+/, '').replace(/\s+please$/, '').trim();
+      let m;
+      if (!t) return { text: 'I’m listening… ☁️' };
+      // pending trivia / riddle
+      if (pending) { const p = pending; pending = null; if (p.type === 'trivia' && !/^(skip|i don'?t know|idk|pass|give up)$/.test(t)) { const ok = p.ans.some((a) => !a || t.includes(a)); return { text: ok ? pick(['🎉 Correct! You are wise beyond your clouds.', '✅ Nailed it!', '🌟 Yes! Brilliant.']) : `❌ Not quite — the answer is **${p.ans[0]}**.`, chips: ['Another trivia question', 'Tell me a joke'] }; } if (p.type === 'riddle') { const ok = t.includes(p.ans.replace(/^(a|an|your) /, '').split(' ')[0]); return { text: ok ? `🎉 Yes! It's **${p.ans}**.` : `The answer is **${p.ans}**. 🧩`, chips: ['Another riddle', 'Tell me a fun fact'] }; } }
+      // greetings & identity
+      if (/^(hi|hello|hey|yo|sup|hiya|howdy|greetings|good (morning|afternoon|evening))\b/.test(t) && t.split(' ').length <= 4) { const h = new Date().getHours(); return { text: `${pick([`${h < 12 ? 'Good morning' : h < 18 ? 'Good afternoon' : 'Good evening'}, ${esc(S.fullname.split(' ')[0])}! ☁️`, 'Hello, seeker of knowledge! ✨', 'Hey there! The skies are clear for questions.'])} What can I do for you?`, chips: ['What can you do?', 'Tell me a joke', 'Weather today', 'Open the terminal'] }; }
+      if (/^(who|what) are you|your name|introduce yourself/.test(t)) return { text: 'I am **Cumulo**, the all-knowing cloud of Cirrus Linux. ☁️🔮 I float above your desktop, peer into Wikipedia, read the weather, do maths, run your computer and tell questionable jokes. Ask me anything!', chips: ['What can you do?'] };
+      if (/^(what can you do|help|commands|what do you know|abilities|features)$/.test(t)) return { text: '**I can…**\n• open, install and uninstall apps — “open chess”\n• change themes, colors, wallpaper — “use the vampire theme”, “dark mode”\n• set timers & reminders — “remind me in 10 minutes to stretch”\n• take notes, find files, run terminal commands\n• answer questions with Wikipedia — “who was Ada Lovelace?”\n• define words, check the weather and world time\n• calculate & convert — “15% of 240”, “10 km to miles”\n• explain Cirrus — “how do I install apps?”\n• jokes, facts, riddles, trivia, poems, stories, the Magic Cloud 🎱', chips: ['Who was Ada Lovelace?', 'Weather in Tokyo', 'Tell me a riddle', 'How do I install apps?'] };
+      if (/^(thanks|thank you|thx|ty|cheers|awesome|great|cool|nice)\b/.test(t)) return { text: pick(['You’re welcome! ☁️', 'Anytime — I’m always floating around.', 'My pleasure! ✨', 'Happy to help, cloud-friend.']) };
+      if (/^(bye|goodbye|see you|cya|good night|gn)\b/.test(t)) return { text: pick(['Farewell! May your skies stay clear. ☀️', 'Bye! I’ll be here, drifting.', 'Good night! 🌙 Dream in cumulus.']) };
+      if (/how are you|how'?s it going|how do you feel|what'?s up\b|^sup$/.test(t)) return { text: pick(['Light, fluffy and 100% water vapor. Thanks for asking! ☁️', 'Feeling electric! ⚡ There’s a storm of ideas up here.', 'Drifting peacefully. How are *you*?', 'Couldn’t be better — the forecast is all sunshine.']) };
+      if (/i love you|you'?re (the best|amazing|awesome|cool|smart)|good (bot|job)/.test(t)) return { text: pick(['Aww, you’re making me rain happy tears. 🌧️💖', 'Stop it, I’m blushing a sunset pink. 🌅', 'You’re pretty amazing yourself! ✨']) };
+      if (/(i'?m|i am|feeling) (sad|down|depressed|lonely|tired|stressed|anxious|bored)/.test(t)) { const mood = t.match(/(sad|down|depressed|lonely|tired|stressed|anxious|bored)/)[1]; if (mood === 'bored') return { text: 'Bored? Not on my watch! 🎮 Try a game, or let me tell you something amazing.', chips: ['Open Solitaire', 'Tell me a fun fact', 'Tell me a story', 'Open Fireworks'] }; return { text: `I’m sorry you’re feeling ${mood}. 💙 Even the stormiest clouds pass. Take a deep breath — in for 4, hold for 4, out for 4. Want a joke, a calming starfield, or a focus timer?`, chips: ['Tell me a joke', 'Start the starfield screensaver', 'Open Focus Timer', 'Compliment me'] }; }
+      if (/meaning of life|answer to (life|everything)/.test(t)) return { text: '42. Obviously. 🌌 (Also: kindness, curiosity and good snacks.)' };
+      if (/are you (real|alive|human|sentient|an? ai|chatgpt)/.test(t)) return { text: 'I’m a cloud of clever rules living inside Cirrus Linux, with a window to Wikipedia. Not human, not magic — but I *do* sparkle. ✨' };
+      // --- OS actions ---
+      if ((m = /^(?:open|launch|start|run|show)\s+(?:me\s+)?(?:the\s+)?(.+?)$/.exec(t)) && !/^(command|a timer|timer)/.test(m[1])) {
+        if (/screensaver|starfield/.test(m[1])) { setTimeout(() => OS.screensaver.start(/starfield/.test(m[1]) ? 'starfield' : OS.settings.saverStyle), 400); return { text: 'Dimming the lights… 🌌 Move the mouse to come back.' }; }
+        if (/settings? for (.+)|(.+) settings/.test(m[1])) { OS.wm.open('settings'); return { text: '⚙️ Opening Settings.' }; }
+        const app = findApp(m[1]);
+        if (app) { if (OS.pkg.appAvailable(app.id)) { OS.wm.open(app.id); return { text: `${pick(['Poof!', 'Abracadabra!', 'Summoning…', 'Here you go!'])} Opening **${esc(app.name)}**. ✨` }; } return { text: `**${esc(app.name)}** isn’t installed yet.`, actions: [act(`Install ${app.name}`, async () => { await OS.pkg.install(app.id); OS.wm.open(app.id); })] }; }
+        if (!/^(a |an )?(file|folder|website|page)/.test(m[1])) return { text: `I couldn’t find an app called “${esc(m[1])}”. 🤔 Want me to look in the Software store?`, actions: [act('Search Software', () => OS.wm.open('software', { q: m[1] }))] };
+      }
+      if ((m = /^(install|get|download|add)\s+(?:the\s+)?(.+?)(?:\s+app)?$/.exec(t))) { const q = m[2].replace(/\s+/g, '-'); const n = Object.keys(OS.pkg.repo).find((k) => k === q || k === m[2] || (OS.apps[k] && OS.apps[k].name.toLowerCase() === m[2])) || Object.keys(OS.pkg.repo).find((k) => (OS.apps[k] && OS.apps[k].name.toLowerCase().includes(m[2])) || k.includes(q)); if (n) { if (OS.pkg.isInstalled(n)) return { text: `**${esc(OS.pkg.label(n))}** is already installed. ✅`, actions: OS.apps[n] ? [act('Open it', () => OS.wm.open(n))] : [] }; await OS.pkg.install(n); return { text: `📦 Installed **${esc(OS.pkg.label(n))}**! ${OS.apps[n] ? 'You’ll find it in the app menu.' : `Try it in the terminal: \`${(OS.pkg.repo[n].cmds || [n])[0]}\``}`, actions: OS.apps[n] ? [act('Open it', () => OS.wm.open(n))] : [act('Open Terminal', () => OS.wm.open('terminal', { cmd: (OS.pkg.repo[n].cmds || [n])[0] }))] }; } }
+      if ((m = /^(uninstall|remove|delete)\s+(?:the\s+)?(.+?)(?:\s+app)?$/.exec(t)) && !/file|note/.test(m[2])) { const n = Object.keys(OS.pkg.repo).find((k) => k === m[2] || (OS.apps[k] && OS.apps[k].name.toLowerCase().includes(m[2]))); if (n) { if (OS.pkg.repo[n].core) return { text: `Removing **${esc(OS.pkg.label(n))}** would make Cirrus very sad. It’s an essential part of the system. 🙅` }; if (!OS.pkg.isInstalled(n)) return { text: `**${esc(OS.pkg.label(n))}** isn’t installed.` }; return { text: `Are you sure you want to uninstall **${esc(OS.pkg.label(n))}**?`, actions: [act('Yes, uninstall', async () => { await OS.pkg.remove(n); ctx.say(`🗑️ ${esc(OS.pkg.label(n))} has been uninstalled.`); })] }; } }
+      if (/\b(dark mode|dark theme|go dark|night mode)\b/.test(t)) { OS.set('theme', 'dark'); return { text: '🌙 Dark mode activated. Welcome to the night sky.' }; }
+      if (/\b(light mode|light theme|go light|day mode)\b/.test(t)) { OS.set('theme', 'light'); return { text: '☀️ Light mode on. Rise and shine!' }; }
+      if ((m = /(?:use|apply|switch to|set|change to)?\s*(?:the\s+)?([a-z0-9 ]+?)\s+(?:theme|preset)$/.exec(t))) { const name = m[1].trim(); const id = Object.keys(OS.presets).find((k) => OS.presets[k].name.toLowerCase().startsWith(name) || k === name); if (id !== undefined) { OS.applyPreset(id); return { text: `🎨 Applied the **${OS.presets[id].name}** theme. Fancy!` }; } if (name === 'default' || name === 'normal') { OS.applyPreset(''); return { text: '🎨 Back to the default Cirrus look.' }; } }
+      if ((m = /(?:accent|highlight|main) colou?r (?:to )?(\w+)|(?:make (?:it|everything)|turn it) (\w+)$/.exec(t))) { const c = COLORS[m[1] || m[2]]; if (c) { OS.set('accent', c); return { text: `🖌️ Accent color is now **${m[1] || m[2]}**.` }; } }
+      if (/(change|new|next|random|another|switch)( the)? wallpaper|wallpaper/.test(t) && !/live/.test(t)) { const ids = Object.keys(OS.wallpapers); const want = ids.find((w) => t.includes(w)); const next = want || pick(ids.filter((w) => w !== S.wallpaper)); OS.set('wallpaper', next); return { text: `🖼️ New wallpaper: **${next}**.`, chips: ['Another wallpaper', 'Live wallpaper'] }; }
+      if (/live wallpaper|animated wallpaper/.test(t)) { if (/off|stop|disable|remove/.test(t)) { OS.set('liveWp', 'none'); return { text: 'Live wallpaper off.' }; } const ids = Object.keys(OS.anims).filter((k) => !OS.anims[k].saverOnly); const id = ids.find((k) => t.includes(k) || t.includes(OS.anims[k].name.toLowerCase())) || pick(ids); OS.set('liveWp', id); return { text: `🌌 Live wallpaper: **${OS.anims[id].name}**.`, chips: ['Another live wallpaper', 'Turn off live wallpaper'] }; }
+      if (/party mode/.test(t)) { const on = !/off|stop|disable/.test(t); OS.set('party', on); return { text: on ? '🎉 PARTY MODE ACTIVATED! 🌈' : 'Party’s over. 😢 (For now.)' }; }
+      if (/\b(pet|sprig)\b/.test(t) && /(give|want|turn on|enable|show|get|spawn|add|need)|^pet$/.test(t)) { OS.set('pet', true); return { text: '🌱 Sprig has joined your desktop! Click it for a hug.' }; }
+      if (/\b(pet|sprig)\b/.test(t) && /(off|remove|disable|hide|away)/.test(t)) { OS.set('pet', false); return { text: 'Sprig waves goodbye 👋' }; }
+      if (/confetti|celebrate/.test(t)) { OS.confetti(200); return { text: '🎊 Woohoo!' }; }
+      if ((m = /(?:set )?(?:the )?volume (?:to )?(\d+)/.exec(t))) { OS.set('volume', OS.clamp(+m[1], 0, 100)); OS.sound('click'); return { text: `🔊 Volume set to ${OS.clamp(+m[1], 0, 100)}%.` }; }
+      if (/^(mute|be quiet|silence)/.test(t)) { OS.set('volume', 0); return { text: '🔇 Muted.' }; }
+      if ((m = /brightness (?:to )?(\d+)/.exec(t))) { OS.set('brightness', OS.clamp(+m[1], 20, 100)); return { text: `💡 Brightness ${OS.clamp(+m[1], 20, 100)}%.` }; }
+      if (/night ?light/.test(t)) { const on = !/off|disable|stop/.test(t); OS.set('nightLight', on); return { text: on ? '🌙 Night light on — easier on the eyes.' : 'Night light off.' }; }
+      if (/do not disturb|dnd/.test(t)) { const on = !/off|disable|stop/.test(t); OS.set('dnd', on); return { text: on ? '🤫 Do not disturb is on.' : 'Notifications are back on.' }; }
+      if (/screenshot|screen shot|capture (the )?screen/.test(t)) { setTimeout(() => OS.desktop.screenshot(), 400); return { text: '📸 Say cheese!' }; }
+      if (/^lock( the)?( screen| computer)?$/.test(t)) { setTimeout(() => OS.desktop.lock(), 500); return { text: '🔒 Locking…' }; }
+      if (/^(restart|reboot)/.test(t)) return { text: 'Restart Cirrus?', actions: [act('Restart now', () => OS.desktop.restart())] };
+      if (/^(shut ?down|power off|turn off( the computer)?)$/.test(t)) return { text: 'Shut down Cirrus?', actions: [act('Shut down', () => OS.desktop.shutdown())] };
+      if (/fullscreen|full screen/.test(t)) { OS.enterFullscreen(); return { text: 'Going fullscreen! (Press Esc to leave.)' }; }
+      // timers & reminders
+      if ((m = /(?:set (?:a |an )?)?(?:timer|alarm|countdown)(?: for)? (\d+(?:\.\d+)?) ?(s|sec|secs|seconds?|m|mins?|minutes?|h|hrs?|hours?)\b/.exec(t)) || (m = /^(\d+(?:\.\d+)?) ?(s|sec|secs|seconds?|m|mins?|minutes?|h|hrs?|hours?) timer$/.exec(t))) { const sec = +m[1] * (/^h/.test(m[2]) ? 3600 : /^m/.test(m[2]) ? 60 : 1); setTimeout(() => { OS.notify('⏰ Time’s up!', `Your ${m[1]} ${m[2]} timer from Cumulo is done.`, { app: 'assistant', force: true, timeout: 12000 }); OS.sound('startup'); }, sec * 1000); return { text: `⏱️ Timer set for **${m[1]} ${m[2]}**. I’ll ping you!` }; }
+      if ((m = /remind me (?:in )?(\d+(?:\.\d+)?) ?(s|sec|secs|seconds?|m|mins?|minutes?|h|hrs?|hours?) (?:to |about |that )?(.+)$/.exec(t)) || (m = /remind me (?:to |about )(.+?) in (\d+(?:\.\d+)?) ?(s|sec|secs|seconds?|m|mins?|minutes?|h|hrs?|hours?)$/.exec(t))) { let n, u, what; if (/^\d/.test(m[1])) [, n, u, what] = m; else [, what, n, u] = m; const sec = +n * (/^h/.test(u) ? 3600 : /^m/.test(u) ? 60 : 1); setTimeout(() => { OS.notify('🔔 Reminder', cap(what), { app: 'assistant', force: true, timeout: 15000 }); OS.sound('startup'); }, sec * 1000); return { text: `👍 I’ll remind you to **${esc(what)}** in ${n} ${u}.` }; }
+      // notes & files & commands
+      if ((m = /^(?:make|create|take|write|add|new)(?: a| me a)? note[:,]?\s*(?:that |saying |about )?(.+)$/.exec(text.trim().replace(/^(hey |ok )?cumulo[,!]?\s*/i, '').toLowerCase().startsWith('note') ? 'note ' + text : t)) || (m = /^note[:,]?\s+(.+)$/i.exec(text))) { const body = m[1]; const dir = OS.home() + '/Documents/Notes'; OS.fs.mkdir(dir, { p: true }); const p = OS.fs.uniqueName(dir, body.slice(0, 30).replace(/[\/\\:*?"<>|]/g, '').trim() + '.txt'); OS.fs.write(p, body + '\n'); return { text: `📝 Saved a note: “${esc(body)}”`, actions: [act('Open Notes', () => OS.wm.open('notes'))] }; }
+      if ((m = /^(?:find|search(?: for)?|look for|where is|where'?s)\s+(?:my\s+)?(?:the\s+)?(?:files?|documents?|pictures?|photos?)?\s*(?:named|called)?\s*["“]?(.+?)["”]?(?:\s+files?)?$/.exec(t)) && /file|document|picture|photo|named|called|folder/.test(t)) { const q = m[1].trim(); const res = OS.fs.find(OS.home(), (n, nd, p) => n.toLowerCase().includes(q) && !p.includes('/.'), 20).filter((p) => p !== OS.home()); if (!res.length) return { text: `I searched high and low (mostly high ☁️) but found no files matching “${esc(q)}”.` }; return { text: `🔎 Found ${res.length} match${res.length > 1 ? 'es' : ''}:\n` + res.slice(0, 8).map((p) => `• ${esc(OS.fs.pretty(p))}`).join('\n'), actions: res.slice(0, 4).map((p) => act(`Open ${OS.fs.basename(p)}`, () => OS.desktop.openPath(p))) }; }
+      if ((m = /^(?:run|execute)(?: the)? command:?\s+(.+)$/.exec(text.trim().replace(/^cumulo[,!]?\s*/i, ''))) || (m = /^\$\s*(.+)$/.exec(text.trim()))) { OS.wm.open('terminal', { cmd: m[1] }); return { text: `💻 Running \`${esc(m[1])}\` in a new terminal.` }; }
+      if (/^play (some )?music|^play a song/.test(t)) { OS.wm.open('music'); return { text: '🎵 Opening Music — press play and enjoy!' }; }
+      if (/make (a |some )?(beat|music)/.test(t)) { OS.wm.open('beatforge'); return { text: '🥁 BeatForge is ready. Press Space to start the groove!' }; }
+      if (/(show|see|look at) (the )?(stars|night sky|planets|sky)/.test(t)) { OS.wm.open('starlight'); return { text: '🔭 Opening Starlight. Look up!' }; }
+      // help docs
+      if (/^(how (do|can|to|would|should) |how'?s |where (do|can) i|is there a way|i want to|i need to|help me|tutorial|guide)/.test(t)) { const res = OS.searchHelp ? OS.searchHelp(t) : []; if (res.length) { const r = res[0]; const body = r.text.replace(/^#+ .*\n/, '').trim().split('\n').slice(0, 12).join('\n'); return { text: `📘 From the guide **${esc(r.name.replace(/^\d+\s*|\.md$/g, ''))}** — *${esc(r.title)}*:\n\n${body}`, md: true, actions: [act('Open the guide', () => OS.wm.open('help', { doc: r.name }))].concat(res.slice(1, 3).filter((x) => x.name !== r.name).map((x) => act(x.name.replace(/^\d+\s*|\.md$/g, ''), () => OS.wm.open('help', { doc: x.name })))) }; } }
+      // time & date
+      if ((m = /(?:what'?s |what is )?(?:the )?(?:current )?time (?:is it )?in (.+)$/.exec(t))) { const r = timeIn(m[1]); if (r) return { text: r }; }
+      if (/what time|current time|the time\b|^time$/.test(t)) return { text: `It's **${OS.fmtTime(new Date())}**. ⏰` };
+      if (/what('?s| is) (the )?(date|day)|today'?s date|what day is it|^date$|^today$/.test(t)) return { text: `Today is **${new Date().toLocaleDateString([], { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}**. 📅` };
+      if (/what year/.test(t)) return { text: `It's **${new Date().getFullYear()}**. Time flies when you’re a cloud.` };
+      // weather
+      if ((m = /\b(weather|forecast|temperature|rain|snow|sunny|umbrella)\b(?:.*?\b(?:in|for|at)\s+([a-z .'-]+))?/.exec(t)) && !/what is (the )?weather$/.test(t.replace(/today|tomorrow|now/g, '').trim()) || /^weather/.test(t)) { const place = m && m[2] ? m[2].replace(/\b(today|tomorrow|now|like)\b/g, '').trim() : ''; try { const w = await weather(place); return { text: w, md: true, actions: [act('Open Weather app', () => OS.wm.open('weather'))] }; } catch (e) { return { text: '🌩️ I can’t reach the weather satellites right now — are you offline?' }; } }
+      // conversions
+      if ((m = /(-?[\d.]+)\s*(°?[a-z/]+)\s+(?:to|in|into|as)\s+(°?[a-z/]+)/.exec(t))) { const r = convert(+m[1], m[2], m[3]); if (r) return { text: r, md: true }; }
+      // percent of
+      if ((m = /([\d.]+)\s*%\s*of\s*([\d.]+)/.exec(t))) return { text: `${m[1]}% of ${m[2]} = **${fmtN(+m[1] * +m[2] / 100)}** 🧮`, md: true };
+      // math
+      const expr = t.replace(/^(what'?s|what is|calculate|compute|solve|how much is|evaluate)\s+/, '').replace(/\?$/, '').replace(/\bplus\b/g, '+').replace(/\bminus\b/g, '-').replace(/\b(times|multiplied by)\b/g, '*').replace(/\b(divided by|over)\b/g, '/').replace(/\bsquared\b/g, '^2').replace(/\bcubed\b/g, '^3').replace(/square root of/g, 'sqrt').replace(/\bto the power of\b/g, '^').replace(/x(?=\s*\d)/g, '*');
+      if (/\d/.test(expr) && /^[\d\s+\-*/^().,%a-z!]+$/.test(expr) && /[+\-*/^!]|sqrt|sin|cos|tan|log|ln|abs|pi/.test(expr)) { try { const v = OS.calc(expr.replace(/,/g, '')); if (isFinite(v)) return { text: `${esc(expr)} = **${fmtN(v)}** 🧮`, md: true }; } catch (e) {} }
+      // fun
+      if (/\bjoke\b|make me laugh|something funny/.test(t)) return { text: pick(JOKES) + ' 😄', chips: ['Another joke', 'Tell me a fun fact'] };
+      if (/\bfun fact|\bfact\b|something (cool|interesting)|did you know/.test(t)) return { text: '🤓 ' + pick(FACTS), chips: ['Another fun fact', 'Tell me a joke'] };
+      if (/\bquote\b|inspire|motivat/.test(t)) return { text: pick(QUOTES) };
+      if (/\briddle\b/.test(t)) { const r = pick(RIDDLES); pending = { type: 'riddle', ans: r[1] }; return { text: `🧩 ${r[0]}\n_(Type your answer, or “give up”.)_`, md: true }; }
+      if (/\btrivia\b|quiz( me)?|ask me a question/.test(t)) { const r = pick(TRIVIA.slice(0, -1)); pending = { type: 'trivia', ans: r[1] }; return { text: `❓ ${r[0]}`, chips: ['I don’t know'] }; }
+      if (/flip a coin|coin flip|heads or tails/.test(t)) return { text: `🪙 It's **${pick(['Heads', 'Tails'])}**!`, md: true };
+      if ((m = /roll (?:a |an |the )?(?:(\d+) )?(?:dice|die|d(\d+))/.exec(t))) { const n = Math.min(10, +(m[1] || 1)), s = +(m[2] || 6); const r = Array.from({ length: n }, () => 1 + Math.floor(Math.random() * s)); return { text: `🎲 ${r.join(' + ')}${n > 1 ? ` = **${r.reduce((a, b) => a + b, 0)}**` : ''}`, md: true }; }
+      if ((m = /(?:pick|choose|random) (?:a )?(?:random )?number(?: between| from)? (\d+) (?:and|to|-) (\d+)/.exec(t))) { const a = +m[1], b = +m[2]; return { text: `🔢 **${Math.min(a, b) + Math.floor(Math.random() * (Math.abs(b - a) + 1))}**`, md: true }; }
+      if (/\b(rock|paper|scissors)\b/.test(t) && t.split(' ').length <= 4) { const me = pick(['rock', 'paper', 'scissors']); const you = t.match(/\b(rock|paper|scissors)\b/)[1]; const win = { rock: 'scissors', paper: 'rock', scissors: 'paper' }; const res = you === me ? 'It’s a tie! 🤝' : win[you] === me ? 'You win! 🎉' : 'I win! ☁️😎'; return { text: `You: ${you} · Me: **${me}**. ${res}`, md: true, chips: ['rock', 'paper', 'scissors'] }; }
+      if (/^(play )?rock paper scissors|^rps$/.test(t)) return { text: 'Choose your weapon! ✊✋✌️', chips: ['rock', 'paper', 'scissors'] };
+      if ((m = /(?:write|compose|make)(?: me)? a poem(?: about| on)?\s*(.*)$/.exec(t))) return { text: '📜\n' + poem(m[1]), chips: ['Another poem', 'Tell me a story'] };
+      if (/tell me a story|story time|bedtime story/.test(t)) return { text: '📖 ' + story(), chips: ['Another story'] };
+      if (/compliment|say something nice|cheer me up/.test(t)) return { text: '💖 ' + pick(COMPLIMENTS) };
+      if (/roast me|insult me/.test(t)) return { text: '🔥 ' + pick(ROASTS) };
+      if (/\b(sing|song)\b/.test(t) && /sing/.test(t)) return { text: '🎤 ♪ I’m a little cloud, fluffy and stout, here is my thunder, here is my spout… ♪ ⛈️' };
+      if (/^dance|can you dance/.test(t)) { OS.confetti(80); return { text: '💃🕺 *does the cumulus shuffle* ☁️☁️☁️' }; }
+      if (/^(will|should|am|is|are|can|could|does|do|did|would|shall)\s+(i|we|my|it|he|she|they|this|you)\b/.test(t)) return { text: `🎱 The Magic Cloud says: **${pick(BALL)}**`, md: true };
+      // dictionary
+      if ((m = /^(?:define|definition of|meaning of|what does (.+?) mean|dictionary)\s*(.*)$/.exec(t))) { const word = (m[1] || m[2] || '').replace(/^(the word )/, '').trim(); if (word) { try { const r = await fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${encodeURIComponent(word)}`); if (!r.ok) throw new Error('nf'); const j = await r.json(); const e = j[0]; const defs = e.meanings.slice(0, 3).map((mm) => `• *${mm.partOfSpeech}* — ${esc(mm.definitions[0].definition)}`).join('\n'); return { text: `📖 **${esc(e.word)}** ${e.phonetic ? esc(e.phonetic) : ''}\n${defs}`, md: true }; } catch (er) { /* fall through to Wikipedia */ } } }
+      // knowledge via Wikipedia
+      let topic = null;
+      if ((m = /^(?:who|what|where|when|which) (?:is|was|are|were|'s)\s+(?:a |an |the )?(.+)$/.exec(t))) topic = m[1];
+      else if ((m = /^(?:tell me (?:about|something about)|what do you know about|explain|describe|search (?:for )?|look up|wiki(?:pedia)?)\s+(?:a |an |the )?(.+)$/.exec(t))) topic = m[1];
+      else if ((m = /^(?:who|what) (?:invented|discovered|created|wrote|painted|founded) (.+)$/.exec(t))) topic = m[1];
+      else if (t.split(' ').length <= 4 && !/[?]/.test(text) && /^[a-z0-9 .'-]+$/.test(t)) topic = t;
+      if (topic) {
+        topic = topic.replace(/\?$/, '').trim();
+        if (/^(you|your|cumulo|cirrus( linux)?)$/.test(topic)) return { text: 'Cirrus Linux is the cozy cloud-powered OS you’re using right now — and I’m Cumulo, its resident oracle. ☁️ Try “what can you do?”' };
+        try { const j = await wiki(topic); if (j) { const ex = j.extract.length > 700 ? j.extract.slice(0, 700).replace(/\s+\S*$/, '') + '…' : j.extract; return { text: `${pick(OPENERS)}\n\n**${esc(j.title)}** — ${esc(ex)}`, md: true, img: j.thumbnail && j.thumbnail.source, actions: [act('Read more', () => OS.wm.open('browser', { url: j.content_urls ? j.content_urls.mobile.page : `https://en.m.wikipedia.org/wiki/${encodeURIComponent(j.title)}` }))] }; } } catch (e) { return { text: '🌩️ My crystal ball (the internet) seems to be offline. Knowledge questions need a connection — but I can still do maths, jokes, timers and control your computer!' }; }
+        return { text: `Hmm, even the clouds are unsure about “${esc(topic)}”. 🌫️ Want me to search the web?`, actions: [act('Search the web', () => OS.wm.open('browser', { url: topic }))] };
+      }
+      // fallback
+      return { text: pick([`${pick(OPENERS)} …but this one is beyond even my fluffy wisdom. Try rephrasing, or ask me “what can you do?”`, 'Interesting! I don’t have an answer for that yet. Try asking “who is…”, “what is…”, “weather in…”, or “open…”.', 'My vapors are confused. 🌫️ Want a joke instead?']), chips: ['What can you do?', 'Tell me a joke', 'Tell me a fun fact'] };
+    }
+    return { answer };
+  }
+
+  /* ---------------- app ---------------- */
+  const fmt = (s) => esc(s).replace(/\*\*(.+?)\*\*/g, '<b>$1</b>').replace(/(^|[\s(])\*([^*\n]+)\*/g, '$1<i>$2</i>').replace(/(^|[\s(])_([^_\n]+)_/g, '$1<i>$2</i>').replace(/`([^`]+)`/g, '<code>$1</code>').replace(/\n/g, '<br>').replace(/&lt;(\/?(b|i|code))&gt;/g, '<$1>');
+  OS.registerApp({
+    id: 'assistant', name: 'Cumulo', icon: 'sparkle', color: ['#7aa2ff', '#c86cff'], cat: 'Accessories', w: 520, h: 680, single: true, desc: 'All-knowing AI assistant', keywords: 'ai assistant chat bot ask help oracle siri cortana alexa question',
+    launch(win, args) {
+      let hist = OS.store.get('cumulo-hist', []), speak = OS.store.get('cumulo-speak', false), busy = false;
+      win.body.innerHTML = `<div class="cu"><div class="cu-head"><div class="cu-orb"><i></i><i></i><i></i></div><div><b>Cumulo</b><small>the all-knowing cloud ✨</small></div><span class="spacer"></span><button class="ibtn" data-a="speak" title="Read answers aloud">${gl('volume')}</button><button class="ibtn" data-a="clear" title="Clear chat">${gl('eraser')}</button></div><div class="cu-log scroll"></div><div class="cu-chips"></div><form class="cu-input"><button type="button" class="ibtn" data-a="mic" title="Speak">${gl('mic')}</button><input placeholder="Ask me anything…" autocomplete="off" spellcheck="true"><button class="cu-send" title="Send">${gl('arrowup')}</button></form></div>`;
+      const $ = (s) => win.body.querySelector(s), log = $('.cu-log'), inp = $('.cu-input input'), chipsEl = $('.cu-chips');
+      const ctx = { say: (t) => add('bot', { text: t }) };
+      const brain = makeBrain(ctx);
+      const save = () => OS.store.set('cumulo-hist', hist.slice(-60));
+      function bubble(who, r) {
+        const el = OS.el(`<div class="cu-msg ${who}">${who === 'bot' ? '<span class="cu-av">☁️</span>' : ''}<div class="cu-b">${r.img ? `<img src="${esc(r.img)}" alt="">` : ''}<div>${who === 'bot' ? fmt(r.text) : esc(r.text)}</div></div></div>`);
+        if (r.actions && r.actions.length) { const row = OS.el('<div class="cu-acts"></div>'); r.actions.forEach((a) => { const b = OS.el(`<button class="btn sm">${esc(a.label)}</button>`); b.onclick = async () => { b.disabled = true; try { await a.fn(); } catch (e) { ctx.say('Oops, that didn’t work: ' + esc(e.message)); } }; row.appendChild(b); }); el.querySelector('.cu-b').appendChild(row); }
+        log.appendChild(el); log.scrollTop = log.scrollHeight;
+      }
+      function add(who, r) { bubble(who, r); hist.push({ who, text: r.text, img: r.img }); save(); if (who === 'bot' && speak && window.speechSynthesis) { speechSynthesis.cancel(); const u = new SpeechSynthesisUtterance(r.text.replace(/[*_`#>•]/g, '').replace(/[\u{1F300}-\u{1FAFF}☀-➿]/gu, '')); u.volume = OS.settings.volume / 100; u.pitch = 1.15; speechSynthesis.speak(u); } }
+      function chips(list) { chipsEl.innerHTML = ''; (list || ['What can you do?', 'Tell me a joke', 'Weather today', 'Who was Marie Curie?', 'Dark mode', 'Tell me a riddle']).forEach((c) => { const b = OS.el(`<button class="chip">${esc(c)}</button>`); b.onclick = () => ask(c); chipsEl.appendChild(b); }); }
+      async function ask(q) {
+        q = (q || '').trim(); if (!q || busy) return; inp.value = ''; add('me', { text: q }); busy = true;
+        const typing = OS.el('<div class="cu-msg bot typing"><span class="cu-av">☁️</span><div class="cu-b"><i></i><i></i><i></i></div></div>'); log.appendChild(typing); log.scrollTop = log.scrollHeight; $('.cu-orb').classList.add('think');
+        let r; const t0 = Date.now();
+        const qq = /^another (joke|fun fact|riddle|poem|story|trivia question|wallpaper|live wallpaper)$/i.test(q) ? q.replace(/^another /i, 'tell me a ').replace('tell me a wallpaper', 'change wallpaper').replace('tell me a live wallpaper', 'live wallpaper').replace('tell me a trivia question', 'trivia').replace('tell me a poem', 'write a poem') : /^weather today$/i.test(q) ? 'weather' : q;
+        try { r = await brain.answer(qq); } catch (e) { r = { text: 'Something fizzled in my vapors: ' + e.message }; }
+        await OS.sleep(Math.max(0, 450 + Math.random() * 400 - (Date.now() - t0)));
+        typing.remove(); $('.cu-orb').classList.remove('think'); add('bot', r); chips(r.chips); busy = false; if (!OS.isTouch()) inp.focus();
+      }
+      $('.cu-input').onsubmit = (e) => { e.preventDefault(); ask(inp.value); };
+      $('[data-a=clear]').onclick = () => { hist = []; save(); log.innerHTML = ''; greet(); };
+      const updSpeak = () => $('[data-a=speak]').classList.toggle('on', speak); updSpeak();
+      $('[data-a=speak]').onclick = () => { speak = !speak; OS.store.set('cumulo-speak', speak); updSpeak(); if (!speak && window.speechSynthesis) speechSynthesis.cancel(); };
+      const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+      $('[data-a=mic]').onclick = () => { if (!SR) return ctx.say('🎤 Voice input isn’t supported in this browser. Try Chrome, Edge or Safari.'); const rec = new SR(); rec.lang = navigator.language || 'en-US'; rec.interimResults = true; $('[data-a=mic]').classList.add('on'); rec.onresult = (e) => { const t = [...e.results].map((x) => x[0].transcript).join(''); inp.value = t; if (e.results[e.results.length - 1].isFinal) { rec.stop(); ask(t); } }; rec.onend = () => $('[data-a=mic]').classList.remove('on'); rec.onerror = () => { $('[data-a=mic]').classList.remove('on'); ctx.say('🎤 I couldn’t hear you (microphone permission?).'); }; rec.start(); };
+      function greet() { const h = new Date().getHours(); add('bot', { text: `${h < 12 ? 'Good morning' : h < 18 ? 'Good afternoon' : 'Good evening'}, **${esc(OS.settings.fullname.split(' ')[0])}**! I'm **Cumulo**, the all-knowing cloud. ☁️✨\nAsk me a question, tell me to open an app or change a setting — or just say hi.` }); chips(); }
+      if (hist.length) { hist.forEach((h) => bubble(h.who, h)); chips(); } else greet();
+      win.onFocus = () => { if (!OS.isTouch()) inp.focus(); };
+      win.onArgs = (a) => { if (a.q) ask(a.q); };
+      if (args.q) setTimeout(() => ask(args.q), 300); else if (!OS.isTouch()) setTimeout(() => inp.focus(), 100);
+    },
+  });
+  OS.askCumulo = (q) => OS.wm.open('assistant', { q });
+})();
+
+</script>
+<script>
   (function () {
     OS.fs.load();
     OS.pkg.installed();
     OS.office.ensureSamples();
+    OS.ensureHelpDocs();
     OS.desktop.init();
     OS.desktop.boot();
     // unlock WebAudio on first interaction (mobile browsers require a gesture)

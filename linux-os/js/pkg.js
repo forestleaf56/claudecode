@@ -35,6 +35,8 @@
     beatforge: { v: '1.4.0', size: 6400, sec: 'Multimedia', desc: 'Music studio: step sequencer, piano roll, song mode, mixer and 5 sample packs', type: 'app' },
     sprout: { v: '1.2.0', size: 3900, sec: 'Development', desc: 'Visual block programming: make games and animations by snapping blocks', type: 'app' },
     code: { v: '1.9.4', size: 9100, sec: 'Development', desc: 'Nimbus Code editor: syntax highlighting for 20+ languages, explorer, terminal, run & preview', type: 'app' },
+    help: { v: '24.11', size: 300, sec: 'System', desc: 'Help & Guides: user guides, how-tos and FAQ', type: 'app', core: 1 },
+    assistant: { v: '1.0.0', size: 1200, sec: 'Accessories', desc: 'Cumulo, the all-knowing AI assistant', type: 'app' },
     // optional GUI
     solitaire: { v: '1.0', size: 260, sec: 'Games', desc: 'Klondike solitaire card game', type: 'app' },
     chess: { v: '1.1', size: 420, sec: 'Games', desc: 'Chess against the computer or a friend', type: 'app' },
@@ -105,9 +107,9 @@
     wttr: { v: '1.0', size: 10, sec: 'Network', desc: 'Weather report in the terminal (wttr.in)', type: 'cli', cmds: ['wttr'] },
     jq: { v: '1.7.1', size: 160, sec: 'Utilities', desc: 'Lightweight command-line JSON processor', type: 'cli', cmds: ['jq'] },
   };
-  const DEFAULT = ['coreutils', 'bash', 'apt', 'cirrus-desktop', 'files', 'terminal', 'browser', 'editor', 'settings', 'software', 'calculator', 'viewer', 'monitor', 'calendar', 'clock', 'music', 'paint', 'weather', 'notes', 'trash', 'snake', 'mines', 'merge', 'blocks', 'memory', 'tictactoe', 'nano', 'curl', 'wget', 'neofetch', 'iputils-ping', 'bc', 'procps', 'less', 'man-db', 'vim-tiny', 'alsa-utils', 'office', 'writer', 'sheets', 'slides', 'cumulus-office', 'starlight', 'beatforge', 'sprout', 'code'];
-  const MIGRATIONS = { 2: ['procps', 'less', 'man-db', 'vim-tiny', 'alsa-utils', 'office', 'writer', 'sheets', 'slides', 'cumulus-office'], 3: ['starlight', 'beatforge', 'sprout', 'code'] };
-  const PKGV = 3;
+  const DEFAULT = ['coreutils', 'bash', 'apt', 'cirrus-desktop', 'files', 'terminal', 'browser', 'editor', 'settings', 'software', 'calculator', 'viewer', 'monitor', 'calendar', 'clock', 'music', 'paint', 'weather', 'notes', 'trash', 'snake', 'mines', 'merge', 'blocks', 'memory', 'tictactoe', 'nano', 'curl', 'wget', 'neofetch', 'iputils-ping', 'bc', 'procps', 'less', 'man-db', 'vim-tiny', 'alsa-utils', 'office', 'writer', 'sheets', 'slides', 'cumulus-office', 'starlight', 'beatforge', 'sprout', 'code', 'help', 'assistant'];
+  const MIGRATIONS = { 2: ['procps', 'less', 'man-db', 'vim-tiny', 'alsa-utils', 'office', 'writer', 'sheets', 'slides', 'cumulus-office'], 3: ['starlight', 'beatforge', 'sprout', 'code'], 4: ['help', 'assistant'] };
+  const PKGV = 4;
 
   const pkg = (OS.pkg = { repo: R });
   const list = () => {
