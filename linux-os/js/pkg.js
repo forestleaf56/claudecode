@@ -85,8 +85,22 @@
     lolcat: { v: '100.0', size: 42, sec: 'Utilities', desc: 'Rainbow coloring for text', type: 'cli', cmds: ['lolcat'] },
     htop: { v: '3.3.0', size: 380, sec: 'Utilities', desc: 'Interactive process viewer', type: 'cli', cmds: ['htop'] },
     tree: { v: '2.1.1', size: 110, sec: 'Utilities', desc: 'Displays an indented directory tree', type: 'cli', cmds: ['tree'] },
+    'build-essential': { v: '12.10', size: 52000, sec: 'Development', desc: 'C/C++ compilers: gcc, g++, clang (cloud build)', type: 'cli', cmds: ['gcc', 'cc', 'clang', 'g++', 'c++', 'clang++'] },
+    'default-jdk': { v: '21.0.3', size: 180000, sec: 'Development', desc: 'Java Development Kit: javac and java', type: 'cli', cmds: ['javac', 'java'] },
+    golang: { v: '1.22.4', size: 220000, sec: 'Development', desc: 'Go programming language: go run, go build', type: 'cli', cmds: ['go'] },
+    rustc: { v: '1.79.0', size: 160000, sec: 'Development', desc: 'Rust compiler and cargo', type: 'cli', cmds: ['rustc', 'cargo'] },
+    'mono-complete': { v: '6.12.0', size: 140000, sec: 'Development', desc: 'C# / .NET: csc, mcs, mono, dotnet', type: 'cli', cmds: ['csc', 'mcs', 'mono', 'dotnet'] },
+    kotlin: { v: '2.0.0', size: 90000, sec: 'Development', desc: 'Kotlin compiler and runner', type: 'cli', cmds: ['kotlinc', 'kotlin'] },
+    swift: { v: '5.10', size: 400000, sec: 'Development', desc: 'Swift compiler', type: 'cli', cmds: ['swift', 'swiftc'] },
+    php: { v: '8.3.6', size: 15000, sec: 'Development', desc: 'PHP command-line interpreter', type: 'cli', cmds: ['php'] },
+    ruby: { v: '3.3.1', size: 12000, sec: 'Development', desc: 'Ruby interpreter', type: 'cli', cmds: ['ruby'] },
+    'lua5.4': { v: '5.4.6', size: 600, sec: 'Development', desc: 'Lua interpreter', type: 'cli', cmds: ['lua', 'lua5.4'] },
+    perl: { v: '5.38.2', size: 18000, sec: 'Development', desc: 'Perl interpreter', type: 'cli', cmds: ['perl'] },
+    sqlite3: { v: '3.45.1', size: 1800, sec: 'Development', desc: 'SQLite database shell', type: 'cli', cmds: ['sqlite3'] },
+    typescript: { v: '5.4.5', size: 22000, sec: 'Development', desc: 'TypeScript: tsc, ts-node, tsx', type: 'cli', cmds: ['tsc', 'ts-node', 'tsx', 'deno'] },
+    'code-runner': { v: '1.0', size: 40, sec: 'Development', desc: 'run any source file: run <file>', type: 'cli', cmds: ['run', 'runner-mode'] },
     nodejs: { v: '20.11.1', size: 38000, sec: 'Development', desc: 'JavaScript runtime (node command)', type: 'cli', cmds: ['node', 'nodejs'] },
-    python3: { v: '3.12.3', size: 21000, sec: 'Development', desc: 'Python interpreter (tiny subset: print, math, loops)', type: 'cli', cmds: ['python3', 'python'] },
+    python3: { v: '3.12.3', size: 21000, sec: 'Development', desc: 'Python 3 interpreter (real CPython via Pyodide when online)', type: 'cli', cmds: ['python3', 'python'] },
     git: { v: '2.43.0', size: 18000, sec: 'Development', desc: 'Fast, scalable, distributed revision control (basic local repo)', type: 'cli', cmds: ['git'] },
     bc: { v: '1.07.1', size: 230, sec: 'Utilities', desc: 'Arbitrary precision calculator language', type: 'cli', cmds: ['bc'] },
     toilet: { v: '0.3', size: 120, sec: 'Utilities', desc: 'Display large colourful characters', type: 'cli', cmds: ['toilet'] },
@@ -107,9 +121,9 @@
     wttr: { v: '1.0', size: 10, sec: 'Network', desc: 'Weather report in the terminal (wttr.in)', type: 'cli', cmds: ['wttr'] },
     jq: { v: '1.7.1', size: 160, sec: 'Utilities', desc: 'Lightweight command-line JSON processor', type: 'cli', cmds: ['jq'] },
   };
-  const DEFAULT = ['coreutils', 'bash', 'apt', 'cirrus-desktop', 'files', 'terminal', 'browser', 'editor', 'settings', 'software', 'calculator', 'viewer', 'monitor', 'calendar', 'clock', 'music', 'paint', 'weather', 'notes', 'trash', 'snake', 'mines', 'merge', 'blocks', 'memory', 'tictactoe', 'nano', 'curl', 'wget', 'neofetch', 'iputils-ping', 'bc', 'procps', 'less', 'man-db', 'vim-tiny', 'alsa-utils', 'office', 'writer', 'sheets', 'slides', 'cumulus-office', 'starlight', 'beatforge', 'sprout', 'code', 'help', 'assistant'];
-  const MIGRATIONS = { 2: ['procps', 'less', 'man-db', 'vim-tiny', 'alsa-utils', 'office', 'writer', 'sheets', 'slides', 'cumulus-office'], 3: ['starlight', 'beatforge', 'sprout', 'code'], 4: ['help', 'assistant'] };
-  const PKGV = 4;
+  const DEFAULT = ['coreutils', 'bash', 'apt', 'cirrus-desktop', 'files', 'terminal', 'browser', 'editor', 'settings', 'software', 'calculator', 'viewer', 'monitor', 'calendar', 'clock', 'music', 'paint', 'weather', 'notes', 'trash', 'snake', 'mines', 'merge', 'blocks', 'memory', 'tictactoe', 'nano', 'curl', 'wget', 'neofetch', 'iputils-ping', 'bc', 'procps', 'less', 'man-db', 'vim-tiny', 'alsa-utils', 'office', 'writer', 'sheets', 'slides', 'cumulus-office', 'starlight', 'beatforge', 'sprout', 'code', 'help', 'assistant', 'nodejs', 'python3', 'build-essential', 'default-jdk', 'golang', 'rustc', 'mono-complete', 'kotlin', 'swift', 'php', 'ruby', 'lua5.4', 'perl', 'sqlite3', 'typescript', 'code-runner'];
+  const MIGRATIONS = { 2: ['procps', 'less', 'man-db', 'vim-tiny', 'alsa-utils', 'office', 'writer', 'sheets', 'slides', 'cumulus-office'], 3: ['starlight', 'beatforge', 'sprout', 'code'], 4: ['help', 'assistant'], 5: ['nodejs', 'python3', 'build-essential', 'default-jdk', 'golang', 'rustc', 'mono-complete', 'kotlin', 'swift', 'php', 'ruby', 'lua5.4', 'perl', 'sqlite3', 'typescript', 'code-runner'] };
+  const PKGV = 5;
 
   const pkg = (OS.pkg = { repo: R });
   const list = () => {

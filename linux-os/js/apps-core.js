@@ -267,124 +267,6 @@
     },
   });
 
-  /* ======================= BROWSER ======================= */
-  const DEFAULT_BM = [
-    { t: 'Wikipedia', u: 'https://en.m.wikipedia.org/wiki/Main_Page', i: 'book' }, { t: 'OpenStreetMap', u: 'https://www.openstreetmap.org/export/embed.html?bbox=-10,35,30,60&layer=mapnik', i: 'map' },
-    { t: 'Wiktionary', u: 'https://en.m.wiktionary.org/', i: 'type' }, { t: 'Example', u: 'https://example.com', i: 'globe' },
-    { t: 'Internet Archive', u: 'https://archive.org', i: 'hdd' }, { t: 'Cirrus Docs', u: 'about:help', i: 'info' },
-  ];
-  const searchUrl = (q) => ({ wikipedia: 'https://en.m.wikipedia.org/w/index.php?search=', duckduckgo: 'https://duckduckgo.com/html/?q=', bing: 'https://www.bing.com/search?q=', google: 'https://www.google.com/search?igu=1&q=' }[OS.settings.searchEngine] || 'https://en.m.wikipedia.org/w/index.php?search=') + encodeURIComponent(q);
-  function internalPage(url) {
-    const accent = OS.settings.accent; const dark = document.documentElement.dataset.theme === 'dark';
-    const base = `<meta name="viewport" content="width=device-width,initial-scale=1"><style>body{font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;margin:0;background:${dark ? '#16181d' : '#f6f7fb'};color:${dark ? '#e9ebf1' : '#1a1c22'}}a{color:${accent}}.wrap{max-width:760px;margin:0 auto;padding:32px 20px}h1{font-weight:700}.card{background:${dark ? '#22252d' : '#fff'};border-radius:16px;padding:18px;box-shadow:0 2px 10px rgba(0,0,0,.08);margin:12px 0}code{background:${dark ? '#0d0f14' : '#eef'};padding:2px 6px;border-radius:6px}</style><script>document.addEventListener('click',e=>{const a=e.target.closest('a[href]');if(a){e.preventDefault();parent.postMessage({cirrusNav:a.getAttribute('href')},'*')}});<\/script>`;
-    if (url === 'about:home' || url === 'about:newtab') {
-      const bms = OS.settings.bookmarks || DEFAULT_BM;
-      const h = new Date().getHours(); const greet = h < 5 ? 'Good night' : h < 12 ? 'Good morning' : h < 18 ? 'Good afternoon' : 'Good evening';
-      return `<!doctype html><html><head>${base}<style>body{min-height:100vh;display:flex;align-items:center;justify-content:center;background:radial-gradient(circle at 20% 20%,${accent}33,transparent 40%),radial-gradient(circle at 80% 80%,#b06cff33,transparent 40%),${dark ? '#16181d' : '#f6f7fb'}}.box{width:min(640px,92vw);text-align:center}h1{font-size:clamp(28px,6vw,44px);margin:0 0 6px}p{opacity:.7;margin:0 0 26px}form{display:flex;background:${dark ? '#22252d' : '#fff'};border-radius:999px;box-shadow:0 6px 24px rgba(0,0,0,.12);overflow:hidden;border:1px solid ${dark ? '#333' : '#e3e5ea'}}input{flex:1;border:0;background:transparent;padding:16px 22px;font-size:17px;outline:0;color:inherit;min-width:0}button{border:0;background:${accent};color:#fff;padding:0 22px;font-size:15px;cursor:pointer}.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:12px;margin-top:30px}.grid a{display:flex;flex-direction:column;align-items:center;gap:8px;padding:14px 6px;border-radius:16px;text-decoration:none;color:inherit;background:${dark ? '#22252d' : '#fff'};box-shadow:0 2px 10px rgba(0,0,0,.06);font-size:13px}.grid a:hover{transform:translateY(-2px)}.grid span{width:44px;height:44px;border-radius:14px;display:grid;place-items:center;color:#fff;font-weight:700;font-size:20px}</style></head><body><div class="box"><h1>${greet}!</h1><p>Search the web or pick a shortcut</p><form onsubmit="event.preventDefault();parent.postMessage({cirrusNav:this.q.value},'*')"><input name="q" placeholder="Search or enter address" autofocus autocomplete="off"><button>Search</button></form><div class="grid">${bms.map((b, i) => `<a href="${esc(b.u)}"><span style="background:hsl(${(i * 57 + 220) % 360},70%,55%)">${esc(b.t[0])}</span>${esc(b.t)}</a>`).join('')}</div></div></body></html>`;
-    }
-    if (url === 'about:help') return `<!doctype html><html><head>${base}</head><body><div class="wrap"><h1>Cirrus Browser</h1><div class="card"><b>How browsing works here</b><p>Cirrus Browser shows real websites inside the desktop. Some websites (Google, YouTube, GitHub, many news sites) <b>refuse to be shown inside another page</b>; when that happens the page stays blank. Use the <b>Open externally</b> button in the toolbar to open them in a real browser tab.</p><p>Sites that work well: <a href="https://en.m.wikipedia.org/wiki/Linux">Wikipedia</a>, <a href="https://www.openstreetmap.org/export/embed.html?bbox=-0.2,51.4,0.1,51.6&layer=mapnik">OpenStreetMap</a>, <a href="https://example.com">example.com</a>, <a href="https://www.youtube.com/embed/aqz-KE-bpKQ">YouTube embeds</a>.</p></div><div class="card"><b>Local files</b><p>Open HTML pages from your home folder with <code>file://~/Documents/page.html</code>, or right-click a file in Files → Open with Browser.</p></div><div class="card"><b>Shortcuts</b><p><code>Ctrl+T</code> new tab · <code>Ctrl+W</code> close tab · <code>Ctrl+L</code> focus address bar · <code>F5</code> reload</p></div></div></body></html>`;
-    if (url === 'about:blank') return '<!doctype html><html><body></body></html>';
-    return `<!doctype html><html><head>${base}</head><body><div class="wrap"><h1>Page not found</h1><p>${esc(url)} is not a known internal page. Try <a href="about:home">about:home</a> or <a href="about:help">about:help</a>.</p></div></body></html>`;
-  }
-  function mdToHtml(md) {
-    let h = esc(md);
-    h = h.replace(/^### (.*)$/gm, '<h3>$1</h3>').replace(/^## (.*)$/gm, '<h2>$1</h2>').replace(/^# (.*)$/gm, '<h1>$1</h1>').replace(/\*\*(.+?)\*\*/g, '<b>$1</b>').replace(/\*(.+?)\*/g, '<i>$1</i>').replace(/`([^`]+)`/g, '<code>$1</code>').replace(/^- \[x\] (.*)$/gm, '<div>☑ $1</div>').replace(/^- \[ \] (.*)$/gm, '<div>☐ $1</div>').replace(/^[-*] (.*)$/gm, '<li>$1</li>').replace(/^    (.*)$/gm, '<pre>$1</pre>').replace(/\[(.+?)\]\((.+?)\)/g, '<a href="$2">$1</a>').replace(/\n\n/g, '<p>');
-    return `<!doctype html><meta name="viewport" content="width=device-width"><style>body{font-family:system-ui;max-width:760px;margin:0 auto;padding:24px;line-height:1.6}code,pre{background:#f0f0f5;padding:2px 6px;border-radius:6px}</style>${h}`;
-  }
-  OS.registerApp({
-    id: 'browser', name: 'Browser', icon: 'globe', color: ['#4facfe', '#7b5cff'], cat: 'Internet', w: 980, h: 640, desc: 'Browse the web', keywords: 'web internet firefox chrome',
-    launch(win, args) {
-      if (!OS.settings.bookmarks) { OS.settings.bookmarks = DEFAULT_BM; OS.saveSettings(); }
-      const tabs = []; let active = null;
-      win.body.innerHTML = `<div class="br-tabs"></div>
-        <div class="toolbar"><button class="ibtn" data-a="back">${gl('left')}</button><button class="ibtn" data-a="fwd">${gl('right')}</button><button class="ibtn" data-a="reload">${gl('refresh')}</button><button class="ibtn hide-m" data-a="home">${gl('home')}</button>
-        <form class="br-url"><span class="br-lock">${gl('globe')}</span><input spellcheck="false" autocomplete="off" autocapitalize="off" placeholder="Search or enter address"></form>
-        <button class="ibtn hide-m" data-a="star" title="Bookmark">${gl('star')}</button><button class="ibtn hide-m" data-a="ext" title="Open externally">${gl('external')}</button><button class="ibtn" data-a="menu">${gl('dots')}</button></div>
-        <div class="br-bm"></div><div class="br-note" hidden></div><div class="br-view"><div class="br-progress"></div></div>`;
-      const $ = (s) => win.body.querySelector(s); const view = $('.br-view'), urlIn = $('.br-url input'), prog = $('.br-progress');
-      const renderBm = () => { const host = $('.br-bm'); host.innerHTML = ''; (OS.settings.bookmarks || []).forEach((b) => { const el = OS.el(`<button>${gl(b.i || 'globe')}${esc(b.t)}</button>`); el.onclick = () => nav(b.u); OS.onContext(el, (e, x, y) => OS.menu(x, y, [{ label: 'Open in new tab', icon: 'plus', action: () => newTab(b.u) }, { label: 'Remove bookmark', icon: 'trash', danger: true, action: () => { OS.set('bookmarks', OS.settings.bookmarks.filter((z) => z !== b)); renderBm(); } }])); host.appendChild(el); }); };
-      const toUrl = (q) => {
-        q = q.trim(); if (!q) return 'about:home';
-        if (/^(about|file):/.test(q)) return q.startsWith('file://~') ? 'file://' + OS.home() + q.slice(8) : q;
-        if (q.startsWith('~/') || q.startsWith('/')) return 'file://' + OS.fs.norm(q);
-        if (/^https?:\/\//i.test(q)) return q;
-        if (/^[\w-]+(\.[\w-]+)+(:\d+)?(\/.*)?$/.test(q) && !/\s/.test(q)) return 'https://' + q;
-        if (/^localhost(:\d+)?/.test(q)) return 'http://' + q;
-        return searchUrl(q);
-      };
-      function newTab(u) {
-        const t = { id: OS.uid(), hist: [], hi: -1, title: 'New Tab', frame: document.createElement('iframe') };
-        t.frame.setAttribute('sandbox', 'allow-scripts allow-forms allow-popups allow-same-origin allow-modals allow-popups-to-escape-sandbox allow-presentation');
-        t.frame.setAttribute('allow', 'fullscreen; autoplay; encrypted-media; geolocation; clipboard-write');
-        t.frame.setAttribute('referrerpolicy', 'no-referrer-when-downgrade');
-        t.frame.onload = () => { prog.style.width = '100%'; setTimeout(() => (prog.style.opacity = 0), 300); try { const d = t.frame.contentDocument; if (d && d.title) { t.title = d.title; renderTabs(); } } catch (e) {} };
-        view.appendChild(t.frame); tabs.push(t); select(t); load(t, toUrl(u || OS.settings.homepage), true);
-      }
-      function select(t) { active = t; tabs.forEach((x) => (x.frame.style.display = x === t ? '' : 'none')); renderTabs(); updBar(); }
-      function closeTab(t) { const i = tabs.indexOf(t); t.frame.remove(); tabs.splice(i, 1); if (!tabs.length) return win.close(); if (active === t) select(tabs[Math.max(0, i - 1)]); else renderTabs(); }
-      function renderTabs() {
-        const host = $('.br-tabs'); host.innerHTML = '';
-        tabs.forEach((t) => { const el = OS.el(`<div class="br-tab ${t === active ? 'on' : ''}">${gl(t.url && t.url.startsWith('file:') ? 'file' : 'globe')}<span>${esc(t.title)}</span><button class="ibtn">${gl('x')}</button></div>`); el.onclick = () => select(t); el.querySelector('.ibtn').onclick = (e) => { e.stopPropagation(); closeTab(t); }; el.onauxclick = (e) => { if (e.button === 1) closeTab(t); }; host.appendChild(el); });
-        const add = OS.el(`<button class="ibtn" title="New tab (Ctrl+T)">${gl('plus')}</button>`); add.onclick = () => newTab(); host.appendChild(add);
-        if (active) win.setTitle(active.title + ' — Browser');
-      }
-      function updBar() {
-        if (!active) return; urlIn.value = active.url && !active.url.startsWith('about:home') ? active.url : '';
-        $('[data-a=back]').disabled = active.hi <= 0; $('[data-a=fwd]').disabled = active.hi >= active.hist.length - 1;
-        const ext = active.url && /^https?:/.test(active.url);
-        $('.br-lock').innerHTML = gl(active.url?.startsWith('https') ? 'lock' : active.url?.startsWith('file') ? 'file' : 'info');
-        const note = $('.br-note');
-        if (ext && !OS.store.get('br-note-hide')) { note.hidden = false; note.innerHTML = `${gl('info')}<span style="flex:1">If this page stays blank, the site doesn't allow being embedded.</span><button class="btn sm" data-n="open">Open externally</button><button class="ibtn" data-n="x">${gl('x')}</button>`; note.querySelector('[data-n=open]').onclick = () => window.open(active.url, '_blank', 'noopener'); note.querySelector('[data-n=x]').onclick = () => { OS.store.set('br-note-hide', 1); note.hidden = true; }; }
-        else note.hidden = true;
-        const bm = (OS.settings.bookmarks || []).some((b) => b.u === active.url); $('[data-a=star]').classList.toggle('on', bm);
-      }
-      function load(t, url, push) {
-        if (push) { t.hist = t.hist.slice(0, t.hi + 1); t.hist.push(url); t.hi = t.hist.length - 1; }
-        t.url = url; prog.style.opacity = 1; prog.style.width = '30%';
-        if (!navigator.onLine && /^https?:/.test(url)) { t.frame.removeAttribute('src'); t.frame.srcdoc = `<body style="font-family:system-ui;display:grid;place-items:center;height:90vh;color:#666;text-align:center"><div><div style="font-size:48px">⚡</div><h2>No internet</h2><p>Check your connection and try again.</p></div></body>`; t.title = 'No internet'; }
-        else if (url.startsWith('about:')) { t.frame.removeAttribute('src'); t.frame.srcdoc = internalPage(url); t.title = url === 'about:home' || url === 'about:newtab' ? 'New Tab' : url; }
-        else if (url.startsWith('file://')) {
-          const p = decodeURIComponent(url.slice(7)); t.frame.removeAttribute('src'); t.title = OS.fs.basename(p);
-          try { const c = OS.fs.read(p); const ty = OS.ftype(p); if (ty === 'html') t.frame.srcdoc = c; else if (ty === 'image' || OS.isDataUrl(c)) t.frame.srcdoc = `<body style="margin:0;display:grid;place-items:center;min-height:100vh;background:#222"><${ty === 'pdf' ? 'embed type="application/pdf" style="width:100vw;height:100vh"' : 'img style="max-width:100%"'} src="${esc(OS.toDataUrl(c, p))}"></body>`; else if (OS.ext(p) === 'md') t.frame.srcdoc = mdToHtml(c); else t.frame.srcdoc = `<pre style="white-space:pre-wrap;font:14px monospace;padding:16px">${esc(c)}</pre>`; }
-          catch (e) { t.frame.srcdoc = `<body style="font-family:system-ui;padding:40px"><h2>File not found</h2><p>${esc(p)}</p></body>`; }
-        }
-        else { t.frame.removeAttribute('srcdoc'); t.frame.src = url; try { t.title = new URL(url).hostname.replace(/^www\.|^en\.m\./, ''); } catch (e) { t.title = url; } }
-        renderTabs(); updBar();
-      }
-      const nav = (q) => load(active, toUrl(q), true);
-      const onMsg = (e) => { const t = tabs.find((x) => x.frame.contentWindow === e.source); if (t && e.data && typeof e.data.cirrusNav === 'string') { select(t); nav(e.data.cirrusNav); } };
-      window.addEventListener('message', onMsg); win.onClose(() => window.removeEventListener('message', onMsg));
-      $('.br-url').onsubmit = (e) => { e.preventDefault(); nav(urlIn.value); urlIn.blur(); };
-      urlIn.onfocus = () => setTimeout(() => urlIn.select(), 0);
-      $('[data-a=back]').onclick = () => { if (active.hi > 0) load(active, active.hist[--active.hi]); };
-      $('[data-a=fwd]').onclick = () => { if (active.hi < active.hist.length - 1) load(active, active.hist[++active.hi]); };
-      $('[data-a=reload]').onclick = () => load(active, active.url);
-      $('[data-a=home]').onclick = () => nav(OS.settings.homepage);
-      $('[data-a=ext]').onclick = () => { if (/^https?:/.test(active.url)) window.open(active.url, '_blank', 'noopener'); else OS.notify('Local page', 'Only web pages can be opened externally.', { app: 'browser' }); };
-      $('[data-a=star]').onclick = async () => {
-        const bms = OS.settings.bookmarks || []; const ex = bms.find((b) => b.u === active.url);
-        if (ex) OS.set('bookmarks', bms.filter((b) => b !== ex)); else { const n = await OS.prompt('Add bookmark', 'Name:', active.title); if (n) OS.set('bookmarks', [...bms, { t: n, u: active.url, i: 'star' }]); }
-        renderBm(); updBar();
-      };
-      $('[data-a=menu]').onclick = (e) => { const r = e.currentTarget.getBoundingClientRect(); OS.menu(r.left - 200, r.bottom + 4, [
-        { label: 'New tab', icon: 'plus', key: 'Ctrl+T', action: () => newTab() },
-        { label: (OS.settings.bookmarks || []).some((b) => b.u === active.url) ? 'Remove bookmark' : 'Bookmark this page', icon: 'star', action: () => $('[data-a=star]').click() },
-        { label: 'Open in real browser', icon: 'external', disabled: !/^https?:/.test(active.url), action: () => window.open(active.url, '_blank', 'noopener') },
-        { label: 'Home', icon: 'home', action: () => nav(OS.settings.homepage) },
-        { label: 'Open local file…', icon: 'folder', action: async () => { const p = await OS.pickFile({ mode: 'open', path: OS.home() + '/Documents' }); if (p) nav('file://' + p); } },
-        { label: 'Save page link to Downloads', icon: 'download', disabled: !/^https?:/.test(active.url), action: () => { OS.fs.write(OS.fs.uniqueName(OS.home() + '/Downloads', (active.title || 'link').replace(/[\/\\]/g, '-') + '.url'), `[InternetShortcut]\nURL=${active.url}\n`); OS.notify('Saved', 'Link saved to Downloads', { app: 'browser' }); } },
-        { label: 'Help', icon: 'info', action: () => newTab('about:help') },
-        '-', { label: 'Search engine: ' + OS.settings.searchEngine, icon: 'search', action: () => OS.wm.open('settings', { page: 'apps' }) },
-        { label: 'Reset bookmarks', icon: 'refresh', action: () => { OS.set('bookmarks', DEFAULT_BM); renderBm(); } },
-      ]); };
-      OS.wm.keys(win, (e) => {
-        const c = e.ctrlKey || e.metaKey;
-        if (c && e.key === 't') { e.preventDefault(); newTab(); } else if (c && e.key === 'w') { e.preventDefault(); closeTab(active); } else if (c && e.key === 'l') { e.preventDefault(); urlIn.focus(); } else if (e.key === 'F5') { e.preventDefault(); load(active, active.url); }
-      });
-      win.onArgs = (a) => newTab(a.url || a.path && 'file://' + a.path);
-      renderBm(); newTab(args.url || (args.path ? 'file://' + args.path : undefined));
-    },
-  });
 
   /* ======================= SETTINGS ======================= */
   const PAGES = [['appearance', 'Appearance', 'palette'], ['desktop', 'Desktop & Panel', 'monitor'], ['display', 'Display', 'sun'], ['sound', 'Sound', 'volume'], ['network', 'Network', 'wifi'], ['notifications', 'Notifications', 'bell'], ['users', 'Users', 'user'], ['apps', 'Apps', 'grid'], ['datetime', 'Date & Time', 'clock'], ['storage', 'Storage', 'hdd'], ['about', 'About', 'info']];
@@ -430,11 +312,11 @@
             ${row('Full name', '', `<input class="inp" data-text="fullname" value="${esc(S.fullname)}" style="width:200px">`)}
             ${row('Username', 'Your home folder is /home/' + esc(S.username), `<button class="btn sm" data-a="username">Change</button>`)}
             ${row('Avatar color', '', `<div class="swatches">${OS.accents.slice(0, 8).map((c) => `<div class="swatch ${S.avatar === c ? 'on' : ''}" data-avatar="${c}" style="background:${c}"></div>`).join('')}</div>`)}
-            ${row('Password', S.password ? 'Password is set — required to unlock and for sudo' : 'No password set', `<button class="btn sm" data-a="password">${S.password ? 'Change' : 'Set'}</button>${S.password ? ' <button class="btn sm danger" data-a="nopass">Remove</button>' : ''}`)}
+            ${row('Password', S.password ? 'Password is set — required to unlock and for sudo' : 'No password set', `<button class="btn sm" data-a="password">${S.password ? 'Change' : 'Set'}</button>`)}
             ${row('Show lock screen at startup', '', sw('lockOnBoot'))}</div>`;
         } else if (page === 'apps') {
           const inst = Object.keys(OS.pkg.repo).filter((n) => OS.pkg.repo[n].type === 'app' && OS.pkg.isInstalled(n) && OS.apps[n]);
-          h = head('Apps') + `<div class="set-gtitle">Default apps</div><div class="set-group">${row('Web search engine', 'Used by the Browser and app menu', `<select class="inp" data-select="searchEngine">${['wikipedia', 'duckduckgo', 'bing', 'google'].map((e) => `<option ${S.searchEngine === e ? 'selected' : ''}>${e}</option>`).join('')}</select>`)}${row('Browser home page', '', `<input class="inp" data-text="homepage" value="${esc(S.homepage)}" style="width:200px">`)}${row('Terminal colors', '', seg('termTheme', [['dark', 'Dark'], ['light', 'Light']]))}</div>
+          h = head('Apps') + `<div class="set-gtitle">Default apps</div><div class="set-group">${row('Web search engine', 'Used by the Browser and app menu', `<select class="inp" data-select="searchEngine">${['cirrus', 'wikipedia', 'duckduckgo', 'bing', 'google'].map((e) => `<option ${S.searchEngine === e ? 'selected' : ''}>${e}</option>`).join('')}</select>`)}${row('Browser home page', '', `<input class="inp" data-text="homepage" value="${esc(S.homepage)}" style="width:200px">`)}${row('Terminal colors', '', seg('termTheme', [['dark', 'Dark'], ['light', 'Light']]))}</div>
             <div class="set-gtitle">Installed apps (${inst.length})</div><div class="set-group">${inst.map((id) => row(`<span class="row">${OS.appIcon(id, 30)} ${esc(OS.apps[id].name)}</span>`, `${OS.pkg.repo[id].v} · ${OS.fmtSize(OS.pkg.repo[id].size * 1024)}`, OS.pkg.repo[id].core ? '<small class="muted">System</small>' : `<button class="btn sm danger" data-uninstall="${id}">Uninstall</button>`)).join('')}</div>
             <button class="btn" data-a="software">${gl('bag')}Get more apps</button>`;
         } else if (page === 'datetime') {
@@ -475,8 +357,8 @@
         A('testnotif', () => OS.notify('Hello there!', 'This is what notifications look like.', { app: 'settings', force: true }));
         A('hostname', async () => { const n = await OS.prompt('Device name', '', S.hostname); if (n && /^[a-z0-9-]+$/i.test(n)) { OS.set('hostname', n); OS.fs.write('/etc/hostname', n + '\n'); render(); } else if (n) OS.alert('Invalid name', 'Use letters, numbers and dashes only.'); });
         A('speed', async () => { const o = main.querySelector('.speed-out'); o.hidden = false; o.textContent = 'Testing…'; const times = []; for (let i = 0; i < 4; i++) { const t0 = performance.now(); try { await fetch('https://www.wikipedia.org/favicon.ico?' + Math.random(), { mode: 'no-cors', cache: 'no-store' }); times.push(performance.now() - t0); } catch (e) {} } o.textContent = times.length ? `Latency: ${Math.min(...times).toFixed(0)} ms (best of ${times.length}) · ${navigator.connection?.downlink ? 'Estimated bandwidth ' + navigator.connection.downlink + ' Mbps' : ''}` : 'Could not reach the test server.'; });
-        A('username', async () => { const n = await OS.prompt('Change username', 'Your home folder will be renamed.', S.username); if (!n || n === S.username) return; if (!/^[a-z_][a-z0-9_-]{0,30}$/.test(n)) return OS.alert('Invalid username', 'Use lowercase letters, digits, - and _.'); const old = S.username; OS.fs.renameHome(old, n); OS.set('username', n); OS.fs.write('/etc/passwd', OS.fs.read('/etc/passwd').split(old).join(n)); render(); });
-        A('password', async () => { if (S.password) { const c = await OS.prompt('Current password', '', '', true); if (c !== S.password) return c !== null && OS.alert('Wrong password', ''); } const a = await OS.prompt('New password', '', '', true); if (a == null) return; const b = await OS.prompt('Confirm password', '', '', true); if (a !== b) return OS.alert('Passwords do not match', ''); OS.set('password', a); render(); });
+        A('username', async () => { const n = await OS.prompt('Change username', 'Your home folder will be renamed.', S.username); if (!n || n === S.username) return; if (!/^[a-z_][a-z0-9_-]{0,30}$/.test(n)) return OS.alert('Invalid username', 'Use lowercase letters, digits, - and _.'); const old = S.username; await OS.fs.applyAccount({ oldUser: old, user: n, fullname: S.fullname, host: S.hostname, password: S.password }); OS.set('username', n); render(); });
+        A('password', async () => { if (S.password) { const c = await OS.prompt('Current password', '', '', true); if (c !== S.password) return c !== null && OS.alert('Wrong password', ''); } const a = await OS.prompt('New password', 'At least 4 characters. You need it to log in.', '', true); if (a == null) return; if (a.length < 4) return OS.alert('Password too short', 'Use at least 4 characters.'); const b = await OS.prompt('Confirm password', '', '', true); if (a !== b) return OS.alert('Passwords do not match', ''); OS.set('password', a); OS.fs.applyAccount({ user: S.username, fullname: S.fullname, host: S.hostname, password: a }); render(); });
         A('nopass', async () => { const c = await OS.prompt('Current password', '', '', true); if (c === S.password) { OS.set('password', ''); render(); } else if (c !== null) OS.alert('Wrong password', ''); });
         A('software', () => OS.wm.open('software'));
         A('openfiles', () => OS.wm.open('files', { path: '/' }));

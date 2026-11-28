@@ -56,6 +56,7 @@
   /* ---------------- the brain ---------------- */
   function makeBrain(ctx) {
     let pending = null; // trivia / riddle state
+    const st = { lastTopic: '', lastPage: null }; // conversation context for follow-ups
     const S = OS.settings;
     const act = (label, fn) => ({ label, fn });
     async function answer(raw) {
@@ -67,7 +68,7 @@
       // greetings & identity
       if (/^(hi|hello|hey|yo|sup|hiya|howdy|greetings|good (morning|afternoon|evening))\b/.test(t) && t.split(' ').length <= 4) { const h = new Date().getHours(); return { text: `${pick([`${h < 12 ? 'Good morning' : h < 18 ? 'Good afternoon' : 'Good evening'}, ${esc(S.fullname.split(' ')[0])}! ☁️`, 'Hello, seeker of knowledge! ✨', 'Hey there! The skies are clear for questions.'])} What can I do for you?`, chips: ['What can you do?', 'Tell me a joke', 'Weather today', 'Open the terminal'] }; }
       if (/^(who|what) are you|your name|introduce yourself/.test(t)) return { text: 'I am **Cumulo**, the all-knowing cloud of Cirrus Linux. ☁️🔮 I float above your desktop, peer into Wikipedia, read the weather, do maths, run your computer and tell questionable jokes. Ask me anything!', chips: ['What can you do?'] };
-      if (/^(what can you do|help|commands|what do you know|abilities|features)$/.test(t)) return { text: '**I can…**\n• open, install and uninstall apps — “open chess”\n• change themes, colors, wallpaper — “use the vampire theme”, “dark mode”\n• set timers & reminders — “remind me in 10 minutes to stretch”\n• take notes, find files, run terminal commands\n• answer questions with Wikipedia — “who was Ada Lovelace?”\n• define words, check the weather and world time\n• calculate & convert — “15% of 240”, “10 km to miles”\n• explain Cirrus — “how do I install apps?”\n• jokes, facts, riddles, trivia, poems, stories, the Magic Cloud 🎱', chips: ['Who was Ada Lovelace?', 'Weather in Tokyo', 'Tell me a riddle', 'How do I install apps?'] };
+      if (/^(what can you do|help|commands|what do you know|abilities|features)$/.test(t)) return { text: '**I know (almost) everything — try me!**\n• **Any question** — “how tall is the Eiffel Tower?”, “why is the sky blue?”, “when did the Berlin Wall fall?” (then “tell me more”, or follow up with “how old was he?”)\n• **Facts offline** — capitals, currencies, populations, chemical elements, planets, science constants\n• **Maths** — “15% of 240”, “solve 3x + 5 = 20”, “is 97 prime?”, “255 in binary”, “50!”, “average of 3, 8, 10”\n• **Dates** — “days until Christmas”, “what day was 1969-07-20?”, “is 2028 a leap year?”\n• **Live data** — weather, world time, “100 usd to eur”, “bitcoin price”, “latest news”, “translate good morning to Japanese”, “synonyms for happy”\n• **Your computer** — open/install apps, themes, wallpaper, volume, timers, reminders, notes, find files, battery, storage, run commands\n• **Memory** — “call me Captain”, “remember that my bike code is 1234”, “what do you remember?”\n• **Fun** — jokes, facts, riddles, trivia, poems, stories, Magic Cloud 🎱, rock-paper-scissors', md: true, chips: ['How tall is the Eiffel Tower?', 'Days until Christmas', '100 usd to eur', 'Latest news', 'Solve 3x + 5 = 20', 'Capital of Australia'] };
       if (/^(thanks|thank you|thx|ty|cheers|awesome|great|cool|nice)\b/.test(t)) return { text: pick(['You’re welcome! ☁️', 'Anytime — I’m always floating around.', 'My pleasure! ✨', 'Happy to help, cloud-friend.']) };
       if (/^(bye|goodbye|see you|cya|good night|gn)\b/.test(t)) return { text: pick(['Farewell! May your skies stay clear. ☀️', 'Bye! I’ll be here, drifting.', 'Good night! 🌙 Dream in cumulus.']) };
       if (/how are you|how'?s it going|how do you feel|what'?s up\b|^sup$/.test(t)) return { text: pick(['Light, fluffy and 100% water vapor. Thanks for asking! ☁️', 'Feeling electric! ⚡ There’s a storm of ideas up here.', 'Drifting peacefully. How are *you*?', 'Couldn’t be better — the forecast is all sunshine.']) };
@@ -75,6 +76,8 @@
       if (/(i'?m|i am|feeling) (sad|down|depressed|lonely|tired|stressed|anxious|bored)/.test(t)) { const mood = t.match(/(sad|down|depressed|lonely|tired|stressed|anxious|bored)/)[1]; if (mood === 'bored') return { text: 'Bored? Not on my watch! 🎮 Try a game, or let me tell you something amazing.', chips: ['Open Solitaire', 'Tell me a fun fact', 'Tell me a story', 'Open Fireworks'] }; return { text: `I’m sorry you’re feeling ${mood}. 💙 Even the stormiest clouds pass. Take a deep breath — in for 4, hold for 4, out for 4. Want a joke, a calming starfield, or a focus timer?`, chips: ['Tell me a joke', 'Start the starfield screensaver', 'Open Focus Timer', 'Compliment me'] }; }
       if (/meaning of life|answer to (life|everything)/.test(t)) return { text: '42. Obviously. 🌌 (Also: kindness, curiosity and good snacks.)' };
       if (/are you (real|alive|human|sentient|an? ai|chatgpt)/.test(t)) return { text: 'I’m a cloud of clever rules living inside Cirrus Linux, with a window to Wikipedia. Not human, not magic — but I *do* sparkle. ✨' };
+      // --- extended skills: memory, follow-ups, offline facts, maths, dates, system info, live data ---
+      { const sk = await OS.cumulo.skills(t, text, st); if (sk) return sk; }
       // --- OS actions ---
       if ((m = /^(?:open|launch|start|run|show)\s+(?:me\s+)?(?:the\s+)?(.+?)$/.exec(t)) && !/^(command|a timer|timer)/.test(m[1])) {
         if (/screensaver|starfield/.test(m[1])) { setTimeout(() => OS.screensaver.start(/starfield/.test(m[1]) ? 'starfield' : OS.settings.saverStyle), 400); return { text: 'Dimming the lights… 🌌 Move the mouse to come back.' }; }
@@ -148,23 +151,13 @@
       if (/roast me|insult me/.test(t)) return { text: '🔥 ' + pick(ROASTS) };
       if (/\b(sing|song)\b/.test(t) && /sing/.test(t)) return { text: '🎤 ♪ I’m a little cloud, fluffy and stout, here is my thunder, here is my spout… ♪ ⛈️' };
       if (/^dance|can you dance/.test(t)) { OS.confetti(80); return { text: '💃🕺 *does the cumulus shuffle* ☁️☁️☁️' }; }
-      if (/^(will|should|am|is|are|can|could|does|do|did|would|shall)\s+(i|we|my|it|he|she|they|this|you)\b/.test(t)) return { text: `🎱 The Magic Cloud says: **${pick(BALL)}**`, md: true };
+      if (/^(will|should|am|is|are|can|could|does|do|did|would|shall)\s+(i|we|my|you)\b/.test(t)) return { text: `🎱 The Magic Cloud says: **${pick(BALL)}**`, md: true };
       // dictionary
       if ((m = /^(?:define|definition of|meaning of|what does (.+?) mean|dictionary)\s*(.*)$/.exec(t))) { const word = (m[1] || m[2] || '').replace(/^(the word )/, '').trim(); if (word) { try { const r = await fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${encodeURIComponent(word)}`); if (!r.ok) throw new Error('nf'); const j = await r.json(); const e = j[0]; const defs = e.meanings.slice(0, 3).map((mm) => `• *${mm.partOfSpeech}* — ${esc(mm.definitions[0].definition)}`).join('\n'); return { text: `📖 **${esc(e.word)}** ${e.phonetic ? esc(e.phonetic) : ''}\n${defs}`, md: true }; } catch (er) { /* fall through to Wikipedia */ } } }
-      // knowledge via Wikipedia
-      let topic = null;
-      if ((m = /^(?:who|what|where|when|which) (?:is|was|are|were|'s)\s+(?:a |an |the )?(.+)$/.exec(t))) topic = m[1];
-      else if ((m = /^(?:tell me (?:about|something about)|what do you know about|explain|describe|search (?:for )?|look up|wiki(?:pedia)?)\s+(?:a |an |the )?(.+)$/.exec(t))) topic = m[1];
-      else if ((m = /^(?:who|what) (?:invented|discovered|created|wrote|painted|founded) (.+)$/.exec(t))) topic = m[1];
-      else if (t.split(' ').length <= 4 && !/[?]/.test(text) && /^[a-z0-9 .'-]+$/.test(t)) topic = t;
-      if (topic) {
-        topic = topic.replace(/\?$/, '').trim();
-        if (/^(you|your|cumulo|cirrus( linux)?)$/.test(topic)) return { text: 'Cirrus Linux is the cozy cloud-powered OS you’re using right now — and I’m Cumulo, its resident oracle. ☁️ Try “what can you do?”' };
-        try { const j = await wiki(topic); if (j) { const ex = j.extract.length > 700 ? j.extract.slice(0, 700).replace(/\s+\S*$/, '') + '…' : j.extract; return { text: `${pick(OPENERS)}\n\n**${esc(j.title)}** — ${esc(ex)}`, md: true, img: j.thumbnail && j.thumbnail.source, actions: [act('Read more', () => OS.wm.open('browser', { url: j.content_urls ? j.content_urls.mobile.page : `https://en.m.wikipedia.org/wiki/${encodeURIComponent(j.title)}` }))] }; } } catch (e) { return { text: '🌩️ My crystal ball (the internet) seems to be offline. Knowledge questions need a connection — but I can still do maths, jokes, timers and control your computer!' }; }
-        return { text: `Hmm, even the clouds are unsure about “${esc(topic)}”. 🌫️ Want me to search the web?`, actions: [act('Search the web', () => OS.wm.open('browser', { url: topic }))] };
-      }
+      // knowledge: Wikipedia question answering, instant answers and web search
+      const k = await OS.cumulo.know(t, text, st, OPENERS); if (k) return k;
       // fallback
-      return { text: pick([`${pick(OPENERS)} …but this one is beyond even my fluffy wisdom. Try rephrasing, or ask me “what can you do?”`, 'Interesting! I don’t have an answer for that yet. Try asking “who is…”, “what is…”, “weather in…”, or “open…”.', 'My vapors are confused. 🌫️ Want a joke instead?']), chips: ['What can you do?', 'Tell me a joke', 'Tell me a fun fact'] };
+      return { text: pick([`${pick(OPENERS)} …but this one is beyond even my fluffy wisdom. Try rephrasing, or ask me “what can you do?”`, 'Interesting! Ask me a question (who, what, when, where, why, how), tell me to do something on your computer, or just chat.', 'My vapors are confused. 🌫️ Want a joke instead?']), chips: ['What can you do?', 'Tell me a joke', 'Tell me a fun fact'] };
     }
     return { answer };
   }
@@ -186,7 +179,7 @@
         log.appendChild(el); log.scrollTop = log.scrollHeight;
       }
       function add(who, r) { bubble(who, r); hist.push({ who, text: r.text, img: r.img }); save(); if (who === 'bot' && speak && window.speechSynthesis) { speechSynthesis.cancel(); const u = new SpeechSynthesisUtterance(r.text.replace(/[*_`#>•]/g, '').replace(/[\u{1F300}-\u{1FAFF}☀-➿]/gu, '')); u.volume = OS.settings.volume / 100; u.pitch = 1.15; speechSynthesis.speak(u); } }
-      function chips(list) { chipsEl.innerHTML = ''; (list || ['What can you do?', 'Tell me a joke', 'Weather today', 'Who was Marie Curie?', 'Dark mode', 'Tell me a riddle']).forEach((c) => { const b = OS.el(`<button class="chip">${esc(c)}</button>`); b.onclick = () => ask(c); chipsEl.appendChild(b); }); }
+      function chips(list) { chipsEl.innerHTML = ''; (list || ['What can you do?', 'Why is the sky blue?', 'Weather today', 'Latest news', 'Days until Christmas', 'Tell me a joke']).forEach((c) => { const b = OS.el(`<button class="chip">${esc(c)}</button>`); b.onclick = () => ask(c); chipsEl.appendChild(b); }); }
       async function ask(q) {
         q = (q || '').trim(); if (!q || busy) return; inp.value = ''; add('me', { text: q }); busy = true;
         const typing = OS.el('<div class="cu-msg bot typing"><span class="cu-av">☁️</span><div class="cu-b"><i></i><i></i><i></i></div></div>'); log.appendChild(typing); log.scrollTop = log.scrollHeight; $('.cu-orb').classList.add('think');

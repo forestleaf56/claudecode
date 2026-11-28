@@ -240,7 +240,7 @@
         if (this.funcs[name]) { let c = 0; for (const l of this.funcs[name]) c = await this.run(l, ctx.term); return c; }
         let fn = CMDS[name];
         // scripts / executables by path
-        if (!fn && (name.includes('/'))) { const p = ctx.path(name); if (OS.fs.isFile(p)) return await CMDS.sh(Object.assign({}, ctx, { args: [p, ...ctx.args] })); }
+        if (!fn && (name.includes('/'))) { const p = ctx.path(name); if (OS.fs.isFile(p) && OS.runners && OS.runners.isBinary(OS.fs.read(p))) return await OS.runners.runBinary(p, ctx); if (OS.fs.isFile(p)) return await CMDS.sh(Object.assign({}, ctx, { args: [p, ...ctx.args] })); }
         // GUI app launchers
         if (!fn) { const app = Shell.appAlias(name); if (app) { let a = app; if (ctx.args.includes('--writer')) a = 'writer'; else if (ctx.args.includes('--calc')) a = 'sheets'; else if (ctx.args.includes('--impress')) a = 'slides'; const f = ctx.args.find((x) => !x.startsWith('-')); if (f && a === 'office' && OS.fs.exists(ctx.path(f))) { OS.desktop.openPath(ctx.path(f)); return 0; } OS.wm.open(a, f ? { path: ctx.path(f), url: f } : {}); return 0; } }
         if (!fn) {
@@ -540,7 +540,7 @@
     return CMDS[sub.name](sub);
   });
   def('su', 'switch user', (ctx) => { ctx.err('su: Authentication failure (use sudo)\n'); return 1; });
-  def('passwd', 'change password', async (ctx) => { const cur = OS.settings.password; if (cur) { const c = await ctx.readLine('Current password: ', true); if (c !== cur) { ctx.err('passwd: Authentication token manipulation error\n'); return 1; } } const a = await ctx.readLine('New password: ', true); const b = await ctx.readLine('Retype new password: ', true); if (a !== b) { ctx.err('Sorry, passwords do not match.\n'); return 1; } OS.set('password', a || ''); ctx.println('passwd: password updated successfully'); });
+  def('passwd', 'change password', async (ctx) => { const cur = OS.settings.password; if (cur) { const c = await ctx.readLine('Current password: ', true); if (c !== cur) { ctx.err('passwd: Authentication token manipulation error\n'); return 1; } } const a = await ctx.readLine('New password: ', true); const b = await ctx.readLine('Retype new password: ', true); if (a !== b) { ctx.err('Sorry, passwords do not match.\n'); return 1; } if (!a || a.length < 4) { ctx.err('BAD PASSWORD: The password is shorter than 4 characters\npasswd: Authentication token manipulation error\n'); return 1; } OS.set('password', a); await OS.fs.applyAccount({ user: OS.settings.username, fullname: OS.settings.fullname, host: OS.settings.hostname, password: a }); ctx.println('passwd: password updated successfully'); });
   def('open xdg-open gio', 'open file with default app', (ctx) => { const t = ctx.args[ctx.name === 'gio' ? 1 : 0] || '.'; if (/^https?:\/\//.test(t)) { OS.wm.open('browser', { url: t }); return; } const p = ctx.path(t); if (!OS.fs.exists(p)) { ctx.err(`${ctx.name}: ${t}: No such file\n`); return 1; } OS.desktop.openPath(p); });
   def('lock', 'lock screen', () => OS.desktop.lock());
   def('shutdown poweroff halt', 'power off', async (ctx) => { if (!needRoot(ctx, 'shutdown')) { ctx.err('Try: sudo shutdown now\n'); return 1; } ctx.println('Broadcast message: The system will power off now!'); await OS.sleep(800); OS.desktop.shutdown(); });
@@ -836,8 +836,12 @@
   }
   def('python3 python', 'Python interpreter (subset)', async (ctx) => {
     if (ctx.args[0] === '--version' || ctx.args[0] === '-V') return ctx.println('Python 3.12.3');
+    const real = OS.runners && !OS.store.get('runner-offline', false) && !ctx.args.includes('--lite');
+    if (real && (ctx.args[0] === '-c' || (ctx.args[0] && !ctx.args[0].startsWith('-')))) { const isC = ctx.args[0] === '-c'; const src = isC ? ctx.args.slice(1).join(' ') : OS.fs.isFile(ctx.path(ctx.args[0])) ? OS.fs.read(ctx.path(ctx.args[0])) : null; if (src == null) { ctx.err(`python3: can't open file '${ctx.args[0]}': [Errno 2] No such file or directory\n`); return 2; } try { return await OS.runners.runPython(src, ctx, isC ? '<string>' : ctx.args[0]); } catch (e) { ctx.println(`${C.yellow}⚠ Real Python unavailable (${e.message}); using Cirrus mini-Python.${C.r}`); } }
     if (ctx.args[0] === '-c') { try { pyRun(ctx.args.slice(1).join(' '), ctx); } catch (e) { ctx.err(`Traceback (most recent call last):\n  File "<string>", line 1\n${e.name === 'ReferenceError' ? 'NameError' : 'Error'}: ${e.message}\n`); return 1; } return; }
+    if (ctx.args[0] && ctx.args[0].startsWith('-') && ctx.args[0] !== '-c') ctx.args = ctx.args.slice(1);
     if (ctx.args[0]) { try { pyRun(OS.fs.read(ctx.path(ctx.args[0])), ctx); } catch (e) { ctx.err(`Traceback (most recent call last):\n  File "${ctx.args[0]}"\n${e.name === 'ReferenceError' ? 'NameError' : e.name === 'SyntaxError' ? 'SyntaxError' : 'Error'}: ${e.message}\n`); return 1; } return; }
+    if (real) { try { const py = await OS.runners.loadPython((m) => ctx.println(C.gray + m + C.r)); py.setStdout({ batched: (t) => ctx.out(t + '\n') }); py.setStderr({ batched: (t) => ctx.err(C.red + t + C.r + '\n') }); py.runPython('import code, sys\n__cirrus_con = code.InteractiveConsole()'); const con = py.globals.get('__cirrus_con'); ctx.println(`Python ${py.runPython('import sys; sys.version.split()[0]')} (Pyodide) on cirrus\nType "help", "copyright", "credits" or "license" for more information.`); let more = false; for (;;) { const l = await ctx.readLine(more ? '... ' : '>>> '); if (l == null || /^(exit|quit)\(\)$/.test(l.trim())) break; try { more = con.push(l); } catch (e) { ctx.err(String(e.message || e) + '\n'); more = false; } } con.destroy && con.destroy(); return; } catch (e) { ctx.println(`${C.yellow}⚠ Real Python unavailable (${e.message}); using Cirrus mini-Python.${C.r}`); } }
     ctx.println('Python 3.12.3 (cirrus) [GCC 13.2.0] on linux\nType "exit()" to quit. (Cirrus mini-Python: print, math, loops, if, def)');
     let buf = [];
     for (;;) {

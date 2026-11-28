@@ -103,7 +103,18 @@
   /* ======================= sample project ======================= */
   function seed() {
     const root = OS.home() + '/Projects/hello-world';
-    if (OS.fs.exists(root)) return root;
+    const X = {
+      'hello.c': `#include <stdio.h>\n\nint square(int x) {\n    return x * x;\n}\n\nint main(void) {\n    printf("Hello from C!\\n");\n    for (int i = 1; i <= 5; i++) {\n        printf("%d squared is %d\\n", i, square(i));\n    }\n    return 0;\n}\n`,
+      'hello.cpp': `#include <iostream>\n#include <vector>\n#include <string>\nusing namespace std;\n\nint main() {\n    vector<string> planets = {"Mercury", "Venus", "Earth"};\n    for (const auto& p : planets) {\n        cout << "Hello, " << p << "!" << endl;\n    }\n    cout << "Total: " << planets.size() << endl;\n    return 0;\n}\n`,
+      'Program.cs': `using System;\n\nclass Program {\n    static void Main(string[] args) {\n        string name = "Cirrus";\n        Console.WriteLine($"Hello from C#, {name}!");\n        for (int i = 0; i < 3; i++) {\n            Console.WriteLine("Line {0}", i + 1);\n        }\n    }\n}\n`,
+      'hello.rb': `# Ruby\ndef greet(name)\n  "Hello, #{name}!"\nend\n\nputs greet("Ruby")\n[1, 2, 3].each do |n|\n  puts "#{n} x 10 = #{n * 10}"\nend\n`,
+      'hello.php': `<?php\n$names = ["Ada", "Linus", "Grace"];\nforeach ($names as $name) {\n    echo "Hello, $name!\\n";\n}\necho "Count: " . count($names) . "\\n";\n`,
+      'hello.lua': `-- Lua\nlocal fruits = {"apple", "banana", "cherry"}\nfor i, f in ipairs(fruits) do\n  print(i, f)\nend\nprint("Total: " .. #fruits)\n`,
+      'main.kt': `fun main() {\n    val langs = listOf("Kotlin", "Java", "Scala")\n    for (l in langs) {\n        println("Hello, $l!")\n    }\n    for (i in 1..3) println("Count \${i * 2}")\n}\n`,
+      'main.swift': `let names = ["Swift", "SwiftUI"]\nfor name in names {\n    print("Hello, \\(name)!")\n}\nfor i in 1...3 {\n    print("Number \\(i)")\n}\n`,
+    };
+    if (OS.fs.exists(root)) { if (!OS.store.get('code-seed2')) { OS.store.set('code-seed2', 1); Object.entries(X).forEach(([n, c]) => { const p = OS.fs.join(root, n); if (!OS.fs.exists(p)) OS.fs.write(p, c); }); } return root; }
+    OS.store.set('code-seed2', 1);
     const F = {
       'README.md': `# Hello World 👋\n\nA tiny multi-language project for **Nimbus Code**.\n\n- Press **F5** (or the ▶ button) to run the current file\n- \`index.html\` opens a live preview\n- \`app.js\`, \`main.py\` and \`utils.ts\` run in the Output panel\n- \`script.sh\` runs in the integrated terminal\n\n> Tip: press **Ctrl+P** to quickly open files and **Ctrl+Shift+P** for all commands.\n`,
       'index.html': `<!doctype html>\n<html lang="en">\n<head>\n  <meta charset="utf-8">\n  <title>Hello from Nimbus Code</title>\n  <link rel="stylesheet" href="style.css">\n</head>\n<body>\n  <main class="card">\n    <h1>Hello, world!</h1>\n    <p>Edit <code>index.html</code> and watch this preview update live.</p>\n    <button id="btn">Click me</button>\n    <p id="out"></p>\n  </main>\n  <script>\n    let n = 0;\n    document.getElementById('btn').onclick = () => {\n      document.getElementById('out').textContent = \`Clicked \${++n} time\${n > 1 ? 's' : ''}!\`;\n    };\n  </script>\n</body>\n</html>\n`,
@@ -120,12 +131,13 @@
       'query.sql': `-- SQL example\nSELECT name, COUNT(*) AS orders\nFROM customers c\nJOIN orders o ON o.customer_id = c.id\nWHERE o.created_at > '2024-01-01'\nGROUP BY name\nORDER BY orders DESC\nLIMIT 10;\n`,
       'config.yml': `# YAML config\napp:\n  name: hello-world\n  debug: true\n  port: 8080\nfeatures:\n  - preview\n  - terminal\n`,
     };
+    Object.assign(F, X);
     OS.fs.mkdir(root, { p: true }); Object.entries(F).forEach(([n, c]) => OS.fs.write(OS.fs.join(root, n), c));
     return root;
   }
   /* ======================= app ======================= */
   OS.registerApp({
-    id: 'code', name: 'Nimbus Code', icon: 'code', color: ['#2f80ed', '#1b4fb3'], cat: 'Development', w: 1180, h: 740, desc: 'Code editor', keywords: 'vscode visual studio code ide editor programming javascript python html',
+    id: 'code', name: 'Nimbus Code', icon: 'code', color: ['#2f80ed', '#1b4fb3'], cat: 'Development', w: 1180, h: 740, single: true, desc: 'Code editor', keywords: 'vscode visual studio code ide editor programming javascript python html',
     launch(win, args) {
       const set = Object.assign({ theme: 'Nimbus Dark', font: 13.5, tab: 2, wrap: false, auto: true, autosave: false, minimap: false, side: 240 }, OS.store.get('code-settings', {}));
       let root = args.folder || OS.store.get('code-root') || seed(); if (!OS.fs.isDir(root)) root = seed();
@@ -134,9 +146,9 @@
         <div class="cd-act">${[['explorer', 'folder', 'Explorer (Ctrl+Shift+E)'], ['search', 'search', 'Search (Ctrl+Shift+F)'], ['run', 'play', 'Run'], ['ext', 'grid', 'Extensions'], ['settings', 'gear', 'Settings']].map(([v, i, t]) => `<button class="cd-ab" data-view="${v}" title="${t}">${gl(i)}</button>`).join('')}</div>
         <div class="cd-side"><div class="cd-sidehead"></div><div class="cd-sidebody"></div></div>
         <div class="cd-center">
-          <div class="cd-tabs"></div><div class="cd-crumbs"></div>
+          <div class="cd-tabbar"><div class="cd-tabs"></div><div class="cd-tacts"><button class="cd-tbtn run" data-a="run" title="Run (F5)">${gl('play')}<span>Run</span></button><button class="cd-tbtn" data-a="toggleterm" title="Toggle terminal (Ctrl+\`)">${gl('terminal')}</button></div></div><div class="cd-crumbs"></div>
           <div class="cd-split"><div class="cd-edwrap"><div class="cd-gutter"><div class="cd-gin"></div></div><div class="cd-code"><div class="cd-curline"></div><pre class="cd-hl"></pre><textarea class="cd-ta" spellcheck="false" autocapitalize="off" autocomplete="off" autocorrect="off" wrap="off"></textarea><div class="cd-ac" hidden></div></div><div class="cd-welcome"></div><div class="cd-find" hidden><input placeholder="Find" data-f="q"><input placeholder="Replace" data-f="r"><button class="ibtn" data-f="prev" title="Previous">${gl('up')}</button><button class="ibtn" data-f="next" title="Next (Enter)">${gl('down')}</button><button class="btn sm" data-f="rep">Replace</button><button class="btn sm" data-f="all">All</button><span data-f="n" class="small"></span><button class="ibtn" data-f="x">${gl('x')}</button></div></div><div class="cd-preview" hidden><div class="cd-phead"><span></span><button class="ibtn" data-a="closeprev">${gl('x')}</button></div><iframe sandbox="allow-scripts allow-modals allow-forms allow-popups"></iframe></div></div>
-          <div class="cd-panel" hidden><div class="cd-ptabs">${[['problems', 'Problems'], ['output', 'Output'], ['terminal', 'Terminal']].map(([v, l]) => `<button class="cd-ptab" data-p="${v}">${l}</button>`).join('')}<span class="spacer"></span><button class="ibtn" data-a="clearout" title="Clear">${gl('eraser')}</button><button class="ibtn" data-a="closepanel" title="Close panel">${gl('x')}</button></div><div class="cd-pbody"><div class="cd-out" data-pp="output"></div><div class="cd-probs" data-pp="problems"></div><div class="cd-term" data-pp="terminal"></div></div></div>
+          <div class="cd-panel"><div class="cd-ptabs">${[['problems', 'Problems'], ['output', 'Output'], ['terminal', 'Terminal']].map(([v, l]) => `<button class="cd-ptab" data-p="${v}">${l}</button>`).join('')}<span class="spacer"></span><button class="ibtn" data-a="clearout" title="Clear">${gl('eraser')}</button><button class="ibtn" data-a="closepanel" title="Close panel">${gl('x')}</button></div><div class="cd-pbody"><div class="cd-out" data-pp="output"></div><div class="cd-probs" data-pp="problems"></div><div class="cd-term" data-pp="terminal"></div></div></div>
         </div>
         <div class="cd-status"><span data-s="branch">${gl('code')} main</span><span data-s="errs"></span><span class="spacer"></span><span data-s="pos"></span><span data-s="tab" class="hide-m"></span><span class="hide-m">UTF-8</span><span data-s="lang" class="cd-click"></span><span data-s="theme" class="cd-click hide-m">${gl('palette')}</span></div>
         <div class="cd-palette" hidden><input placeholder="Search files by name (type > for commands)"><div class="cd-plist"></div></div>
@@ -270,22 +282,23 @@
       const outWrite = (t, cls = '') => { const d = document.createElement('div'); d.className = 'cd-ol ' + cls; d.textContent = t; out.appendChild(d); out.scrollTop = out.scrollHeight; };
       function showPanel(p, noFocus) { panel = p; panelOpen = true; OS.store.set('code-panel', p); win.body.querySelectorAll('.cd-ptab').forEach((b) => b.classList.toggle('on', b.dataset.p === p)); win.body.querySelectorAll('[data-pp]').forEach((d) => (d.hidden = d.dataset.pp !== p)); applySet(); if (p === 'terminal') ensureTerm().then(() => { if (!noFocus) setTimeout(() => $('.cd-term .inl input')?.focus(), 60); }); }
       const stripTS = (src) => src.replace(/^\s*(export\s+)?interface\s+\w+[^{]*\{[\s\S]*?\n\}\s*$/gm, '').replace(/^\s*(export\s+)?type\s+\w+\s*=[^;]+;\s*$/gm, '').replace(/\b(public|private|protected|readonly)\s+/g, '').replace(/(\w|\))\s*:\s*[A-Za-z_][\w<>\[\]|&., ]*?(\[\])?(?=\s*[,)=;{]|\s*=>)/g, '$1').replace(/\bas\s+[A-Za-z_][\w<>\[\]]*/g, '').replace(/function\s+(\w+)\s*<[^>]+>/g, 'function $1').replace(/!\./g, '.');
+      const RUNCMD = { javascript: (f) => `node ${f}`, typescript: (f) => `ts-node ${f}`, python: (f) => `python3 ${f}`, shell: (f) => `bash ${f}`, c: (f, b) => `gcc ${f} -o ${b} && ./${b}`, cpp: (f, b) => `g++ ${f} -o ${b} && ./${b}`, java: (f) => `java ${f}`, csharp: (f, b) => `csc ${f} && mono ${b}.exe`, go: (f) => `go run ${f}`, rust: (f, b) => `rustc ${f} && ./${b}`, kotlin: (f, b) => `kotlinc ${f} -include-runtime -d ${b}.jar && java -jar ${b}.jar`, swift: (f) => `swift ${f}`, php: (f) => `php ${f}`, ruby: (f) => `ruby ${f}`, lua: (f) => `lua ${f}`, sql: (f) => `sqlite3 :memory: < ${f}` };
+      const q = (x) => (/^[\w.@+-]+$/.test(x) ? x : `"${x.replace(/(["\\$`])/g, '\\$1')}"`);
       async function run() {
-        if (!active) return; if (dirty(active) && active.path) await saveTab(active);
-        const L = active.lang, src = ta.value, name = active.name;
+        if (!active) { OS.notify('Nothing to run', 'Open a file first.', { app: 'code' }); return; }
+        stash(); if (dirty(active) && active.path) await saveTab(active);
+        const L = active.lang, src = ta.value;
         if (L === 'html' || L === 'markdown' || L === 'css') { openPreview(); return; }
-        if (L === 'shell') { showPanel('terminal'); await ensureTerm(); setTimeout(() => termRun(active.path ? `cd "${OS.fs.dirname(active.path)}" && sh "${active.name}"` : `sh -c '${src.replace(/'/g, "'\\''")}'`), 100); return; }
-        showPanel('output'); outWrite(`▶ Running ${name} (${LANGS[L].name}) · ${new Date().toLocaleTimeString()}`, 'cd-run');
-        const t0 = performance.now();
-        if (L === 'javascript' || L === 'typescript' || L === 'json') {
+        if (L === 'json' || !RUNCMD[L]) {
+          showPanel('output'); out.innerHTML = ''; outWrite(`▶ ${active.name} (${LANGS[L].name}) · ${new Date().toLocaleTimeString()}`, 'cd-run');
           if (L === 'json') { try { const o = JSON.parse(src); outWrite('✔ Valid JSON: ' + (Array.isArray(o) ? `array with ${o.length} items` : `object with ${Object.keys(o).length} keys`), 'ok'); } catch (e) { outWrite('✖ ' + e.message, 'err'); } return; }
-          const fmt = (a) => a.map((x) => (typeof x === 'string' ? x : (() => { try { return JSON.stringify(x); } catch (e) { return String(x); } })())).join(' ');
-          const con = { log: (...a) => outWrite(fmt(a)), info: (...a) => outWrite(fmt(a)), warn: (...a) => outWrite(fmt(a), 'warn'), error: (...a) => outWrite(fmt(a), 'err'), table: (x) => outWrite(JSON.stringify(x, null, 2)) };
-          try { const code = L === 'typescript' ? stripTS(src) : src; const r = new Function('console', 'require', 'process', `"use strict";\n${code}`)(con, (m) => { throw new Error(`Cannot find module '${m}' (no npm packages in the browser)`); }, { argv: ['node', name], env: {}, platform: 'linux' }); if (r && r.then) await r; outWrite(`✔ Finished in ${(performance.now() - t0).toFixed(1)} ms`, 'ok'); } catch (e) { outWrite(`✖ ${e.name}: ${e.message}`, 'err'); }
-          return;
+          outWrite(`ℹ ${LANGS[L].name} is a data/config format — nothing to run. Syntax highlighting and checks are available.`, 'warn'); return;
         }
-        if (L === 'python') { const ctx = { out: (t) => String(t).split('\n').forEach((l, i, a) => { if (i < a.length - 1 || l) outWrite(l); }), println: (t) => outWrite(String(t)), err: (t) => outWrite(String(t), 'err') }; try { OS.shell.pyRun(src, ctx); outWrite(`✔ Finished in ${(performance.now() - t0).toFixed(1)} ms (Cirrus mini-Python)`, 'ok'); } catch (e) { outWrite(`✖ ${e.name === 'ReferenceError' ? 'NameError' : e.name}: ${e.message}`, 'err'); outWrite('Note: Cirrus runs a small subset of Python (print, variables, lists, loops, if, def).', 'warn'); } return; }
-        outWrite(`ℹ ${LANGS[L].name} needs a compiler or runtime that isn't available in the browser.`, 'warn'); outWrite('  Editing, syntax highlighting, bracket checking and search are fully supported.', 'warn'); outWrite('  Runnable here: JavaScript, TypeScript, Python, Shell, HTML/CSS/Markdown preview, JSON validation.', 'warn');
+        let path = active.path;
+        if (!path) { const dir = '/tmp/nimbus'; OS.fs.mkdir(dir, { p: true }); const ext = (LANGS[L].ext || ['txt'])[0]; path = OS.fs.join(dir, /\.\w+$/.test(active.name) ? active.name : `${active.name.replace(/\W+/g, '_')}.${ext}`); OS.fs.write(path, src); }
+        const name = OS.fs.basename(path), base = name.replace(/\.[^.]+$/, '');
+        showPanel('terminal', true); await ensureTerm();
+        setTimeout(() => { termRun(`cd ${q(OS.fs.dirname(path))} && ${RUNCMD[L](q(name), q(base))}`); setTimeout(() => $('.cd-term .inl input')?.focus(), 80); }, 120);
       }
       function openPreview() { if (!active) return; preview = { tab: active }; $('.cd-preview').hidden = false; ROOT.classList.add('previewing'); refreshPreview(); }
       let pvT = null; const refreshPreviewSoon = () => { clearTimeout(pvT); pvT = setTimeout(refreshPreview, 400); };
@@ -334,7 +347,7 @@
           q.oninput = () => { clearTimeout(t); t = setTimeout(doSearch, 250); }; body.querySelector('[data-cs]').onchange = doSearch; setTimeout(() => q.focus(), 30);
         } else if (view === 'run') {
           head.innerHTML = '<span>RUN AND DEBUG</span>';
-          body.innerHTML = `<div class="pad col"><button class="btn primary" data-r="run">${gl('play')}Run current file (F5)</button><button class="btn" data-r="preview">${gl('eye')}Open preview</button><button class="btn" data-r="term">${gl('terminal')}New terminal</button><div class="small muted">Run support:<br>• JavaScript & TypeScript → Output panel<br>• Python → Output panel (mini-Python)<br>• Shell → integrated terminal<br>• HTML, CSS, Markdown → live preview<br>• JSON → validation<br>• Other languages → editing & highlighting</div></div>`;
+          body.innerHTML = `<div class="pad col"><button class="btn primary" data-r="run">${gl('play')}Run current file (F5)</button><button class="btn" data-r="preview">${gl('eye')}Open preview</button><button class="btn" data-r="term">${gl('terminal')}New terminal</button><div class="small muted">Run support (integrated terminal):<br>• JavaScript, TypeScript, Shell — run locally<br>• Python — real Python 3 (Pyodide) online, mini-Python offline<br>• C, C++, Java, C#, Go, Rust, Kotlin, Swift, PHP, Ruby, Lua, Perl, SQL — real compilers in the cloud when online; simple programs also run offline<br>• HTML, CSS, Markdown — live preview<br>• JSON — validation</div></div>`;
           body.querySelector('[data-r=run]').onclick = run; body.querySelector('[data-r=preview]').onclick = openPreview; body.querySelector('[data-r=term]').onclick = () => showPanel('terminal');
         } else if (view === 'ext') {
           head.innerHTML = '<span>EXTENSIONS</span>';
@@ -391,6 +404,8 @@
       /* ---------- wiring ---------- */
       win.body.querySelectorAll('.cd-ab').forEach((b) => (b.onclick = () => { if (view === b.dataset.view && sideOpen) sideOpen = false; else { view = b.dataset.view; sideOpen = true; } applySet(); renderSide(); }));
       win.body.querySelectorAll('.cd-ptab').forEach((b) => (b.onclick = () => showPanel(b.dataset.p)));
+      $('[data-a=run]').onclick = () => run();
+      $('[data-a=toggleterm]').onclick = () => { if (panelOpen && panel === 'terminal') { panelOpen = false; applySet(); } else showPanel('terminal'); };
       $('[data-a=closepanel]').onclick = () => { panelOpen = false; applySet(); };
       $('[data-a=clearout]').onclick = () => { if (panel === 'output') out.innerHTML = ''; };
       $('[data-s=lang]').onclick = () => COMMANDS().find((c) => c.label.startsWith('Change Language')).run();

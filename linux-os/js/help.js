@@ -66,7 +66,13 @@ On phones every window opens full-screen; switch between them with the overview 
 Click the network/volume/battery icons for **quick settings**: dark style, night light, do-not-disturb, fullscreen, screenshot, volume and brightness. Notifications are listed there too. Click the **clock** for a calendar.
 
 ## Locking and power
-Open the app menu and use the buttons at the bottom right to **lock**, **log out**, **restart** or **shut down**. You can set a password in *Settings → Users*.
+Open the app menu and use the buttons at the bottom right to **lock**, **log out**, **restart** or **shut down**.
+
+## Your account
+The first time Cirrus starts it asks for your **name, user name, password and computer name**. Your home folder becomes \`/home/<user name>\`, and your password is needed every time you log in or unlock, and for \`sudo\`. Change any of it in *Settings → Users* (changing the user name renames your home folder and updates every file that pointed to it).
+
+## Starting up
+Cirrus boots like a real PC: firmware check, boot menu (counts down from 5), kernel and service messages, then the splash screen. Press **Esc**, **Space** or tap to skip ahead. Choose *Boot log*, *Splash* or *Quick* in *Settings → Personalize*.
 `,
     '02 Files and Folders.md': `# Files and folders
 
@@ -167,7 +173,7 @@ sudo apt remove cowsay       # remove
 apt list --installed         # what's installed
 sudo apt upgrade             # install updates
 \`\`\`
-Installing and removing needs \`sudo\`. If you set a password in *Settings → Users*, sudo asks for it.
+Installing and removing needs \`sudo\`, which asks for your password.
 
 If you type a command that isn't installed, the terminal tells you which package provides it.
 
@@ -271,12 +277,27 @@ Cumulo is a cheerful cloud oracle that lives in your desktop. Open it from the a
 - “make a note: buy milk”, “find files named budget”
 - “run command neofetch”
 
-**Ask anything**
-- “who is Ada Lovelace?”, “what is a black hole?”, “tell me about Saturn” (Wikipedia, needs internet)
-- “define serendipity”
-- “weather in Tokyo”, “what time is it in New York?”
-- “what is 15% of 240?”, “sqrt(2)*10”
-- “convert 10 km to miles”, “72 f to c”
+**Ask anything** — Cumulo researches Wikipedia, instant answers and the web, and picks the sentence that answers your question
+- “how tall is the Eiffel Tower?”, “why is the sky blue?”, “who painted the Mona Lisa?”
+- follow-ups: “when was it built?”, “how old was he?”, “tell me more”
+- “define serendipity”, “synonyms for happy”, “rhymes with cat”
+- “weather in Tokyo”, “what time is it in New York?”, “latest news”, “news about space”
+- “translate good morning to Japanese”, “100 usd to eur”, “bitcoin price”
+
+**Offline knowledge**
+- capitals, currencies, languages and populations: “capital of Australia”, “what currency is used in Japan”
+- elements and planets: “symbol for gold”, “how many moons does Saturn have”
+- science: “speed of light”, “boiling point of water”, “age of the universe”
+
+**Maths and dates**
+- “what is 15% of 240?”, “sqrt(2)*10”, “solve 3x + 5 = 20”, “solve x^2 - 5x + 6 = 0”
+- “is 97 prime?”, “factorize 360”, “255 in binary”, “MCMXC in numbers”, “30!”, “average of 3, 8, 10”
+- “days until Christmas”, “what day was 1969-07-20?”, “is 2028 a leap year?”, “tip on 80 at 20%”
+- “convert 10 km to miles”, “72 f to c”, “generate a password”
+
+**About you and your computer**
+- “call me Captain”, “remember that my locker is 42”, “what do you remember?”, “forget everything”
+- “how much storage am I using?”, “battery”, “what's my IP?”, “how many apps do I have?”, “list files in Documents”
 - “how do I install apps?” — answers from these guides
 
 **Just for fun**
@@ -290,7 +311,7 @@ Cumulo is a cheerful cloud oracle that lives in your desktop. Open it from the a
 Tap 🎤 to speak (in browsers that support speech recognition) and the speaker button to have Cumulo read its answers aloud.
 
 ## Privacy
-Cumulo works on your device. Only knowledge, dictionary and weather questions are sent to public services (Wikipedia, a dictionary API, Open-Meteo).
+Cumulo runs on your device, and what it remembers about you stays on this device. Only questions that need live data are sent to public services: knowledge questions (Wikipedia, DuckDuckGo), definitions and synonyms, weather (Open-Meteo), exchange rates, crypto prices, translation and news.
 `,
     '08 Cumulus Office.md': `# Cumulus Office
 
@@ -334,12 +355,22 @@ A code editor with syntax highlighting for 20+ languages: JavaScript, TypeScript
 Press **F5** or the ▶ button:
 | Language | What happens |
 |---|---|
-| JavaScript / TypeScript | Runs, output in the Output panel |
-| Python | Runs with Cirrus mini-Python |
-| Shell | Runs in the integrated terminal |
+| Language | Command run in the terminal |
+|---|---|
+| JavaScript / TypeScript | \`node app.js\` / \`ts-node utils.ts\` (local) |
+| Python | \`python3 main.py\` — real Python 3 (Pyodide) when online, mini-Python offline |
+| Shell | \`bash script.sh\` |
+| C / C++ | \`gcc hello.c -o hello && ./hello\` / \`g++ …\` |
+| Java | \`java Main.java\` |
+| C# | \`csc Program.cs && mono Program.exe\` |
+| Go / Rust | \`go run main.go\` / \`rustc main.rs && ./main\` |
+| Kotlin / Swift | \`kotlinc …\` / \`swift main.swift\` |
+| PHP / Ruby / Lua / Perl | \`php\`, \`ruby\`, \`lua\`, \`perl\` |
+| SQL | \`sqlite3 :memory: < query.sql\` |
 | HTML / CSS / Markdown | Live preview beside the editor |
-| JSON | Validated |
-| Others | Edit and check only (no compiler in the browser) |
+| JSON | Validated in the Output panel |
+
+Compiled languages are built by real compilers on an online build service. Without internet, a built-in "lite" runner handles simple programs (printing, variables, loops, functions). Programs that read input ask for it in the terminal first. You can use the same commands yourself in any terminal, or run any file with \`run <file>\`.
 
 ## Handy shortcuts
 Ctrl+P quick open · Ctrl+Shift+P command palette · Ctrl+/ comment · Alt+↑/↓ move line · Shift+Alt+↓ duplicate line · Ctrl+D select next match · Ctrl+F find · Ctrl+G go to line · Ctrl+\` terminal · Ctrl+B sidebar.
@@ -539,8 +570,8 @@ Clearing browsing data, private/incognito windows and some phone browsers (for f
 `,
     '18 Troubleshooting and FAQ.md': `# Troubleshooting and FAQ
 
-**A website stays blank in the Browser.**
-Many sites (Google, YouTube, GitHub…) refuse to be shown inside another page. Use *Open in real browser* from the ⋮ menu. Wikipedia, OpenStreetMap and example.com work well.
+**A website doesn't look right in the Browser.**
+Many sites refuse to be shown inside another app, so the Browser's **Auto** mode loads them through a relay (*Compatible* mode) or as a clean *Reader* view. Use the mode button at the left of the address bar to switch between Auto, Direct, Compatible and Reader, and pin a mode per site. YouTube, Vimeo and Spotify links open in their players. Sites that need a login work best with *Open in real browser* from the ⋮ menu.
 
 **curl or wget says “blocked by CORS”.**
 Browsers only allow requests to servers that permit it. Try \`curl https://api.github.com/zen\` or \`curl https://httpbin.org/json\`.
@@ -552,7 +583,7 @@ Check the volume in quick settings and *Settings → Sound*. Phones need a tap o
 The terminal tells you which package to install, e.g. \`sudo apt install htop\`.
 
 **I forgot my password.**
-On the lock screen there is no recovery. Clear the site's data in your browser (this erases Cirrus) or import a backup.
+If you set a password hint, it appears after two wrong attempts. Otherwise there is no recovery: clear the site's data in your browser (this erases Cirrus and starts the account setup again) or import a backup.
 
 **The screen is too small / too big.**
 *Settings → Display → Text size*, or *Desktop & Panel → Mobile layout*.
@@ -574,7 +605,8 @@ Open **Help** from the app menu or the desktop, look in \`~/Documents/Help\`, or
   const helpDir = () => OS.home() + '/Documents/Help';
   OS.ensureHelpDocs = (force) => {
     const d = helpDir(); try { OS.fs.mkdir(d, { p: true }); } catch (e) { return; }
-    let n = 0; Object.entries(DOCS).forEach(([name, c]) => { const p = OS.fs.join(d, name); if (force || !OS.fs.exists(p)) { OS.fs.write(p, c); n++; } });
+    const upd = OS.store.get('help-ver', 1) < 2; if (upd) OS.store.set('help-ver', 2);
+    let n = 0; Object.entries(DOCS).forEach(([name, c]) => { const p = OS.fs.join(d, name); if (force || upd || !OS.fs.exists(p)) { OS.fs.write(p, c); n++; } });
     const ds = OS.home() + '/Desktop/Help & Guides.desktop'; if (!OS.store.get('help-desk') && OS.fs.isDir(OS.home() + '/Desktop')) { OS.store.set('help-desk', 1); if (!OS.fs.exists(ds)) OS.fs.write(ds, '[Desktop Entry]\nType=Application\nName=Help & Guides\nExec=help\n'); }
     return n;
   };

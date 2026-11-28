@@ -196,6 +196,25 @@
   fs.emptyTrash = () => { const t = node(TRASH()); if (t) { t.c = {}; changed(TRASH() + '/x'); } OS.store.set('trashinfo', {}); OS.emit('trash'); };
   fs.trashCount = () => { const t = node(TRASH()); return t ? Object.keys(t.c).length : 0; };
 
+  /* switch the whole system to a new user account: home folder, /etc files, paths inside files and app data */
+  fs.applyAccount = async ({ oldUser, user, fullname, host, password }) => {
+    if (oldUser && oldUser !== user) fs.renameHome(oldUser, user);
+    if (!node('/home/' + user)) { const h = node('/home'); h.c[user] = makeDefault(user).c.home.c[user]; }
+    const re = oldUser && oldUser !== user ? new RegExp('/home/' + oldUser.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '(?=[/\\s"\'`:;,)\\]}]|$)', 'g') : null;
+    if (re) {
+      (function walk(n, path) { if (path === '/proc') return; if (n.t === 'd') { for (const k in n.c) walk(n.c[k], path === '/' ? '/' + k : path + '/' + k); return; } if (typeof n.d === 'string' && !n.d.startsWith('data:') && n.d.length < 2e6 && re.test(n.d)) { re.lastIndex = 0; n.d = n.d.replace(re, '/home/' + user); } re.lastIndex = 0; })(root, '/');
+      try { for (let i = 0; i < localStorage.length; i++) { const k = localStorage.key(i); if (!k.startsWith('cirrus.') || k === 'cirrus.fs' || k === 'cirrus.settings') continue; const v = localStorage.getItem(k); if (v && v.includes('/home/' + oldUser)) localStorage.setItem(k, v.replace(re, '/home/' + user)); } } catch (e) {}
+    }
+    const hash = password ? '$6$cirrus$' + Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256', new TextEncoder().encode('cirrus:' + password)))).map((b) => b.toString(16).padStart(2, '0')).join('') : '!';
+    const day = Math.floor(Date.now() / 864e5);
+    const etc = node('/etc');
+    etc.c.passwd = F(`root:x:0:0:root:/root:/bin/bash\ndaemon:x:1:1:daemon:/usr/sbin:/usr/sbin/nologin\nmessagebus:x:100:102::/nonexistent:/usr/sbin/nologin\n${user}:x:1000:1000:${fullname || user},,,:/home/${user}:/bin/bash\n`);
+    etc.c.group = F(`root:x:0:\nadm:x:4:${user}\ncdrom:x:24:${user}\nsudo:x:27:${user}\naudio:x:29:${user}\nvideo:x:44:${user}\nplugdev:x:46:${user}\nusers:x:100:${user}\n${user}:x:1000:\n`);
+    etc.c.shadow = F(`root:*:${day}:0:99999:7:::\ndaemon:*:${day}:0:99999:7:::\n${user}:${hash}:${day}:0:99999:7:::\n`);
+    if (host) { etc.c.hostname = F(host + '\n'); etc.c.hosts = F(`127.0.0.1\tlocalhost\n127.0.1.1\t${host}\n::1\tlocalhost ip6-localhost\n`); }
+    const log = node('/var/log'); if (log) log.c['auth.log'] = F(`${new Date().toUTCString()} ${host || 'cirrus'} useradd[812]: new user: name=${user}, UID=1000, GID=1000, home=/home/${user}, shell=/bin/bash\n${new Date().toUTCString()} ${host || 'cirrus'} passwd[815]: password changed for ${user}\n`);
+    fs.saveNow(); OS.emit('fs', '/');
+  };
   /* rename home when username changes */
   fs.renameHome = (oldU, newU) => {
     const h = node('/home'); if (!h || !h.c[oldU] || h.c[newU]) return;

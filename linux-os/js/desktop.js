@@ -369,7 +369,7 @@
     lk = OS.el(`<div id="lock"><div class="lbg"></div><div class="lcontent">
       <div class="ltime"></div><div class="ldate"></div>
       <div class="avatar" style="background:${s.avatar}">${esc((s.fullname || s.username)[0].toUpperCase())}</div>
-      <div class="lname">${esc(s.fullname)}</div>
+      <div class="lname">${esc(s.fullname)}</div><div class="luser">${esc(s.username)}@${esc(s.hostname)}</div>
       <div class="lform">${s.password ? `<input type="password" placeholder="Password" autocomplete="current-password">` : ''}<button class="lbtn" title="Unlock">${gl('right')}</button></div>
       <div class="lerr"></div>
       ${s.password ? '' : '<div class="lhint">Press Enter or tap to unlock</div>'}
@@ -378,9 +378,9 @@
     document.body.appendChild(lk);
     const tick = () => { const d = new Date(); lk.querySelector('.ltime').textContent = OS.fmtTime(d); lk.querySelector('.ldate').textContent = d.toLocaleDateString([], { weekday: 'long', month: 'long', day: 'numeric' }); };
     tick(); const t = setInterval(tick, 1000);
-    const inp = lk.querySelector('input');
+    const inp = lk.querySelector('input'); let fails = 0;
     const unlock = () => {
-      if (s.password && inp.value !== s.password) { lk.querySelector('.lerr').textContent = 'Incorrect password, try again'; lk.querySelector('.lform').classList.remove('shake'); void lk.offsetWidth; lk.querySelector('.lform').classList.add('shake'); OS.sound('error'); inp.value = ''; return; }
+      if (s.password && inp.value !== s.password) { fails++; lk.querySelector('.lerr').textContent = 'Incorrect password, try again' + (s.passwordHint && fails >= 2 ? ` · Hint: ${s.passwordHint}` : ''); lk.querySelector('.lform').classList.remove('shake'); void lk.offsetWidth; lk.querySelector('.lform').classList.add('shake'); OS.sound('error'); inp.value = ''; return; }
       clearInterval(t); document.removeEventListener('keydown', key, true);
       if (OS.settings.fullscreenOnLogin) OS.enterFullscreen();
       lk.classList.add('gone'); setTimeout(() => lk.remove(), 500);
@@ -402,25 +402,61 @@
     }
   }
 
-  const BOOTLOG = ['Linux version 6.8.0-cirrus (gcc 13.2.0) #1 SMP PREEMPT_DYNAMIC', 'Command line: BOOT_IMAGE=/boot/vmlinuz-6.8.0-cirrus root=cirrusfs:/ ro quiet splash', 'x86/fpu: Supporting XSAVE feature 0x001', 'Memory: %MEM%K available', 'smpboot: CPU0: Cirrus vCPU @ 3.20GHz', 'smp: Brought up 1 node, %CPU% CPUs', 'ACPI: Interpreter enabled', 'PCI: Using host bridge windows from ACPI', 'usb 1-1: new high-speed USB device number 2', 'EXT4-fs (cirrusfs): mounted filesystem with ordered data mode', '[ OK ] Started Journal Service.', '[ OK ] Mounted /home.', '[ OK ] Started Network Manager.', '[ OK ] Reached target Network.', '[ OK ] Started PipeWire Multimedia Service.', '[ OK ] Started Cirrus Display Manager.', '[ OK ] Reached target Graphical Interface.'];
+  const KLOG = ['Linux version 6.8.0-cirrus (buildd@cirrus) (gcc (Cirrus 13.2.0) 13.2.0, GNU ld 2.42) #1 SMP PREEMPT_DYNAMIC', 'Command line: BOOT_IMAGE=/boot/vmlinuz-6.8.0-cirrus root=cirrusfs:/ ro quiet splash vt.handoff=7', 'KERNEL supported cpus:', '  Intel GenuineIntel', '  AMD AuthenticAMD', 'x86/fpu: Supporting XSAVE feature 0x001: \'x87 floating point registers\'', 'x86/fpu: Supporting XSAVE feature 0x002: \'SSE registers\'', 'x86/fpu: Enabled xstate features 0x7, context size is 832 bytes', 'BIOS-provided physical RAM map:', 'BIOS-e820: [mem 0x0000000000000000-0x000000000009fbff] usable', 'NX (Execute Disable) protection: active', 'efi: EFI v2.7 by Cirrus UEFI', 'SMBIOS 3.3.0 present.', 'DMI: Cirrus Cloud Machine/Nimbus, BIOS 2.4.1 11/2026', 'tsc: Detected 3200.000 MHz processor', 'Memory: %MEM%K/%MEM%K available (18432K kernel code, 4096K rwdata)', 'SLUB: HWalign=64, Order=0-3, MinObjects=0, CPUs=%CPU%, Nodes=1', 'rcu: Preemptible hierarchical RCU implementation.', 'NR_IRQS: 524544, nr_irqs: 1096, preallocated irqs: 16', 'Console: colour dummy device 80x25', 'printk: console [tty0] enabled', 'ACPI: Core revision 20230628', 'APIC: Switch to symmetric I/O mode setup', 'Calibrating delay loop (skipped), value calculated using timer frequency.. 6400.00 BogoMIPS', 'pid_max: default: 32768 minimum: 301', 'LSM: initializing lsm=lockdown,capability,landlock,yama,apparmor', 'Mount-cache hash table entries: 32768 (order: 6, 262144 bytes, linear)', 'smpboot: CPU0: Cirrus vCPU @ 3.20GHz (family: 0x6, model: 0x9a, stepping: 0x3)', 'smp: Bringing up secondary CPUs ...', 'smp: Brought up 1 node, %CPU% CPUs', 'devtmpfs: initialized', 'NET: Registered PF_NETLINK/PF_ROUTE protocol family', 'ACPI: Interpreter enabled', 'ACPI: PM: (supports S0 S3 S4 S5)', 'PCI: Using host bridge windows from ACPI; if necessary, use "pci=nocrs"', 'pci 0000:00:02.0: vgaarb: setting as boot VGA device', 'SCSI subsystem initialized', 'usbcore: registered new interface driver usbfs', 'clocksource: Switched to clocksource tsc', 'NET: Registered PF_INET protocol family', 'Trying to unpack rootfs image as initramfs...', 'Freeing initrd memory: 61440K', 'Initialise system trusted keyrings', 'zswap: loaded using pool lzo/zbud', 'Key type asymmetric registered', 'Serial: 8250/16550 driver, 32 ports, IRQ sharing enabled', 'nvme nvme0: pci function 0000:01:00.0', 'nvme nvme0: 8/0/0 default/read/poll queues', ' nvme0n1: p1 p2 p3', 'usb 1-1: new high-speed USB device number 2 using xhci_hcd', 'input: Cirrus Touch Keyboard as /devices/virtual/input/input3', 'i915 0000:00:02.0: [drm] Initialized i915 1.6.0 for 0000:00:02.0 on minor 0', 'fbcon: i915drmfb (fb0) is primary device', 'EXT4-fs (nvme0n1p2): mounted filesystem cirrusfs ro with ordered data mode. Quota mode: none.', 'Run /init as init process'];
+  const UNITS = [['Journal Service'], ['Load Kernel Modules'], ['Remount Root and Kernel File Systems'], ['Create Static Device Nodes in /dev', 'Creating'], ['Rule-based Manager for Device Events and Files'], ['Coldplug All udev Devices'], ['File System Check on /dev/disk/by-uuid/cirrus-home', 'Checking'], ['/home', 'Mounting', 'Mounted'], ['/boot/efi', 'Mounting', 'Mounted'], ['Load/Save Random Seed'], ['Create Volatile Files and Directories'], ['Network Time Synchronization'], ['Local File Systems', '', 'Reached target'], ['Set console font and keymap'], ['Bluetooth service'], ['D-Bus System Message Bus'], ['Network Manager'], ['Network Manager Wait Online'], ['Network is Online', '', 'Reached target'], ['WPA supplicant'], ['Avahi mDNS/DNS-SD Stack'], ['Cirrus Package Manager (apt) daemon'], ['Snap-free Software Store backend'], ['CUPS Scheduler'], ['Power Profiles daemon'], ['Accounts Service'], ['User Login Management'], ['PipeWire Multimedia Service'], ['WirePlumber Session Manager'], ['UPower battery monitor'], ['Thermal Daemon Service'], ['Cumulo Assistant Service'], ['Cirrus Display Manager'], ['Graphical Interface', '', 'Reached target']];
+  const sleepS = (ms, skip) => (skip() ? Promise.resolve() : OS.sleep(ms));
   desk.boot = async () => {
     let b = $('#boot'); if (!b) { b = OS.el('<div id="boot"></div>'); document.body.appendChild(b); }
-    b.innerHTML = '<div class="log"></div>'; b.hidden = false;
+    b.innerHTML = ''; b.hidden = false; b.style.opacity = 1;
     const bs = OS.settings.bootStyle || 'verbose';
-    let skip = bs !== 'verbose'; const sk = () => (skip = true); b.addEventListener('pointerdown', sk); document.addEventListener('keydown', sk, { once: true });
-    const log = b.querySelector('.log');
-    for (const line of BOOTLOG) {
-      if (skip) break;
-      const l = line.replace('%MEM%', String((navigator.deviceMemory || 8) * 1024 * 1000)).replace('%CPU%', navigator.hardwareConcurrency || 4);
-      const ok = l.startsWith('[ OK ]');
-      log.insertAdjacentHTML('beforeend', `<div>${ok ? `[<span class="ok">  OK  </span>]${esc(l.slice(6))}` : `[    ${((performance.now() / 1000) % 9).toFixed(6)}] ${esc(l)}`}</div>`);
-      await OS.sleep(45 + Math.random() * 70);
+    let skip = bs === 'quick'; const isSkip = () => skip; const sk = (e) => { if (e.type === 'keydown' && !['Escape', ' ', 'Enter'].includes(e.key) && !e.key.startsWith('F')) return; skip = true; }; b.addEventListener('pointerdown', sk); document.addEventListener('keydown', sk);
+    const mem = (navigator.deviceMemory || 8) * 1024 * 1024, cpu = navigator.hardwareConcurrency || 4;
+    if (bs === 'verbose') {
+      // 1. firmware POST
+      b.innerHTML = `<div class="post"><div class="post-top"><div class="post-logo">${OS.logo(56)}<div><b>Cirrus UEFI Firmware</b><small>Version 2.4.1 · Copyright (C) 2026 Cirrus Systems</small></div></div><div class="post-lines"></div></div><div class="post-foot"><span><b>F2</b> Setup</span><span><b>F12</b> Boot Menu</span><span><b>Esc</b> / tap to skip</span></div></div>`;
+      const pl = b.querySelector('.post-lines'); const line = (t) => pl.insertAdjacentHTML('beforeend', `<div>${t}</div>`);
+      line(`CPU: Cirrus vCPU @ 3.20GHz × ${cpu}`); await sleepS(300, isSkip);
+      line('Memory Test: <span class="mt">0</span>K'); const mt = pl.querySelector('.mt');
+      for (let i = 1; i <= 24 && !skip; i++) { mt.textContent = Math.round((mem * i) / 24); await OS.sleep(40); } mt.textContent = mem + ' OK';
+      for (const t of ['USB Device(s): 1 Keyboard, 1 Mouse, 1 Touchscreen', 'Detected NVMe SSD: CIRRUS-CLOUD-SSD 512GB', 'Detected ATAPI CD-ROM: none', 'Secure Boot: Enabled', 'Network: Cirrus Virtual Ethernet (PXE disabled)', 'Display: Cirrus Graphics Adapter, 2560×1600']) { if (skip) break; line(t); await OS.sleep(170); }
+      await sleepS(600, isSkip);
+      // 2. boot menu with countdown
+      if (!skip) {
+        const opts = ['Cirrus Linux', 'Advanced options for Cirrus Linux', 'Memory test (memtest86+)', 'UEFI Firmware Settings'];
+        b.innerHTML = `<div class="grub"><div class="grub-title">GNU GRUB  version 2.12</div><div class="grub-box">${opts.map((o, i) => `<div class="${i === 0 ? 'sel' : ''}">${i === 0 ? '*' : ' '}${o}</div>`).join('')}</div><div class="grub-help">Use the ↑ and ↓ keys to select which entry is highlighted.<br>Press enter to boot the selected OS, \`e' to edit the commands<br>before booting or \`c' for a command-line.<br><span class="grub-t">The highlighted entry will be executed automatically in 5s.</span></div></div>`;
+        for (let t = 5; t > 0 && !skip; t--) { b.querySelector('.grub-t').textContent = `The highlighted entry will be executed automatically in ${t}s.`; await OS.sleep(700); }
+        skip = false;
+        b.innerHTML = '<div class="log"></div>'; const lg = b.querySelector('.log');
+        for (const t of ['Booting `Cirrus Linux\'', '', 'Loading Linux 6.8.0-cirrus ...', 'Loading initial ramdisk ...']) { lg.insertAdjacentHTML('beforeend', `<div>${esc(t)}</div>`); await sleepS(350, isSkip); }
+        await sleepS(400, isSkip);
+      }
+      // 3. kernel + systemd log
+      b.innerHTML = '<div class="log"></div>'; const log = b.querySelector('.log');
+      let ts = 0; const add = (h) => { log.insertAdjacentHTML('beforeend', `<div>${h}</div>`); if (log.children.length > 80) log.firstChild.remove(); };
+      for (const line of KLOG) {
+        if (skip) break;
+        ts += 0.004 + Math.random() * (ts > 0.5 ? 0.09 : 0.02);
+        add(`[${ts.toFixed(6).padStart(12)}] ${esc(line.replace(/%MEM%/g, String(mem * 1000 / 1024 | 0)).replace(/%CPU%/g, cpu))}`);
+        await OS.sleep(28 + Math.random() * 55);
+      }
+      if (!skip) { add(''); add(`Welcome to <b style="color:#7aa2ff">Cirrus Linux 24.11 (Nimbus)</b>!`); add(''); await OS.sleep(300); }
+      for (const [name, verb = 'Starting', done = 'Started'] of UNITS) {
+        if (skip) break;
+        if (done === 'Reached target') add(`[<span class="ok">  OK  </span>] Reached target <b>${esc(name)}</b>.`);
+        else { add(`         ${verb} ${esc(name)}...`); await OS.sleep(40 + Math.random() * 120); add(`[<span class="ok">  OK  </span>] ${done === 'Mounted' ? 'Mounted' : done} <b>${esc(name)}</b>.`); }
+        await OS.sleep(35 + Math.random() * 80);
+      }
     }
-    b.insertAdjacentHTML('beforeend', `<div class="splash"><div>${OS.logo(84)}<div style="font-size:22px;font-weight:600;color:#fff;letter-spacing:.02em">Cirrus Linux</div><div class="spinner"></div></div></div>`);
-    await OS.sleep(bs === 'quick' ? 150 : skip && bs === 'verbose' ? 300 : 1100);
-    b.removeEventListener('pointerdown', sk);
+    // 4. splash with progress
+    b.innerHTML = `<div class="splash"><div>${OS.logo(84)}<div style="font-size:22px;font-weight:600;color:#fff;letter-spacing:.02em">Cirrus Linux</div><div class="bprog"><i></i></div><div class="bmsg">Starting…</div></div></div>`;
+    const bar = b.querySelector('.bprog i'), msg = b.querySelector('.bmsg');
+    const steps = ['Loading desktop environment', 'Restoring your files', 'Starting system services', 'Loading apps', 'Preparing the login screen'];
+    const per = bs === 'quick' ? 30 : bs === 'splash' ? 600 : skip ? 120 : 420;
+    for (let i = 0; i < steps.length; i++) { msg.textContent = steps[i] + '…'; bar.style.width = ((i + 1) / steps.length) * 100 + '%'; await OS.sleep(per); }
+    b.removeEventListener('pointerdown', sk); document.removeEventListener('keydown', sk);
     b.style.transition = 'opacity .5s'; b.style.opacity = 0;
     setTimeout(() => { b.remove(); }, 500);
+    if (OS.setup && OS.setup.needed()) { await OS.setup.run(); OS.sound('startup'); setTimeout(firstRun, 600); if (OS.settings.fullscreenOnLogin) document.addEventListener('pointerdown', OS.enterFullscreen, { once: true, capture: true }); return; }
     if (OS.settings.lockOnBoot || OS.settings.password) desk.lock(true); else { OS.sound('startup'); setTimeout(firstRun, 600); if (OS.settings.fullscreenOnLogin) document.addEventListener('pointerdown', OS.enterFullscreen, { once: true, capture: true }); }
   };
   desk.restart = () => {
