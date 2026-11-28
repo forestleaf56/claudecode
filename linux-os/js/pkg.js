@@ -31,7 +31,29 @@
     sheets: { v: '24.8.2', size: 8700, sec: 'Office', desc: 'Cumulus Sheets spreadsheet: formulas, charts, CSV import/export', type: 'app' },
     slides: { v: '24.8.2', size: 7600, sec: 'Office', desc: 'Cumulus Slides presentations: themes, shapes, images, slideshow', type: 'app' },
     'cumulus-office': { v: '24.8.2', size: 300, sec: 'Office', desc: 'Cumulus Office suite (Writer, Sheets, Slides)', type: 'lib', deps: ['office', 'writer', 'sheets', 'slides'] },
+    starlight: { v: '2.1.0', size: 4200, sec: 'Education', desc: 'Planetarium: real stars, planets, Moon and constellations for any place and time', type: 'app' },
+    beatforge: { v: '1.4.0', size: 6400, sec: 'Multimedia', desc: 'Music studio: step sequencer, piano roll, song mode, mixer and 5 sample packs', type: 'app' },
+    sprout: { v: '1.2.0', size: 3900, sec: 'Development', desc: 'Visual block programming: make games and animations by snapping blocks', type: 'app' },
+    code: { v: '1.9.4', size: 9100, sec: 'Development', desc: 'Nimbus Code editor: syntax highlighting for 20+ languages, explorer, terminal, run & preview', type: 'app' },
     // optional GUI
+    solitaire: { v: '1.0', size: 260, sec: 'Games', desc: 'Klondike solitaire card game', type: 'app' },
+    chess: { v: '1.1', size: 420, sec: 'Games', desc: 'Chess against the computer or a friend', type: 'app' },
+    rocks: { v: '1.0', size: 210, sec: 'Games', desc: 'Space Rocks: blast asteroids in a retro vector shooter', type: 'app' },
+    skyhop: { v: '1.0', size: 150, sec: 'Games', desc: 'Sky Hop: tap to fly between the pipes', type: 'app' },
+    fourrow: { v: '1.0', size: 140, sec: 'Games', desc: 'Four in a Row: drop discs and connect four', type: 'app' },
+    hangman: { v: '1.0', size: 120, sec: 'Games', desc: 'Guess the hidden word letter by letter', type: 'app' },
+    life: { v: '1.0', size: 110, sec: 'Education', desc: "Conway's Game of Life cellular automaton", type: 'app' },
+    fractal: { v: '1.0', size: 140, sec: 'Graphics', desc: 'Explore the Mandelbrot and Julia fractals', type: 'app' },
+    pixelart: { v: '1.0', size: 230, sec: 'Graphics', desc: 'Draw pixel art sprites and export PNG', type: 'app' },
+    pomodoro: { v: '1.0', size: 90, sec: 'Office', desc: 'Focus timer with work and break sessions', type: 'app' },
+    units: { v: '1.0', size: 120, sec: 'Accessories', desc: 'Convert length, weight, temperature, speed and more', type: 'app' },
+    fireworks: { v: '1.0', size: 80, sec: 'Graphics', desc: 'Tap the sky to launch fireworks', type: 'app' },
+    maps: { v: '1.0', size: 160, sec: 'Internet', desc: 'World map with place search (OpenStreetMap)', type: 'app' },
+    passgen: { v: '1.0', size: 60, sec: 'Accessories', desc: 'Generate strong passwords and passphrases', type: 'app' },
+    dice: { v: '1.0', size: 70, sec: 'Games', desc: 'Roll dice and flip coins', type: 'app' },
+    morse: { v: '1.0', size: 70, sec: 'Education', desc: 'Translate text to Morse code and hear it', type: 'app' },
+    kaleido: { v: '1.0', size: 90, sec: 'Graphics', desc: 'Draw symmetrical kaleidoscope art', type: 'app' },
+    reaction: { v: '1.0', size: 50, sec: 'Games', desc: 'Test your reaction time', type: 'app' },
     sudoku: { v: '3.0', size: 410, sec: 'Games', desc: 'Number puzzles with three difficulty levels', type: 'app' },
     pong: { v: '1.0', size: 120, sec: 'Games', desc: 'Paddle duel against a CPU opponent', type: 'app' },
     bricks: { v: '1.3', size: 240, sec: 'Games', desc: 'Break all the bricks with your ball', type: 'app' },
@@ -69,16 +91,29 @@
     'bsd-games': { v: '2.17', size: 1200, sec: 'Games', desc: 'Collection of classic text games (guess number, banner, rot13)', type: 'cli', cmds: ['guess', 'banner', 'rot13', 'factor'] },
     asciiquarium: { v: '1.1', size: 80, sec: 'Games', desc: 'Enjoy the mysteries of the sea from your terminal', type: 'cli', cmds: ['asciiquarium'] },
     vim: { v: '9.1', size: 3900, sec: 'Editors', desc: 'Vi IMproved, full version (vim, vimtutor)', type: 'cli', cmds: ['vim', 'vi', 'vimtutor', 'view'] },
+    cbonsai: { v: '1.3.1', size: 60, sec: 'Games', desc: 'Grow a bonsai tree in your terminal', type: 'cli', cmds: ['cbonsai'] },
+    'pipes-sh': { v: '1.3.0', size: 30, sec: 'Games', desc: 'Animated pipes screensaver for the terminal', type: 'cli', cmds: ['pipes', 'pipes.sh'] },
+    nyancat: { v: '1.5.2', size: 40, sec: 'Games', desc: 'Rainbow cat flying through your terminal', type: 'cli', cmds: ['nyancat'] },
+    hollywood: { v: '1.21', size: 90, sec: 'Games', desc: 'Fill your terminal with movie-style hacker screens', type: 'cli', cmds: ['hollywood'] },
+    rig: { v: '1.11', size: 40, sec: 'Utilities', desc: 'Random identity generator', type: 'cli', cmds: ['rig'] },
+    '2048-cli': { v: '0.9.1', size: 30, sec: 'Games', desc: 'Play 2048 in the terminal', type: 'cli', cmds: ['2048'] },
+    'tty-clock': { v: '2.3', size: 30, sec: 'Utilities', desc: 'Big digital clock in the terminal', type: 'cli', cmds: ['tty-clock'] },
+    espeak: { v: '1.52', size: 900, sec: 'Multimedia', desc: 'Text to speech (espeak, say)', type: 'cli', cmds: ['espeak', 'say', 'spd-say'] },
+    donut: { v: '1.0', size: 10, sec: 'Games', desc: 'Spinning 3D ASCII donut', type: 'cli', cmds: ['donut'] },
+    boxes: { v: '2.2.1', size: 120, sec: 'Utilities', desc: 'Draw ASCII art boxes around text', type: 'cli', cmds: ['boxes'] },
+    'desktop-pet': { v: '1.0', size: 50, sec: 'Games', desc: 'A little creature that lives on your desktop (pet)', type: 'cli', cmds: ['pet'] },
+    wttr: { v: '1.0', size: 10, sec: 'Network', desc: 'Weather report in the terminal (wttr.in)', type: 'cli', cmds: ['wttr'] },
     jq: { v: '1.7.1', size: 160, sec: 'Utilities', desc: 'Lightweight command-line JSON processor', type: 'cli', cmds: ['jq'] },
   };
-  const DEFAULT = ['coreutils', 'bash', 'apt', 'cirrus-desktop', 'files', 'terminal', 'browser', 'editor', 'settings', 'software', 'calculator', 'viewer', 'monitor', 'calendar', 'clock', 'music', 'paint', 'weather', 'notes', 'trash', 'snake', 'mines', 'merge', 'blocks', 'memory', 'tictactoe', 'nano', 'curl', 'wget', 'neofetch', 'iputils-ping', 'bc', 'procps', 'less', 'man-db', 'vim-tiny', 'alsa-utils', 'office', 'writer', 'sheets', 'slides', 'cumulus-office'];
-  const MIGRATIONS = { 2: ['procps', 'less', 'man-db', 'vim-tiny', 'alsa-utils', 'office', 'writer', 'sheets', 'slides', 'cumulus-office'] };
+  const DEFAULT = ['coreutils', 'bash', 'apt', 'cirrus-desktop', 'files', 'terminal', 'browser', 'editor', 'settings', 'software', 'calculator', 'viewer', 'monitor', 'calendar', 'clock', 'music', 'paint', 'weather', 'notes', 'trash', 'snake', 'mines', 'merge', 'blocks', 'memory', 'tictactoe', 'nano', 'curl', 'wget', 'neofetch', 'iputils-ping', 'bc', 'procps', 'less', 'man-db', 'vim-tiny', 'alsa-utils', 'office', 'writer', 'sheets', 'slides', 'cumulus-office', 'starlight', 'beatforge', 'sprout', 'code'];
+  const MIGRATIONS = { 2: ['procps', 'less', 'man-db', 'vim-tiny', 'alsa-utils', 'office', 'writer', 'sheets', 'slides', 'cumulus-office'], 3: ['starlight', 'beatforge', 'sprout', 'code'] };
+  const PKGV = 3;
 
   const pkg = (OS.pkg = { repo: R });
   const list = () => {
-    if (!Array.isArray(OS.settings.installed)) { OS.settings.installed = DEFAULT.slice(); OS.settings.pkgVersion = 2; OS.saveSettings(); }
+    if (!Array.isArray(OS.settings.installed)) { OS.settings.installed = DEFAULT.slice(); OS.settings.pkgVersion = PKGV; OS.saveSettings(); }
     const v = OS.settings.pkgVersion || 1;
-    if (v < 2) { Object.keys(MIGRATIONS).filter((k) => +k > v).forEach((k) => MIGRATIONS[k].forEach((n) => { if (!OS.settings.installed.includes(n)) OS.settings.installed.push(n); })); OS.settings.pkgVersion = 2; OS.saveSettings(); OS.emit('pkg-migrated', v); }
+    if (v < PKGV) { Object.keys(MIGRATIONS).filter((k) => +k > v).forEach((k) => MIGRATIONS[k].forEach((n) => { if (!OS.settings.installed.includes(n)) OS.settings.installed.push(n); })); OS.settings.pkgVersion = PKGV; OS.saveSettings(); OS.emit('pkg-migrated', v); }
     return OS.settings.installed;
   };
   pkg.installed = () => list().slice();

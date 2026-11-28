@@ -258,7 +258,7 @@
       }
     }
     static appAlias(n) {
-      const map = { libreoffice: 'office', soffice: 'office', lowriter: 'writer', localc: 'sheets', loimpress: 'slides', abiword: 'writer', gnumeric: 'sheets', firefox: 'browser', chromium: 'browser', 'google-chrome': 'browser', nautilus: 'files', thunar: 'files', dolphin: 'files', gedit: 'editor', 'gnome-text-editor': 'editor', kate: 'editor', code: 'editor', 'gnome-calculator': 'calculator', gimp: 'paint', eog: 'viewer', 'gnome-system-monitor': 'monitor', 'gnome-control-center': 'settings', rhythmbox: 'music', 'gnome-software': 'software', 'gnome-terminal': 'terminal', xterm: 'terminal', konsole: 'terminal' };
+      const map = { libreoffice: 'office', soffice: 'office', lowriter: 'writer', localc: 'sheets', loimpress: 'slides', abiword: 'writer', gnumeric: 'sheets', firefox: 'browser', chromium: 'browser', 'google-chrome': 'browser', nautilus: 'files', thunar: 'files', dolphin: 'files', gedit: 'editor', 'gnome-text-editor': 'editor', kate: 'editor', code: 'code', vscode: 'code', codium: 'code', stellarium: 'starlight', planetarium: 'starlight', lmms: 'beatforge', daw: 'beatforge', scratch: 'sprout', 'gnome-calculator': 'calculator', gimp: 'paint', eog: 'viewer', 'gnome-system-monitor': 'monitor', 'gnome-control-center': 'settings', rhythmbox: 'music', 'gnome-software': 'software', 'gnome-terminal': 'terminal', xterm: 'terminal', konsole: 'terminal' };
       if (map[n]) return map[n];
       if (OS.apps[n] && OS.pkg.appAvailable(n) && !CMDS[n]) return n;
       return null;
@@ -907,7 +907,7 @@
         live() { if (inputLine) inputLine.remove(); const el = document.createElement('div'); el.className = 'ln'; el._closed = true; box.appendChild(el); if (inputLine) box.appendChild(inputLine); return { set: (t) => { el.innerHTML = ansiToHtml(t); box.scrollTop = box.scrollHeight; }, done: (rm) => { if (rm) el.remove(); } }; },
         readLine(promptText, secret) { return new Promise((res) => { readResolve = res; showInput(promptText, secret); }); },
         exit() { setTimeout(() => win.close(), 50); },
-        fullscreen(setup, bg) { return new Promise((res) => { const fsEl = OS.el('<div class="term-full"><pre></pre></div>'); if (bg) fsEl.style.background = bg; win.body.appendChild(fsEl); const pre = fsEl.querySelector('pre'); let cleanup = null; const done = () => { if (!fsEl.isConnected) return; cleanup && cleanup(); fsEl.remove(); fullscreenStop = null; document.removeEventListener('keydown', kh, true); res(); focus(); }; const kh = (e) => { if (OS.wm.active !== win) return; if (e.key === 'q' || e.key === 'Escape' || (e.ctrlKey && e.key === 'c')) { e.preventDefault(); done(); } }; document.addEventListener('keydown', kh, true); fsEl.addEventListener('click', done); fullscreenStop = done; cleanup = setup(pre, done, fsEl); }); },
+        fullscreen(setup, bg) { return new Promise((res) => { const fsEl = OS.el('<div class="term-full"><pre></pre></div>'); if (bg) fsEl.style.background = bg; win.body.appendChild(fsEl); const pre = fsEl.querySelector('pre'); let cleanup = null; const done = () => { if (!fsEl.isConnected) return; cleanup && cleanup(); fsEl.remove(); fullscreenStop = null; document.removeEventListener('keydown', kh, true); res(); focus(); }; const kh = (e) => { if (OS.wm.active !== (win.realWin || win)) return; if (e.key === 'q' || e.key === 'Escape' || (e.ctrlKey && e.key === 'c')) { e.preventDefault(); done(); } }; document.addEventListener('keydown', kh, true); fsEl.addEventListener('click', done); fullscreenStop = done; cleanup = setup(pre, done, fsEl); }); },
 
         tui(prog) {
           return new Promise((res) => {
@@ -1000,7 +1000,7 @@
         inp.addEventListener('beforeinput', (e) => { if (sticky && e.data) { e.preventDefault(); sticky = false; updSticky(); onKey({ key: e.data.slice(-1).toLowerCase(), ctrlKey: true, preventDefault() {} }); } });
         box.scrollTop = box.scrollHeight; focus();
       }
-      function focus() { if (tuiTa) { if (OS.wm.active === win) tuiTa.focus({ preventScroll: true }); return; } if (inp && OS.wm.active === win && !window.getSelection().toString()) inp.focus({ preventScroll: true }); }
+      function focus() { if (tuiTa) { if (OS.wm.active === (win.realWin || win)) tuiTa.focus({ preventScroll: true }); return; } if (inp && OS.wm.active === (win.realWin || win) && !window.getSelection().toString()) inp.focus({ preventScroll: true }); }
       async function submit(line) {
         const pr = inputLine.querySelector('.pr').innerHTML; const secret = inp.type === 'password';
         inputLine.remove(); inputLine = null;
@@ -1089,5 +1089,5 @@
     },
   });
   OS.ansiToHtml = ansiToHtml;
-  Object.assign(OS.shell, { def, opts, readInput, lines, C, stripAnsi, procs, uptimeStr });
+  Object.assign(OS.shell, { def, opts, readInput, lines, C, stripAnsi, procs, uptimeStr, pyRun, jsRun });
 })();

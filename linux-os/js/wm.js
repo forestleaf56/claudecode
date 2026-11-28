@@ -121,6 +121,7 @@
       let nx = ox + (e.clientX - sx), ny = Math.max(0, oy + (e.clientY - sy));
       ny = Math.min(ny, r.height - 40);
       win.el.style.left = nx + 'px'; win.el.style.top = ny + 'px';
+      if (document.body.classList.contains('wobbly')) { const vx = e.clientX - (win._lx ?? e.clientX), vy = e.clientY - (win._ly ?? e.clientY); win._lx = e.clientX; win._ly = e.clientY; win.el.style.transform = `skew(${OS.clamp(-vx * 0.7, -14, 14)}deg, ${OS.clamp(-vy * 0.35, -7, 7)}deg)`; }
       const px = e.clientX - r.left, py = e.clientY - r.top;
       snapTo = py < 6 ? 'max' : px < 6 ? 'left' : px > r.width - 6 ? 'right' : null;
       if (snapTo && !prevEl) { prevEl = OS.el('<div id="snap-preview"></div>'); ws().appendChild(prevEl); }
@@ -130,7 +131,7 @@
       }
     });
     const end = () => {
-      if (sx == null) return; sx = null; document.body.classList.remove('dragging');
+      if (sx == null) return; sx = null; document.body.classList.remove('dragging'); win.el.style.transform = ''; win._lx = win._ly = null;
       if (prevEl) { prevEl.remove(); prevEl = null; }
       if (moving && snapTo) { if (snapTo === 'max') setMax(win, true); else snap(win, snapTo); }
       snapTo = null; if (moving) win.onResize && win.onResize(); moving = false;

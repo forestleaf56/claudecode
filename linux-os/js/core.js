@@ -37,6 +37,8 @@
     hostname: 'cirrus', installed: null, pinned: ['files', 'terminal', 'browser', 'office', 'software', 'settings'],
     homepage: 'about:home', searchEngine: 'wikipedia', showLabels: false, dnd: false, desktopIcons: true,
     termTheme: 'dark', termFont: 13.5, bookmarks: null, lockOnBoot: true, mobileMode: 'auto', fullscreenOnLogin: true,
+    preset: '', font: 'inter', radius: 14, winAnim: 'zoom', dockStyle: 'bar', magnify: true, panelBlur: 24, liveWp: 'none', saver: 0, saverStyle: 'starfield', saverLock: false,
+    widgets: [], widgetPos: {}, soundTheme: 'classic', wobbly: false, party: false, trail: false, pet: false, filter: 'none', bigCursor: false, bootStyle: 'verbose', celebrate: true,
   };
   OS.defaults = DEF;
   OS.settings = Object.assign({}, DEF, OS.store.get('settings', {}));
@@ -83,6 +85,7 @@
     const br = OS.$('#ov-bright'); if (br) br.style.opacity = (1 - s.brightness / 100) * 0.85;
     const nl = OS.$('#ov-night'); if (nl) nl.style.opacity = s.nightLight ? 0.35 : 0;
     const meta = OS.$('meta[name=theme-color]'); if (meta) meta.content = theme === 'dark' ? '#14161b' : '#eef0f4';
+    OS.emit('apply', s);
   };
   mqDark.addEventListener && mqDark.addEventListener('change', () => OS.applySettings());
 
@@ -276,13 +279,15 @@
   let actx = null;
   OS.audio = () => { if (!actx) { const A = window.AudioContext || window.webkitAudioContext; if (A) actx = new A(); } if (actx && actx.state === 'suspended') actx.resume(); return actx; };
   OS.sound = (type) => {
-    if (!OS.settings.sounds || OS.settings.volume === 0) return;
+    const thm = OS.settings.soundTheme || 'classic';
+    if (!OS.settings.sounds || OS.settings.volume === 0 || thm === 'silent') return;
     const a = OS.audio(); if (!a) return;
-    const vol = OS.settings.volume / 100 * 0.18;
+    const TH = { classic: ['sine', 1, 1, 1], soft: ['triangle', 0.75, 0.6, 1.8], retro: ['square', 1, 0.35, 0.8], pop: ['sine', 1.5, 1, 0.6], glass: ['sine', 2, 0.7, 2.4] }[thm] || ['sine', 1, 1, 1];
+    const vol = OS.settings.volume / 100 * 0.18 * TH[2];
     const seqs = { notify: [[880, 0, .09], [1320, .09, .14]], error: [[220, 0, .12], [180, .12, .2]], click: [[1200, 0, .03]], startup: [[523, 0, .18], [659, .12, .2], [784, .24, .22], [1047, .38, .5]], trash: [[400, 0, .06], [260, .05, .1]], unlock: [[660, 0, .08], [990, .07, .12]], done: [[784, 0, .1], [1047, .1, .2]] };
     (seqs[type] || seqs.click).forEach(([f, t, d]) => {
-      const o = a.createOscillator(), g = a.createGain(); o.type = type === 'error' ? 'square' : 'sine'; o.frequency.value = f;
-      const s0 = a.currentTime + t; g.gain.setValueAtTime(0, s0); g.gain.linearRampToValueAtTime(vol * (type === 'error' ? .4 : 1), s0 + .01); g.gain.exponentialRampToValueAtTime(0.0001, s0 + d);
+      const o = a.createOscillator(), g = a.createGain(); o.type = type === 'error' && thm === 'classic' ? 'square' : TH[0]; o.frequency.value = thm === 'retro' ? Math.round(f * TH[1] / 110) * 110 : f * TH[1]; if (thm === 'pop') o.frequency.exponentialRampToValueAtTime(f * 0.7, a.currentTime + t + d);
+      d *= TH[3]; const s0 = a.currentTime + t; g.gain.setValueAtTime(0, s0); g.gain.linearRampToValueAtTime(vol * (type === 'error' ? .4 : 1), s0 + .01); g.gain.exponentialRampToValueAtTime(0.0001, s0 + d);
       o.connect(g).connect(a.destination); o.start(s0); o.stop(s0 + d + .05);
     });
   };
@@ -369,7 +374,7 @@
       document.addEventListener('keydown', key, true);
       back.addEventListener('pointerdown', (e) => { if (e.target === back) d.classList.remove('shake'), void d.offsetWidth, d.classList.add('shake'); });
       document.body.appendChild(back);
-      setTimeout(() => { if (inp) { inp.focus(); const dot = inp.value.lastIndexOf('.'); inp.setSelectionRange(0, dot > 0 ? dot : inp.value.length); } else d.querySelector('.btn.primary')?.focus(); }, 30);
+      setTimeout(() => { if (inp) { inp.focus(); if (/^(text|password|search)$/.test(inp.type)) { const dot = inp.value.lastIndexOf('.'); inp.setSelectionRange(0, dot > 0 ? dot : inp.value.length); } } else d.querySelector('.btn.primary')?.focus(); }, 30);
       OS._dlg = { el: d, done };
     });
   OS.alert = (title, message) => OS.dialog({ title, message });

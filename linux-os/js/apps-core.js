@@ -113,6 +113,8 @@
       OS.menu(x, y, [
         { label: 'Open', icon: 'external', action: () => open(it) },
         !multi && it.type === 'file' && { label: 'Open with Text Editor', icon: 'edit', action: () => OS.wm.open('editor', { path: it.path }) },
+        !multi && it.type === 'file' && OS.pkg.appAvailable('code') && { label: 'Open with Nimbus Code', icon: 'code', action: () => OS.wm.open('code', { path: it.path }) },
+        !multi && it.type === 'dir' && OS.pkg.appAvailable('code') && { label: 'Open folder in Nimbus Code', icon: 'code', action: () => OS.wm.open('code', { folder: it.path }) },
         !multi && it.type === 'file' && (t === 'html' || t === 'image') && { label: 'Open with Browser', icon: 'globe', action: () => OS.wm.open('browser', { url: 'file://' + it.path }) },
         !multi && it.type === 'file' && /\.(sh|py|js)$/.test(it.name) && { label: 'Run in Terminal', icon: 'terminal', action: () => OS.wm.open('terminal', { cwd: cur, cmd: (it.name.endsWith('.py') ? 'python3 ' : it.name.endsWith('.js') ? 'node ' : 'sh ') + JSON.stringify(it.name) }) },
         !multi && t === 'image' && { label: 'Set as Wallpaper', icon: 'image', action: () => { OS.settings.customWallpaper = OS.toDataUrl(OS.fs.read(it.path), it.name); OS.set('wallpaper', 'custom'); } },
@@ -392,15 +394,17 @@
       let page = args.page || 'appearance';
       win.body.innerHTML = `<div class="toolbar" style="display:none"></div><div class="split" style="position:relative"><div class="sidebar"></div><div class="scroll set-main"></div></div>`;
       const side = win.body.querySelector('.sidebar'), main = win.body.querySelector('.set-main');
-      const renderSide = () => { side.innerHTML = `<div class="sm-search" style="margin:4px 2px 10px;height:38px"><input placeholder="Search settings" spellcheck="false"></div>` + PAGES.map(([id, n, i]) => `<button class="side-item ${id === page ? 'on' : ''}" data-p="${id}">${gl(i)}${n}</button>`).join(''); side.querySelectorAll('[data-p]').forEach((b) => (b.onclick = () => { page = b.dataset.p; side.classList.remove('open'); render(); })); side.querySelector('input').oninput = (e) => { const q = e.target.value.toLowerCase(); side.querySelectorAll('[data-p]').forEach((b) => (b.style.display = !q || b.textContent.toLowerCase().includes(q) ? '' : 'none')); }; };
+      const ALLP = () => { const ex = OS.settingsExtra || []; const out = PAGES.slice(); ex.forEach((p) => out.splice(p.after ? out.findIndex((x) => x[0] === p.after) + 1 : out.length, 0, [p.id, p.label, p.icon])); return out; };
+      const renderSide = () => { side.innerHTML = `<div class="sm-search" style="margin:4px 2px 10px;height:38px"><input placeholder="Search settings" spellcheck="false"></div>` + ALLP().map(([id, n, i]) => `<button class="side-item ${id === page ? 'on' : ''}" data-p="${id}">${gl(i)}${n}</button>`).join(''); side.querySelectorAll('[data-p]').forEach((b) => (b.onclick = () => { page = b.dataset.p; side.classList.remove('open'); render(); })); side.querySelector('input').oninput = (e) => { const q = e.target.value.toLowerCase(); side.querySelectorAll('[data-p]').forEach((b) => (b.style.display = !q || b.textContent.toLowerCase().includes(q) ? '' : 'none')); }; };
       const S = OS.settings;
       const sw = (k, v = S[k]) => `<label class="switch"><input type="checkbox" data-k="${k}" ${v ? 'checked' : ''}><i></i></label>`;
       const row = (title, sub, ctl) => `<div class="set-row"><div class="lab"><b>${title}</b>${sub ? `<small>${sub}</small>` : ''}</div>${ctl}</div>`;
       const seg = (k, opts) => `<div class="seg" data-seg="${k}">${opts.map(([v, l]) => `<button data-v="${v}" class="${String(S[k]) === String(v) ? 'on' : ''}">${l}</button>`).join('')}</div>`;
       const head = (t) => `<div class="row" style="margin-bottom:16px"><button class="ibtn side-toggle" data-a="side">${gl('menu')}</button><h2 style="margin:0">${t}</h2></div>`;
       function render() {
-        renderSide(); const t = PAGES.find((p) => p[0] === page)[1]; win.setTitle(t + ' — Settings');
-        let h = '';
+        renderSide(); const t = (ALLP().find((p) => p[0] === page) || ['', 'Settings'])[1]; win.setTitle(t + ' — Settings');
+        let h = ''; const extra = (OS.settingsExtra || []).find((p) => p.id === page);
+        if (extra) h = head(extra.label) + extra.html({ row, sw, seg, S });
         if (page === 'appearance') {
           h = head('Appearance') + `<div class="set-gtitle">Style</div><div class="set-group"><div class="theme-cards">${[['light', 'Light'], ['dark', 'Dark'], ['auto', 'Automatic']].map(([v, l]) => `<div class="theme-card ${S.theme === v ? 'on' : ''}" data-theme="${v}"><div class="tp ${v}"><i></i><b></b></div>${l}</div>`).join('')}</div></div>
           <div class="set-gtitle">Accent color</div><div class="set-group"><div class="set-row"><div class="swatches">${OS.accents.map((c) => `<div class="swatch ${S.accent === c ? 'on' : ''}" data-accent="${c}" style="background:${c}"></div>`).join('')}<label class="swatch" style="background:conic-gradient(red,yellow,lime,cyan,blue,magenta,red);position:relative" title="Custom"><input type="color" value="${S.accent}" data-custom-accent style="opacity:0;position:absolute;inset:0;width:100%;height:100%"></label></div></div></div>
@@ -446,7 +450,7 @@
             ${row('Device name', esc(S.hostname), '')}${row('Processor', `Cirrus vCPU × ${navigator.hardwareConcurrency || 4}`, '')}${row('Memory', (navigator.deviceMemory || 8) + ' GB', '')}${row('Kernel', OS.kernel, '')}${row('Desktop', 'Cirrus Desktop ' + OS.version, '')}${row('Windowing system', 'Web Compositor (HTML5)', '')}${row('Packages', OS.pkg.installed().length + ' installed', '')}${row('Host browser', esc(navigator.userAgent.split(') ').pop()), '')}</div>`;
         }
         main.innerHTML = `<div class="set-sec">${h}</div>`;
-        bind();
+        bind(); if (extra && extra.bind) extra.bind(main, render);
       }
       function bind() {
         const q = (s) => main.querySelectorAll(s);
@@ -528,7 +532,7 @@
         main.querySelectorAll('[data-inst]').forEach((b) => (b.onclick = () => install(b.dataset.inst)));
         main.querySelectorAll('[data-rm]').forEach((b) => (b.onclick = async () => { const n = b.dataset.rm; if (!(await OS.confirm(`Remove ${OS.pkg.label(n)}?`, '', 'Remove', true))) return; busy[n] = { p: .5, label: 'Removing…' }; render(); await OS.pkg.remove(n); delete busy[n]; render(); }));
         main.querySelectorAll('[data-open]').forEach((b) => (b.onclick = () => OS.wm.open(b.dataset.open)));
-        main.querySelectorAll('[data-try]').forEach((b) => (b.onclick = () => OS.wm.open('terminal', { cmd: { cowsay: 'cowsay Hello from Cirrus!', figlet: 'figlet Cirrus', fortune: 'fortune | cowsay', sl: 'sl', cmatrix: 'cmatrix', lolcat: 'fortune | lolcat', htop: 'htop', tree: 'tree ~', nodejs: 'node', python3: 'python3', git: 'git --version', bc: 'bc', toilet: 'toilet Hi', 'bsd-games': 'guess', asciiquarium: 'asciiquarium', neofetch: 'neofetch', curl: 'curl https://api.github.com/zen', wget: 'wget --help', 'iputils-ping': 'ping -c 3 wikipedia.org', jq: 'echo \'{"hello":"world"}\' | jq .', nano: 'nano', vim: 'vim' }[b.dataset.try] || b.dataset.try })));
+        main.querySelectorAll('[data-try]').forEach((b) => (b.onclick = () => OS.wm.open('terminal', { cmd: { cowsay: 'cowsay Hello from Cirrus!', figlet: 'figlet Cirrus', fortune: 'fortune | cowsay', sl: 'sl', cmatrix: 'cmatrix', lolcat: 'fortune | lolcat', htop: 'htop', tree: 'tree ~', nodejs: 'node', python3: 'python3', git: 'git --version', bc: 'bc', toilet: 'toilet Hi', 'bsd-games': 'guess', asciiquarium: 'asciiquarium', neofetch: 'neofetch', curl: 'curl https://api.github.com/zen', wget: 'wget --help', 'iputils-ping': 'ping -c 3 wikipedia.org', jq: 'echo \'{"hello":"world"}\' | jq .', nano: 'nano', vim: 'vim', 'pipes-sh': 'pipes', '2048-cli': '2048', 'desktop-pet': 'pet', espeak: 'say Hello from Cirrus Linux', boxes: 'boxes -d double Hello from Cirrus', wttr: 'wttr', cbonsai: 'cbonsai', nyancat: 'nyancat', hollywood: 'hollywood', rig: 'rig', 'tty-clock': 'tty-clock -s', donut: 'donut' }[b.dataset.try] || b.dataset.try })));
         const ua = main.querySelector('[data-a=upall]'); if (ua) ua.onclick = async () => { ua.disabled = true; ua.textContent = 'Updating…'; await OS.sleep(1500); OS.pkg.markUpgraded(); OS.notify('System updated', 'All packages are up to date.', { app: 'software' }); render(); };
       }
       async function install(n) {

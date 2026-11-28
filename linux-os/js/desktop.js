@@ -333,6 +333,9 @@
     if (['cdoc', 'doc'].includes(ex)) return OS.wm.open('writer', { path: p });
     if (['csht', 'csv', 'tsv'].includes(ex)) return OS.wm.open('sheets', { path: p });
     if (ex === 'cslide') return OS.wm.open('slides', { path: p });
+    if (ex === 'beat' && OS.pkg.appAvailable('beatforge')) return OS.wm.open('beatforge', { path: p });
+    if (ex === 'sprout' && OS.pkg.appAvailable('sprout')) return OS.wm.open('sprout', { path: p });
+    if (t === 'code' && OS.pkg.appAvailable('code')) return OS.wm.open('code', { path: p });
     if (['docx', 'odt', 'xlsx', 'ods', 'pptx', 'odp'].includes(ex)) return OS.alert('Binary office file', `Cumulus Office can't read .${ex} files. Export them as .doc/HTML, .csv or plain text first.`);
     if (t === 'image' || t === 'video') return OS.wm.open('viewer', { path: p });
     if (t === 'audio') return OS.wm.open('music', { path: p });
@@ -401,7 +404,8 @@
   desk.boot = async () => {
     let b = $('#boot'); if (!b) { b = OS.el('<div id="boot"></div>'); document.body.appendChild(b); }
     b.innerHTML = '<div class="log"></div>'; b.hidden = false;
-    let skip = false; const sk = () => (skip = true); b.addEventListener('pointerdown', sk); document.addEventListener('keydown', sk, { once: true });
+    const bs = OS.settings.bootStyle || 'verbose';
+    let skip = bs !== 'verbose'; const sk = () => (skip = true); b.addEventListener('pointerdown', sk); document.addEventListener('keydown', sk, { once: true });
     const log = b.querySelector('.log');
     for (const line of BOOTLOG) {
       if (skip) break;
@@ -411,7 +415,7 @@
       await OS.sleep(45 + Math.random() * 70);
     }
     b.insertAdjacentHTML('beforeend', `<div class="splash"><div>${OS.logo(84)}<div style="font-size:22px;font-weight:600;color:#fff;letter-spacing:.02em">Cirrus Linux</div><div class="spinner"></div></div></div>`);
-    await OS.sleep(skip ? 300 : 1100);
+    await OS.sleep(bs === 'quick' ? 150 : skip && bs === 'verbose' ? 300 : 1100);
     b.removeEventListener('pointerdown', sk);
     b.style.transition = 'opacity .5s'; b.style.opacity = 0;
     setTimeout(() => { b.remove(); }, 500);
